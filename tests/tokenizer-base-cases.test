@@ -1,0 +1,97 @@
+@test("It should tokenize an 'EOF' token on empty file")
+@given("file")
+@whenRun("./bin/tokenizer-tester")
+@expectOutput("stdout")
+<TOKEN_EOF>
+
+@endtest
+
+@test("It should tokenize one char punctuators")
+@given("file")
++
+-
+*
+/
+(
+)
+{
+}
+=
+;
+>
+<
+!
+@whenRun("./bin/tokenizer-tester")
+@expectOutput("stdout")
+<TOKEN_PUNCTUATOR '+'>
+<TOKEN_PUNCTUATOR '-'>
+<TOKEN_PUNCTUATOR '*'>
+<TOKEN_PUNCTUATOR '/'>
+<TOKEN_PUNCTUATOR '('>
+<TOKEN_PUNCTUATOR ')'>
+<TOKEN_PUNCTUATOR '{'>
+<TOKEN_PUNCTUATOR '}'>
+<TOKEN_PUNCTUATOR '='>
+<TOKEN_PUNCTUATOR ';'>
+<TOKEN_PUNCTUATOR '>'>
+<TOKEN_PUNCTUATOR '<'>
+<TOKEN_PUNCTUATOR '!'>
+<TOKEN_EOF>
+
+@endtest
+
+@test("It should tokenize keywords")
+@given("file")
+int
+return
+while
+if
+else
+@whenRun("./bin/tokenizer-tester")
+@expectOutput("stdout")
+<TOKEN_KEYWORD 'int'>
+<TOKEN_KEYWORD 'return'>
+<TOKEN_KEYWORD 'while'>
+<TOKEN_KEYWORD 'if'>
+<TOKEN_KEYWORD 'else'>
+<TOKEN_EOF>
+
+@endtest
+
+@test("It should tokenize identifiers")
+@given("file")
+a
+name
+super_cool_name
+superVar1
+superVar_2
+@whenRun("./bin/tokenizer-tester")
+@expectOutput("stdout")
+<TOKEN_IDENTIFIER 'a'>
+<TOKEN_IDENTIFIER 'name'>
+<TOKEN_IDENTIFIER 'super_cool_name'>
+<TOKEN_IDENTIFIER 'superVar1'>
+<TOKEN_IDENTIFIER 'superVar_2'>
+<TOKEN_EOF>
+
+@endtest
+
+@test("It should tokenize int numbers")
+@given("file")
+0
+1
+2
+10
+777
+10000780
+@whenRun("./bin/tokenizer-tester")
+@expectOutput("stdout")
+<TOKEN_NUMBER '0'>
+<TOKEN_NUMBER '1'>
+<TOKEN_NUMBER '2'>
+<TOKEN_NUMBER '10'>
+<TOKEN_NUMBER '777'>
+<TOKEN_NUMBER '10000780'>
+<TOKEN_EOF>
+
+@endtest

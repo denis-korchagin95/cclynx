@@ -1,23 +1,23 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <assert.h>
-#include <ctype.h>
-#include <string.h>
 
 #include "allocator.h"
-#include "identifier.h"
-#include "symbol.h"
 #include "tokenizer.h"
 #include "print.h"
+#include "symbol.h"
 
 
 int main(int argc, const char * argv[])
 {
-    const char * example_filename = "./examples/factorial.c";
-    FILE * file = fopen(example_filename, "r");
+    if (argc <= 1) {
+        fprintf(stderr, "No source given!\n");
+        exit(1);
+    }
+
+    FILE * file = fopen(argv[1], "r");
 
     if (file == NULL) {
-        fprintf(stderr, "Could not open file %s\n", example_filename);
+        fprintf(stderr, "Could not open file %s\n", argv[1]);
         exit(1);
     }
 
