@@ -74,6 +74,37 @@ int main(int argc, const char * argv[])
     return 0;
 }
 
+void read_identifier(FILE * file, struct token * token, int ch)
+{
+    unsigned int hash = 0;
+
+    identifier_buffer_pos = 0;
+
+    while(ch != EOF && is_identifier_char(ch) && identifier_buffer_pos < MAX_IDENTIFIER_BUFFER_SIZE - 1) {
+        identifier_buffer[identifier_buffer_pos++] = ch;
+        hash = ch + 31 * hash;
+        ch = get_one_char(file);
+    }
+    identifier_buffer[identifier_buffer_pos] = '\0';
+    putback_one_char(ch);
+
+    if(identifier_buffer_pos >= MAX_IDENTIFIER_BUFFER_SIZE - 1) {
+        fprintf(stderr, "warning: identifier too long!\n");
+        while(is_identifier_char(ch))
+            ch = get_one_char(file);
+        putback_one_char(ch);
+    }
+
+    struct identifier * identifier = identifier_lookup(hash, identifier_buffer);
+
+    if (identifier == NULL) {
+        identifier = identifier_insert(hash, identifier_buffer, identifier_buffer_pos);
+    }
+
+    token->kind = TOKEN_KIND_IDENTIFIER;
+    token->content.identifier = identifier;
+}
+
 struct token * read_token(FILE * file)
 {
     assert(file != NULL);
@@ -93,17 +124,7 @@ struct token * read_token(FILE * file)
     }
 
     if (is_start_identifier_char(ch)) {
-        token->kind = TOKEN_KIND_IDENTIFIER;
-        identifier_buffer_pos = 0;
-        while (is_identifier_char(ch)) {
-            // TODO: handle max identifier length
-            identifier_buffer[identifier_buffer_pos++] = ch;
-            ch = get_one_char(file);
-        }
-        identifier_buffer[identifier_buffer_pos] = '\0';
-        putback_one_char(ch);
-        struct identifier * identifier = identifier_create(identifier_buffer);
-        token->content.identifier = identifier;
+        read_identifier(file, token, ch);
         return token;
     }
 
