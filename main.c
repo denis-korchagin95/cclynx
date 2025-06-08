@@ -5,6 +5,7 @@
 #include <string.h>
 
 #include "allocator.h"
+#include "identifier.h"
 
 #define MAX_CHAR_BUFFER_SIZE (4)
 #define MAX_IDENTIFIER_BUFFER_SIZE (512)
@@ -32,7 +33,7 @@ struct token
     unsigned int kind;
     union {
         int ch;
-        char * str;
+        struct identifier * identifier;
     } content;
 };
 
@@ -48,13 +49,13 @@ static void print_token(struct token * token, FILE * file);
 static int get_one_char(FILE * file);
 static void putback_one_char(int ch);
 
-struct memory_blob_pool pool = {0};
+struct memory_blob_pool main_pool = {0};
 
 int main(int argc, const char * argv[])
 {
     FILE * file = fopen("./examples/factorial.c", "r");
 
-    memory_blob_pool_init(&pool, DEFAULT_MEMORY_BLOB_SIZE, DEFAULT_MEMORY_BLOB_ALIGNMENT);
+    memory_blob_pool_init(&main_pool, DEFAULT_MEMORY_BLOB_SIZE, DEFAULT_MEMORY_BLOB_ALIGNMENT);
 
     for (;;) {
         struct token * token = read_token(file);
@@ -66,7 +67,7 @@ int main(int argc, const char * argv[])
         }
     }
 
-    memory_blob_pool_free(&pool, false);
+    memory_blob_pool_free(&main_pool, false);
 
     fclose(file);
 
@@ -77,7 +78,7 @@ struct token * read_token(FILE * file)
 {
     assert(file != NULL);
 
-    struct token * token = (struct token *) memory_blob_pool_alloc(&pool, sizeof(struct token));
+    struct token * token = (struct token *) memory_blob_pool_alloc(&main_pool, sizeof(struct token));
 
     int ch = get_one_char(file);
 
@@ -101,10 +102,8 @@ struct token * read_token(FILE * file)
         }
         identifier_buffer[identifier_buffer_pos] = '\0';
         putback_one_char(ch);
-        char * str = malloc(identifier_buffer_pos + 1);
-        strncpy(str, identifier_buffer, identifier_buffer_pos);
-        str[identifier_buffer_pos] = '\0';
-        token->content.str = str;
+        struct identifier * identifier = identifier_create(identifier_buffer);
+        token->content.identifier = identifier;
         return token;
     }
 
@@ -166,7 +165,7 @@ void print_token(struct token * token, FILE * file)
             fprintf(file, "<TOKEN_UNKNOWN_CHARACTER '%c'>\n", token->content.ch);
             break;
         case TOKEN_KIND_IDENTIFIER:
-            fprintf(file, "<TOKEN_IDENTIFIER '%s'>\n", token->content.str);
+            fprintf(file, "<TOKEN_IDENTIFIER '%s'>\n", token->content.identifier->name);
             break;
         case TOKEN_KIND_NUMBER:
             fprintf(file, "<TOKEN_NUMBER '%d'>\n", token->content.ch);

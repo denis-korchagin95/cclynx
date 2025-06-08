@@ -9,6 +9,7 @@ HEADERS=./headers/
 all: build
 
 OBJECTS+=allocator.o
+OBJECTS+=identifier.o
 OBJECTS+=main.o
 
 build: $(addprefix $(OBJ), $(OBJECTS))

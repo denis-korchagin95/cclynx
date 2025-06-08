@@ -22,6 +22,8 @@ struct memory_blob_pool {
     size_t alignment;
 };
 
+extern struct memory_blob_pool main_pool;
+
 struct memory_blob_pool * memory_blob_pool_create(size_t blob_size, size_t alignment);
 
 void memory_blob_pool_init(struct memory_blob_pool * pool, size_t blob_size, size_t alignment);
