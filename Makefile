@@ -10,6 +10,7 @@ all: build
 
 OBJECTS+=allocator.o
 OBJECTS+=identifier.o
+OBJECTS+=symbol.o
 OBJECTS+=main.o
 
 build: $(addprefix $(OBJ), $(OBJECTS))

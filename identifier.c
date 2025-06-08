@@ -1,4 +1,5 @@
 #include <string.h>
+#include <memory.h>
 
 #include "identifier.h"
 #include "allocator.h"
@@ -41,6 +42,7 @@ struct identifier * identifier_insert(unsigned int hash, const char * name, unsi
     unsigned int index = hash % IDENTIFIER_TABLE_SIZE;
 
     struct identifier * identifier = memory_blob_pool_alloc(&main_pool, sizeof(struct identifier));
+    memset(identifier, 0, sizeof(struct identifier));
 
     identifier->name = (char *) memory_blob_pool_alloc(&main_pool, len + 1);
     strncpy(identifier->name, name, len);

@@ -6,6 +6,7 @@
 
 #include "allocator.h"
 #include "identifier.h"
+#include "symbol.h"
 
 #define MAX_CHAR_BUFFER_SIZE (4)
 #define MAX_IDENTIFIER_BUFFER_SIZE (512)
@@ -56,6 +57,7 @@ int main(int argc, const char * argv[])
     FILE * file = fopen("./examples/factorial.c", "r");
 
     memory_blob_pool_init(&main_pool, DEFAULT_MEMORY_BLOB_SIZE, DEFAULT_MEMORY_BLOB_ALIGNMENT);
+    init_builtin_symbols();
 
     for (;;) {
         struct token * token = read_token(file);
@@ -125,6 +127,10 @@ struct token * read_token(FILE * file)
 
     if (is_start_identifier_char(ch)) {
         read_identifier(file, token, ch);
+        struct symbol * symbol = symbol_lookup(token->content.identifier, SYMBOL_KIND_KEYWORD);
+        if (symbol != NULL) {
+            token->kind = TOKEN_KIND_KEYWORD;
+        }
         return token;
     }
 
@@ -176,6 +182,9 @@ void print_token(struct token * token, FILE * file)
     assert(token != NULL);
 
     switch (token->kind) {
+        case TOKEN_KIND_KEYWORD:
+            fprintf(file, "<TOKEN_KEYWORD '%s'>\n", token->content.identifier->name);
+            break;
         case TOKEN_KIND_PUNCTUATOR:
             fprintf(file, "<TOKEN_PUNCTUATOR '%c'>\n", token->content.ch);
             break;
