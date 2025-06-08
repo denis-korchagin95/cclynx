@@ -1,8 +1,8 @@
-@test("It should tokenize an 'EOF' token on empty file")
+@test("It should tokenize an 'EOS' token on empty file")
 @given("file")
 @whenRun("./bin/tokenizer-tester")
 @expectOutput("stdout")
-<TOKEN_EOF>
+<TOKEN_EOS>
 
 @endtest
 
@@ -36,7 +36,7 @@
 <TOKEN_PUNCTUATOR '>'>
 <TOKEN_PUNCTUATOR '<'>
 <TOKEN_PUNCTUATOR '!'>
-<TOKEN_EOF>
+<TOKEN_EOS>
 
 @endtest
 
@@ -54,7 +54,7 @@ else
 <TOKEN_KEYWORD 'while'>
 <TOKEN_KEYWORD 'if'>
 <TOKEN_KEYWORD 'else'>
-<TOKEN_EOF>
+<TOKEN_EOS>
 
 @endtest
 
@@ -72,7 +72,7 @@ superVar_2
 <TOKEN_IDENTIFIER 'super_cool_name'>
 <TOKEN_IDENTIFIER 'superVar1'>
 <TOKEN_IDENTIFIER 'superVar_2'>
-<TOKEN_EOF>
+<TOKEN_EOS>
 
 @endtest
 
@@ -92,6 +92,6 @@ superVar_2
 <TOKEN_NUMBER '10'>
 <TOKEN_NUMBER '777'>
 <TOKEN_NUMBER '10000780'>
-<TOKEN_EOF>
+<TOKEN_EOS>
 
 @endtest

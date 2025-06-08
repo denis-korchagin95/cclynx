@@ -16,8 +16,8 @@ void print_token(struct token * token, FILE * file)
         case TOKEN_KIND_PUNCTUATOR:
             fprintf(file, "<TOKEN_PUNCTUATOR '%c'>\n", token->content.ch);
             break;
-        case TOKEN_KIND_EOF:
-            fprintf(file, "<TOKEN_EOF>\n");
+        case TOKEN_KIND_EOS:
+            fprintf(file, "<TOKEN_EOS>\n");
             break;
         case TOKEN_KIND_UNKNOWN_CHARACTER:
             fprintf(file, "<TOKEN_UNKNOWN_CHARACTER '%c'>\n", token->content.ch);

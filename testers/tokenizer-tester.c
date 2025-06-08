@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <memory.h>
 
 #include "allocator.h"
 #include "tokenizer.h"
@@ -24,14 +25,13 @@ int main(int argc, const char * argv[])
     memory_blob_pool_init(&main_pool, DEFAULT_MEMORY_BLOB_SIZE, DEFAULT_MEMORY_BLOB_ALIGNMENT);
     init_builtin_symbols();
 
-    for (;;) {
-        struct token * token = tokenizer_get_one_token(file);
+    struct token * tokens = tokenizer_tokenize_file(file);
 
-        print_token(token, stdout);
+    struct token * it = tokens;
 
-        if (token->kind == TOKEN_KIND_EOF) {
-            break;
-        }
+    while (it != &eos_token) {
+        print_token(it, stdout);
+        it = it->next;
     }
 
     memory_blob_pool_free(&main_pool, false);

@@ -1,11 +1,14 @@
 #include <assert.h>
 #include <stdio.h>
 #include <ctype.h>
+#include <memory.h>
 
 #include "tokenizer.h"
 #include "allocator.h"
 #include "symbol.h"
 #include "identifier.h"
+
+struct token eos_token = {{0}, &eos_token, TOKEN_KIND_EOS};
 
 static char char_buffer[MAX_CHAR_BUFFER_SIZE] = {0};
 static unsigned int char_buffer_pos = 0;
@@ -17,11 +20,37 @@ static int get_one_char(FILE * file);
 static void putback_one_char(int ch);
 static void read_identifier(FILE * file, struct token * token, int ch);
 
-struct token * tokenizer_get_one_token(FILE * file)
+
+struct token * tokenizer_tokenize_file(FILE * file)
 {
     assert(file != NULL);
 
-    struct token * token = (struct token *) memory_blob_pool_alloc(&main_pool, sizeof(struct token));
+    struct token * tokens = &eos_token;
+    struct token ** next_token = &tokens;
+
+    for (;;) {
+        struct token * token = (struct token *) memory_blob_pool_alloc(&main_pool, sizeof(struct token));
+        memset(token, 0, sizeof(struct token));
+
+        token->next = (*next_token)->next;
+        *next_token = token;
+        next_token = &token->next;
+
+        tokenizer_get_one_token(file, token);
+
+        if (token->kind == TOKEN_KIND_EOS) {
+            break;
+        }
+    }
+
+    return tokens;
+}
+
+
+void tokenizer_get_one_token(FILE * file, struct token * token)
+{
+    assert(file != NULL);
+    assert(token != NULL);
 
     int ch = get_one_char(file);
 
@@ -30,9 +59,9 @@ struct token * tokenizer_get_one_token(FILE * file)
     }
 
     if (ch == EOF) {
-        token->kind = TOKEN_KIND_EOF;
+        token->kind = TOKEN_KIND_EOS;
         token->content.ch = EOF;
-        return token;
+        return;
     }
 
     if (is_start_identifier_char(ch)) {
@@ -41,7 +70,7 @@ struct token * tokenizer_get_one_token(FILE * file)
         if (symbol != NULL) {
             token->kind = TOKEN_KIND_KEYWORD;
         }
-        return token;
+        return;
     }
 
     if (isdigit(ch)) {
@@ -58,7 +87,7 @@ struct token * tokenizer_get_one_token(FILE * file)
             }
         }
         token->content.ch = number;
-        return token;
+        return;
     }
 
     switch (ch) {
@@ -82,8 +111,6 @@ struct token * tokenizer_get_one_token(FILE * file)
             token->kind = TOKEN_KIND_UNKNOWN_CHARACTER;
             token->content.ch = ch;
     }
-
-    return token;
 }
 
 void read_identifier(FILE * file, struct token * token, int ch)

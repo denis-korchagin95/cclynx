@@ -7,16 +7,18 @@ CFLAGS=-std=c11 -g -Wall -O0
 HEADERS=./headers/
 TESTERS=./testers/
 
+vpath %.c $(SRC) $(TESTERS)
+
 all: build
 
-OBJECTS_TOKENIZER_TESTER+=$(TESTERS)tokenizer-tester.o
+OBJECTS_TOKENIZER_TESTER=$(TESTERS)tokenizer-tester.o
 OBJECTS_TOKENIZER_TESTER+=allocator.o
 OBJECTS_TOKENIZER_TESTER+=print.o
 OBJECTS_TOKENIZER_TESTER+=tokenizer.o
 OBJECTS_TOKENIZER_TESTER+=identifier.o
 OBJECTS_TOKENIZER_TESTER+=symbol.o
 
-OBJECTS+=allocator.o
+OBJECTS=allocator.o
 OBJECTS+=identifier.o
 OBJECTS+=symbol.o
 OBJECTS+=print.o
@@ -32,6 +34,7 @@ build: $(addprefix $(OBJ), $(OBJECTS))
 clean:
 	rm -rfv $(BIN)$(PROGRAM)
 	rm -rfv $(BIN)tokenizer-tester
+	rm -rfv $(OBJ)$(TESTERS)tokenizer-tester.o
 	rm -rfv $(OBJ)*.o
 
 $(OBJ)%.o: %.c
