@@ -4,9 +4,11 @@ BIN=./bin/
 OBJ=./obj/
 PROGRAM=cminx
 CFLAGS=-std=c11 -g -Wall -O0
+HEADERS=./headers/
 
 all: build
 
+OBJECTS+=allocator.o
 OBJECTS+=main.o
 
 build: $(addprefix $(OBJ), $(OBJECTS))
@@ -17,4 +19,4 @@ clean:
 	rm -rfv $(OBJ)*.o
 
 $(OBJ)%.o: %.c
-	$(CC) $(CFLAGS) -c $(SRC)$*.c -o $@
+	$(CC) $(CFLAGS) -I$(HEADERS) -c $(SRC)$*.c -o $@

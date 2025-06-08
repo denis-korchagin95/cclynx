@@ -4,6 +4,8 @@
 #include <ctype.h>
 #include <string.h>
 
+#include "allocator.h"
+
 #define MAX_CHAR_BUFFER_SIZE (4)
 #define MAX_IDENTIFIER_BUFFER_SIZE (512)
 
@@ -40,37 +42,42 @@ static unsigned int char_buffer_pos = 0;
 static char identifier_buffer[MAX_IDENTIFIER_BUFFER_SIZE] = {0};
 static unsigned int identifier_buffer_pos = 0;
 
-static void read_token(FILE * file, struct token * token);
+static struct token * read_token(FILE * file);
 static void print_token(struct token * token, FILE * file);
 
 static int get_one_char(FILE * file);
 static void putback_one_char(int ch);
 
+struct memory_blob_pool pool = {0};
+
 int main(int argc, const char * argv[])
 {
     FILE * file = fopen("./examples/factorial.c", "r");
 
-    struct token token;
+    memory_blob_pool_init(&pool, DEFAULT_MEMORY_BLOB_SIZE, DEFAULT_MEMORY_BLOB_ALIGNMENT);
 
     for (;;) {
-        read_token(file, &token);
+        struct token * token = read_token(file);
 
-        print_token(&token, stdout);
+        print_token(token, stdout);
 
-        if (token.kind == TOKEN_KIND_EOF) {
+        if (token->kind == TOKEN_KIND_EOF) {
             break;
         }
     }
+
+    memory_blob_pool_free(&pool, false);
 
     fclose(file);
 
     return 0;
 }
 
-void read_token(FILE * file, struct token * token)
+struct token * read_token(FILE * file)
 {
     assert(file != NULL);
-    assert(token != NULL);
+
+    struct token * token = (struct token *) memory_blob_pool_alloc(&pool, sizeof(struct token));
 
     int ch = get_one_char(file);
 
@@ -81,7 +88,7 @@ void read_token(FILE * file, struct token * token)
     if (ch == EOF) {
         token->kind = TOKEN_KIND_EOF;
         token->content.ch = EOF;
-        return;
+        return token;
     }
 
     if (is_start_identifier_char(ch)) {
@@ -98,7 +105,7 @@ void read_token(FILE * file, struct token * token)
         strncpy(str, identifier_buffer, identifier_buffer_pos);
         str[identifier_buffer_pos] = '\0';
         token->content.str = str;
-        return;
+        return token;
     }
 
     if (isdigit(ch)) {
@@ -115,7 +122,7 @@ void read_token(FILE * file, struct token * token)
             }
         }
         token->content.ch = number;
-        return;
+        return token;
     }
 
     switch (ch) {
@@ -139,6 +146,8 @@ void read_token(FILE * file, struct token * token)
             token->kind = TOKEN_KIND_UNKNOWN_CHARACTER;
             token->content.ch = ch;
     }
+
+    return token;
 }
 
 void print_token(struct token * token, FILE * file)
