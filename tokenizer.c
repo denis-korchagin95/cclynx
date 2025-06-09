@@ -75,7 +75,7 @@ void tokenizer_get_one_token(FILE * file, struct token * token)
 
     if (isdigit(ch)) {
         token->kind = TOKEN_KIND_NUMBER;
-        int number = 0;
+        long long int number = 0;
         for (;;) {
             number = number * 10 + (ch - '0');
 
@@ -86,7 +86,7 @@ void tokenizer_get_one_token(FILE * file, struct token * token)
                 break;
             }
         }
-        token->content.ch = number;
+        token->content.integer_constant = number;
         return;
     }
 

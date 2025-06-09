@@ -3,11 +3,13 @@
 #include "print.h"
 #include "tokenizer.h"
 #include "identifier.h"
+#include "parser.h"
+
 
 void print_token(struct token * token, FILE * file)
 {
-    assert(file != NULL);
     assert(token != NULL);
+    assert(file != NULL);
 
     switch (token->kind) {
         case TOKEN_KIND_KEYWORD:
@@ -26,9 +28,22 @@ void print_token(struct token * token, FILE * file)
             fprintf(file, "<TOKEN_IDENTIFIER '%s'>\n", token->content.identifier->name);
             break;
         case TOKEN_KIND_NUMBER:
-            fprintf(file, "<TOKEN_NUMBER '%d'>\n", token->content.ch);
+            fprintf(file, "<TOKEN_NUMBER '%lld'>\n", token->content.integer_constant);
             break;
         default:
             fprintf(file, "<TOKEN_UNKNOWN>\n");
+    }
+}
+
+
+void print_ast(struct ast_node * ast, FILE * file)
+{
+    assert(ast != NULL);
+    assert(file != NULL);
+
+    switch (ast->kind) {
+        case AST_NODE_KIND_INTEGER_CONSTANT:
+            fprintf(file, "IntegerConstant: '%llu'\n", ast->content.integer_constant);
+            break;
     }
 }

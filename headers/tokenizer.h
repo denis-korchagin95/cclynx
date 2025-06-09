@@ -31,6 +31,7 @@ struct token
     union {
         int ch;
         struct identifier * identifier;
+        long long int integer_constant;
     } content;
     struct token * next;
     unsigned int kind;

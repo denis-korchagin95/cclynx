@@ -1,0 +1,8 @@
+@test("It should parse an integer number")
+@given("file")
+777
+@whenRun("./bin/parser-tester")
+@expectOutput("stdout")
+IntegerConstant: '777'
+
+@endtest
