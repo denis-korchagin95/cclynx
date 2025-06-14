@@ -1,7 +1,6 @@
 #ifndef ALLOCATOR_H
 #define ALLOCATOR_H 1
 
-#include <stddef.h>
 #include <stdbool.h>
 
 #define DEFAULT_MEMORY_BLOB_SIZE (1024 * 1024)

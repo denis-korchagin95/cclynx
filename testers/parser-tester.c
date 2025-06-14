@@ -1,18 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <assert.h>
-#include <ctype.h>
-#include <string.h>
 
 #include "allocator.h"
-#include "identifier.h"
 #include "symbol.h"
 #include "tokenizer.h"
 #include "print.h"
 #include "parser.h"
 
 
-int main(int argc, const char * argv[])
+int main(const int argc, const char * argv[])
 {
     if (argc <= 1) {
         fprintf(stderr, "No source given!\n");

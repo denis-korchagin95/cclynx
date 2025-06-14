@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <memory.h>
 
 #include "allocator.h"
 #include "tokenizer.h"
@@ -8,7 +7,7 @@
 #include "symbol.h"
 
 
-int main(int argc, const char * argv[])
+int main(const int argc, const char * argv[])
 {
     if (argc <= 1) {
         fprintf(stderr, "No source given!\n");

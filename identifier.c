@@ -1,5 +1,4 @@
 #include <string.h>
-#include <memory.h>
 
 #include "identifier.h"
 #include "allocator.h"
@@ -20,16 +19,15 @@ unsigned int get_string_hash(const char * name)
 
 struct identifier * identifier_create(const char * name)
 {
-    unsigned int hash = get_string_hash(name);
-    unsigned int len = strlen(name);
+    const unsigned int hash = get_string_hash(name);
+    const unsigned int len = strlen(name);
     return identifier_insert(hash, name, len);
 }
 
-struct identifier * identifier_lookup(unsigned int hash, const char * name)
+struct identifier * identifier_lookup(const unsigned int hash, const char * name)
 {
     unsigned int index = hash % IDENTIFIER_TABLE_SIZE;
-    struct identifier * it;
-    for(it = identifiers[index]; it != NULL; it = it->next) {
+    for(struct identifier * it = identifiers[index]; it != NULL; it = it->next) {
         if (strcmp(name, it->name) == 0) {
             return it;
         }
@@ -37,7 +35,7 @@ struct identifier * identifier_lookup(unsigned int hash, const char * name)
     return NULL;
 }
 
-struct identifier * identifier_insert(unsigned int hash, const char * name, unsigned int len)
+struct identifier * identifier_insert(const unsigned int hash, const char * name, unsigned int len)
 {
     unsigned int index = hash % IDENTIFIER_TABLE_SIZE;
 

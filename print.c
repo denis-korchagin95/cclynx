@@ -6,9 +6,9 @@
 #include "identifier.h"
 #include "parser.h"
 
-static void do_print_ast(struct ast_node * ast, FILE * file, int depth, unsigned int * ancestors_info);
+static void do_print_ast(const struct ast_node * ast, FILE * file, int depth, unsigned int * ancestors_info);
 
-void print_token(struct token * token, FILE * file)
+void print_token(const struct token * token, FILE * file)
 {
     assert(token != NULL);
     assert(file != NULL);
@@ -44,7 +44,7 @@ void print_token(struct token * token, FILE * file)
 }
 
 
-void print_ast(struct ast_node * ast, FILE * file)
+void print_ast(const struct ast_node * ast, FILE * file)
 {
     assert(ast != NULL);
     assert(file != NULL);
@@ -56,7 +56,7 @@ void print_ast(struct ast_node * ast, FILE * file)
 	do_print_ast(ast, file, 0, ancestors_info);
 }
 
-void do_print_ast(struct ast_node * ast, FILE * file, int depth, unsigned int * ancestors_info)
+void do_print_ast(const struct ast_node * ast, FILE * file, int depth, unsigned int * ancestors_info)
 {
     const unsigned int is_top = (ancestors_info[depth] & 1) > 0;
 
