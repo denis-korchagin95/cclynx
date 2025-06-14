@@ -1,317 +1,425 @@
 @test("It should parse an integer number")
 @given("file")
-777
+int main() {
+    777;
+}
 @whenRun("./bin/parser-tester")
 @expectOutput("stdout")
-IntegerConstant: '777'
+FunctionDefinition: {name: 'main', type: 'int'}
+|
++-> CompoundStatement
+    |
+    +-> IntegerConstant: '777'
 
 @endtest
 
 @test("It should parse a multiplicative expression (*) (primitive case)")
 @given("file")
-7 * 8
+int main() {
+    7 * 8;
+}
 @whenRun("./bin/parser-tester")
 @expectOutput("stdout")
-MultiplicativeExpression: '*'
+FunctionDefinition: {name: 'main', type: 'int'}
 |
-+-> IntegerConstant: '7'
-|
-+-> IntegerConstant: '8'
++-> CompoundStatement
+    |
+    +-> MultiplicativeExpression: '*'
+        |
+        +-> IntegerConstant: '7'
+        |
+        +-> IntegerConstant: '8'
 
 @endtest
 
 @test("It should parse a multiplicative expression (*) (nested level 2 primitive case)")
 @given("file")
-7 * 6 * 8
+int main() {
+    7 * 6 * 8;
+}
 @whenRun("./bin/parser-tester")
 @expectOutput("stdout")
-MultiplicativeExpression: '*'
+FunctionDefinition: {name: 'main', type: 'int'}
 |
-+-> MultiplicativeExpression: '*'
-|   |
-|   +-> IntegerConstant: '7'
-|   |
-|   +-> IntegerConstant: '6'
-|
-+-> IntegerConstant: '8'
++-> CompoundStatement
+    |
+    +-> MultiplicativeExpression: '*'
+        |
+        +-> MultiplicativeExpression: '*'
+        |   |
+        |   +-> IntegerConstant: '7'
+        |   |
+        |   +-> IntegerConstant: '6'
+        |
+        +-> IntegerConstant: '8'
 
 @endtest
 
 @test("It should parse a multiplicative expression (*) (nested level 4 primitive case)")
 @given("file")
-7 * 6 * 8 * 10 * 15
+int main() {
+    7 * 6 * 8 * 10 * 15;
+}
 @whenRun("./bin/parser-tester")
 @expectOutput("stdout")
-MultiplicativeExpression: '*'
+FunctionDefinition: {name: 'main', type: 'int'}
 |
-+-> MultiplicativeExpression: '*'
-|   |
-|   +-> MultiplicativeExpression: '*'
-|   |   |
-|   |   +-> MultiplicativeExpression: '*'
-|   |   |   |
-|   |   |   +-> IntegerConstant: '7'
-|   |   |   |
-|   |   |   +-> IntegerConstant: '6'
-|   |   |
-|   |   +-> IntegerConstant: '8'
-|   |
-|   +-> IntegerConstant: '10'
-|
-+-> IntegerConstant: '15'
++-> CompoundStatement
+    |
+    +-> MultiplicativeExpression: '*'
+        |
+        +-> MultiplicativeExpression: '*'
+        |   |
+        |   +-> MultiplicativeExpression: '*'
+        |   |   |
+        |   |   +-> MultiplicativeExpression: '*'
+        |   |   |   |
+        |   |   |   +-> IntegerConstant: '7'
+        |   |   |   |
+        |   |   |   +-> IntegerConstant: '6'
+        |   |   |
+        |   |   +-> IntegerConstant: '8'
+        |   |
+        |   +-> IntegerConstant: '10'
+        |
+        +-> IntegerConstant: '15'
 
 @endtest
 
 @test("It should parse a multiplicative expression (combination *, /) (with nested level primitive case)")
 @given("file")
-15 / 3 * 101
+int main() {
+    15 / 3 * 101;
+}
 @whenRun("./bin/parser-tester")
 @expectOutput("stdout")
-MultiplicativeExpression: '*'
+FunctionDefinition: {name: 'main', type: 'int'}
 |
-+-> MultiplicativeExpression: '/'
-|   |
-|   +-> IntegerConstant: '15'
-|   |
-|   +-> IntegerConstant: '3'
-|
-+-> IntegerConstant: '101'
++-> CompoundStatement
+    |
+    +-> MultiplicativeExpression: '*'
+        |
+        +-> MultiplicativeExpression: '/'
+        |   |
+        |   +-> IntegerConstant: '15'
+        |   |
+        |   +-> IntegerConstant: '3'
+        |
+        +-> IntegerConstant: '101'
 
 @endtest
 
 @test("It should parse an additive expression (+) (primitive case)")
 @given("file")
-7 + 8
+int main() {
+    7 + 8;
+}
 @whenRun("./bin/parser-tester")
 @expectOutput("stdout")
-AdditiveExpression: '+'
+FunctionDefinition: {name: 'main', type: 'int'}
 |
-+-> IntegerConstant: '7'
-|
-+-> IntegerConstant: '8'
++-> CompoundStatement
+    |
+    +-> AdditiveExpression: '+'
+        |
+        +-> IntegerConstant: '7'
+        |
+        +-> IntegerConstant: '8'
 
 @endtest
 
 @test("It should parse an additive expression (+) (nested level 2 primitive case)")
 @given("file")
-7 + 6 + 8
+int main() {
+    7 + 6 + 8;
+}
 @whenRun("./bin/parser-tester")
 @expectOutput("stdout")
-AdditiveExpression: '+'
+FunctionDefinition: {name: 'main', type: 'int'}
 |
-+-> AdditiveExpression: '+'
-|   |
-|   +-> IntegerConstant: '7'
-|   |
-|   +-> IntegerConstant: '6'
-|
-+-> IntegerConstant: '8'
++-> CompoundStatement
+    |
+    +-> AdditiveExpression: '+'
+        |
+        +-> AdditiveExpression: '+'
+        |   |
+        |   +-> IntegerConstant: '7'
+        |   |
+        |   +-> IntegerConstant: '6'
+        |
+        +-> IntegerConstant: '8'
 
 @endtest
 
 @test("It should parse an additive expression (+) (nested level 4 primitive case)")
 @given("file")
-7 + 6 + 8 + 10 + 15
+int main() {
+    7 + 6 + 8 + 10 + 15;
+}
 @whenRun("./bin/parser-tester")
 @expectOutput("stdout")
-AdditiveExpression: '+'
+FunctionDefinition: {name: 'main', type: 'int'}
 |
-+-> AdditiveExpression: '+'
-|   |
-|   +-> AdditiveExpression: '+'
-|   |   |
-|   |   +-> AdditiveExpression: '+'
-|   |   |   |
-|   |   |   +-> IntegerConstant: '7'
-|   |   |   |
-|   |   |   +-> IntegerConstant: '6'
-|   |   |
-|   |   +-> IntegerConstant: '8'
-|   |
-|   +-> IntegerConstant: '10'
-|
-+-> IntegerConstant: '15'
++-> CompoundStatement
+    |
+    +-> AdditiveExpression: '+'
+        |
+        +-> AdditiveExpression: '+'
+        |   |
+        |   +-> AdditiveExpression: '+'
+        |   |   |
+        |   |   +-> AdditiveExpression: '+'
+        |   |   |   |
+        |   |   |   +-> IntegerConstant: '7'
+        |   |   |   |
+        |   |   |   +-> IntegerConstant: '6'
+        |   |   |
+        |   |   +-> IntegerConstant: '8'
+        |   |
+        |   +-> IntegerConstant: '10'
+        |
+        +-> IntegerConstant: '15'
 
 @endtest
 
 @test("It should parse an additive expression (combination +, -) (with nested level primitive case)")
 @given("file")
-15 + 3 - 101
+int main() {
+    15 + 3 - 101;
+}
 @whenRun("./bin/parser-tester")
 @expectOutput("stdout")
-AdditiveExpression: '-'
+FunctionDefinition: {name: 'main', type: 'int'}
 |
-+-> AdditiveExpression: '+'
-|   |
-|   +-> IntegerConstant: '15'
-|   |
-|   +-> IntegerConstant: '3'
-|
-+-> IntegerConstant: '101'
++-> CompoundStatement
+    |
+    +-> AdditiveExpression: '-'
+        |
+        +-> AdditiveExpression: '+'
+        |   |
+        |   +-> IntegerConstant: '15'
+        |   |
+        |   +-> IntegerConstant: '3'
+        |
+        +-> IntegerConstant: '101'
 
 @endtest
 
 @test("It should parse an expression with combination (additive, multiplicative)")
 @given("file")
-1 + 7 * 6 - 4
+int main() {
+    1 + 7 * 6 - 4;
+}
 @whenRun("./bin/parser-tester")
 @expectOutput("stdout")
-AdditiveExpression: '-'
+FunctionDefinition: {name: 'main', type: 'int'}
 |
-+-> AdditiveExpression: '+'
-|   |
-|   +-> IntegerConstant: '1'
-|   |
-|   +-> MultiplicativeExpression: '*'
-|       |
-|       +-> IntegerConstant: '7'
-|       |
-|       +-> IntegerConstant: '6'
-|
-+-> IntegerConstant: '4'
++-> CompoundStatement
+    |
+    +-> AdditiveExpression: '-'
+        |
+        +-> AdditiveExpression: '+'
+        |   |
+        |   +-> IntegerConstant: '1'
+        |   |
+        |   +-> MultiplicativeExpression: '*'
+        |       |
+        |       +-> IntegerConstant: '7'
+        |       |
+        |       +-> IntegerConstant: '6'
+        |
+        +-> IntegerConstant: '4'
 
 @endtest
 
 @test("It should parse a relational expression (<) (primitive case)")
 @given("file")
-7 < 8
+int main() {
+    7 < 8;
+}
 @whenRun("./bin/parser-tester")
 @expectOutput("stdout")
-RelationalExpression: '<'
+FunctionDefinition: {name: 'main', type: 'int'}
 |
-+-> IntegerConstant: '7'
-|
-+-> IntegerConstant: '8'
++-> CompoundStatement
+    |
+    +-> RelationalExpression: '<'
+        |
+        +-> IntegerConstant: '7'
+        |
+        +-> IntegerConstant: '8'
 
 @endtest
 
 @test("It should parse a relational expression (<) (nested level 2 primitive case)")
 @given("file")
-7 < 6 < 8
+int main() {
+    7 < 6 < 8;
+}
 @whenRun("./bin/parser-tester")
 @expectOutput("stdout")
-RelationalExpression: '<'
+FunctionDefinition: {name: 'main', type: 'int'}
 |
-+-> RelationalExpression: '<'
-|   |
-|   +-> IntegerConstant: '7'
-|   |
-|   +-> IntegerConstant: '6'
-|
-+-> IntegerConstant: '8'
++-> CompoundStatement
+    |
+    +-> RelationalExpression: '<'
+        |
+        +-> RelationalExpression: '<'
+        |   |
+        |   +-> IntegerConstant: '7'
+        |   |
+        |   +-> IntegerConstant: '6'
+        |
+        +-> IntegerConstant: '8'
 
 @endtest
 
 @test("It should parse a relational expression (<) (nested level 4 primitive case)")
 @given("file")
-7 < 6 < 8 < 10 < 15
+int main() {
+    7 < 6 < 8 < 10 < 15;
+}
 @whenRun("./bin/parser-tester")
 @expectOutput("stdout")
-RelationalExpression: '<'
+FunctionDefinition: {name: 'main', type: 'int'}
 |
-+-> RelationalExpression: '<'
-|   |
-|   +-> RelationalExpression: '<'
-|   |   |
-|   |   +-> RelationalExpression: '<'
-|   |   |   |
-|   |   |   +-> IntegerConstant: '7'
-|   |   |   |
-|   |   |   +-> IntegerConstant: '6'
-|   |   |
-|   |   +-> IntegerConstant: '8'
-|   |
-|   +-> IntegerConstant: '10'
-|
-+-> IntegerConstant: '15'
++-> CompoundStatement
+    |
+    +-> RelationalExpression: '<'
+        |
+        +-> RelationalExpression: '<'
+        |   |
+        |   +-> RelationalExpression: '<'
+        |   |   |
+        |   |   +-> RelationalExpression: '<'
+        |   |   |   |
+        |   |   |   +-> IntegerConstant: '7'
+        |   |   |   |
+        |   |   |   +-> IntegerConstant: '6'
+        |   |   |
+        |   |   +-> IntegerConstant: '8'
+        |   |
+        |   +-> IntegerConstant: '10'
+        |
+        +-> IntegerConstant: '15'
 
 @endtest
 
 @test("It should parse a relational expression (combination <, >) (with nested level primitive case)")
 @given("file")
-15 < 3 > 101
+int main() {
+    15 < 3 > 101;
+}
 @whenRun("./bin/parser-tester")
 @expectOutput("stdout")
-RelationalExpression: '>'
+FunctionDefinition: {name: 'main', type: 'int'}
 |
-+-> RelationalExpression: '<'
-|   |
-|   +-> IntegerConstant: '15'
-|   |
-|   +-> IntegerConstant: '3'
-|
-+-> IntegerConstant: '101'
++-> CompoundStatement
+    |
+    +-> RelationalExpression: '>'
+        |
+        +-> RelationalExpression: '<'
+        |   |
+        |   +-> IntegerConstant: '15'
+        |   |
+        |   +-> IntegerConstant: '3'
+        |
+        +-> IntegerConstant: '101'
 
 @endtest
 
 @test("It should parse a equality expression (==) (primitive case)")
 @given("file")
-7 == 8
+int main() {
+    7 == 8;
+}
 @whenRun("./bin/parser-tester")
 @expectOutput("stdout")
-EqualityExpression: '=='
+FunctionDefinition: {name: 'main', type: 'int'}
 |
-+-> IntegerConstant: '7'
-|
-+-> IntegerConstant: '8'
++-> CompoundStatement
+    |
+    +-> EqualityExpression: '=='
+        |
+        +-> IntegerConstant: '7'
+        |
+        +-> IntegerConstant: '8'
 
 @endtest
 
 @test("It should parse a equality expression (==) (nested level 2 primitive case)")
 @given("file")
-7 == 6 == 8
+int main() {
+    7 == 6 == 8;
+}
 @whenRun("./bin/parser-tester")
 @expectOutput("stdout")
-EqualityExpression: '=='
+FunctionDefinition: {name: 'main', type: 'int'}
 |
-+-> EqualityExpression: '=='
-|   |
-|   +-> IntegerConstant: '7'
-|   |
-|   +-> IntegerConstant: '6'
-|
-+-> IntegerConstant: '8'
++-> CompoundStatement
+    |
+    +-> EqualityExpression: '=='
+        |
+        +-> EqualityExpression: '=='
+        |   |
+        |   +-> IntegerConstant: '7'
+        |   |
+        |   +-> IntegerConstant: '6'
+        |
+        +-> IntegerConstant: '8'
 
 @endtest
 
 @test("It should parse a equality expression (==) (nested level 4 primitive case)")
 @given("file")
-7 == 6 == 8 == 10 == 15
+int main() {
+    7 == 6 == 8 == 10 == 15;
+}
 @whenRun("./bin/parser-tester")
 @expectOutput("stdout")
-EqualityExpression: '=='
+FunctionDefinition: {name: 'main', type: 'int'}
 |
-+-> EqualityExpression: '=='
-|   |
-|   +-> EqualityExpression: '=='
-|   |   |
-|   |   +-> EqualityExpression: '=='
-|   |   |   |
-|   |   |   +-> IntegerConstant: '7'
-|   |   |   |
-|   |   |   +-> IntegerConstant: '6'
-|   |   |
-|   |   +-> IntegerConstant: '8'
-|   |
-|   +-> IntegerConstant: '10'
-|
-+-> IntegerConstant: '15'
++-> CompoundStatement
+    |
+    +-> EqualityExpression: '=='
+        |
+        +-> EqualityExpression: '=='
+        |   |
+        |   +-> EqualityExpression: '=='
+        |   |   |
+        |   |   +-> EqualityExpression: '=='
+        |   |   |   |
+        |   |   |   +-> IntegerConstant: '7'
+        |   |   |   |
+        |   |   |   +-> IntegerConstant: '6'
+        |   |   |
+        |   |   +-> IntegerConstant: '8'
+        |   |
+        |   +-> IntegerConstant: '10'
+        |
+        +-> IntegerConstant: '15'
 
 @endtest
 
 @test("It should parse a equality expression (combination ==, !=) (with nested level primitive case)")
 @given("file")
-15 == 3 != 101
+int main() {
+    15 == 3 != 101;
+}
 @whenRun("./bin/parser-tester")
 @expectOutput("stdout")
-EqualityExpression: '!='
+FunctionDefinition: {name: 'main', type: 'int'}
 |
-+-> EqualityExpression: '=='
-|   |
-|   +-> IntegerConstant: '15'
-|   |
-|   +-> IntegerConstant: '3'
-|
-+-> IntegerConstant: '101'
++-> CompoundStatement
+    |
+    +-> EqualityExpression: '!='
+        |
+        +-> EqualityExpression: '=='
+        |   |
+        |   +-> IntegerConstant: '15'
+        |   |
+        |   +-> IntegerConstant: '3'
+        |
+        +-> IntegerConstant: '101'
 
 @endtest

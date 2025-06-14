@@ -1,0 +1,36 @@
+@test("It should parse main function (with basic expression)")
+@given("file")
+int main() {
+    7 * 8;
+}
+@whenRun("./bin/parser-tester")
+@expectOutput("stdout")
+FunctionDefinition: {name: 'main', type: 'int'}
+|
++-> CompoundStatement
+    |
+    +-> MultiplicativeExpression: '*'
+        |
+        +-> IntegerConstant: '7'
+        |
+        +-> IntegerConstant: '8'
+
+@endtest
+
+@test("It should parse main function (with two variable declarations x and y)")
+@given("file")
+int main() {
+    int x;
+    int y;
+}
+@whenRun("./bin/parser-tester")
+@expectOutput("stdout")
+FunctionDefinition: {name: 'main', type: 'int'}
+|
++-> CompoundStatement
+    |
+    +-> VariableDeclaration {name: 'x', type: 'int'}
+    |
+    +-> VariableDeclaration {name: 'y', type: 'int'}
+
+@endtest

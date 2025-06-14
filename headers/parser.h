@@ -7,6 +7,8 @@ enum ast_node_kind
 {
     AST_NODE_KIND_INTEGER_CONSTANT = 1,
     AST_NODE_KIND_VARIABLE_DECLARATION,
+    AST_NODE_KIND_FUNCTION_DEFINITION,
+    AST_NODE_KIND_COMPOUND_STATEMENT,
     AST_NODE_KIND_MULTIPLICATIVE_EXPRESSION,
     AST_NODE_KIND_ADDITIVE_EXPRESSION,
     AST_NODE_KIND_RELATIONAL_EXPRESSION,
@@ -25,20 +27,31 @@ enum binary_operation
     BINARY_OPERATION_INEQUALITY,
 };
 
+struct ast_node_list {
+    struct ast_node * node;
+    struct ast_node_list * next;
+};
+
 struct ast_node
 {
-    enum ast_node_kind kind;
     union
     {
         struct identifier * variable;
         long long int integer_constant;
+        struct ast_node_list * list;
         struct binary_expression
         {
             enum binary_operation operation;
             struct ast_node * lhs;
             struct ast_node * rhs;
         } binary_expression;
+        struct function_definition
+        {
+            struct identifier * name;
+            struct ast_node * body;
+        } function_definition;
     } content;
+    enum ast_node_kind kind;
 };
 
 struct parser_context

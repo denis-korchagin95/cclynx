@@ -11,6 +11,9 @@
 #include "print.h"
 #include "symbol.h"
 
+static struct ast_node * parse_compound_statement(struct parser_context * context);
+static struct ast_node * parse_expression_statement(struct parser_context * context);
+static struct ast_node * parse_function_definition(struct parser_context * context);
 static struct ast_node * parse_declaration(struct parser_context * context);
 static struct ast_node * parse_equality_expression(struct parser_context * context);
 static struct ast_node * parse_relational_expression(struct parser_context * context);
@@ -22,7 +25,131 @@ struct ast_node * parser_parse(struct parser_context * context)
 {
     assert(context != NULL);
 
-    return parse_equality_expression(context);
+    return parse_function_definition(context);
+}
+
+struct ast_node * parse_compound_statement(struct parser_context * context)
+{
+    assert(context != NULL);
+
+    struct token * current_token = parser_get_token(context);
+
+    if (!(current_token->kind == TOKEN_KIND_PUNCTUATOR && current_token->content.ch == '{')) {
+        fprintf(stderr, "ERROR: expected '{'!\n");
+        exit(1);
+    }
+
+    current_token = parser_get_token(context);
+
+    struct ast_node_list * statement_list = NULL;
+    struct ast_node_list ** statement_list_end = &statement_list;
+
+    do {
+        struct ast_node * statement = NULL;
+
+        if (current_token->kind == TOKEN_KIND_IDENTIFIER) {
+            parser_putback_token(current_token, context);
+            statement = parse_declaration(context);
+        } else {
+            parser_putback_token(current_token, context);
+            statement = parse_expression_statement(context);
+        }
+
+        struct ast_node_list * list = (struct ast_node_list *) memory_blob_pool_alloc(&main_pool, sizeof(struct ast_node_list));
+        list->node = statement;
+        list->next = NULL;
+
+        *statement_list_end = list;
+        statement_list_end = &list->next;
+
+        current_token = parser_get_token(context);
+    }
+    while (!(current_token->kind == TOKEN_KIND_PUNCTUATOR && current_token->content.ch == '}'));
+
+    if (!(current_token->kind == TOKEN_KIND_PUNCTUATOR && current_token->content.ch == '}')) {
+        fprintf(stderr, "ERROR: expected '}'!\n");
+        exit(1);
+    }
+
+    struct ast_node * compound_statement = (struct ast_node *) memory_blob_pool_alloc(&main_pool, sizeof(struct ast_node));
+    memset(compound_statement, 0, sizeof(struct ast_node));
+    compound_statement->kind = AST_NODE_KIND_COMPOUND_STATEMENT;
+    compound_statement->content.list = statement_list;
+
+    return compound_statement;
+}
+
+struct ast_node * parse_expression_statement(struct parser_context * context)
+{
+    assert(context != NULL);
+
+    struct ast_node * expression = parse_equality_expression(context);
+
+    struct token * current_token = parser_get_token(context);
+
+    if (!(current_token->kind == TOKEN_KIND_PUNCTUATOR && current_token->content.ch == ';')) {
+        fprintf(stderr, "ERROR: expected ';'!\n");
+        exit(1);
+    }
+
+    return expression;
+}
+
+struct ast_node * parse_function_definition(struct parser_context * context)
+{
+    assert(context != NULL);
+
+    struct token * current_token = parser_get_token(context);
+
+    if (current_token->kind != TOKEN_KIND_IDENTIFIER) {
+        fprintf(stderr, "ERROR: expected identifier!\n");
+        exit(1);
+    }
+
+    const struct symbol * symbol = symbol_lookup(current_token->content.identifier, SYMBOL_KIND_TYPE_SPECIFIER);
+
+    if (symbol == NULL) {
+        fprintf(stderr, "ERROR: expected type specifier!\n");
+        exit(1);
+    }
+
+    current_token = parser_get_token(context);
+
+    if (current_token->kind != TOKEN_KIND_IDENTIFIER) {
+        fprintf(stderr, "ERROR: expected identifier!\n");
+        exit(1);
+    }
+
+    if (current_token->content.identifier->is_keyword) {
+        fprintf(stderr, "ERROR: expected identifier but not a keyword!\n");
+        exit(1);
+    }
+
+    struct identifier * identifier = current_token->content.identifier;
+
+    current_token = parser_get_token(context);
+
+    if (!(current_token->kind == TOKEN_KIND_PUNCTUATOR && current_token->content.ch == '(')) {
+        fprintf(stderr, "ERROR: expected '('!\n");
+        exit(1);
+    }
+
+    current_token = parser_get_token(context);
+
+    if (!(current_token->kind == TOKEN_KIND_PUNCTUATOR && current_token->content.ch == ')')) {
+        fprintf(stderr, "ERROR: expected ')'!\n");
+        exit(1);
+    }
+
+    struct ast_node * compound_statement = parse_compound_statement(context);
+
+    struct ast_node * function_definition = (struct ast_node *) memory_blob_pool_alloc(&main_pool, sizeof(struct ast_node));
+    memset(function_definition, 0, sizeof(struct ast_node));
+    function_definition->kind = AST_NODE_KIND_FUNCTION_DEFINITION;
+    function_definition->content.function_definition.name = identifier;
+    function_definition->content.function_definition.body = compound_statement;
+
+    return function_definition;
 }
 
 struct ast_node * parse_declaration(struct parser_context * context)

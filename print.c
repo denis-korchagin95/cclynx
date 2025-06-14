@@ -76,6 +76,17 @@ void do_print_ast(const struct ast_node * ast, FILE * file, int depth, unsigned 
 	}
 
     switch (ast->kind) {
+        case AST_NODE_KIND_COMPOUND_STATEMENT:
+            {
+                fprintf(file, "CompoundStatement\n");
+                struct ast_node_list * iterator = ast->content.list;
+                while (iterator != NULL) {
+                    ancestors_info[depth] = iterator->next == NULL ? 0 : 2;
+                    do_print_ast(iterator->node, file, depth + 1, ancestors_info);
+                    iterator = iterator->next;
+                }
+            }
+            break;
         case AST_NODE_KIND_EQUALITY_EXPRESSION:
             fprintf(file, "EqualityExpression: '%s'\n", ast->content.binary_expression.operation == BINARY_OPERATION_EQUALITY ? "==" : "!=");
             ancestors_info[depth] = 2;
@@ -109,6 +120,11 @@ void do_print_ast(const struct ast_node * ast, FILE * file, int depth, unsigned 
             break;
         case AST_NODE_KIND_VARIABLE_DECLARATION:
             fprintf(file, "VariableDeclaration {name: '%s', type: 'int'}\n", ast->content.variable->name);
+            break;
+        case AST_NODE_KIND_FUNCTION_DEFINITION:
+            fprintf(file, "FunctionDefinition: {name: '%s', type: 'int'}\n", ast->content.function_definition.name->name);
+            if (ast->content.function_definition.body != NULL)
+                do_print_ast(ast->content.function_definition.body, file, depth + 1, ancestors_info);
             break;
         default:
             fprintf(file, "<Unknown Ast Node>\n");
