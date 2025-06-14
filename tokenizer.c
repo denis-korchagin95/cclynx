@@ -91,6 +91,34 @@ void tokenizer_get_one_token(FILE * file, struct token * token)
     }
 
     switch (ch) {
+        case '=':
+            {
+                int next_char = get_one_char(file);
+
+                if (next_char == '=') {
+                    token->kind = TOKEN_KIND_EQUAL_PUNCTUATOR;
+                } else {
+                    putback_one_char(next_char);
+
+                    token->kind = TOKEN_KIND_PUNCTUATOR;
+                    token->content.ch = ch;
+                }
+            }
+            break;
+        case '!':
+            {
+                int next_char = get_one_char(file);
+
+                if (next_char == '=') {
+                    token->kind = TOKEN_KIND_NOT_EQUAL_PUNCTUATOR;
+                } else {
+                    putback_one_char(next_char);
+
+                    token->kind = TOKEN_KIND_PUNCTUATOR;
+                    token->content.ch = ch;
+                }
+            }
+            break;
         case '+':
         case '-':
         case '*':
@@ -99,11 +127,9 @@ void tokenizer_get_one_token(FILE * file, struct token * token)
         case ')':
         case '{':
         case '}':
-        case '=':
         case ';':
         case '>':
         case '<':
-        case '!':
             token->kind = TOKEN_KIND_PUNCTUATOR;
             token->content.ch = ch;
             break;

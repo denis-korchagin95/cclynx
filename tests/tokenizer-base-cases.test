@@ -21,6 +21,8 @@
 >
 <
 !
+!=
+==
 @whenRun("./bin/tokenizer-tester")
 @expectOutput("stdout")
 <TOKEN_PUNCTUATOR '+'>
@@ -36,6 +38,8 @@
 <TOKEN_PUNCTUATOR '>'>
 <TOKEN_PUNCTUATOR '<'>
 <TOKEN_PUNCTUATOR '!'>
+<TOKEN_SPECIAL_PUNCTUATOR '!='>
+<TOKEN_SPECIAL_PUNCTUATOR '=='>
 <TOKEN_EOS>
 
 @endtest

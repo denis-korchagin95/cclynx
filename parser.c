@@ -1,25 +1,219 @@
 #include <assert.h>
 #include <stddef.h>
 #include <memory.h>
+#include <stdlib.h>
 
 #include "parser.h"
 #include "tokenizer.h"
 #include "allocator.h"
 
+#include "print.h"
+
+static struct ast_node * parse_equality_expression(struct parser_context * context);
+static struct ast_node * parse_relational_expression(struct parser_context * context);
+static struct ast_node * parse_additive_expression(struct parser_context * context);
+static struct ast_node * parse_multiplicative_expression(struct parser_context * context);
+static struct ast_node * parse_primary_expression(struct parser_context * context);
+
 struct ast_node * parser_parse(struct parser_context * context)
 {
     assert(context != NULL);
 
-    struct token * current_token = context->next_token;
+    return parse_equality_expression(context);
+}
 
-    if (current_token->kind == TOKEN_KIND_NUMBER) {
-        struct ast_node * number = (struct ast_node *) memory_blob_pool_alloc(&main_pool, sizeof(struct ast_node));
-        memset(number, 0, sizeof(struct ast_node));
-        number->kind = AST_NODE_KIND_INTEGER_CONSTANT;
-        number->content.integer_constant = current_token->content.integer_constant;
-        context->next_token = current_token->next;
-        return number;
+struct ast_node * parse_primary_expression(struct parser_context * context)
+{
+    assert(context != NULL);
+
+    struct token * current_token = parser_get_token(context);
+
+    if (current_token->kind != TOKEN_KIND_NUMBER) {
+        fprintf(stderr, "ERROR: expected number\n");
+        exit(1);
     }
 
-    return NULL;
+    struct ast_node * number = (struct ast_node *) memory_blob_pool_alloc(&main_pool, sizeof(struct ast_node));
+    memset(number, 0, sizeof(struct ast_node));
+    number->kind = AST_NODE_KIND_INTEGER_CONSTANT;
+    number->content.integer_constant = current_token->content.integer_constant;
+
+    return number;
+}
+
+struct ast_node * parse_equality_expression(struct parser_context * context) {
+    assert(context != NULL);
+
+    struct ast_node * lhs = parse_relational_expression(context);
+
+    struct token * current_token = parser_get_token(context);
+
+    while (
+        current_token->kind == TOKEN_KIND_EQUAL_PUNCTUATOR
+        || current_token->kind == TOKEN_KIND_NOT_EQUAL_PUNCTUATOR
+    ) {
+        enum binary_operation operation = current_token->kind == TOKEN_KIND_EQUAL_PUNCTUATOR
+            ? BINARY_OPERATION_EQUALITY
+            : BINARY_OPERATION_INEQUALITY;
+        struct ast_node * rhs = parse_multiplicative_expression(context);
+        struct ast_node * binary_expression = (struct ast_node *) memory_blob_pool_alloc(&main_pool, sizeof(struct ast_node));
+        memset(binary_expression, 0, sizeof(struct ast_node));
+        binary_expression->kind = AST_NODE_KIND_EQUALITY_EXPRESSION;
+        binary_expression->content.binary_expression.operation = operation;
+        binary_expression->content.binary_expression.lhs = lhs;
+        binary_expression->content.binary_expression.rhs = rhs;
+        lhs = binary_expression;
+
+        current_token = parser_get_token(context);
+    }
+
+    parser_putback_token(current_token, context);
+
+    return lhs;
+}
+
+struct ast_node * parse_relational_expression(struct parser_context * context) {
+    assert(context != NULL);
+
+    struct ast_node * lhs = parse_additive_expression(context);
+
+    struct token * current_token = parser_get_token(context);
+
+    while (
+        current_token->kind == TOKEN_KIND_PUNCTUATOR
+        && (
+            current_token->content.ch == '<'
+            || current_token->content.ch == '>'
+        )
+    ) {
+        enum binary_operation operation = current_token->content.ch == '<'
+            ? BINARY_OPERATION_LESS_THAN
+            : BINARY_OPERATION_GREATER_THAN;
+        struct ast_node * rhs = parse_multiplicative_expression(context);
+        struct ast_node * binary_expression = (struct ast_node *) memory_blob_pool_alloc(&main_pool, sizeof(struct ast_node));
+        memset(binary_expression, 0, sizeof(struct ast_node));
+        binary_expression->kind = AST_NODE_KIND_RELATIONAL_EXPRESSION;
+        binary_expression->content.binary_expression.operation = operation;
+        binary_expression->content.binary_expression.lhs = lhs;
+        binary_expression->content.binary_expression.rhs = rhs;
+        lhs = binary_expression;
+
+        current_token = parser_get_token(context);
+    }
+
+    parser_putback_token(current_token, context);
+
+    return lhs;
+}
+
+
+struct ast_node * parse_additive_expression(struct parser_context * context)
+{
+    assert(context != NULL);
+
+    struct ast_node * lhs = parse_multiplicative_expression(context);
+
+    struct token * current_token = parser_get_token(context);
+
+    while (
+        current_token->kind == TOKEN_KIND_PUNCTUATOR
+        && (
+            current_token->content.ch == '+'
+            || current_token->content.ch == '-'
+        )
+    ) {
+        enum binary_operation operation = current_token->content.ch == '+'
+            ? BINARY_OPERATION_ADDITION
+            : BINARY_OPERATION_SUBTRACTION;
+        struct ast_node * rhs = parse_multiplicative_expression(context);
+        struct ast_node * binary_expression = (struct ast_node *) memory_blob_pool_alloc(&main_pool, sizeof(struct ast_node));
+        memset(binary_expression, 0, sizeof(struct ast_node));
+        binary_expression->kind = AST_NODE_KIND_ADDITIVE_EXPRESSION;
+        binary_expression->content.binary_expression.operation = operation;
+        binary_expression->content.binary_expression.lhs = lhs;
+        binary_expression->content.binary_expression.rhs = rhs;
+        lhs = binary_expression;
+
+        current_token = parser_get_token(context);
+    }
+
+    parser_putback_token(current_token, context);
+
+    return lhs;
+}
+
+struct ast_node * parse_multiplicative_expression(struct parser_context * context)
+{
+    assert(context != NULL);
+
+    struct ast_node * lhs = parse_primary_expression(context);
+
+    struct token * current_token = parser_get_token(context);
+
+    while (
+        current_token->kind == TOKEN_KIND_PUNCTUATOR
+        && (
+            current_token->content.ch == '*'
+            || current_token->content.ch == '/'
+        )
+    ) {
+        enum binary_operation operation = current_token->content.ch == '*'
+            ? BINARY_OPERATION_MULTIPLY
+            : BINARY_OPERATION_DIVIDE;
+        struct ast_node * rhs = parse_primary_expression(context);
+        struct ast_node * binary_expression = (struct ast_node *) memory_blob_pool_alloc(&main_pool, sizeof(struct ast_node));
+        memset(binary_expression, 0, sizeof(struct ast_node));
+        binary_expression->kind = AST_NODE_KIND_MULTIPLICATIVE_EXPRESSION;
+        binary_expression->content.binary_expression.operation = operation;
+        binary_expression->content.binary_expression.lhs = lhs;
+        binary_expression->content.binary_expression.rhs = rhs;
+        lhs = binary_expression;
+
+        current_token = parser_get_token(context);
+    }
+
+    parser_putback_token(current_token, context);
+
+    return lhs;
+}
+
+struct token * parser_get_token(struct parser_context * context)
+{
+    assert(context != NULL);
+
+    if (context->token_buffer_pos > 0)
+        return context->token_buffer[--context->token_buffer_pos];
+
+    struct token * current_token = context->iterator;
+    context->iterator = context->iterator->next;
+
+    return current_token;
+}
+
+void parser_putback_token(struct token * token, struct parser_context * context)
+{
+    assert(token != NULL);
+    assert(context != NULL);
+
+    if (token == &eos_token) {
+        fprintf(stderr, "ERROR: Trying to putback EOS token!\n");
+        exit(1);
+    }
+
+    if (context->token_buffer_pos >= MAX_TOKEN_BUFFER_SIZE) {
+        fprintf(stderr, "ERROR: Maximum token buffer size reached!\n");
+        exit(1);
+    }
+
+    context->token_buffer[context->token_buffer_pos++] = token;
+}
+
+void parser_init_context(struct parser_context * context, struct token * tokens)
+{
+    assert(context != NULL);
+    assert(tokens != NULL);
+
+    memset(context, 0, sizeof(struct parser_context));
+    context->tokens = tokens;
+    context->iterator = context->tokens;
 }

@@ -27,7 +27,8 @@ int main(int argc, const char * argv[])
 
     struct token * tokens = tokenizer_tokenize_file(file);
 
-    struct parser_context context = {tokens, tokens};
+    struct parser_context context;
+    parser_init_context(&context, tokens);
 
     struct ast_node * ast = parser_parse(&context);
 

@@ -3,7 +3,7 @@ SRC=./
 BIN=./bin/
 OBJ=./obj/
 PROGRAM=cminx
-CFLAGS=-std=c11 -g -Wall -O0
+CFLAGS=-std=c11 -g2 -Wall -O0
 HEADERS=./headers/
 TESTERS=./testers/
 
