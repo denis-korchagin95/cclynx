@@ -1,11 +1,12 @@
 #include <assert.h>
 
 #include "print.h"
+
 #include "tokenizer.h"
 #include "identifier.h"
 #include "parser.h"
 
-static void do_print_ast(struct ast_node * ast, FILE * file, int depth, unsigned int flags);
+static void do_print_ast(struct ast_node * ast, FILE * file, int depth, unsigned int * ancestors_info);
 
 void print_token(struct token * token, FILE * file)
 {
@@ -48,21 +49,28 @@ void print_ast(struct ast_node * ast, FILE * file)
     assert(ast != NULL);
     assert(file != NULL);
 
-	do_print_ast(ast, file, 0, 1);
+    unsigned int ancestors_info[512] = {0};
+
+    ancestors_info[0] = 1;
+
+	do_print_ast(ast, file, 0, ancestors_info);
 }
 
-void do_print_ast(struct ast_node * ast, FILE * file, int depth, unsigned int flags)
+void do_print_ast(struct ast_node * ast, FILE * file, int depth, unsigned int * ancestors_info)
 {
-    const unsigned int is_top = (flags & 1) > 0;
-    const unsigned int is_nested = (flags & 2) > 0;
+    const unsigned int is_top = (ancestors_info[depth] & 1) > 0;
 
     if (is_top == 0) {
         for (int i = 0; i < depth - 1; ++i) {
-            fprintf(file, "%s   ", is_nested == 1 ? "|" : " ");
+            const unsigned int has_siblings = (ancestors_info[i] & 2) > 0;
+
+            fprintf(file, "%s   ", has_siblings == 1 ? "|" : " ");
         }
         fprintf(file, "|\n");
         for (int i = 0; i < depth - 1; ++i) {
-            fprintf(file, "%s   ", is_nested == 1 ? "|" : " ");
+            const unsigned int has_siblings = (ancestors_info[i] & 2) > 0;
+
+            fprintf(file, "%s   ", has_siblings == 1 ? "|" : " ");
         }
     }
 
@@ -73,23 +81,31 @@ void do_print_ast(struct ast_node * ast, FILE * file, int depth, unsigned int fl
     switch (ast->kind) {
         case AST_NODE_KIND_EQUALITY_EXPRESSION:
             fprintf(file, "EqualityExpression: '%s'\n", ast->content.binary_expression.operation == BINARY_OPERATION_EQUALITY ? "==" : "!=");
-            do_print_ast(ast->content.binary_expression.lhs, file, depth + 1, 2);
-            do_print_ast(ast->content.binary_expression.rhs, file, depth + 1, 2);
+            ancestors_info[depth] = 2;
+            do_print_ast(ast->content.binary_expression.lhs, file, depth + 1, ancestors_info);
+            ancestors_info[depth] = 0;
+            do_print_ast(ast->content.binary_expression.rhs, file, depth + 1, ancestors_info);
             break;
         case AST_NODE_KIND_RELATIONAL_EXPRESSION:
             fprintf(file, "RelationalExpression: '%c'\n", ast->content.binary_expression.operation == BINARY_OPERATION_LESS_THAN ? '<' : '>');
-            do_print_ast(ast->content.binary_expression.lhs, file, depth + 1, 2);
-            do_print_ast(ast->content.binary_expression.rhs, file, depth + 1, 2);
+            ancestors_info[depth] = 2;
+            do_print_ast(ast->content.binary_expression.lhs, file, depth + 1, ancestors_info);
+            ancestors_info[depth] = 0;
+            do_print_ast(ast->content.binary_expression.rhs, file, depth + 1, ancestors_info);
             break;
         case AST_NODE_KIND_ADDITIVE_EXPRESSION:
             fprintf(file, "AdditiveExpression: '%c'\n", ast->content.binary_expression.operation == BINARY_OPERATION_ADDITION ? '+' : '-');
-            do_print_ast(ast->content.binary_expression.lhs, file, depth + 1, 2);
-            do_print_ast(ast->content.binary_expression.rhs, file, depth + 1, 2);
+            ancestors_info[depth] = 2;
+            do_print_ast(ast->content.binary_expression.lhs, file, depth + 1, ancestors_info);
+            ancestors_info[depth] = 0;
+            do_print_ast(ast->content.binary_expression.rhs, file, depth + 1, ancestors_info);
             break;
         case AST_NODE_KIND_MULTIPLICATIVE_EXPRESSION:
             fprintf(file, "MultiplicativeExpression: '%c'\n", ast->content.binary_expression.operation == BINARY_OPERATION_MULTIPLY ? '*' : '/');
-            do_print_ast(ast->content.binary_expression.lhs, file, depth + 1, 2);
-            do_print_ast(ast->content.binary_expression.rhs, file, depth + 1, 2);
+            ancestors_info[depth] = 2;
+            do_print_ast(ast->content.binary_expression.lhs, file, depth + 1, ancestors_info);
+            ancestors_info[depth] = 0;
+            do_print_ast(ast->content.binary_expression.rhs, file, depth + 1, ancestors_info);
             break;
         case AST_NODE_KIND_INTEGER_CONSTANT:
             fprintf(file, "IntegerConstant: '%llu'\n", ast->content.integer_constant);

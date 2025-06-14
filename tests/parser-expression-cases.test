@@ -163,10 +163,10 @@ AdditiveExpression: '-'
 |   +-> IntegerConstant: '1'
 |   |
 |   +-> MultiplicativeExpression: '*'
-|   |   |
-|   |   +-> IntegerConstant: '7'
-|   |   |
-|   |   +-> IntegerConstant: '6'
+|       |
+|       +-> IntegerConstant: '7'
+|       |
+|       +-> IntegerConstant: '6'
 |
 +-> IntegerConstant: '4'
 
