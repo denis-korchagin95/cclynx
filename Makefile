@@ -43,6 +43,8 @@ parser-tester: $(addprefix $(OBJ), $(OBJECTS_PARSER_TESTER))
 build: $(addprefix $(OBJ), $(OBJECTS))
 	$(CC) $(LFLAGS) $^ -o $(BIN)$(PROGRAM)
 
+build-testers: tokenizer-tester parser-tester
+
 clean:
 	rm -rfv $(BIN)$(PROGRAM)
 	rm -rfv $(BIN)tokenizer-tester

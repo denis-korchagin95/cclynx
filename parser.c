@@ -6,9 +6,12 @@
 #include "parser.h"
 #include "tokenizer.h"
 #include "allocator.h"
+#include "identifier.h"
 
 #include "print.h"
+#include "symbol.h"
 
+static struct ast_node * parse_declaration(struct parser_context * context);
 static struct ast_node * parse_equality_expression(struct parser_context * context);
 static struct ast_node * parse_relational_expression(struct parser_context * context);
 static struct ast_node * parse_additive_expression(struct parser_context * context);
@@ -20,6 +23,53 @@ struct ast_node * parser_parse(struct parser_context * context)
     assert(context != NULL);
 
     return parse_equality_expression(context);
+}
+
+struct ast_node * parse_declaration(struct parser_context * context)
+{
+    assert(context != NULL);
+
+    struct token * current_token = parser_get_token(context);
+
+    if (current_token->kind != TOKEN_KIND_IDENTIFIER) {
+        fprintf(stderr, "ERROR: expected identifier!\n");
+        exit(1);
+    }
+
+    const struct symbol * symbol = symbol_lookup(current_token->content.identifier, SYMBOL_KIND_TYPE_SPECIFIER);
+
+    if (symbol == NULL) {
+        fprintf(stderr, "ERROR: expected type specifier!\n");
+        exit(1);
+    }
+
+    current_token = parser_get_token(context);
+
+    if (current_token->kind != TOKEN_KIND_IDENTIFIER) {
+        fprintf(stderr, "ERROR: expected identifier!\n");
+        exit(1);
+    }
+
+    if (current_token->content.identifier->is_keyword) {
+        fprintf(stderr, "ERROR: expected identifier but not a keyword!\n");
+        exit(1);
+    }
+
+    struct identifier * identifier = current_token->content.identifier;
+
+    current_token = parser_get_token(context);
+
+    if (!(current_token->kind == TOKEN_KIND_PUNCTUATOR && current_token->content.ch == ';')) {
+        fprintf(stderr, "ERROR: expected ';'!\n");
+        exit(1);
+    }
+
+    struct ast_node * declaration = (struct ast_node *) memory_blob_pool_alloc(&main_pool, sizeof(struct ast_node));
+    memset(declaration, 0, sizeof(struct ast_node));
+    declaration->kind = AST_NODE_KIND_VARIABLE_DECLARATION;
+    declaration->content.variable = identifier;
+
+    return declaration;
 }
 
 struct ast_node * parse_primary_expression(struct parser_context * context)

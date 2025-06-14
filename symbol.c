@@ -1,32 +1,37 @@
 #include <assert.h>
 #include <memory.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 #include "symbol.h"
 #include "identifier.h"
 #include "allocator.h"
 
 
-struct builtin_symbol
+static struct builtin_symbol
 {
     const char * name;
     enum symbol_kind kind;
 } builtin_symbols[] = {
-    {"int", SYMBOL_KIND_KEYWORD},
-    {"return", SYMBOL_KIND_KEYWORD},
-    {"while", SYMBOL_KIND_KEYWORD},
-    {"if", SYMBOL_KIND_KEYWORD},
-    {"else", SYMBOL_KIND_KEYWORD},
+    {"int", SYMBOL_KIND_TYPE_SPECIFIER},
 };
 
-void init_builtin_symbols(void)
+void init_symbols(void)
 {
     for (int i = 0; i < sizeof(builtin_symbols) / sizeof(builtin_symbols[0]); ++i) {
         struct builtin_symbol * builtin_symbol = &builtin_symbols[i];
 
+        struct identifier * identifier = identifier_lookup(builtin_symbol->name);
+
+        if (identifier == NULL) {
+            fprintf(stderr, "ERROR: not found identifier for symbol \"%s\"\n", builtin_symbol->name);
+            exit(1);
+        }
+
         struct symbol * symbol = (struct symbol *) memory_blob_pool_alloc(&main_pool, sizeof(struct symbol));
         memset(symbol, 0, sizeof(struct symbol));
         symbol->kind = builtin_symbol->kind;
-        symbol->identifier = identifier_create(builtin_symbol->name);
+        symbol->identifier = identifier;
 
         identifier_attach_symbol(symbol->identifier, symbol);
     }

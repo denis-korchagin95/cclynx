@@ -14,9 +14,6 @@ void print_token(const struct token * token, FILE * file)
     assert(file != NULL);
 
     switch (token->kind) {
-        case TOKEN_KIND_KEYWORD:
-            fprintf(file, "<TOKEN_KEYWORD '%s'>\n", token->content.identifier->name);
-            break;
         case TOKEN_KIND_PUNCTUATOR:
             fprintf(file, "<TOKEN_PUNCTUATOR '%c'>\n", token->content.ch);
             break;
@@ -27,7 +24,7 @@ void print_token(const struct token * token, FILE * file)
             fprintf(file, "<TOKEN_UNKNOWN_CHARACTER '%c'>\n", token->content.ch);
             break;
         case TOKEN_KIND_IDENTIFIER:
-            fprintf(file, "<TOKEN_IDENTIFIER '%s'>\n", token->content.identifier->name);
+            fprintf(file, "<TOKEN_%s '%s'>\n", token->content.identifier->is_keyword ? "KEYWORD" : "IDENTIFIER", token->content.identifier->name);
             break;
         case TOKEN_KIND_NUMBER:
             fprintf(file, "<TOKEN_NUMBER '%lld'>\n", token->content.integer_constant);
@@ -109,6 +106,9 @@ void do_print_ast(const struct ast_node * ast, FILE * file, int depth, unsigned 
             break;
         case AST_NODE_KIND_INTEGER_CONSTANT:
             fprintf(file, "IntegerConstant: '%llu'\n", ast->content.integer_constant);
+            break;
+        case AST_NODE_KIND_VARIABLE_DECLARATION:
+            fprintf(file, "VariableDeclaration {name: '%s', type: 'int'}\n", ast->content.variable->name);
             break;
         default:
             fprintf(file, "<Unknown Ast Node>\n");

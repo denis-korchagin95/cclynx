@@ -5,7 +5,6 @@
 
 #include "tokenizer.h"
 #include "allocator.h"
-#include "symbol.h"
 #include "identifier.h"
 
 struct token eos_token = {{0}, &eos_token, TOKEN_KIND_EOS};
@@ -66,10 +65,6 @@ void tokenizer_get_one_token(FILE * file, struct token * token)
 
     if (is_start_identifier_char(ch)) {
         read_identifier(file, token, ch);
-        struct symbol * symbol = symbol_lookup(token->content.identifier, SYMBOL_KIND_KEYWORD);
-        if (symbol != NULL) {
-            token->kind = TOKEN_KIND_KEYWORD;
-        }
         return;
     }
 
@@ -161,7 +156,7 @@ void read_identifier(FILE * file, struct token * token, int ch)
         putback_one_char(ch);
     }
 
-    struct identifier * identifier = identifier_lookup(hash, identifier_buffer);
+    struct identifier * identifier = identifier_find(hash, identifier_buffer);
 
     if (identifier == NULL) {
         identifier = identifier_insert(hash, identifier_buffer, identifier_buffer_pos);

@@ -2,6 +2,7 @@
 #include <stdlib.h>
 
 #include "allocator.h"
+#include "identifier.h"
 #include "symbol.h"
 #include "tokenizer.h"
 #include "print.h"
@@ -23,7 +24,8 @@ int main(const int argc, const char * argv[])
     }
 
     memory_blob_pool_init(&main_pool, DEFAULT_MEMORY_BLOB_SIZE, DEFAULT_MEMORY_BLOB_ALIGNMENT);
-    init_builtin_symbols();
+    init_keywords();
+    init_symbols();
 
     struct token * tokens = tokenizer_tokenize_file(file);
 

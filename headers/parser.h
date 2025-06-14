@@ -6,7 +6,7 @@
 enum ast_node_kind
 {
     AST_NODE_KIND_INTEGER_CONSTANT = 1,
-    AST_NODE_KIND_VARIABLE,
+    AST_NODE_KIND_VARIABLE_DECLARATION,
     AST_NODE_KIND_MULTIPLICATIVE_EXPRESSION,
     AST_NODE_KIND_ADDITIVE_EXPRESSION,
     AST_NODE_KIND_RELATIONAL_EXPRESSION,
@@ -30,11 +30,7 @@ struct ast_node
     enum ast_node_kind kind;
     union
     {
-        struct variable
-        {
-            struct identifier * identifier;
-            struct symbol * symbol;
-        } variable;
+        struct identifier * variable;
         long long int integer_constant;
         struct binary_expression
         {
