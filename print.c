@@ -55,6 +55,9 @@ void print_ast(const struct ast_node * ast, FILE * file)
 
 void do_print_ast(const struct ast_node * ast, FILE * file, int depth, unsigned int * ancestors_info)
 {
+    assert(ast != NULL);
+    assert(file != NULL);
+
     const unsigned int is_top = (ancestors_info[depth] & 1) > 0;
 
     if (is_top == 0) {
@@ -76,6 +79,11 @@ void do_print_ast(const struct ast_node * ast, FILE * file, int depth, unsigned 
 	}
 
     switch (ast->kind) {
+        case AST_NODE_KIND_EXPRESSION_STATEMENT:
+            fprintf(file, "ExpressionStatement\n");
+            if (ast->content.node != NULL)
+                do_print_ast(ast->content.node, file, depth + 1, ancestors_info);
+            break;
         case AST_NODE_KIND_COMPOUND_STATEMENT:
             {
                 fprintf(file, "CompoundStatement\n");

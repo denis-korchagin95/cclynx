@@ -9,7 +9,9 @@ FunctionDefinition: {name: 'main', type: 'int'}
 |
 +-> CompoundStatement
     |
-    +-> IntegerConstant: '777'
+    +-> ExpressionStatement
+        |
+        +-> IntegerConstant: '777'
 
 @endtest
 
@@ -24,11 +26,13 @@ FunctionDefinition: {name: 'main', type: 'int'}
 |
 +-> CompoundStatement
     |
-    +-> MultiplicativeExpression: '*'
+    +-> ExpressionStatement
         |
-        +-> IntegerConstant: '7'
-        |
-        +-> IntegerConstant: '8'
+        +-> MultiplicativeExpression: '*'
+            |
+            +-> IntegerConstant: '7'
+            |
+            +-> IntegerConstant: '8'
 
 @endtest
 
@@ -43,15 +47,17 @@ FunctionDefinition: {name: 'main', type: 'int'}
 |
 +-> CompoundStatement
     |
-    +-> MultiplicativeExpression: '*'
+    +-> ExpressionStatement
         |
         +-> MultiplicativeExpression: '*'
-        |   |
-        |   +-> IntegerConstant: '7'
-        |   |
-        |   +-> IntegerConstant: '6'
-        |
-        +-> IntegerConstant: '8'
+            |
+            +-> MultiplicativeExpression: '*'
+            |   |
+            |   +-> IntegerConstant: '7'
+            |   |
+            |   +-> IntegerConstant: '6'
+            |
+            +-> IntegerConstant: '8'
 
 @endtest
 
@@ -66,23 +72,25 @@ FunctionDefinition: {name: 'main', type: 'int'}
 |
 +-> CompoundStatement
     |
-    +-> MultiplicativeExpression: '*'
+    +-> ExpressionStatement
         |
         +-> MultiplicativeExpression: '*'
-        |   |
-        |   +-> MultiplicativeExpression: '*'
-        |   |   |
-        |   |   +-> MultiplicativeExpression: '*'
-        |   |   |   |
-        |   |   |   +-> IntegerConstant: '7'
-        |   |   |   |
-        |   |   |   +-> IntegerConstant: '6'
-        |   |   |
-        |   |   +-> IntegerConstant: '8'
-        |   |
-        |   +-> IntegerConstant: '10'
-        |
-        +-> IntegerConstant: '15'
+            |
+            +-> MultiplicativeExpression: '*'
+            |   |
+            |   +-> MultiplicativeExpression: '*'
+            |   |   |
+            |   |   +-> MultiplicativeExpression: '*'
+            |   |   |   |
+            |   |   |   +-> IntegerConstant: '7'
+            |   |   |   |
+            |   |   |   +-> IntegerConstant: '6'
+            |   |   |
+            |   |   +-> IntegerConstant: '8'
+            |   |
+            |   +-> IntegerConstant: '10'
+            |
+            +-> IntegerConstant: '15'
 
 @endtest
 
@@ -97,15 +105,17 @@ FunctionDefinition: {name: 'main', type: 'int'}
 |
 +-> CompoundStatement
     |
-    +-> MultiplicativeExpression: '*'
+    +-> ExpressionStatement
         |
-        +-> MultiplicativeExpression: '/'
-        |   |
-        |   +-> IntegerConstant: '15'
-        |   |
-        |   +-> IntegerConstant: '3'
-        |
-        +-> IntegerConstant: '101'
+        +-> MultiplicativeExpression: '*'
+            |
+            +-> MultiplicativeExpression: '/'
+            |   |
+            |   +-> IntegerConstant: '15'
+            |   |
+            |   +-> IntegerConstant: '3'
+            |
+            +-> IntegerConstant: '101'
 
 @endtest
 
@@ -120,11 +130,13 @@ FunctionDefinition: {name: 'main', type: 'int'}
 |
 +-> CompoundStatement
     |
-    +-> AdditiveExpression: '+'
+    +-> ExpressionStatement
         |
-        +-> IntegerConstant: '7'
-        |
-        +-> IntegerConstant: '8'
+        +-> AdditiveExpression: '+'
+            |
+            +-> IntegerConstant: '7'
+            |
+            +-> IntegerConstant: '8'
 
 @endtest
 
@@ -139,15 +151,17 @@ FunctionDefinition: {name: 'main', type: 'int'}
 |
 +-> CompoundStatement
     |
-    +-> AdditiveExpression: '+'
+    +-> ExpressionStatement
         |
         +-> AdditiveExpression: '+'
-        |   |
-        |   +-> IntegerConstant: '7'
-        |   |
-        |   +-> IntegerConstant: '6'
-        |
-        +-> IntegerConstant: '8'
+            |
+            +-> AdditiveExpression: '+'
+            |   |
+            |   +-> IntegerConstant: '7'
+            |   |
+            |   +-> IntegerConstant: '6'
+            |
+            +-> IntegerConstant: '8'
 
 @endtest
 
@@ -162,23 +176,25 @@ FunctionDefinition: {name: 'main', type: 'int'}
 |
 +-> CompoundStatement
     |
-    +-> AdditiveExpression: '+'
+    +-> ExpressionStatement
         |
         +-> AdditiveExpression: '+'
-        |   |
-        |   +-> AdditiveExpression: '+'
-        |   |   |
-        |   |   +-> AdditiveExpression: '+'
-        |   |   |   |
-        |   |   |   +-> IntegerConstant: '7'
-        |   |   |   |
-        |   |   |   +-> IntegerConstant: '6'
-        |   |   |
-        |   |   +-> IntegerConstant: '8'
-        |   |
-        |   +-> IntegerConstant: '10'
-        |
-        +-> IntegerConstant: '15'
+            |
+            +-> AdditiveExpression: '+'
+            |   |
+            |   +-> AdditiveExpression: '+'
+            |   |   |
+            |   |   +-> AdditiveExpression: '+'
+            |   |   |   |
+            |   |   |   +-> IntegerConstant: '7'
+            |   |   |   |
+            |   |   |   +-> IntegerConstant: '6'
+            |   |   |
+            |   |   +-> IntegerConstant: '8'
+            |   |
+            |   +-> IntegerConstant: '10'
+            |
+            +-> IntegerConstant: '15'
 
 @endtest
 
@@ -193,15 +209,17 @@ FunctionDefinition: {name: 'main', type: 'int'}
 |
 +-> CompoundStatement
     |
-    +-> AdditiveExpression: '-'
+    +-> ExpressionStatement
         |
-        +-> AdditiveExpression: '+'
-        |   |
-        |   +-> IntegerConstant: '15'
-        |   |
-        |   +-> IntegerConstant: '3'
-        |
-        +-> IntegerConstant: '101'
+        +-> AdditiveExpression: '-'
+            |
+            +-> AdditiveExpression: '+'
+            |   |
+            |   +-> IntegerConstant: '15'
+            |   |
+            |   +-> IntegerConstant: '3'
+            |
+            +-> IntegerConstant: '101'
 
 @endtest
 
@@ -216,19 +234,21 @@ FunctionDefinition: {name: 'main', type: 'int'}
 |
 +-> CompoundStatement
     |
-    +-> AdditiveExpression: '-'
+    +-> ExpressionStatement
         |
-        +-> AdditiveExpression: '+'
-        |   |
-        |   +-> IntegerConstant: '1'
-        |   |
-        |   +-> MultiplicativeExpression: '*'
-        |       |
-        |       +-> IntegerConstant: '7'
-        |       |
-        |       +-> IntegerConstant: '6'
-        |
-        +-> IntegerConstant: '4'
+        +-> AdditiveExpression: '-'
+            |
+            +-> AdditiveExpression: '+'
+            |   |
+            |   +-> IntegerConstant: '1'
+            |   |
+            |   +-> MultiplicativeExpression: '*'
+            |       |
+            |       +-> IntegerConstant: '7'
+            |       |
+            |       +-> IntegerConstant: '6'
+            |
+            +-> IntegerConstant: '4'
 
 @endtest
 
@@ -243,11 +263,13 @@ FunctionDefinition: {name: 'main', type: 'int'}
 |
 +-> CompoundStatement
     |
-    +-> RelationalExpression: '<'
+    +-> ExpressionStatement
         |
-        +-> IntegerConstant: '7'
-        |
-        +-> IntegerConstant: '8'
+        +-> RelationalExpression: '<'
+            |
+            +-> IntegerConstant: '7'
+            |
+            +-> IntegerConstant: '8'
 
 @endtest
 
@@ -262,15 +284,17 @@ FunctionDefinition: {name: 'main', type: 'int'}
 |
 +-> CompoundStatement
     |
-    +-> RelationalExpression: '<'
+    +-> ExpressionStatement
         |
         +-> RelationalExpression: '<'
-        |   |
-        |   +-> IntegerConstant: '7'
-        |   |
-        |   +-> IntegerConstant: '6'
-        |
-        +-> IntegerConstant: '8'
+            |
+            +-> RelationalExpression: '<'
+            |   |
+            |   +-> IntegerConstant: '7'
+            |   |
+            |   +-> IntegerConstant: '6'
+            |
+            +-> IntegerConstant: '8'
 
 @endtest
 
@@ -285,23 +309,25 @@ FunctionDefinition: {name: 'main', type: 'int'}
 |
 +-> CompoundStatement
     |
-    +-> RelationalExpression: '<'
+    +-> ExpressionStatement
         |
         +-> RelationalExpression: '<'
-        |   |
-        |   +-> RelationalExpression: '<'
-        |   |   |
-        |   |   +-> RelationalExpression: '<'
-        |   |   |   |
-        |   |   |   +-> IntegerConstant: '7'
-        |   |   |   |
-        |   |   |   +-> IntegerConstant: '6'
-        |   |   |
-        |   |   +-> IntegerConstant: '8'
-        |   |
-        |   +-> IntegerConstant: '10'
-        |
-        +-> IntegerConstant: '15'
+            |
+            +-> RelationalExpression: '<'
+            |   |
+            |   +-> RelationalExpression: '<'
+            |   |   |
+            |   |   +-> RelationalExpression: '<'
+            |   |   |   |
+            |   |   |   +-> IntegerConstant: '7'
+            |   |   |   |
+            |   |   |   +-> IntegerConstant: '6'
+            |   |   |
+            |   |   +-> IntegerConstant: '8'
+            |   |
+            |   +-> IntegerConstant: '10'
+            |
+            +-> IntegerConstant: '15'
 
 @endtest
 
@@ -316,15 +342,17 @@ FunctionDefinition: {name: 'main', type: 'int'}
 |
 +-> CompoundStatement
     |
-    +-> RelationalExpression: '>'
+    +-> ExpressionStatement
         |
-        +-> RelationalExpression: '<'
-        |   |
-        |   +-> IntegerConstant: '15'
-        |   |
-        |   +-> IntegerConstant: '3'
-        |
-        +-> IntegerConstant: '101'
+        +-> RelationalExpression: '>'
+            |
+            +-> RelationalExpression: '<'
+            |   |
+            |   +-> IntegerConstant: '15'
+            |   |
+            |   +-> IntegerConstant: '3'
+            |
+            +-> IntegerConstant: '101'
 
 @endtest
 
@@ -339,11 +367,13 @@ FunctionDefinition: {name: 'main', type: 'int'}
 |
 +-> CompoundStatement
     |
-    +-> EqualityExpression: '=='
+    +-> ExpressionStatement
         |
-        +-> IntegerConstant: '7'
-        |
-        +-> IntegerConstant: '8'
+        +-> EqualityExpression: '=='
+            |
+            +-> IntegerConstant: '7'
+            |
+            +-> IntegerConstant: '8'
 
 @endtest
 
@@ -358,15 +388,17 @@ FunctionDefinition: {name: 'main', type: 'int'}
 |
 +-> CompoundStatement
     |
-    +-> EqualityExpression: '=='
+    +-> ExpressionStatement
         |
         +-> EqualityExpression: '=='
-        |   |
-        |   +-> IntegerConstant: '7'
-        |   |
-        |   +-> IntegerConstant: '6'
-        |
-        +-> IntegerConstant: '8'
+            |
+            +-> EqualityExpression: '=='
+            |   |
+            |   +-> IntegerConstant: '7'
+            |   |
+            |   +-> IntegerConstant: '6'
+            |
+            +-> IntegerConstant: '8'
 
 @endtest
 
@@ -381,23 +413,25 @@ FunctionDefinition: {name: 'main', type: 'int'}
 |
 +-> CompoundStatement
     |
-    +-> EqualityExpression: '=='
+    +-> ExpressionStatement
         |
         +-> EqualityExpression: '=='
-        |   |
-        |   +-> EqualityExpression: '=='
-        |   |   |
-        |   |   +-> EqualityExpression: '=='
-        |   |   |   |
-        |   |   |   +-> IntegerConstant: '7'
-        |   |   |   |
-        |   |   |   +-> IntegerConstant: '6'
-        |   |   |
-        |   |   +-> IntegerConstant: '8'
-        |   |
-        |   +-> IntegerConstant: '10'
-        |
-        +-> IntegerConstant: '15'
+            |
+            +-> EqualityExpression: '=='
+            |   |
+            |   +-> EqualityExpression: '=='
+            |   |   |
+            |   |   +-> EqualityExpression: '=='
+            |   |   |   |
+            |   |   |   +-> IntegerConstant: '7'
+            |   |   |   |
+            |   |   |   +-> IntegerConstant: '6'
+            |   |   |
+            |   |   +-> IntegerConstant: '8'
+            |   |
+            |   +-> IntegerConstant: '10'
+            |
+            +-> IntegerConstant: '15'
 
 @endtest
 
@@ -412,14 +446,16 @@ FunctionDefinition: {name: 'main', type: 'int'}
 |
 +-> CompoundStatement
     |
-    +-> EqualityExpression: '!='
+    +-> ExpressionStatement
         |
-        +-> EqualityExpression: '=='
-        |   |
-        |   +-> IntegerConstant: '15'
-        |   |
-        |   +-> IntegerConstant: '3'
-        |
-        +-> IntegerConstant: '101'
+        +-> EqualityExpression: '!='
+            |
+            +-> EqualityExpression: '=='
+            |   |
+            |   +-> IntegerConstant: '15'
+            |   |
+            |   +-> IntegerConstant: '3'
+            |
+            +-> IntegerConstant: '101'
 
 @endtest

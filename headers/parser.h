@@ -9,6 +9,7 @@ enum ast_node_kind
     AST_NODE_KIND_VARIABLE_DECLARATION,
     AST_NODE_KIND_FUNCTION_DEFINITION,
     AST_NODE_KIND_COMPOUND_STATEMENT,
+    AST_NODE_KIND_EXPRESSION_STATEMENT,
     AST_NODE_KIND_MULTIPLICATIVE_EXPRESSION,
     AST_NODE_KIND_ADDITIVE_EXPRESSION,
     AST_NODE_KIND_RELATIONAL_EXPRESSION,
@@ -39,6 +40,7 @@ struct ast_node
         struct identifier * variable;
         long long int integer_constant;
         struct ast_node_list * list;
+        struct ast_node * node;
         struct binary_expression
         {
             enum binary_operation operation;

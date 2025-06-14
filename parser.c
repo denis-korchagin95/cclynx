@@ -56,6 +56,7 @@ struct ast_node * parse_compound_statement(struct parser_context * context)
         }
 
         struct ast_node_list * list = (struct ast_node_list *) memory_blob_pool_alloc(&main_pool, sizeof(struct ast_node_list));
+        memset(list, 0, sizeof(struct ast_node_list));
         list->node = statement;
         list->next = NULL;
 
@@ -92,7 +93,12 @@ struct ast_node * parse_expression_statement(struct parser_context * context)
         exit(1);
     }
 
-    return expression;
+    struct ast_node * expression_statement = (struct ast_node *) memory_blob_pool_alloc(&main_pool, sizeof(struct ast_node));
+    memset(expression_statement, 0, sizeof(struct ast_node));
+    expression_statement->kind = AST_NODE_KIND_EXPRESSION_STATEMENT;
+    expression_statement->content.node = expression;
+
+    return expression_statement;
 }
 
 struct ast_node * parse_function_definition(struct parser_context * context)
@@ -199,26 +205,8 @@ struct ast_node * parse_declaration(struct parser_context * context)
     return declaration;
 }
 
-struct ast_node * parse_primary_expression(struct parser_context * context)
+struct ast_node * parse_equality_expression(struct parser_context * context)
 {
-    assert(context != NULL);
-
-    struct token * current_token = parser_get_token(context);
-
-    if (current_token->kind != TOKEN_KIND_NUMBER) {
-        fprintf(stderr, "ERROR: expected number\n");
-        exit(1);
-    }
-
-    struct ast_node * number = (struct ast_node *) memory_blob_pool_alloc(&main_pool, sizeof(struct ast_node));
-    memset(number, 0, sizeof(struct ast_node));
-    number->kind = AST_NODE_KIND_INTEGER_CONSTANT;
-    number->content.integer_constant = current_token->content.integer_constant;
-
-    return number;
-}
-
-struct ast_node * parse_equality_expression(struct parser_context * context) {
     assert(context != NULL);
 
     struct ast_node * lhs = parse_relational_expression(context);
@@ -352,6 +340,25 @@ struct ast_node * parse_multiplicative_expression(struct parser_context * contex
     parser_putback_token(current_token, context);
 
     return lhs;
+}
+
+struct ast_node * parse_primary_expression(struct parser_context * context)
+{
+    assert(context != NULL);
+
+    struct token * current_token = parser_get_token(context);
+
+    if (current_token->kind != TOKEN_KIND_NUMBER) {
+        fprintf(stderr, "ERROR: expected number\n");
+        exit(1);
+    }
+
+    struct ast_node * number = (struct ast_node *) memory_blob_pool_alloc(&main_pool, sizeof(struct ast_node));
+    memset(number, 0, sizeof(struct ast_node));
+    number->kind = AST_NODE_KIND_INTEGER_CONSTANT;
+    number->content.integer_constant = current_token->content.integer_constant;
+
+    return number;
 }
 
 struct token * parser_get_token(struct parser_context * context)

@@ -9,11 +9,13 @@ FunctionDefinition: {name: 'main', type: 'int'}
 |
 +-> CompoundStatement
     |
-    +-> MultiplicativeExpression: '*'
+    +-> ExpressionStatement
         |
-        +-> IntegerConstant: '7'
-        |
-        +-> IntegerConstant: '8'
+        +-> MultiplicativeExpression: '*'
+            |
+            +-> IntegerConstant: '7'
+            |
+            +-> IntegerConstant: '8'
 
 @endtest
 
