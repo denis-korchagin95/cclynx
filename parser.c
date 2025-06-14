@@ -4,6 +4,9 @@
 #include <stdlib.h>
 
 #include "parser.h"
+
+#include <math.h>
+
 #include "tokenizer.h"
 #include "allocator.h"
 #include "identifier.h"
@@ -11,6 +14,7 @@
 #include "print.h"
 #include "symbol.h"
 
+static struct ast_node * parse_assignment_expression(struct parser_context * context);
 static struct ast_node * parse_compound_statement(struct parser_context * context);
 static struct ast_node * parse_expression_statement(struct parser_context * context);
 static struct ast_node * parse_function_definition(struct parser_context * context);
@@ -47,7 +51,7 @@ struct ast_node * parse_compound_statement(struct parser_context * context)
     do {
         struct ast_node * statement = NULL;
 
-        if (current_token->kind == TOKEN_KIND_IDENTIFIER) {
+        if (current_token->kind == TOKEN_KIND_IDENTIFIER && current_token->content.identifier->is_keyword) {
             parser_putback_token(current_token, context);
             statement = parse_declaration(context);
         } else {
@@ -84,7 +88,7 @@ struct ast_node * parse_expression_statement(struct parser_context * context)
 {
     assert(context != NULL);
 
-    struct ast_node * expression = parse_equality_expression(context);
+    struct ast_node * expression = parse_assignment_expression(context);
 
     struct token * current_token = parser_get_token(context);
 
@@ -203,6 +207,36 @@ struct ast_node * parse_declaration(struct parser_context * context)
     declaration->content.variable = identifier;
 
     return declaration;
+}
+
+struct ast_node * parse_assignment_expression(struct parser_context * context)
+{
+    assert(context != NULL);
+
+    struct ast_node * lhs = parse_equality_expression(context);
+
+    if (lhs->kind != AST_NODE_KIND_VARIABLE) {
+        return lhs;
+    }
+
+    struct token * current_token = parser_get_token(context);
+
+    struct ast_node * initializer = NULL;
+
+    if (current_token->kind == TOKEN_KIND_PUNCTUATOR && current_token->content.ch == '=') {
+        initializer = parse_equality_expression(context);
+    } else {
+        parser_putback_token(current_token, context);
+    }
+
+    struct ast_node * assignment_expression = (struct ast_node *) memory_blob_pool_alloc(&main_pool, sizeof(struct ast_node));
+    memset(assignment_expression, 0, sizeof(struct ast_node));
+    assignment_expression->kind = AST_NODE_KIND_ASSIGNMENT_EXPRESSION;
+    assignment_expression->content.assignment.type = ASSIGNMENT_REGULAR;
+    assignment_expression->content.assignment.lhs = lhs;
+    assignment_expression->content.assignment.initializer = initializer;
+
+    return assignment_expression;
 }
 
 struct ast_node * parse_equality_expression(struct parser_context * context)
@@ -348,17 +382,24 @@ struct ast_node * parse_primary_expression(struct parser_context * context)
 
     struct token * current_token = parser_get_token(context);
 
-    if (current_token->kind != TOKEN_KIND_NUMBER) {
-        fprintf(stderr, "ERROR: expected number\n");
-        exit(1);
+    if (current_token->kind == TOKEN_KIND_NUMBER) {
+        struct ast_node * number = (struct ast_node *) memory_blob_pool_alloc(&main_pool, sizeof(struct ast_node));
+        memset(number, 0, sizeof(struct ast_node));
+        number->kind = AST_NODE_KIND_INTEGER_CONSTANT;
+        number->content.integer_constant = current_token->content.integer_constant;
+        return number;
     }
 
-    struct ast_node * number = (struct ast_node *) memory_blob_pool_alloc(&main_pool, sizeof(struct ast_node));
-    memset(number, 0, sizeof(struct ast_node));
-    number->kind = AST_NODE_KIND_INTEGER_CONSTANT;
-    number->content.integer_constant = current_token->content.integer_constant;
+    if (current_token->kind == TOKEN_KIND_IDENTIFIER) {
+        struct ast_node * variable = (struct ast_node *) memory_blob_pool_alloc(&main_pool, sizeof(struct ast_node));
+        memset(variable, 0, sizeof(struct ast_node));
+        variable->kind = AST_NODE_KIND_VARIABLE;
+        variable->content.variable = current_token->content.identifier;
+        return variable;
+    }
 
-    return number;
+    fprintf(stderr, "ERROR: expected number or variable!\n");
+    exit(1);
 }
 
 struct token * parser_get_token(struct parser_context * context)

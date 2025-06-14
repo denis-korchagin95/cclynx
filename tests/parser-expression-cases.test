@@ -459,3 +459,27 @@ FunctionDefinition: {name: 'main', type: 'int'}
             +-> IntegerConstant: '101'
 
 @endtest
+
+@test("It should parse an assignment expression (simple version)")
+@given("file")
+int main() {
+    int x;
+    x = 3;
+}
+@whenRun("./bin/parser-tester")
+@expectOutput("stdout")
+FunctionDefinition: {name: 'main', type: 'int'}
+|
++-> CompoundStatement
+    |
+    +-> VariableDeclaration {name: 'x', type: 'int'}
+    |
+    +-> ExpressionStatement
+        |
+        +-> AssignmentExpression: '='
+            |
+            +-> Variable {name: 'x', type: 'int'}
+            |
+            +-> IntegerConstant: '3'
+
+@endtest

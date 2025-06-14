@@ -79,6 +79,16 @@ void do_print_ast(const struct ast_node * ast, FILE * file, int depth, unsigned 
 	}
 
     switch (ast->kind) {
+        case AST_NODE_KIND_ASSIGNMENT_EXPRESSION:
+            fprintf(file, "AssignmentExpression: '='\n");
+            ancestors_info[depth] = ast->content.assignment.initializer != NULL ? 2 : 0;
+            do_print_ast(ast->content.assignment.lhs, file, depth + 1, ancestors_info);
+            if (ast->content.assignment.initializer != NULL)
+                do_print_ast(ast->content.assignment.initializer, file, depth + 1, ancestors_info);
+            break;
+        case AST_NODE_KIND_VARIABLE:
+            fprintf(file, "Variable {name: '%s', type: 'int'}\n", ast->content.variable->name);
+            break;
         case AST_NODE_KIND_EXPRESSION_STATEMENT:
             fprintf(file, "ExpressionStatement\n");
             if (ast->content.node != NULL)
