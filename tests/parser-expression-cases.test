@@ -483,3 +483,28 @@ FunctionDefinition: {name: 'main', type: 'int'}
             +-> IntegerConstant: '3'
 
 @endtest
+
+@test("It should parse nested expressions")
+@given("file")
+int main() {
+    77 * (1 + 23);
+}
+@whenRun("./bin/parser-tester")
+@expectOutput("stdout")
+FunctionDefinition: {name: 'main', type: 'int'}
+|
++-> CompoundStatement
+    |
+    +-> ExpressionStatement
+        |
+        +-> MultiplicativeExpression: '*'
+            |
+            +-> IntegerConstant: '77'
+            |
+            +-> AdditiveExpression: '+'
+                |
+                +-> IntegerConstant: '1'
+                |
+                +-> IntegerConstant: '23'
+
+@endtest

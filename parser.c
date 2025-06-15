@@ -12,6 +12,7 @@
 #include "print.h"
 #include "symbol.h"
 
+static struct ast_node * parse_expression(struct parser_context * context);
 static struct ast_node * parse_jump_statement(struct parser_context * context);
 static struct ast_node * parse_statement(struct parser_context * context);
 static struct ast_node * parse_iteration_statement(struct parser_context * context);
@@ -130,7 +131,7 @@ struct ast_node * parse_jump_statement(struct parser_context * context)
 
     if (!(current_token->kind == TOKEN_KIND_PUNCTUATOR && current_token->content.ch == ';')) {
         parser_putback_token(current_token, context);
-        expression = parse_assignment_expression(context);
+        expression = parse_expression(context);
         current_token = parser_get_token(context);
     }
 
@@ -170,7 +171,7 @@ struct ast_node * parse_iteration_statement(struct parser_context * context)
         exit(1);
     }
 
-    struct ast_node * expression = parse_assignment_expression(context);
+    struct ast_node * expression = parse_expression(context);
 
     current_token = parser_get_token(context);
 
@@ -201,7 +202,7 @@ struct ast_node * parse_expression_statement(struct parser_context * context)
 
     if (!(current_token->kind == TOKEN_KIND_PUNCTUATOR && current_token->content.ch == ';')) {
         parser_putback_token(current_token, context);
-        expression = parse_assignment_expression(context);
+        expression = parse_expression(context);
         current_token = parser_get_token(context);
     }
 
@@ -320,6 +321,13 @@ struct ast_node * parse_declaration(struct parser_context * context)
     declaration->content.variable = identifier;
 
     return declaration;
+}
+
+struct ast_node * parse_expression(struct parser_context * context)
+{
+    assert(context != NULL);
+
+    return parse_assignment_expression(context);
 }
 
 struct ast_node * parse_assignment_expression(struct parser_context * context)
@@ -510,6 +518,19 @@ struct ast_node * parse_primary_expression(struct parser_context * context)
         variable->kind = AST_NODE_KIND_VARIABLE;
         variable->content.variable = current_token->content.identifier;
         return variable;
+    }
+
+    if (current_token->kind == TOKEN_KIND_PUNCTUATOR && current_token->content.ch == '(') {
+        struct ast_node * expression = parse_expression(context);
+
+        current_token = parser_get_token(context);
+
+        if (!(current_token->kind == TOKEN_KIND_PUNCTUATOR && current_token->content.ch == ')')) {
+            fprintf(stderr, "ERROR: expected ')'!\n");
+            exit(1);
+        }
+
+        return expression;
     }
 
     fprintf(stderr, "ERROR: expected number or variable!\n");
