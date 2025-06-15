@@ -83,8 +83,7 @@ struct ast_node * parse_compound_statement(struct parser_context * context)
     do {
         struct ast_node * statement = parse_statement(context);
 
-        struct ast_node_list * list = (struct ast_node_list *) memory_blob_pool_alloc(&main_pool, sizeof(struct ast_node_list));
-        memset(list, 0, sizeof(struct ast_node_list));
+        main_pool_alloc(struct ast_node_list, list);
         list->node = statement;
         list->next = NULL;
 
@@ -103,8 +102,7 @@ struct ast_node * parse_compound_statement(struct parser_context * context)
 
     (void)parser_get_token(context);
 
-    struct ast_node * compound_statement = (struct ast_node *) memory_blob_pool_alloc(&main_pool, sizeof(struct ast_node));
-    memset(compound_statement, 0, sizeof(struct ast_node));
+    main_pool_alloc(struct ast_node, compound_statement)
     compound_statement->kind = AST_NODE_KIND_COMPOUND_STATEMENT;
     compound_statement->content.list = statement_list;
 
@@ -159,8 +157,7 @@ struct ast_node * parse_selection_statement(struct parser_context * context)
         parser_putback_token(current_token, context);
     }
 
-    struct ast_node * selection_statement = (struct ast_node *) memory_blob_pool_alloc(&main_pool, sizeof(struct ast_node));
-    memset(selection_statement, 0, sizeof(struct ast_node));
+    main_pool_alloc(struct ast_node, selection_statement);
     selection_statement->kind = AST_NODE_KIND_SELECTION_STATEMENT;
     selection_statement->content.selection.type = SELECTION_IF;
     selection_statement->content.selection.condition = condition;
@@ -202,8 +199,7 @@ struct ast_node * parse_jump_statement(struct parser_context * context)
         exit(1);
     }
 
-    struct ast_node * jump_statement = (struct ast_node *) memory_blob_pool_alloc(&main_pool, sizeof(struct ast_node));
-    memset(jump_statement, 0, sizeof(struct ast_node));
+    main_pool_alloc(struct ast_node, jump_statement);
     jump_statement->kind = AST_NODE_KIND_JUMP_STATEMENT;
     jump_statement->content.jump.type = JUMP_RETURN;
     jump_statement->content.jump.expression = expression;
@@ -244,8 +240,7 @@ struct ast_node * parse_iteration_statement(struct parser_context * context)
 
     struct ast_node * statement = parse_statement(context);
 
-    struct ast_node * iteration_statement = (struct ast_node *) memory_blob_pool_alloc(&main_pool, sizeof(struct ast_node));
-    memset(iteration_statement, 0, sizeof(struct ast_node));
+    main_pool_alloc(struct ast_node, iteration_statement);
     iteration_statement->kind = AST_NODE_KIND_ITERATION_STATEMENT;
     iteration_statement->content.iteration.type = ITERATION_WHILE;
     iteration_statement->content.iteration.condition = expression;
@@ -273,8 +268,7 @@ struct ast_node * parse_expression_statement(struct parser_context * context)
         exit(1);
     }
 
-    struct ast_node * expression_statement = (struct ast_node *) memory_blob_pool_alloc(&main_pool, sizeof(struct ast_node));
-    memset(expression_statement, 0, sizeof(struct ast_node));
+    main_pool_alloc(struct ast_node, expression_statement)
     expression_statement->kind = AST_NODE_KIND_EXPRESSION_STATEMENT;
     expression_statement->content.node = expression;
 
@@ -329,8 +323,7 @@ struct ast_node * parse_function_definition(struct parser_context * context)
 
     struct ast_node * compound_statement = parse_compound_statement(context);
 
-    struct ast_node * function_definition = (struct ast_node *) memory_blob_pool_alloc(&main_pool, sizeof(struct ast_node));
-    memset(function_definition, 0, sizeof(struct ast_node));
+    main_pool_alloc(struct ast_node, function_definition)
     function_definition->kind = AST_NODE_KIND_FUNCTION_DEFINITION;
     function_definition->content.function_definition.name = identifier;
     function_definition->content.function_definition.body = compound_statement;
@@ -377,8 +370,7 @@ struct ast_node * parse_declaration(struct parser_context * context)
         exit(1);
     }
 
-    struct ast_node * declaration = (struct ast_node *) memory_blob_pool_alloc(&main_pool, sizeof(struct ast_node));
-    memset(declaration, 0, sizeof(struct ast_node));
+    main_pool_alloc(struct ast_node, declaration)
     declaration->kind = AST_NODE_KIND_VARIABLE_DECLARATION;
     declaration->content.variable = identifier;
 
@@ -413,8 +405,7 @@ struct ast_node * parse_assignment_expression(struct parser_context * context)
         return lhs;
     }
 
-    struct ast_node * assignment_expression = (struct ast_node *) memory_blob_pool_alloc(&main_pool, sizeof(struct ast_node));
-    memset(assignment_expression, 0, sizeof(struct ast_node));
+    main_pool_alloc(struct ast_node, assignment_expression)
     assignment_expression->kind = AST_NODE_KIND_ASSIGNMENT_EXPRESSION;
     assignment_expression->content.assignment.type = ASSIGNMENT_REGULAR;
     assignment_expression->content.assignment.lhs = lhs;
@@ -439,8 +430,8 @@ struct ast_node * parse_equality_expression(struct parser_context * context)
             ? BINARY_OPERATION_EQUALITY
             : BINARY_OPERATION_INEQUALITY;
         struct ast_node * rhs = parse_multiplicative_expression(context);
-        struct ast_node * binary_expression = (struct ast_node *) memory_blob_pool_alloc(&main_pool, sizeof(struct ast_node));
-        memset(binary_expression, 0, sizeof(struct ast_node));
+
+        main_pool_alloc(struct ast_node, binary_expression)
         binary_expression->kind = AST_NODE_KIND_EQUALITY_EXPRESSION;
         binary_expression->content.binary_expression.operation = operation;
         binary_expression->content.binary_expression.lhs = lhs;
@@ -473,8 +464,8 @@ struct ast_node * parse_relational_expression(struct parser_context * context) {
             ? BINARY_OPERATION_LESS_THAN
             : BINARY_OPERATION_GREATER_THAN;
         struct ast_node * rhs = parse_multiplicative_expression(context);
-        struct ast_node * binary_expression = (struct ast_node *) memory_blob_pool_alloc(&main_pool, sizeof(struct ast_node));
-        memset(binary_expression, 0, sizeof(struct ast_node));
+
+        main_pool_alloc(struct ast_node, binary_expression)
         binary_expression->kind = AST_NODE_KIND_RELATIONAL_EXPRESSION;
         binary_expression->content.binary_expression.operation = operation;
         binary_expression->content.binary_expression.lhs = lhs;
@@ -509,8 +500,8 @@ struct ast_node * parse_additive_expression(struct parser_context * context)
             ? BINARY_OPERATION_ADDITION
             : BINARY_OPERATION_SUBTRACTION;
         struct ast_node * rhs = parse_multiplicative_expression(context);
-        struct ast_node * binary_expression = (struct ast_node *) memory_blob_pool_alloc(&main_pool, sizeof(struct ast_node));
-        memset(binary_expression, 0, sizeof(struct ast_node));
+
+        main_pool_alloc(struct ast_node, binary_expression)
         binary_expression->kind = AST_NODE_KIND_ADDITIVE_EXPRESSION;
         binary_expression->content.binary_expression.operation = operation;
         binary_expression->content.binary_expression.lhs = lhs;
@@ -544,8 +535,8 @@ struct ast_node * parse_multiplicative_expression(struct parser_context * contex
             ? BINARY_OPERATION_MULTIPLY
             : BINARY_OPERATION_DIVIDE;
         struct ast_node * rhs = parse_primary_expression(context);
-        struct ast_node * binary_expression = (struct ast_node *) memory_blob_pool_alloc(&main_pool, sizeof(struct ast_node));
-        memset(binary_expression, 0, sizeof(struct ast_node));
+
+        main_pool_alloc(struct ast_node, binary_expression)
         binary_expression->kind = AST_NODE_KIND_MULTIPLICATIVE_EXPRESSION;
         binary_expression->content.binary_expression.operation = operation;
         binary_expression->content.binary_expression.lhs = lhs;
@@ -567,16 +558,14 @@ struct ast_node * parse_primary_expression(struct parser_context * context)
     const struct token * current_token = parser_get_token(context);
 
     if (current_token->kind == TOKEN_KIND_NUMBER) {
-        struct ast_node * number = (struct ast_node *) memory_blob_pool_alloc(&main_pool, sizeof(struct ast_node));
-        memset(number, 0, sizeof(struct ast_node));
+        main_pool_alloc(struct ast_node, number)
         number->kind = AST_NODE_KIND_INTEGER_CONSTANT;
         number->content.integer_constant = current_token->content.integer_constant;
         return number;
     }
 
     if (current_token->kind == TOKEN_KIND_IDENTIFIER) {
-        struct ast_node * variable = (struct ast_node *) memory_blob_pool_alloc(&main_pool, sizeof(struct ast_node));
-        memset(variable, 0, sizeof(struct ast_node));
+        main_pool_alloc(struct ast_node, variable)
         variable->kind = AST_NODE_KIND_VARIABLE;
         variable->content.variable = current_token->content.identifier;
         return variable;

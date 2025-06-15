@@ -28,8 +28,7 @@ void init_symbols(void)
             exit(1);
         }
 
-        struct symbol * symbol = (struct symbol *) memory_blob_pool_alloc(&main_pool, sizeof(struct symbol));
-        memset(symbol, 0, sizeof(struct symbol));
+        main_pool_alloc(struct symbol, symbol)
         symbol->kind = builtin_symbol->kind;
         symbol->identifier = identifier;
 

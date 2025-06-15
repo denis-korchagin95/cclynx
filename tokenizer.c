@@ -28,8 +28,7 @@ struct token * tokenizer_tokenize_file(FILE * file)
     struct token ** next_token = &tokens;
 
     for (;;) {
-        struct token * token = (struct token *) memory_blob_pool_alloc(&main_pool, sizeof(struct token));
-        memset(token, 0, sizeof(struct token));
+        main_pool_alloc(struct token, token)
 
         token->next = (*next_token)->next;
         *next_token = token;

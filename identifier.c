@@ -57,8 +57,7 @@ struct identifier * identifier_insert(const unsigned int hash, const char * name
 {
     const unsigned int index = hash % IDENTIFIER_TABLE_SIZE;
 
-    struct identifier * identifier = memory_blob_pool_alloc(&main_pool, sizeof(struct identifier));
-    memset(identifier, 0, sizeof(struct identifier));
+    main_pool_alloc(struct identifier, identifier)
 
     identifier->name = (char *) memory_blob_pool_alloc(&main_pool, len + 1);
     strncpy(identifier->name, name, len);
