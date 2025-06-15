@@ -1,0 +1,129 @@
+@test("It should parse while loop")
+@given("file")
+int main() {
+    int i;
+    i = 0;
+    while(i < 10) {
+        i = i + 1;
+    }
+}
+@whenRun("./bin/parser-tester")
+@expectOutput("stdout")
+FunctionDefinition: {name: 'main', type: 'int'}
+|
++-> CompoundStatement
+    |
+    +-> VariableDeclaration: {name: 'i', type: 'int'}
+    |
+    +-> ExpressionStatement
+    |   |
+    |   +-> AssignmentExpression: '='
+    |       |
+    |       +-> Variable: {name: 'i', type: 'int'}
+    |       |
+    |       +-> IntegerConstant: '0'
+    |
+    +-> IterationStatement: 'while'
+        |
+        +-> (condition) RelationalExpression: '<'
+        |   |
+        |   +-> Variable: {name: 'i', type: 'int'}
+        |   |
+        |   +-> IntegerConstant: '10'
+        |
+        +-> (body) CompoundStatement
+            |
+            +-> ExpressionStatement
+                |
+                +-> AssignmentExpression: '='
+                    |
+                    +-> Variable: {name: 'i', type: 'int'}
+                    |
+                    +-> AdditiveExpression: '+'
+                        |
+                        +-> Variable: {name: 'i', type: 'int'}
+                        |
+                        +-> IntegerConstant: '1'
+
+@endtest
+
+@test("It should parse while with empty statement")
+@given("file")
+int main() {
+    int i;
+    i = 0;
+    while(i < 10);
+}
+@whenRun("./bin/parser-tester")
+@expectOutput("stdout")
+FunctionDefinition: {name: 'main', type: 'int'}
+|
++-> CompoundStatement
+    |
+    +-> VariableDeclaration: {name: 'i', type: 'int'}
+    |
+    +-> ExpressionStatement
+    |   |
+    |   +-> AssignmentExpression: '='
+    |       |
+    |       +-> Variable: {name: 'i', type: 'int'}
+    |       |
+    |       +-> IntegerConstant: '0'
+    |
+    +-> IterationStatement: 'while'
+        |
+        +-> (condition) RelationalExpression: '<'
+        |   |
+        |   +-> Variable: {name: 'i', type: 'int'}
+        |   |
+        |   +-> IntegerConstant: '10'
+        |
+        +-> (body) ExpressionStatement: {empty expression}
+
+@endtest
+
+@test("It should parse while with simple expression")
+@given("file")
+int main() {
+    int i;
+    i = 0;
+    while(i < 10)
+        i = i + 1;
+}
+@whenRun("./bin/parser-tester")
+@expectOutput("stdout")
+FunctionDefinition: {name: 'main', type: 'int'}
+|
++-> CompoundStatement
+    |
+    +-> VariableDeclaration: {name: 'i', type: 'int'}
+    |
+    +-> ExpressionStatement
+    |   |
+    |   +-> AssignmentExpression: '='
+    |       |
+    |       +-> Variable: {name: 'i', type: 'int'}
+    |       |
+    |       +-> IntegerConstant: '0'
+    |
+    +-> IterationStatement: 'while'
+        |
+        +-> (condition) RelationalExpression: '<'
+        |   |
+        |   +-> Variable: {name: 'i', type: 'int'}
+        |   |
+        |   +-> IntegerConstant: '10'
+        |
+        +-> (body) ExpressionStatement
+            |
+            +-> AssignmentExpression: '='
+                |
+                +-> Variable: {name: 'i', type: 'int'}
+                |
+                +-> AdditiveExpression: '+'
+                    |
+                    +-> Variable: {name: 'i', type: 'int'}
+                    |
+                    +-> IntegerConstant: '1'
+
+@endtest

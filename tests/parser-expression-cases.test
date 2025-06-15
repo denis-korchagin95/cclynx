@@ -472,13 +472,13 @@ FunctionDefinition: {name: 'main', type: 'int'}
 |
 +-> CompoundStatement
     |
-    +-> VariableDeclaration {name: 'x', type: 'int'}
+    +-> VariableDeclaration: {name: 'x', type: 'int'}
     |
     +-> ExpressionStatement
         |
         +-> AssignmentExpression: '='
             |
-            +-> Variable {name: 'x', type: 'int'}
+            +-> Variable: {name: 'x', type: 'int'}
             |
             +-> IntegerConstant: '3'
 

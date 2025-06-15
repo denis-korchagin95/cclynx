@@ -11,6 +11,7 @@ enum ast_node_kind
     AST_NODE_KIND_FUNCTION_DEFINITION,
     AST_NODE_KIND_COMPOUND_STATEMENT,
     AST_NODE_KIND_EXPRESSION_STATEMENT,
+    AST_NODE_KIND_ITERATION_STATEMENT,
     AST_NODE_KIND_ASSIGNMENT_EXPRESSION,
     AST_NODE_KIND_MULTIPLICATIVE_EXPRESSION,
     AST_NODE_KIND_ADDITIVE_EXPRESSION,
@@ -39,6 +40,10 @@ enum assignment_type {
     ASSIGNMENT_REGULAR = 1,
 };
 
+enum iteration_type {
+    ITERATION_WHILE = 1,
+};
+
 struct ast_node
 {
     union
@@ -63,6 +68,11 @@ struct ast_node
             struct ast_node * lhs;
             struct ast_node * initializer;
         } assignment;
+        struct iteration {
+            enum iteration_type type;
+            struct ast_node * condition;
+            struct ast_node * body;
+        } iteration;
     } content;
     enum ast_node_kind kind;
 };

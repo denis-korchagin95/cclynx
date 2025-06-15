@@ -31,8 +31,8 @@ FunctionDefinition: {name: 'main', type: 'int'}
 |
 +-> CompoundStatement
     |
-    +-> VariableDeclaration {name: 'x', type: 'int'}
+    +-> VariableDeclaration: {name: 'x', type: 'int'}
     |
-    +-> VariableDeclaration {name: 'y', type: 'int'}
+    +-> VariableDeclaration: {name: 'y', type: 'int'}
 
 @endtest

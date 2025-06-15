@@ -14,6 +14,6 @@ struct symbol
 };
 
 void init_symbols(void);
-struct symbol * symbol_lookup(struct identifier * identifier, enum symbol_kind kind);
+struct symbol * symbol_lookup(const struct identifier * identifier, enum symbol_kind kind);
 
 #endif /* SYMBOL_H */
