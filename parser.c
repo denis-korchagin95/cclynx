@@ -342,7 +342,7 @@ struct ast_node * parse_declaration(struct parser_context * context)
 {
     assert(context != NULL);
 
-    struct token * current_token = parser_get_token(context);
+    const struct token * current_token = parser_get_token(context);
 
     if (current_token->kind != TOKEN_KIND_IDENTIFIER) {
         fprintf(stderr, "ERROR: expected identifier!\n");
@@ -435,7 +435,7 @@ struct ast_node * parse_equality_expression(struct parser_context * context)
         current_token->kind == TOKEN_KIND_EQUAL_PUNCTUATOR
         || current_token->kind == TOKEN_KIND_NOT_EQUAL_PUNCTUATOR
     ) {
-        enum binary_operation operation = current_token->kind == TOKEN_KIND_EQUAL_PUNCTUATOR
+        const enum binary_operation operation = current_token->kind == TOKEN_KIND_EQUAL_PUNCTUATOR
             ? BINARY_OPERATION_EQUALITY
             : BINARY_OPERATION_INEQUALITY;
         struct ast_node * rhs = parse_multiplicative_expression(context);
@@ -469,7 +469,7 @@ struct ast_node * parse_relational_expression(struct parser_context * context) {
             || current_token->content.ch == '>'
         )
     ) {
-        enum binary_operation operation = current_token->content.ch == '<'
+        const enum binary_operation operation = current_token->content.ch == '<'
             ? BINARY_OPERATION_LESS_THAN
             : BINARY_OPERATION_GREATER_THAN;
         struct ast_node * rhs = parse_multiplicative_expression(context);
@@ -505,7 +505,7 @@ struct ast_node * parse_additive_expression(struct parser_context * context)
             || current_token->content.ch == '-'
         )
     ) {
-        enum binary_operation operation = current_token->content.ch == '+'
+        const enum binary_operation operation = current_token->content.ch == '+'
             ? BINARY_OPERATION_ADDITION
             : BINARY_OPERATION_SUBTRACTION;
         struct ast_node * rhs = parse_multiplicative_expression(context);
@@ -540,7 +540,7 @@ struct ast_node * parse_multiplicative_expression(struct parser_context * contex
             || current_token->content.ch == '/'
         )
     ) {
-        enum binary_operation operation = current_token->content.ch == '*'
+        const enum binary_operation operation = current_token->content.ch == '*'
             ? BINARY_OPERATION_MULTIPLY
             : BINARY_OPERATION_DIVIDE;
         struct ast_node * rhs = parse_primary_expression(context);
@@ -564,7 +564,7 @@ struct ast_node * parse_primary_expression(struct parser_context * context)
 {
     assert(context != NULL);
 
-    struct token * current_token = parser_get_token(context);
+    const struct token * current_token = parser_get_token(context);
 
     if (current_token->kind == TOKEN_KIND_NUMBER) {
         struct ast_node * number = (struct ast_node *) memory_blob_pool_alloc(&main_pool, sizeof(struct ast_node));
