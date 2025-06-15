@@ -79,6 +79,12 @@ void do_print_ast(const struct ast_node * ast, FILE * file, int depth, unsigned 
 	}
 
     switch (ast->kind) {
+        case AST_NODE_KIND_JUMP_STATEMENT:
+            fprintf(file, "JumpStatement: 'return'\n");
+            ancestors_info[depth] = 0;
+            if (ast->content.jump.expression != NULL)
+                do_print_ast(ast->content.jump.expression, file, depth + 1, ancestors_info, NULL);
+            break;
         case AST_NODE_KIND_ITERATION_STATEMENT:
             fprintf(file, "IterationStatement: 'while'\n");
             ancestors_info[depth] = 2;

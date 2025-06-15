@@ -12,6 +12,7 @@
 #include "print.h"
 #include "symbol.h"
 
+static struct ast_node * parse_jump_statement(struct parser_context * context);
 static struct ast_node * parse_statement(struct parser_context * context);
 static struct ast_node * parse_iteration_statement(struct parser_context * context);
 static struct ast_node * parse_assignment_expression(struct parser_context * context);
@@ -45,6 +46,8 @@ struct ast_node * parse_statement(struct parser_context * context)
 
         if (strncmp("while", current_token->content.identifier->name, 5) == 0) {
             statement = parse_iteration_statement(context);
+        } else if (strncmp("return", current_token->content.identifier->name, 6) == 0) {
+            statement = parse_jump_statement(context);
         } else {
             statement = parse_declaration(context);
         }
@@ -102,6 +105,47 @@ struct ast_node * parse_compound_statement(struct parser_context * context)
     compound_statement->content.list = statement_list;
 
     return compound_statement;
+}
+
+struct ast_node * parse_jump_statement(struct parser_context * context)
+{
+    assert(context != NULL);
+
+    struct token * current_token = parser_get_token(context);
+
+    if (
+        !(
+        current_token->kind == TOKEN_KIND_IDENTIFIER
+        && current_token->content.identifier->is_keyword
+        && strncmp("return", current_token->content.identifier->name, 6) == 0
+        )
+    ) {
+        fprintf(stderr, "ERROR: expected 'return'!\n");
+        exit(1);
+    }
+
+    current_token = parser_get_token(context);
+
+    struct ast_node * expression = NULL;
+
+    if (!(current_token->kind == TOKEN_KIND_PUNCTUATOR && current_token->content.ch == ';')) {
+        parser_putback_token(current_token, context);
+        expression = parse_assignment_expression(context);
+        current_token = parser_get_token(context);
+    }
+
+    if (!(current_token->kind == TOKEN_KIND_PUNCTUATOR && current_token->content.ch == ';')) {
+        fprintf(stderr, "ERROR: expected ';'!\n");
+        exit(1);
+    }
+
+    struct ast_node * jump_statement = (struct ast_node *) memory_blob_pool_alloc(&main_pool, sizeof(struct ast_node));
+    memset(jump_statement, 0, sizeof(struct ast_node));
+    jump_statement->kind = AST_NODE_KIND_JUMP_STATEMENT;
+    jump_statement->content.jump.type = JUMP_RETURN;
+    jump_statement->content.jump.expression = expression;
+
+    return jump_statement;
 }
 
 struct ast_node * parse_iteration_statement(struct parser_context * context)
@@ -296,6 +340,7 @@ struct ast_node * parse_assignment_expression(struct parser_context * context)
         initializer = parse_equality_expression(context);
     } else {
         parser_putback_token(current_token, context);
+        return lhs;
     }
 
     struct ast_node * assignment_expression = (struct ast_node *) memory_blob_pool_alloc(&main_pool, sizeof(struct ast_node));

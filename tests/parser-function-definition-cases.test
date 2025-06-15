@@ -36,3 +36,64 @@ FunctionDefinition: {name: 'main', type: 'int'}
     +-> VariableDeclaration: {name: 'y', type: 'int'}
 
 @endtest
+
+@test("It should parse main function with return expression")
+@given("file")
+int main() {
+    return 7;
+}
+@whenRun("./bin/parser-tester")
+@expectOutput("stdout")
+FunctionDefinition: {name: 'main', type: 'int'}
+|
++-> CompoundStatement
+    |
+    +-> JumpStatement: 'return'
+        |
+        +-> IntegerConstant: '7'
+
+@endtest
+
+@test("It should parse main function with return (empty expression)")
+@given("file")
+int main() {
+    return;
+}
+@whenRun("./bin/parser-tester")
+@expectOutput("stdout")
+FunctionDefinition: {name: 'main', type: 'int'}
+|
++-> CompoundStatement
+    |
+    +-> JumpStatement: 'return'
+
+@endtest
+
+@test("It should parse main function with return variable")
+@given("file")
+int main() {
+    int result;
+    result = 1;
+    return result;
+}
+@whenRun("./bin/parser-tester")
+@expectOutput("stdout")
+FunctionDefinition: {name: 'main', type: 'int'}
+|
++-> CompoundStatement
+    |
+    +-> VariableDeclaration: {name: 'result', type: 'int'}
+    |
+    +-> ExpressionStatement
+    |   |
+    |   +-> AssignmentExpression: '='
+    |       |
+    |       +-> Variable: {name: 'result', type: 'int'}
+    |       |
+    |       +-> IntegerConstant: '1'
+    |
+    +-> JumpStatement: 'return'
+        |
+        +-> Variable: {name: 'result', type: 'int'}
+
+@endtest
