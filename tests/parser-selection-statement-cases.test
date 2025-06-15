@@ -22,7 +22,7 @@ FunctionDefinition: {name: 'main', type: 'int'}
     |       |
     |       +-> IntegerConstant: '10'
     |
-    +-> SelectionStatement: 'if'
+    +-> IfStatement
         |
         +-> (condition) RelationalExpression: '<'
         |   |
@@ -30,7 +30,7 @@ FunctionDefinition: {name: 'main', type: 'int'}
         |   |
         |   +-> IntegerConstant: '5'
         |
-        +-> (if statement) ExpressionStatement
+        +-> (true branch) ExpressionStatement
             |
             +-> AssignmentExpression: '='
                 |
@@ -63,7 +63,7 @@ FunctionDefinition: {name: 'main', type: 'int'}
     |       |
     |       +-> IntegerConstant: '10'
     |
-    +-> SelectionStatement: 'if'
+    +-> IfStatement
         |
         +-> (condition) RelationalExpression: '<'
         |   |
@@ -71,7 +71,7 @@ FunctionDefinition: {name: 'main', type: 'int'}
         |   |
         |   +-> IntegerConstant: '5'
         |
-        +-> (if statement) ExpressionStatement: {empty expression}
+        +-> (true branch) ExpressionStatement: {empty expression}
 
 @endtest
 
@@ -101,7 +101,7 @@ FunctionDefinition: {name: 'main', type: 'int'}
     |       |
     |       +-> IntegerConstant: '10'
     |
-    +-> SelectionStatement: 'if'
+    +-> IfStatement
         |
         +-> (condition) RelationalExpression: '<'
         |   |
@@ -109,7 +109,7 @@ FunctionDefinition: {name: 'main', type: 'int'}
         |   |
         |   +-> IntegerConstant: '5'
         |
-        +-> (if statement) CompoundStatement
+        +-> (true branch) CompoundStatement
             |
             +-> ExpressionStatement
             |   |
@@ -159,7 +159,7 @@ FunctionDefinition: {name: 'main', type: 'int'}
     |       |
     |       +-> IntegerConstant: '10'
     |
-    +-> SelectionStatement: 'if'
+    +-> IfStatement
         |
         +-> (condition) RelationalExpression: '<'
         |   |
@@ -167,7 +167,7 @@ FunctionDefinition: {name: 'main', type: 'int'}
         |   |
         |   +-> IntegerConstant: '5'
         |
-        +-> (if statement) ExpressionStatement
+        +-> (true branch) ExpressionStatement
         |   |
         |   +-> AssignmentExpression: '='
         |       |
@@ -175,7 +175,7 @@ FunctionDefinition: {name: 'main', type: 'int'}
         |       |
         |       +-> IntegerConstant: '10'
         |
-        +-> (else statement) ExpressionStatement
+        +-> (false branch) ExpressionStatement
             |
             +-> AssignmentExpression: '='
                 |
@@ -210,7 +210,7 @@ FunctionDefinition: {name: 'main', type: 'int'}
     |       |
     |       +-> IntegerConstant: '10'
     |
-    +-> SelectionStatement: 'if'
+    +-> IfStatement
         |
         +-> (condition) RelationalExpression: '<'
         |   |
@@ -218,7 +218,7 @@ FunctionDefinition: {name: 'main', type: 'int'}
         |   |
         |   +-> IntegerConstant: '5'
         |
-        +-> (if statement) ExpressionStatement
+        +-> (true branch) ExpressionStatement
         |   |
         |   +-> AssignmentExpression: '='
         |       |
@@ -226,7 +226,7 @@ FunctionDefinition: {name: 'main', type: 'int'}
         |       |
         |       +-> IntegerConstant: '10'
         |
-        +-> (else statement) ExpressionStatement: {empty expression}
+        +-> (false branch) ExpressionStatement: {empty expression}
 
 @endtest
 
@@ -258,7 +258,7 @@ FunctionDefinition: {name: 'main', type: 'int'}
     |       |
     |       +-> IntegerConstant: '10'
     |
-    +-> SelectionStatement: 'if'
+    +-> IfStatement
         |
         +-> (condition) RelationalExpression: '<'
         |   |
@@ -266,7 +266,7 @@ FunctionDefinition: {name: 'main', type: 'int'}
         |   |
         |   +-> IntegerConstant: '5'
         |
-        +-> (if statement) ExpressionStatement
+        +-> (true branch) ExpressionStatement
         |   |
         |   +-> AssignmentExpression: '='
         |       |
@@ -274,7 +274,7 @@ FunctionDefinition: {name: 'main', type: 'int'}
         |       |
         |       +-> IntegerConstant: '10'
         |
-        +-> (else statement) CompoundStatement
+        +-> (false branch) CompoundStatement
             |
             +-> ExpressionStatement
             |   |

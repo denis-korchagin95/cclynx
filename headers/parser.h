@@ -6,14 +6,17 @@
 enum ast_node_kind
 {
     AST_NODE_KIND_INTEGER_CONSTANT = 1,
-    AST_NODE_KIND_VARIABLE_DECLARATION,
     AST_NODE_KIND_VARIABLE,
+
+    AST_NODE_KIND_VARIABLE_DECLARATION,
     AST_NODE_KIND_FUNCTION_DEFINITION,
+
     AST_NODE_KIND_COMPOUND_STATEMENT,
     AST_NODE_KIND_EXPRESSION_STATEMENT,
-    AST_NODE_KIND_ITERATION_STATEMENT,
-    AST_NODE_KIND_SELECTION_STATEMENT,
-    AST_NODE_KIND_JUMP_STATEMENT,
+    AST_NODE_KIND_WHILE_STATEMENT,
+    AST_NODE_KIND_RETURN_STATEMENT,
+    AST_NODE_KIND_IF_STATEMENT,
+
     AST_NODE_KIND_ASSIGNMENT_EXPRESSION,
     AST_NODE_KIND_MULTIPLICATIVE_EXPRESSION,
     AST_NODE_KIND_ADDITIVE_EXPRESSION,
@@ -42,18 +45,6 @@ enum assignment_type {
     ASSIGNMENT_REGULAR = 1,
 };
 
-enum iteration_type {
-    ITERATION_WHILE = 1,
-};
-
-enum jump_type {
-    JUMP_RETURN = 1,
-};
-
-enum selection_type {
-    SELECTION_IF = 1,
-};
-
 struct ast_node
 {
     union
@@ -78,21 +69,15 @@ struct ast_node
             struct ast_node * lhs;
             struct ast_node * initializer;
         } assignment;
-        struct iteration {
-            enum iteration_type type;
+        struct while_statement {
             struct ast_node * condition;
             struct ast_node * body;
-        } iteration;
-        struct jump {
-            enum jump_type type;
-            struct ast_node * expression;
-        } jump;
-        struct selection {
-            enum selection_type type;
+        } while_statement;
+        struct if_statement {
             struct ast_node * condition;
-            struct ast_node * if_statement;
-            struct ast_node * else_statement;
-        } selection;
+            struct ast_node * true_branch;
+            struct ast_node * false_branch;
+        } if_statement;
     } content;
     enum ast_node_kind kind;
 };

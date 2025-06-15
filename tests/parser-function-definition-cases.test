@@ -48,7 +48,7 @@ FunctionDefinition: {name: 'main', type: 'int'}
 |
 +-> CompoundStatement
     |
-    +-> JumpStatement: 'return'
+    +-> ReturnStatement
         |
         +-> IntegerConstant: '7'
 
@@ -65,7 +65,7 @@ FunctionDefinition: {name: 'main', type: 'int'}
 |
 +-> CompoundStatement
     |
-    +-> JumpStatement: 'return'
+    +-> ReturnStatement
 
 @endtest
 
@@ -92,7 +92,7 @@ FunctionDefinition: {name: 'main', type: 'int'}
     |       |
     |       +-> IntegerConstant: '1'
     |
-    +-> JumpStatement: 'return'
+    +-> ReturnStatement
         |
         +-> Variable: {name: 'result', type: 'int'}
 

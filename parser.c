@@ -13,10 +13,10 @@
 #include "symbol.h"
 
 static struct ast_node * parse_expression(struct parser_context * context);
-static struct ast_node * parse_selection_statement(struct parser_context * context);
-static struct ast_node * parse_jump_statement(struct parser_context * context);
+static struct ast_node * parse_if_statement(struct parser_context * context);
+static struct ast_node * parse_return_statement(struct parser_context * context);
 static struct ast_node * parse_statement(struct parser_context * context);
-static struct ast_node * parse_iteration_statement(struct parser_context * context);
+static struct ast_node * parse_while_statement(struct parser_context * context);
 static struct ast_node * parse_assignment_expression(struct parser_context * context);
 static struct ast_node * parse_compound_statement(struct parser_context * context);
 static struct ast_node * parse_expression_statement(struct parser_context * context);
@@ -44,15 +44,14 @@ struct ast_node * parse_statement(struct parser_context * context)
     struct ast_node * statement = NULL;
 
     if (current_token->kind == TOKEN_KIND_IDENTIFIER && current_token->content.identifier->is_keyword) {
-        parser_putback_token(current_token, context);
-
         if (strncmp("while", current_token->content.identifier->name, 5) == 0) {
-            statement = parse_iteration_statement(context);
+            statement = parse_while_statement(context);
         } else if (strncmp("return", current_token->content.identifier->name, 6) == 0) {
-            statement = parse_jump_statement(context);
+            statement = parse_return_statement(context);
         } else if (strncmp("if", current_token->content.identifier->name, 2) == 0) {
-            statement = parse_selection_statement(context);
+            statement = parse_if_statement(context);
         } else {
+            parser_putback_token(current_token, context);
             statement = parse_declaration(context);
         }
     } else if (current_token->kind == TOKEN_KIND_PUNCTUATOR && current_token->content.ch == '{') {
@@ -109,24 +108,11 @@ struct ast_node * parse_compound_statement(struct parser_context * context)
     return compound_statement;
 }
 
-struct ast_node * parse_selection_statement(struct parser_context * context)
+struct ast_node * parse_if_statement(struct parser_context * context)
 {
     assert(context != NULL);
 
     struct token * current_token = parser_get_token(context);
-
-    if (
-        !(
-        current_token->kind == TOKEN_KIND_IDENTIFIER
-        && current_token->content.identifier->is_keyword
-        && strncmp("if", current_token->content.identifier->name, 2) == 0
-        )
-    ) {
-        fprintf(stderr, "ERROR: expected 'if'!\n");
-        exit(1);
-    }
-
-    current_token = parser_get_token(context);
 
     if (!(current_token->kind == TOKEN_KIND_PUNCTUATOR && current_token->content.ch == '(')) {
         fprintf(stderr, "ERROR: expected '('!\n");
@@ -142,8 +128,8 @@ struct ast_node * parse_selection_statement(struct parser_context * context)
         exit(1);
     }
 
-    struct ast_node * if_statement = parse_statement(context);
-    struct ast_node * else_statement = NULL;
+    struct ast_node * true_branch = parse_statement(context);
+    struct ast_node * false_branch = NULL;
 
     current_token = parser_get_token(context);
 
@@ -152,39 +138,25 @@ struct ast_node * parse_selection_statement(struct parser_context * context)
         && current_token->content.identifier->is_keyword
         && strncmp("else", current_token->content.identifier->name, 4) == 0
     ) {
-        else_statement = parse_statement(context);
+        false_branch = parse_statement(context);
     } else {
         parser_putback_token(current_token, context);
     }
 
-    main_pool_alloc(struct ast_node, selection_statement);
-    selection_statement->kind = AST_NODE_KIND_SELECTION_STATEMENT;
-    selection_statement->content.selection.type = SELECTION_IF;
-    selection_statement->content.selection.condition = condition;
-    selection_statement->content.selection.if_statement = if_statement;
-    selection_statement->content.selection.else_statement = else_statement;
+    main_pool_alloc(struct ast_node, if_statement);
+    if_statement->kind = AST_NODE_KIND_IF_STATEMENT;
+    if_statement->content.if_statement.condition = condition;
+    if_statement->content.if_statement.true_branch = true_branch;
+    if_statement->content.if_statement.false_branch = false_branch;
 
-    return selection_statement;
+    return if_statement;
 }
 
-struct ast_node * parse_jump_statement(struct parser_context * context)
+struct ast_node * parse_return_statement(struct parser_context * context)
 {
     assert(context != NULL);
 
     struct token * current_token = parser_get_token(context);
-
-    if (
-        !(
-        current_token->kind == TOKEN_KIND_IDENTIFIER
-        && current_token->content.identifier->is_keyword
-        && strncmp("return", current_token->content.identifier->name, 6) == 0
-        )
-    ) {
-        fprintf(stderr, "ERROR: expected 'return'!\n");
-        exit(1);
-    }
-
-    current_token = parser_get_token(context);
 
     struct ast_node * expression = NULL;
 
@@ -199,30 +171,18 @@ struct ast_node * parse_jump_statement(struct parser_context * context)
         exit(1);
     }
 
-    main_pool_alloc(struct ast_node, jump_statement);
-    jump_statement->kind = AST_NODE_KIND_JUMP_STATEMENT;
-    jump_statement->content.jump.type = JUMP_RETURN;
-    jump_statement->content.jump.expression = expression;
+    main_pool_alloc(struct ast_node, return_statement);
+    return_statement->kind = AST_NODE_KIND_RETURN_STATEMENT;
+    return_statement->content.node = expression;
 
-    return jump_statement;
+    return return_statement;
 }
 
-struct ast_node * parse_iteration_statement(struct parser_context * context)
+struct ast_node * parse_while_statement(struct parser_context * context)
 {
     assert(context != NULL);
 
-    struct token * current_token = parser_get_token(context);
-
-    if (
-        !(current_token->kind == TOKEN_KIND_IDENTIFIER
-        && current_token->content.identifier->is_keyword
-        && strncmp("while", current_token->content.identifier->name, 5) == 0)
-    ) {
-        fprintf(stderr, "ERROR: expected 'while' keyword!\n");
-        exit(1);
-    }
-
-    current_token = parser_get_token(context);
+    const struct token * current_token = parser_get_token(context);
 
     if (!(current_token->kind == TOKEN_KIND_PUNCTUATOR && current_token->content.ch == '(')) {
         fprintf(stderr, "ERROR: expected '('!\n");
@@ -240,13 +200,12 @@ struct ast_node * parse_iteration_statement(struct parser_context * context)
 
     struct ast_node * statement = parse_statement(context);
 
-    main_pool_alloc(struct ast_node, iteration_statement);
-    iteration_statement->kind = AST_NODE_KIND_ITERATION_STATEMENT;
-    iteration_statement->content.iteration.type = ITERATION_WHILE;
-    iteration_statement->content.iteration.condition = expression;
-    iteration_statement->content.iteration.body = statement;
+    main_pool_alloc(struct ast_node, while_statement);
+    while_statement->kind = AST_NODE_KIND_WHILE_STATEMENT;
+    while_statement->content.while_statement.condition = expression;
+    while_statement->content.while_statement.body = statement;
 
-    return iteration_statement;
+    return while_statement;
 }
 
 struct ast_node * parse_expression_statement(struct parser_context * context)

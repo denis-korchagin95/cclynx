@@ -23,7 +23,7 @@ FunctionDefinition: {name: 'main', type: 'int'}
     |       |
     |       +-> IntegerConstant: '0'
     |
-    +-> IterationStatement: 'while'
+    +-> WhileStatement
         |
         +-> (condition) RelationalExpression: '<'
         |   |
@@ -70,7 +70,7 @@ FunctionDefinition: {name: 'main', type: 'int'}
     |       |
     |       +-> IntegerConstant: '0'
     |
-    +-> IterationStatement: 'while'
+    +-> WhileStatement
         |
         +-> (condition) RelationalExpression: '<'
         |   |
@@ -106,7 +106,7 @@ FunctionDefinition: {name: 'main', type: 'int'}
     |       |
     |       +-> IntegerConstant: '0'
     |
-    +-> IterationStatement: 'while'
+    +-> WhileStatement
         |
         +-> (condition) RelationalExpression: '<'
         |   |

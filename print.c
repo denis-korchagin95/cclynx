@@ -79,29 +79,29 @@ void do_print_ast(const struct ast_node * ast, FILE * file, int depth, unsigned 
 	}
 
     switch (ast->kind) {
-        case AST_NODE_KIND_SELECTION_STATEMENT:
-            fprintf(file, "SelectionStatement: 'if'\n");
+        case AST_NODE_KIND_IF_STATEMENT:
+            fprintf(file, "IfStatement\n");
             ancestors_info[depth] = 2;
-            do_print_ast(ast->content.selection.condition, file, depth + 1, ancestors_info, "(condition) ");
-            ancestors_info[depth] = ast->content.selection.else_statement != NULL ? 2 : 0;
-            do_print_ast(ast->content.selection.if_statement, file, depth + 1, ancestors_info, "(if statement) ");
-            if (ast->content.selection.else_statement != NULL) {
+            do_print_ast(ast->content.if_statement.condition, file, depth + 1, ancestors_info, "(condition) ");
+            ancestors_info[depth] = ast->content.if_statement.false_branch != NULL ? 2 : 0;
+            do_print_ast(ast->content.if_statement.true_branch, file, depth + 1, ancestors_info, "(true branch) ");
+            if (ast->content.if_statement.false_branch != NULL) {
                 ancestors_info[depth] = 0;
-                do_print_ast(ast->content.selection.else_statement, file, depth + 1, ancestors_info, "(else statement) ");
+                do_print_ast(ast->content.if_statement.false_branch, file, depth + 1, ancestors_info, "(false branch) ");
             }
             break;
-        case AST_NODE_KIND_JUMP_STATEMENT:
-            fprintf(file, "JumpStatement: 'return'\n");
+        case AST_NODE_KIND_RETURN_STATEMENT:
+            fprintf(file, "ReturnStatement\n");
             ancestors_info[depth] = 0;
-            if (ast->content.jump.expression != NULL)
-                do_print_ast(ast->content.jump.expression, file, depth + 1, ancestors_info, NULL);
+            if (ast->content.node != NULL)
+                do_print_ast(ast->content.node, file, depth + 1, ancestors_info, NULL);
             break;
-        case AST_NODE_KIND_ITERATION_STATEMENT:
-            fprintf(file, "IterationStatement: 'while'\n");
+        case AST_NODE_KIND_WHILE_STATEMENT:
+            fprintf(file, "WhileStatement\n");
             ancestors_info[depth] = 2;
-            do_print_ast(ast->content.iteration.condition, file, depth + 1, ancestors_info, "(condition) ");
+            do_print_ast(ast->content.while_statement.condition, file, depth + 1, ancestors_info, "(condition) ");
             ancestors_info[depth] = 0;
-            do_print_ast(ast->content.iteration.body, file, depth + 1, ancestors_info, "(body) ");
+            do_print_ast(ast->content.while_statement.body, file, depth + 1, ancestors_info, "(body) ");
             break;
         case AST_NODE_KIND_ASSIGNMENT_EXPRESSION:
             fprintf(file, "AssignmentExpression: '='\n");
