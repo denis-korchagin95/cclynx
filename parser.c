@@ -13,6 +13,7 @@
 #include "symbol.h"
 
 static struct ast_node * parse_expression(struct parser_context * context);
+static struct ast_node * parse_selection_statement(struct parser_context * context);
 static struct ast_node * parse_jump_statement(struct parser_context * context);
 static struct ast_node * parse_statement(struct parser_context * context);
 static struct ast_node * parse_iteration_statement(struct parser_context * context);
@@ -49,6 +50,8 @@ struct ast_node * parse_statement(struct parser_context * context)
             statement = parse_iteration_statement(context);
         } else if (strncmp("return", current_token->content.identifier->name, 6) == 0) {
             statement = parse_jump_statement(context);
+        } else if (strncmp("if", current_token->content.identifier->name, 2) == 0) {
+            statement = parse_selection_statement(context);
         } else {
             statement = parse_declaration(context);
         }
@@ -106,6 +109,65 @@ struct ast_node * parse_compound_statement(struct parser_context * context)
     compound_statement->content.list = statement_list;
 
     return compound_statement;
+}
+
+struct ast_node * parse_selection_statement(struct parser_context * context)
+{
+    assert(context != NULL);
+
+    struct token * current_token = parser_get_token(context);
+
+    if (
+        !(
+        current_token->kind == TOKEN_KIND_IDENTIFIER
+        && current_token->content.identifier->is_keyword
+        && strncmp("if", current_token->content.identifier->name, 2) == 0
+        )
+    ) {
+        fprintf(stderr, "ERROR: expected 'if'!\n");
+        exit(1);
+    }
+
+    current_token = parser_get_token(context);
+
+    if (!(current_token->kind == TOKEN_KIND_PUNCTUATOR && current_token->content.ch == '(')) {
+        fprintf(stderr, "ERROR: expected '('!\n");
+        exit(1);
+    }
+
+    struct ast_node * condition = parse_expression(context);
+
+    current_token = parser_get_token(context);
+
+    if (!(current_token->kind == TOKEN_KIND_PUNCTUATOR && current_token->content.ch == ')')) {
+        fprintf(stderr, "ERROR: expected ')'!\n");
+        exit(1);
+    }
+
+    struct ast_node * if_statement = parse_statement(context);
+    struct ast_node * else_statement = NULL;
+
+    current_token = parser_get_token(context);
+
+    if (
+        current_token->kind == TOKEN_KIND_IDENTIFIER
+        && current_token->content.identifier->is_keyword
+        && strncmp("else", current_token->content.identifier->name, 4) == 0
+    ) {
+        else_statement = parse_statement(context);
+    } else {
+        parser_putback_token(current_token, context);
+    }
+
+    struct ast_node * selection_statement = (struct ast_node *) memory_blob_pool_alloc(&main_pool, sizeof(struct ast_node));
+    memset(selection_statement, 0, sizeof(struct ast_node));
+    selection_statement->kind = AST_NODE_KIND_SELECTION_STATEMENT;
+    selection_statement->content.selection.type = SELECTION_IF;
+    selection_statement->content.selection.condition = condition;
+    selection_statement->content.selection.if_statement = if_statement;
+    selection_statement->content.selection.else_statement = else_statement;
+
+    return selection_statement;
 }
 
 struct ast_node * parse_jump_statement(struct parser_context * context)

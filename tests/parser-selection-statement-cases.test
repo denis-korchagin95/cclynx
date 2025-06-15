@@ -1,0 +1,299 @@
+@test("It should parse if statement (single statement)")
+@given("file")
+int main() {
+    int x;
+    x = 10;
+    if (x < 5)
+        x = 10;
+}
+@whenRun("./bin/parser-tester")
+@expectOutput("stdout")
+FunctionDefinition: {name: 'main', type: 'int'}
+|
++-> CompoundStatement
+    |
+    +-> VariableDeclaration: {name: 'x', type: 'int'}
+    |
+    +-> ExpressionStatement
+    |   |
+    |   +-> AssignmentExpression: '='
+    |       |
+    |       +-> Variable: {name: 'x', type: 'int'}
+    |       |
+    |       +-> IntegerConstant: '10'
+    |
+    +-> SelectionStatement: 'if'
+        |
+        +-> (condition) RelationalExpression: '<'
+        |   |
+        |   +-> Variable: {name: 'x', type: 'int'}
+        |   |
+        |   +-> IntegerConstant: '5'
+        |
+        +-> (if statement) ExpressionStatement
+            |
+            +-> AssignmentExpression: '='
+                |
+                +-> Variable: {name: 'x', type: 'int'}
+                |
+                +-> IntegerConstant: '10'
+
+@endtest
+
+@test("It should parse if statement (empty expression)")
+@given("file")
+int main() {
+    int x;
+    x = 10;
+    if (x < 5);
+}
+@whenRun("./bin/parser-tester")
+@expectOutput("stdout")
+FunctionDefinition: {name: 'main', type: 'int'}
+|
++-> CompoundStatement
+    |
+    +-> VariableDeclaration: {name: 'x', type: 'int'}
+    |
+    +-> ExpressionStatement
+    |   |
+    |   +-> AssignmentExpression: '='
+    |       |
+    |       +-> Variable: {name: 'x', type: 'int'}
+    |       |
+    |       +-> IntegerConstant: '10'
+    |
+    +-> SelectionStatement: 'if'
+        |
+        +-> (condition) RelationalExpression: '<'
+        |   |
+        |   +-> Variable: {name: 'x', type: 'int'}
+        |   |
+        |   +-> IntegerConstant: '5'
+        |
+        +-> (if statement) ExpressionStatement: {empty expression}
+
+@endtest
+
+@test("It should parse if statement (compound statement)")
+@given("file")
+int main() {
+    int x;
+    x = 10;
+    if (x < 5) {
+        x = 10;
+        x = x + 15;
+    }
+}
+@whenRun("./bin/parser-tester")
+@expectOutput("stdout")
+FunctionDefinition: {name: 'main', type: 'int'}
+|
++-> CompoundStatement
+    |
+    +-> VariableDeclaration: {name: 'x', type: 'int'}
+    |
+    +-> ExpressionStatement
+    |   |
+    |   +-> AssignmentExpression: '='
+    |       |
+    |       +-> Variable: {name: 'x', type: 'int'}
+    |       |
+    |       +-> IntegerConstant: '10'
+    |
+    +-> SelectionStatement: 'if'
+        |
+        +-> (condition) RelationalExpression: '<'
+        |   |
+        |   +-> Variable: {name: 'x', type: 'int'}
+        |   |
+        |   +-> IntegerConstant: '5'
+        |
+        +-> (if statement) CompoundStatement
+            |
+            +-> ExpressionStatement
+            |   |
+            |   +-> AssignmentExpression: '='
+            |       |
+            |       +-> Variable: {name: 'x', type: 'int'}
+            |       |
+            |       +-> IntegerConstant: '10'
+            |
+            +-> ExpressionStatement
+                |
+                +-> AssignmentExpression: '='
+                    |
+                    +-> Variable: {name: 'x', type: 'int'}
+                    |
+                    +-> AdditiveExpression: '+'
+                        |
+                        +-> Variable: {name: 'x', type: 'int'}
+                        |
+                        +-> IntegerConstant: '15'
+
+@endtest
+
+@test("It should parse if statement with else (single statement)")
+@given("file")
+int main() {
+    int x;
+    x = 10;
+    if (x < 5)
+        x = 10;
+    else
+        x = 77;
+}
+@whenRun("./bin/parser-tester")
+@expectOutput("stdout")
+FunctionDefinition: {name: 'main', type: 'int'}
+|
++-> CompoundStatement
+    |
+    +-> VariableDeclaration: {name: 'x', type: 'int'}
+    |
+    +-> ExpressionStatement
+    |   |
+    |   +-> AssignmentExpression: '='
+    |       |
+    |       +-> Variable: {name: 'x', type: 'int'}
+    |       |
+    |       +-> IntegerConstant: '10'
+    |
+    +-> SelectionStatement: 'if'
+        |
+        +-> (condition) RelationalExpression: '<'
+        |   |
+        |   +-> Variable: {name: 'x', type: 'int'}
+        |   |
+        |   +-> IntegerConstant: '5'
+        |
+        +-> (if statement) ExpressionStatement
+        |   |
+        |   +-> AssignmentExpression: '='
+        |       |
+        |       +-> Variable: {name: 'x', type: 'int'}
+        |       |
+        |       +-> IntegerConstant: '10'
+        |
+        +-> (else statement) ExpressionStatement
+            |
+            +-> AssignmentExpression: '='
+                |
+                +-> Variable: {name: 'x', type: 'int'}
+                |
+                +-> IntegerConstant: '77'
+
+@endtest
+
+@test("It should parse if statement with else (empty expression)")
+@given("file")
+int main() {
+    int x;
+    x = 10;
+    if (x < 5)
+        x = 10;
+    else;
+}
+@whenRun("./bin/parser-tester")
+@expectOutput("stdout")
+FunctionDefinition: {name: 'main', type: 'int'}
+|
++-> CompoundStatement
+    |
+    +-> VariableDeclaration: {name: 'x', type: 'int'}
+    |
+    +-> ExpressionStatement
+    |   |
+    |   +-> AssignmentExpression: '='
+    |       |
+    |       +-> Variable: {name: 'x', type: 'int'}
+    |       |
+    |       +-> IntegerConstant: '10'
+    |
+    +-> SelectionStatement: 'if'
+        |
+        +-> (condition) RelationalExpression: '<'
+        |   |
+        |   +-> Variable: {name: 'x', type: 'int'}
+        |   |
+        |   +-> IntegerConstant: '5'
+        |
+        +-> (if statement) ExpressionStatement
+        |   |
+        |   +-> AssignmentExpression: '='
+        |       |
+        |       +-> Variable: {name: 'x', type: 'int'}
+        |       |
+        |       +-> IntegerConstant: '10'
+        |
+        +-> (else statement) ExpressionStatement: {empty expression}
+
+@endtest
+
+@test("It should parse if statement with else (compound statement)")
+@given("file")
+int main() {
+    int x;
+    x = 10;
+    if (x < 5)
+        x = 10;
+    else {
+        x = 77;
+        x = x - 1;
+    }
+}
+@whenRun("./bin/parser-tester")
+@expectOutput("stdout")
+FunctionDefinition: {name: 'main', type: 'int'}
+|
++-> CompoundStatement
+    |
+    +-> VariableDeclaration: {name: 'x', type: 'int'}
+    |
+    +-> ExpressionStatement
+    |   |
+    |   +-> AssignmentExpression: '='
+    |       |
+    |       +-> Variable: {name: 'x', type: 'int'}
+    |       |
+    |       +-> IntegerConstant: '10'
+    |
+    +-> SelectionStatement: 'if'
+        |
+        +-> (condition) RelationalExpression: '<'
+        |   |
+        |   +-> Variable: {name: 'x', type: 'int'}
+        |   |
+        |   +-> IntegerConstant: '5'
+        |
+        +-> (if statement) ExpressionStatement
+        |   |
+        |   +-> AssignmentExpression: '='
+        |       |
+        |       +-> Variable: {name: 'x', type: 'int'}
+        |       |
+        |       +-> IntegerConstant: '10'
+        |
+        +-> (else statement) CompoundStatement
+            |
+            +-> ExpressionStatement
+            |   |
+            |   +-> AssignmentExpression: '='
+            |       |
+            |       +-> Variable: {name: 'x', type: 'int'}
+            |       |
+            |       +-> IntegerConstant: '77'
+            |
+            +-> ExpressionStatement
+                |
+                +-> AssignmentExpression: '='
+                    |
+                    +-> Variable: {name: 'x', type: 'int'}
+                    |
+                    +-> AdditiveExpression: '-'
+                        |
+                        +-> Variable: {name: 'x', type: 'int'}
+                        |
+                        +-> IntegerConstant: '1'
+
+@endtest

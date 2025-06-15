@@ -79,6 +79,17 @@ void do_print_ast(const struct ast_node * ast, FILE * file, int depth, unsigned 
 	}
 
     switch (ast->kind) {
+        case AST_NODE_KIND_SELECTION_STATEMENT:
+            fprintf(file, "SelectionStatement: 'if'\n");
+            ancestors_info[depth] = 2;
+            do_print_ast(ast->content.selection.condition, file, depth + 1, ancestors_info, "(condition) ");
+            ancestors_info[depth] = ast->content.selection.else_statement != NULL ? 2 : 0;
+            do_print_ast(ast->content.selection.if_statement, file, depth + 1, ancestors_info, "(if statement) ");
+            if (ast->content.selection.else_statement != NULL) {
+                ancestors_info[depth] = 0;
+                do_print_ast(ast->content.selection.else_statement, file, depth + 1, ancestors_info, "(else statement) ");
+            }
+            break;
         case AST_NODE_KIND_JUMP_STATEMENT:
             fprintf(file, "JumpStatement: 'return'\n");
             ancestors_info[depth] = 0;

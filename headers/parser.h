@@ -12,6 +12,7 @@ enum ast_node_kind
     AST_NODE_KIND_COMPOUND_STATEMENT,
     AST_NODE_KIND_EXPRESSION_STATEMENT,
     AST_NODE_KIND_ITERATION_STATEMENT,
+    AST_NODE_KIND_SELECTION_STATEMENT,
     AST_NODE_KIND_JUMP_STATEMENT,
     AST_NODE_KIND_ASSIGNMENT_EXPRESSION,
     AST_NODE_KIND_MULTIPLICATIVE_EXPRESSION,
@@ -49,6 +50,10 @@ enum jump_type {
     JUMP_RETURN = 1,
 };
 
+enum selection_type {
+    SELECTION_IF = 1,
+};
+
 struct ast_node
 {
     union
@@ -82,6 +87,12 @@ struct ast_node
             enum jump_type type;
             struct ast_node * expression;
         } jump;
+        struct selection {
+            enum selection_type type;
+            struct ast_node * condition;
+            struct ast_node * if_statement;
+            struct ast_node * else_statement;
+        } selection;
     } content;
     enum ast_node_kind kind;
 };
