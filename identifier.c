@@ -71,7 +71,7 @@ struct identifier * identifier_insert(const unsigned int hash, const char * name
 void init_keywords(void)
 {
     for (int i = 0; i < sizeof(keywords) / sizeof(keywords[0]); ++i) {
-        struct keyword * keyword = &keywords[i];
+        const struct keyword * keyword = &keywords[i];
 
         struct identifier * identifier = identifier_create(keyword->name);
         identifier->is_keyword = 1;

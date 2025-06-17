@@ -5,6 +5,7 @@
 #include "tokenizer.h"
 #include "identifier.h"
 #include "parser.h"
+#include "symbol.h"
 
 static void do_print_ast(const struct ast_node * ast, FILE * file, int depth, unsigned int * ancestors_info, const char * node_label);
 
@@ -113,7 +114,7 @@ void do_print_ast(const struct ast_node * ast, FILE * file, int depth, unsigned 
             }
             break;
         case AST_NODE_KIND_VARIABLE:
-            fprintf(file, "Variable: {name: '%s', type: 'int'}\n", ast->content.variable->name);
+            fprintf(file, "Variable: {name: '%s', type: 'int'}\n", ast->content.variable->identifier->name);
             break;
         case AST_NODE_KIND_EXPRESSION_STATEMENT:
             fprintf(file, "ExpressionStatement%s\n", ast->content.node == NULL ? ": {empty expression}" : "");
@@ -163,7 +164,7 @@ void do_print_ast(const struct ast_node * ast, FILE * file, int depth, unsigned 
             fprintf(file, "IntegerConstant: '%llu'\n", ast->content.integer_constant);
             break;
         case AST_NODE_KIND_VARIABLE_DECLARATION:
-            fprintf(file, "VariableDeclaration: {name: '%s', type: 'int'}\n", ast->content.variable->name);
+            fprintf(file, "VariableDeclaration: {name: '%s', type: 'int'}\n", ast->content.variable->identifier->name);
             break;
         case AST_NODE_KIND_FUNCTION_DEFINITION:
             fprintf(file, "FunctionDefinition: {name: '%s', type: 'int'}\n", ast->content.function_definition.name->name);

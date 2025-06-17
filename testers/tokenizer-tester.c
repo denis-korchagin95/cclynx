@@ -24,9 +24,9 @@ int main(const int argc, const char * argv[])
     memory_blob_pool_init(&main_pool, DEFAULT_MEMORY_BLOB_SIZE, DEFAULT_MEMORY_BLOB_ALIGNMENT);
     init_keywords();
 
-    struct token * tokens = tokenizer_tokenize_file(file);
+    const struct token * tokens = tokenizer_tokenize_file(file);
 
-    struct token * it = tokens;
+    const struct token * it = tokens;
 
     while (it != &eos_token) {
         print_token(it, stdout);

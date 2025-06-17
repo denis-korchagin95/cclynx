@@ -11,6 +11,7 @@
 
 #include "print.h"
 #include "symbol.h"
+#include "type.h"
 
 static struct ast_node * parse_expression(struct parser_context * context);
 static struct ast_node * parse_if_statement(struct parser_context * context);
@@ -322,6 +323,13 @@ struct ast_node * parse_declaration(struct parser_context * context)
 
     struct identifier * identifier = current_token->content.identifier;
 
+    symbol = symbol_lookup(identifier, SYMBOL_KIND_VARIABLE);
+
+    if (symbol != NULL) {
+        fprintf(stderr, "ERROR: variable '%s' already declared!\n", identifier->name);
+        exit(1);
+    }
+
     current_token = parser_get_token(context);
 
     if (!(current_token->kind == TOKEN_KIND_PUNCTUATOR && current_token->content.ch == ';')) {
@@ -329,9 +337,16 @@ struct ast_node * parse_declaration(struct parser_context * context)
         exit(1);
     }
 
+    main_pool_alloc(struct symbol, variable)
+    variable->kind = SYMBOL_KIND_VARIABLE;
+    variable->identifier = identifier;
+    variable->type = &type_integer;
+
+    identifier_attach_symbol(identifier, variable)
+
     main_pool_alloc(struct ast_node, declaration)
     declaration->kind = AST_NODE_KIND_VARIABLE_DECLARATION;
-    declaration->content.variable = identifier;
+    declaration->content.variable = variable;
 
     return declaration;
 }
@@ -524,9 +539,21 @@ struct ast_node * parse_primary_expression(struct parser_context * context)
     }
 
     if (current_token->kind == TOKEN_KIND_IDENTIFIER) {
+        if (current_token->content.identifier->is_keyword) {
+            fprintf(stderr, "ERROR: expected identifier but not a keyword!\n");
+            exit(1);
+        }
+
+        struct symbol * symbol = symbol_lookup(current_token->content.identifier, SYMBOL_KIND_VARIABLE);
+
+        if (symbol == NULL) {
+            fprintf(stderr, "ERROR: undeclared variable \"%s\"!\n", current_token->content.identifier->name);
+            exit(1);
+        }
+
         main_pool_alloc(struct ast_node, variable)
         variable->kind = AST_NODE_KIND_VARIABLE;
-        variable->content.variable = current_token->content.identifier;
+        variable->content.variable = symbol;
         return variable;
     }
 

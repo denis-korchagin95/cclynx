@@ -1,16 +1,20 @@
 #ifndef IDENTIFIER_H
 #define IDENTIFIER_H 1
 
-struct symbol;
+struct symbol_list;
 
-#define identifier_attach_symbol(identifier, symbol) \
-    (symbol)->next = (identifier)->symbols;          \
-    (identifier)->symbols = (symbol);                \
+#define identifier_attach_symbol(identifier, symbol_name)    \
+    {                                                        \
+        main_pool_alloc(struct symbol_list, element)         \
+        element->symbol = (symbol_name);                     \
+        element->next = (identifier)->symbols;               \
+        (identifier)->symbols = element;                     \
+    }
 
 struct identifier
 {
     char * name;
-    struct symbol * symbols;
+    struct symbol_list * symbols;
     struct identifier * next;
     unsigned int is_keyword:1;
     unsigned int reserved:31;

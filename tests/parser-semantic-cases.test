@@ -1,0 +1,47 @@
+@test("It should raise an error on variable redeclaration")
+@given("file")
+int main() {
+    int result;
+    int result;
+}
+@whenRun("./bin/parser-tester")
+@expectOutput("stderr")
+ERROR: variable 'result' already declared!
+
+@endtest
+
+@test("It should raise an error when name of the variable is keyword")
+@given("file")
+int main() {
+    int while;
+}
+@whenRun("./bin/parser-tester")
+@expectOutput("stderr")
+ERROR: expected identifier but not a keyword!
+
+@endtest
+
+@test("It should raise an error when trying to use undeclared variable")
+@given("file")
+int main() {
+    int result;
+    result = x + 1;
+}
+@whenRun("./bin/parser-tester")
+@expectOutput("stderr")
+ERROR: undeclared variable "x"!
+
+@endtest
+
+@test("It should raise an error when trying to use keyword as variable")
+@given("file")
+int main() {
+    int result;
+    result = int + 1;
+}
+@whenRun("./bin/parser-tester")
+@expectOutput("stderr")
+ERROR: expected identifier but not a keyword!
+
+@endtest
+

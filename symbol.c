@@ -6,14 +6,16 @@
 #include "symbol.h"
 #include "identifier.h"
 #include "allocator.h"
+#include "type.h"
 
 
 static struct builtin_symbol
 {
     const char * name;
-    enum symbol_kind kind;
+    enum symbol_kind symbol_kind;
+    struct type * type;
 } builtin_symbols[] = {
-    {"int", SYMBOL_KIND_TYPE_SPECIFIER},
+    {"int", SYMBOL_KIND_TYPE_SPECIFIER, &type_integer},
 };
 
 void init_symbols(void)
@@ -29,10 +31,11 @@ void init_symbols(void)
         }
 
         main_pool_alloc(struct symbol, symbol)
-        symbol->kind = builtin_symbol->kind;
+        symbol->kind = builtin_symbol->symbol_kind;
+        symbol->type = builtin_symbol->type;
         symbol->identifier = identifier;
 
-        identifier_attach_symbol(symbol->identifier, symbol);
+        identifier_attach_symbol(identifier, symbol)
     }
 }
 
@@ -40,9 +43,10 @@ struct symbol * symbol_lookup(const struct identifier * identifier, enum symbol_
 {
     assert(identifier != NULL);
 
-    for (struct symbol * it = identifier->symbols; it != NULL; it = it->next) {
-        if (it->kind == kind)
-            return it;
+    for (const struct symbol_list * it = identifier->symbols; it != NULL; it = it->next) {
+        if (it->symbol->kind == kind) {
+            return it->symbol;
+        }
     }
 
     return NULL;

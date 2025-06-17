@@ -3,6 +3,8 @@
 
 #define MAX_TOKEN_BUFFER_SIZE (4)
 
+struct symbol;
+
 enum ast_node_kind
 {
     AST_NODE_KIND_INTEGER_CONSTANT = 1,
@@ -49,7 +51,7 @@ struct ast_node
 {
     union
     {
-        struct identifier * variable;
+        struct symbol * variable;
         long long int integer_constant;
         struct ast_node_list * list;
         struct ast_node * node;

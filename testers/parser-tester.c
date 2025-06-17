@@ -32,7 +32,7 @@ int main(const int argc, const char * argv[])
     struct parser_context context;
     parser_init_context(&context, tokens);
 
-    struct ast_node * ast = parser_parse(&context);
+    const struct ast_node * ast = parser_parse(&context);
 
     print_ast(ast, stdout);
 
