@@ -6,6 +6,7 @@
 #include "identifier.h"
 #include "parser.h"
 #include "symbol.h"
+#include "ir.h"
 
 static void do_print_ast(const struct ast_node * ast, FILE * file, int depth, unsigned int * ancestors_info, const char * node_label);
 
@@ -39,6 +40,8 @@ void print_token(const struct token * token, FILE * file)
         default:
             fprintf(file, "<TOKEN_UNKNOWN>\n");
     }
+
+    fflush(file);
 }
 
 
@@ -174,4 +177,39 @@ void do_print_ast(const struct ast_node * ast, FILE * file, int depth, unsigned 
         default:
             fprintf(file, "<Unknown Ast Node>\n");
     }
+
+    fflush(file);
+}
+
+void print_ir_program(const struct ir_program * program, FILE * file)
+{
+    assert(program != NULL);
+    assert(file != NULL);
+    assert(program->position > 0);
+
+    static char buf[1024] = {'\0'};
+
+    char * label = NULL;
+
+    for (size_t i = 0; i < program->position; ++i) {
+        struct ir_instruction * instruction = program->instructions[i];
+
+        if (instruction->label != NULL) {
+            label = instruction->label->name;
+            fprintf(file, "%s:\n", label);
+        }
+
+        switch (instruction->code) {
+            case OP_CONST:
+                sprintf(buf, "%lli, t%llu", instruction->op1->content.llic, instruction->result->content.temp_id);
+                fprintf(file, "%sOP_CONST %s\n", label != NULL ? "    " : "", buf);
+            break;
+            case OP_RETURN:
+                sprintf(buf, "t%llu", instruction->op1->content.temp_id);
+                fprintf(file, "%sOP_RETURN %s\n", label != NULL ? "    " : "", buf);
+            break;
+        }
+    }
+
+    fflush(file);
 }

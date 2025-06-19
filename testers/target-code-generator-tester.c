@@ -11,13 +11,17 @@
 #include "target-arm64.h"
 
 
-int main(int argc, const char * argv[])
+int main(const int argc, const char * argv[])
 {
-    const char * example_filename = "./examples/factorial.c";
-    FILE * file = fopen(example_filename, "r");
+    if (argc <= 1) {
+        fprintf(stderr, "No source given!\n");
+        exit(1);
+    }
+
+    FILE * file = fopen(argv[1], "r");
 
     if (file == NULL) {
-        fprintf(stderr, "Could not open file %s\n", example_filename);
+        fprintf(stderr, "Could not open file %s\n", argv[1]);
         exit(1);
     }
 
@@ -30,11 +34,7 @@ int main(int argc, const char * argv[])
     struct parser_context context;
     parser_init_context(&context, tokens);
 
-    struct ast_node * ast = parser_parse(&context);
-
-    printf("AST:\n");
-
-    print_ast(ast, stdout);
+    const struct ast_node * ast = parser_parse(&context);
 
     struct ir_program ir_program;
 
@@ -42,15 +42,7 @@ int main(int argc, const char * argv[])
 
     ir_program_generate(&ir_program, ast);
 
-    printf("\n\nIR:\n");
-
-    print_ir_program(&ir_program, stdout);
-
-    printf("\n\nARM64 Assembly:\n");
-
     target_arm64_generate(&ir_program, stdout);
-
-    printf("\n\n");
 
     memory_blob_pool_free(&main_pool, false);
 

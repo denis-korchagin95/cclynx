@@ -2,6 +2,7 @@
 #define ALLOCATOR_H 1
 
 #include <stdbool.h>
+#include <memory.h>
 
 #define DEFAULT_MEMORY_BLOB_SIZE (1024 * 1024)
 #define DEFAULT_MEMORY_BLOB_ALIGNMENT (16)

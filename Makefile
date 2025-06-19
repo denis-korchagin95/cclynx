@@ -30,6 +30,29 @@ OBJECTS_PARSER_TESTER+=print.o
 OBJECTS_PARSER_TESTER+=type.o
 OBJECTS_PARSER_TESTER+=scope.o
 
+OBJECTS_IR_GENERATOR_TESTER+=$(TESTERS)ir-generator-tester.o
+OBJECTS_IR_GENERATOR_TESTER+=parser.o
+OBJECTS_IR_GENERATOR_TESTER+=tokenizer.o
+OBJECTS_IR_GENERATOR_TESTER+=symbol.o
+OBJECTS_IR_GENERATOR_TESTER+=type.o
+OBJECTS_IR_GENERATOR_TESTER+=allocator.o
+OBJECTS_IR_GENERATOR_TESTER+=scope.o
+OBJECTS_IR_GENERATOR_TESTER+=identifier.o
+OBJECTS_IR_GENERATOR_TESTER+=print.o
+OBJECTS_IR_GENERATOR_TESTER+=ir.o
+
+OBJECTS_TARGET_CODE_GENERATOR_TESTER+=$(TESTERS)target-code-generator-tester.o
+OBJECTS_TARGET_CODE_GENERATOR_TESTER+=parser.o
+OBJECTS_TARGET_CODE_GENERATOR_TESTER+=tokenizer.o
+OBJECTS_TARGET_CODE_GENERATOR_TESTER+=symbol.o
+OBJECTS_TARGET_CODE_GENERATOR_TESTER+=type.o
+OBJECTS_TARGET_CODE_GENERATOR_TESTER+=allocator.o
+OBJECTS_TARGET_CODE_GENERATOR_TESTER+=scope.o
+OBJECTS_TARGET_CODE_GENERATOR_TESTER+=identifier.o
+OBJECTS_TARGET_CODE_GENERATOR_TESTER+=print.o
+OBJECTS_TARGET_CODE_GENERATOR_TESTER+=ir.o
+OBJECTS_TARGET_CODE_GENERATOR_TESTER+=target-arm64.o
+
 OBJECTS+=allocator.o
 OBJECTS+=identifier.o
 OBJECTS+=symbol.o
@@ -38,6 +61,8 @@ OBJECTS+=scope.o
 OBJECTS+=print.o
 OBJECTS+=tokenizer.o
 OBJECTS+=parser.o
+OBJECTS+=ir.o
+OBJECTS+=target-arm64.o
 OBJECTS+=main.o
 
 tokenizer-tester: $(addprefix $(OBJ), $(OBJECTS_TOKENIZER_TESTER))
@@ -46,10 +71,16 @@ tokenizer-tester: $(addprefix $(OBJ), $(OBJECTS_TOKENIZER_TESTER))
 parser-tester: $(addprefix $(OBJ), $(OBJECTS_PARSER_TESTER))
 	$(CC) $(LFLAGS) $^ -o $(BIN)parser-tester
 
+ir-generator-tester: $(addprefix $(OBJ), $(OBJECTS_IR_GENERATOR_TESTER))
+	$(CC) $(LFLAGS) $^ -o $(BIN)ir-generator-tester
+
+target-code-generator-tester: $(addprefix $(OBJ), $(OBJECTS_TARGET_CODE_GENERATOR_TESTER))
+	$(CC) $(LFLAGS) $^ -o $(BIN)target-code-generator-tester
+
 build: $(addprefix $(OBJ), $(OBJECTS))
 	$(CC) $(LFLAGS) $^ -o $(BIN)$(PROGRAM)
 
-build-testers: tokenizer-tester parser-tester
+build-testers: tokenizer-tester parser-tester ir-generator-tester target-code-generator-tester
 
 clean:
 	rm -rfv $(BIN)$(PROGRAM)
