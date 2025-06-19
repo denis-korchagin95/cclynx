@@ -49,6 +49,66 @@ void do_generate_ir(struct ir_program * program, const struct ast_node * node)
     assert(node != NULL);
 
     switch(node->kind) {
+        case AST_NODE_KIND_MULTIPLICATIVE_EXPRESSION:
+            {
+                main_pool_alloc(struct ir_instruction, instruction)
+
+                switch (node->content.binary_expression.operation) {
+                    case BINARY_OPERATION_MULTIPLY:
+                        {
+                            instruction->code = OP_MUL;
+
+                            do_generate_ir(program, node->content.binary_expression.lhs);
+                            instruction->op1 = program->instructions[program->position - 1]->result;
+
+                            do_generate_ir(program, node->content.binary_expression.rhs);
+                            instruction->op2 = program->instructions[program->position - 1]->result;
+                        }
+                        break;
+                    default:
+                        fprintf(stderr, "ERROR: unknown operation\n");
+                        exit(1);
+                }
+
+                main_pool_alloc(struct ir_operand, result)
+                result->content.temp_id = ++temp_id;
+                result->kind = OPERAND_KIND_TEMPORARY;
+
+                instruction->result = result;
+
+                ir_emit(program, instruction);
+            }
+            break;
+        case AST_NODE_KIND_ADDITIVE_EXPRESSION:
+            {
+                main_pool_alloc(struct ir_instruction, instruction)
+
+                switch (node->content.binary_expression.operation) {
+                    case BINARY_OPERATION_ADDITION:
+                        {
+                            instruction->code = OP_ADD;
+
+                            do_generate_ir(program, node->content.binary_expression.lhs);
+                            instruction->op1 = program->instructions[program->position - 1]->result;
+
+                            do_generate_ir(program, node->content.binary_expression.rhs);
+                            instruction->op2 = program->instructions[program->position - 1]->result;
+                        }
+                        break;
+                    default:
+                        fprintf(stderr, "ERROR: unknown operation\n");
+                        exit(1);
+                }
+
+                main_pool_alloc(struct ir_operand, result)
+                result->content.temp_id = ++temp_id;
+                result->kind = OPERAND_KIND_TEMPORARY;
+
+                instruction->result = result;
+
+                ir_emit(program, instruction);
+            }
+            break;
         case AST_NODE_KIND_COMPOUND_STATEMENT:
             for (struct ast_node_list * it = node->content.list; it != NULL; it = it->next)
                 do_generate_ir(program, it->node);

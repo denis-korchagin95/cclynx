@@ -30,6 +30,8 @@ enum opcode
 {
     OP_CONST = 1,
     OP_RETURN,
+    OP_ADD,
+    OP_MUL,
 };
 
 struct ir_instruction

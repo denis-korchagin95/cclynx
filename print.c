@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <stdlib.h>
 
 #include "print.h"
 
@@ -39,6 +40,7 @@ void print_token(const struct token * token, FILE * file)
             break;
         default:
             fprintf(file, "<TOKEN_UNKNOWN>\n");
+            exit(1);
     }
 
     fflush(file);
@@ -176,6 +178,7 @@ void do_print_ast(const struct ast_node * ast, FILE * file, int depth, unsigned 
             break;
         default:
             fprintf(file, "<Unknown Ast Node>\n");
+            exit(1);
     }
 
     fflush(file);
@@ -208,6 +211,17 @@ void print_ir_program(const struct ir_program * program, FILE * file)
                 sprintf(buf, "t%llu", instruction->op1->content.temp_id);
                 fprintf(file, "%sOP_RETURN %s\n", label != NULL ? "    " : "", buf);
             break;
+            case OP_ADD:
+                sprintf(buf, "t%llu, t%llu, t%llu", instruction->op1->content.temp_id, instruction->op2->content.temp_id, instruction->result->content.temp_id);
+                fprintf(file, "%sOP_ADD %s\n", label != NULL ? "    " : "", buf);
+            break;
+            case OP_MUL:
+                sprintf(buf, "t%llu, t%llu, t%llu", instruction->op1->content.temp_id, instruction->op2->content.temp_id, instruction->result->content.temp_id);
+                fprintf(file, "%sOP_MUL %s\n", label != NULL ? "    " : "", buf);
+            break;
+            default:
+                fprintf(file, "ERROR: Unknown instruction for IR program\n");
+                exit(1);
         }
     }
 
