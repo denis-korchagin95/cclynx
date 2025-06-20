@@ -27,3 +27,26 @@ main:
     OP_RETURN t5
 
 @endtest
+
+@test("It should generate on return trivial expression with nested sub-expressions")
+@given("file")
+int main() {
+    return 2 * ((3 * 4 + 20) + 1) * 15;
+}
+@whenRun("./bin/ir-generator-tester")
+@expectOutput("stdout")
+main:
+    OP_CONST 2, t1
+    OP_CONST 3, t2
+    OP_CONST 4, t3
+    OP_MUL t2, t3, t4
+    OP_CONST 20, t5
+    OP_ADD t4, t5, t6
+    OP_CONST 1, t7
+    OP_ADD t6, t7, t8
+    OP_MUL t1, t8, t9
+    OP_CONST 15, t10
+    OP_MUL t9, t10, t11
+    OP_RETURN t11
+
+@endtest

@@ -31,9 +31,37 @@ _main:
     mov x9, #2
     mov x10, #3
     mul x11, x9, x10
-    mov x12, #1
-    add x13, x11, x12
-    mov x0, x13
+    mov x9, #1
+    add x10, x11, x9
+    mov x0, x10
+    ret
+
+@endtest
+
+@test("It should generate on return trivial expression with nested sub-expressions")
+@given("file")
+int main() {
+    return 2 * ((3 * 4 + 20) + 1) * 15;
+}
+@whenRun("./bin/target-code-generator-tester")
+@expectOutput("stdout")
+.text
+.globl _main
+.align 2
+
+_main:
+    mov x9, #2
+    mov x10, #3
+    mov x11, #4
+    mul x12, x10, x11
+    mov x10, #20
+    add x11, x12, x10
+    mov x10, #1
+    add x12, x11, x10
+    mul x10, x9, x12
+    mov x9, #15
+    mul x11, x10, x9
+    mov x0, x11
     ret
 
 @endtest
