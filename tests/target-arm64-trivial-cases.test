@@ -16,7 +16,7 @@ _main:
 
 @endtest
 
-@test("It should generate on return trivial expression (without variables)")
+@test("It should generate on return trivial expression (without variables +, *)")
 @given("file")
 int main() {
     return 2 * 3 + 1;
@@ -33,6 +33,28 @@ _main:
     mul x11, x9, x10
     mov x9, #1
     add x10, x11, x9
+    mov x0, x10
+    ret
+
+@endtest
+
+@test("It should generate on return trivial expression (without variables, -, /)")
+@given("file")
+int main() {
+    return 12 / 3 - 1;
+}
+@whenRun("./bin/target-code-generator-tester")
+@expectOutput("stdout")
+.text
+.globl _main
+.align 2
+
+_main:
+    mov x9, #12
+    mov x10, #3
+    sdiv x11, x9, x10
+    mov x9, #1
+    sub x10, x11, x9
     mov x0, x10
     ret
 

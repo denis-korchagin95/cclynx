@@ -203,6 +203,14 @@ void print_ir_program(const struct ir_program * program, FILE * file)
         }
 
         switch (instruction->code) {
+            case OP_SUB:
+                sprintf(buf, "t%llu, t%llu, t%llu", instruction->op1->content.temp_id, instruction->op2->content.temp_id, instruction->result->content.temp_id);
+                fprintf(file, "%sOP_SUB %s\n", label != NULL ? "    " : "", buf);
+            break;
+            case OP_DIV:
+                sprintf(buf, "t%llu, t%llu, t%llu", instruction->op1->content.temp_id, instruction->op2->content.temp_id, instruction->result->content.temp_id);
+                fprintf(file, "%sOP_DIV %s\n", label != NULL ? "    " : "", buf);
+                break;
             case OP_CONST:
                 sprintf(buf, "%lli, t%llu", instruction->op1->content.llic, instruction->result->content.temp_id);
                 fprintf(file, "%sOP_CONST %s\n", label != NULL ? "    " : "", buf);

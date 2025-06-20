@@ -65,6 +65,17 @@ void do_generate_ir(struct ir_program * program, const struct ast_node * node)
                             instruction->op2 = program->instructions[program->position - 1]->result;
                         }
                         break;
+                    case BINARY_OPERATION_DIVIDE:
+                        {
+                            instruction->code = OP_DIV;
+
+                            do_generate_ir(program, node->content.binary_expression.lhs);
+                            instruction->op1 = program->instructions[program->position - 1]->result;
+
+                            do_generate_ir(program, node->content.binary_expression.rhs);
+                            instruction->op2 = program->instructions[program->position - 1]->result;
+                        }
+                        break;
                     default:
                         fprintf(stderr, "ERROR: unknown operation\n");
                         exit(1);
@@ -87,6 +98,17 @@ void do_generate_ir(struct ir_program * program, const struct ast_node * node)
                     case BINARY_OPERATION_ADDITION:
                         {
                             instruction->code = OP_ADD;
+
+                            do_generate_ir(program, node->content.binary_expression.lhs);
+                            instruction->op1 = program->instructions[program->position - 1]->result;
+
+                            do_generate_ir(program, node->content.binary_expression.rhs);
+                            instruction->op2 = program->instructions[program->position - 1]->result;
+                        }
+                        break;
+                    case BINARY_OPERATION_SUBTRACTION:
+                        {
+                            instruction->code = OP_SUB;
 
                             do_generate_ir(program, node->content.binary_expression.lhs);
                             instruction->op1 = program->instructions[program->position - 1]->result;

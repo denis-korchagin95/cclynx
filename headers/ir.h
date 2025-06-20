@@ -32,6 +32,8 @@ enum opcode
     OP_RETURN,
     OP_ADD,
     OP_MUL,
+    OP_DIV,
+    OP_SUB,
 };
 
 struct ir_instruction

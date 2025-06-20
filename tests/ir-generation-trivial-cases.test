@@ -11,7 +11,7 @@ main:
 
 @endtest
 
-@test("It should generate on return trivial expression (without variables)")
+@test("It should generate on return trivial expression (without variables +, *)")
 @given("file")
 int main() {
     return 2 * 3 + 1;
@@ -50,3 +50,21 @@ main:
     OP_RETURN t11
 
 @endtest
+
+@test("It should generate on return trivial expression (without variables, -, /)")
+@given("file")
+int main() {
+    return 12 / 3 - 1;
+}
+@whenRun("./bin/ir-generator-tester")
+@expectOutput("stdout")
+main:
+    OP_CONST 12, t1
+    OP_CONST 3, t2
+    OP_DIV t1, t2, t3
+    OP_CONST 1, t4
+    OP_SUB t3, t4, t5
+    OP_RETURN t5
+
+@endtest
+

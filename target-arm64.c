@@ -102,6 +102,28 @@ void target_arm64_generate(struct ir_program * program, FILE * file)
 					push_reg(op_reg);
 				}
                 break;
+            case OP_DIV:
+                {
+                	unsigned int op_reg = alloc_reg();
+					unsigned int op2_reg = pop_reg();
+					unsigned int op1_reg = pop_reg();
+                	fprintf(file, "%ssdiv %s, %s, %s\n", "    ", get_reg_name(op_reg), get_reg_name(op1_reg), get_reg_name(op2_reg));
+					free_reg(op1_reg);
+					free_reg(op2_reg);
+					push_reg(op_reg);
+                }
+                break;
+            case OP_SUB:
+                {
+                	unsigned int op_reg = alloc_reg();
+					unsigned int op2_reg = pop_reg();
+					unsigned int op1_reg = pop_reg();
+                	fprintf(file, "%ssub %s, %s, %s\n", "    ", get_reg_name(op_reg), get_reg_name(op1_reg), get_reg_name(op2_reg));
+					free_reg(op1_reg);
+					free_reg(op2_reg);
+					push_reg(op_reg);
+                }
+                break;
             case OP_ADD:
 				{
                 	unsigned int op_reg = alloc_reg();
