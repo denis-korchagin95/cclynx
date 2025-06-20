@@ -4,6 +4,7 @@
 
 #include "target-arm64.h"
 #include "ir.h"
+#include "identifier.h"
 
 static unsigned int regs[5] = {0};
 static const char * reg_names[] = {"x9", "x10", "x11", "x12", "x13"};
@@ -77,12 +78,16 @@ void target_arm64_generate(struct ir_program * program, FILE * file)
     fprintf(file, ".globl _main\n");
     fprintf(file, ".align 2\n");
     fprintf(file, "\n");
-    fprintf(file, "_main:\n");
 
     for (size_t i = 0; i < program->position; ++i) {
         struct ir_instruction * instruction = program->instructions[i];
 
         switch (instruction->code) {
+            case OP_FUNC:
+                fprintf(file, "_%s:\n", instruction->result->content.function_name->name);
+                break;
+            case OP_FUNC_END:
+                break;
             case OP_CONST:
 				{
                 	unsigned int op_reg = alloc_reg();

@@ -13,6 +13,7 @@ enum operand_kind
 {
     OPERAND_KIND_CONSTANT = 1,
     OPERAND_KIND_TEMPORARY,
+    OPERAND_KIND_FUNCTION_NAME,
 };
 
 struct ir_operand
@@ -20,6 +21,7 @@ struct ir_operand
     union
     {
         unsigned long long int temp_id;
+        struct identifier * function_name;
         long long int llic;
     } content;
     struct type * type;
@@ -28,7 +30,10 @@ struct ir_operand
 
 enum opcode
 {
+    OP_NOP,
     OP_CONST = 1,
+    OP_FUNC,
+    OP_FUNC_END,
     OP_RETURN,
     OP_ADD,
     OP_MUL,
@@ -41,7 +46,6 @@ struct ir_instruction
     struct ir_operand * op1;
     struct ir_operand * op2;
     struct ir_operand * result;
-    struct identifier * label;
     enum opcode code;
 };
 

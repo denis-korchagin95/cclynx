@@ -5,9 +5,10 @@ int main() {
 }
 @whenRun("./bin/ir-generator-tester")
 @expectOutput("stdout")
-main:
-    OP_CONST 7, t1
-    OP_RETURN t1
+OP_FUNC "main"
+OP_CONST 7, t1
+OP_RETURN t1
+OP_FUNC_END
 
 @endtest
 
@@ -18,13 +19,14 @@ int main() {
 }
 @whenRun("./bin/ir-generator-tester")
 @expectOutput("stdout")
-main:
-    OP_CONST 2, t1
-    OP_CONST 3, t2
-    OP_MUL t1, t2, t3
-    OP_CONST 1, t4
-    OP_ADD t3, t4, t5
-    OP_RETURN t5
+OP_FUNC "main"
+OP_CONST 2, t1
+OP_CONST 3, t2
+OP_MUL t1, t2, t3
+OP_CONST 1, t4
+OP_ADD t3, t4, t5
+OP_RETURN t5
+OP_FUNC_END
 
 @endtest
 
@@ -35,19 +37,20 @@ int main() {
 }
 @whenRun("./bin/ir-generator-tester")
 @expectOutput("stdout")
-main:
-    OP_CONST 2, t1
-    OP_CONST 3, t2
-    OP_CONST 4, t3
-    OP_MUL t2, t3, t4
-    OP_CONST 20, t5
-    OP_ADD t4, t5, t6
-    OP_CONST 1, t7
-    OP_ADD t6, t7, t8
-    OP_MUL t1, t8, t9
-    OP_CONST 15, t10
-    OP_MUL t9, t10, t11
-    OP_RETURN t11
+OP_FUNC "main"
+OP_CONST 2, t1
+OP_CONST 3, t2
+OP_CONST 4, t3
+OP_MUL t2, t3, t4
+OP_CONST 20, t5
+OP_ADD t4, t5, t6
+OP_CONST 1, t7
+OP_ADD t6, t7, t8
+OP_MUL t1, t8, t9
+OP_CONST 15, t10
+OP_MUL t9, t10, t11
+OP_RETURN t11
+OP_FUNC_END
 
 @endtest
 
@@ -58,13 +61,14 @@ int main() {
 }
 @whenRun("./bin/ir-generator-tester")
 @expectOutput("stdout")
-main:
-    OP_CONST 12, t1
-    OP_CONST 3, t2
-    OP_DIV t1, t2, t3
-    OP_CONST 1, t4
-    OP_SUB t3, t4, t5
-    OP_RETURN t5
+OP_FUNC "main"
+OP_CONST 12, t1
+OP_CONST 3, t2
+OP_DIV t1, t2, t3
+OP_CONST 1, t4
+OP_SUB t3, t4, t5
+OP_RETURN t5
+OP_FUNC_END
 
 @endtest
 

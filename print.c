@@ -192,40 +192,39 @@ void print_ir_program(const struct ir_program * program, FILE * file)
 
     static char buf[1024] = {'\0'};
 
-    char * label = NULL;
-
     for (size_t i = 0; i < program->position; ++i) {
         struct ir_instruction * instruction = program->instructions[i];
 
-        if (instruction->label != NULL) {
-            label = instruction->label->name;
-            fprintf(file, "%s:\n", label);
-        }
-
         switch (instruction->code) {
+            case OP_FUNC:
+                fprintf(file, "OP_FUNC \"%s\"\n", instruction->result->content.function_name->name);
+                break;
+            case OP_FUNC_END:
+                fprintf(file, "OP_FUNC_END\n");
+                break;
             case OP_SUB:
                 sprintf(buf, "t%llu, t%llu, t%llu", instruction->op1->content.temp_id, instruction->op2->content.temp_id, instruction->result->content.temp_id);
-                fprintf(file, "%sOP_SUB %s\n", label != NULL ? "    " : "", buf);
+                fprintf(file, "OP_SUB %s\n", buf);
             break;
             case OP_DIV:
                 sprintf(buf, "t%llu, t%llu, t%llu", instruction->op1->content.temp_id, instruction->op2->content.temp_id, instruction->result->content.temp_id);
-                fprintf(file, "%sOP_DIV %s\n", label != NULL ? "    " : "", buf);
+                fprintf(file, "OP_DIV %s\n", buf);
                 break;
             case OP_CONST:
                 sprintf(buf, "%lli, t%llu", instruction->op1->content.llic, instruction->result->content.temp_id);
-                fprintf(file, "%sOP_CONST %s\n", label != NULL ? "    " : "", buf);
+                fprintf(file, "OP_CONST %s\n", buf);
             break;
             case OP_RETURN:
                 sprintf(buf, "t%llu", instruction->op1->content.temp_id);
-                fprintf(file, "%sOP_RETURN %s\n", label != NULL ? "    " : "", buf);
+                fprintf(file, "OP_RETURN %s\n", buf);
             break;
             case OP_ADD:
                 sprintf(buf, "t%llu, t%llu, t%llu", instruction->op1->content.temp_id, instruction->op2->content.temp_id, instruction->result->content.temp_id);
-                fprintf(file, "%sOP_ADD %s\n", label != NULL ? "    " : "", buf);
+                fprintf(file, "OP_ADD %s\n", buf);
             break;
             case OP_MUL:
                 sprintf(buf, "t%llu, t%llu, t%llu", instruction->op1->content.temp_id, instruction->op2->content.temp_id, instruction->result->content.temp_id);
-                fprintf(file, "%sOP_MUL %s\n", label != NULL ? "    " : "", buf);
+                fprintf(file, "OP_MUL %s\n", buf);
             break;
             default:
                 fprintf(file, "ERROR: Unknown instruction for IR program\n");

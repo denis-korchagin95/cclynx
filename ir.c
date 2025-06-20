@@ -33,12 +33,26 @@ void ir_program_generate(struct ir_program * program, const struct ast_node * as
         exit(1);
     }
 
-    struct identifier * function_name = ast->content.function_definition.name;
+    {
+        main_pool_alloc(struct ir_instruction, instruction)
+        instruction->code = OP_FUNC;
+
+        main_pool_alloc(struct ir_operand, result)
+        result->content.function_name = ast->content.function_definition.name;
+        result->kind = OPERAND_KIND_FUNCTION_NAME;
+
+        instruction->result = result;
+
+        ir_emit(program, instruction);
+    }
 
     do_generate_ir(program, ast->content.function_definition.body);
 
-    if (program->position > 0) {
-        program->instructions[0]->label = function_name;
+    {
+        main_pool_alloc(struct ir_instruction, instruction)
+        instruction->code = OP_FUNC_END;
+
+        ir_emit(program, instruction);
     }
 }
 
