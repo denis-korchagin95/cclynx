@@ -1,0 +1,57 @@
+@test("It should generate target arm64 code when returning variable with a constant")
+@given("file")
+int main() {
+    int x;
+    x = 10;
+    return x;
+}
+@whenRun("./bin/target-code-generator-tester")
+@expectOutput("stdout")
+.text
+.global _main
+.align 2
+
+_main:
+    stp x29, x30, [sp, -16]!
+    mov x29, sp
+    sub sp, sp, #16
+    mov x9, #10
+    str x9, [sp, #0]
+    ldr x9, [sp, #0]
+    mov x0, x9
+    add sp, sp, #16
+    ldp x29, x30, [sp], #16
+    ret
+
+@endtest
+
+@test("It should generate target arm64 code when returning a variable with an expression")
+@given("file")
+int main() {
+    int x;
+    x = 7 * 8;
+    return x / 2;
+}
+@whenRun("./bin/target-code-generator-tester")
+@expectOutput("stdout")
+.text
+.global _main
+.align 2
+
+_main:
+    stp x29, x30, [sp, -16]!
+    mov x29, sp
+    sub sp, sp, #16
+    mov x9, #7
+    mov x10, #8
+    mul x11, x9, x10
+    str x11, [sp, #0]
+    ldr x9, [sp, #0]
+    mov x10, #2
+    sdiv x11, x9, x10
+    mov x0, x11
+    add sp, sp, #16
+    ldp x29, x30, [sp], #16
+    ret
+
+@endtest

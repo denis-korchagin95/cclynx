@@ -1,4 +1,4 @@
-@test("It should generate on return integer constant")
+@test("It should generate IR code on return integer constant")
 @given("file")
 int main() {
     return 7;
@@ -12,7 +12,7 @@ OP_FUNC_END
 
 @endtest
 
-@test("It should generate on return trivial expression (without variables +, *)")
+@test("It should generate IR code on return trivial expression (without variables +, *)")
 @given("file")
 int main() {
     return 2 * 3 + 1;
@@ -30,7 +30,7 @@ OP_FUNC_END
 
 @endtest
 
-@test("It should generate on return trivial expression with nested sub-expressions")
+@test("It should generate IR code on return trivial expression with nested sub-expressions")
 @given("file")
 int main() {
     return 2 * ((3 * 4 + 20) + 1) * 15;
@@ -54,7 +54,7 @@ OP_FUNC_END
 
 @endtest
 
-@test("It should generate on return trivial expression (without variables, -, /)")
+@test("It should generate IR code on return trivial expression (without variables, -, /)")
 @given("file")
 int main() {
     return 12 / 3 - 1;

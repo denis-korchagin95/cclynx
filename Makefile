@@ -19,6 +19,7 @@ OBJECTS_TOKENIZER_TESTER+=identifier.o
 OBJECTS_TOKENIZER_TESTER+=symbol.o
 OBJECTS_TOKENIZER_TESTER+=type.o
 OBJECTS_TOKENIZER_TESTER+=scope.o
+OBJECTS_TOKENIZER_TESTER+=util.o
 
 OBJECTS_PARSER_TESTER+=$(TESTERS)parser-tester.o
 OBJECTS_PARSER_TESTER+=parser.o
@@ -29,6 +30,7 @@ OBJECTS_PARSER_TESTER+=symbol.o
 OBJECTS_PARSER_TESTER+=print.o
 OBJECTS_PARSER_TESTER+=type.o
 OBJECTS_PARSER_TESTER+=scope.o
+OBJECTS_PARSER_TESTER+=util.o
 
 OBJECTS_IR_GENERATOR_TESTER+=$(TESTERS)ir-generator-tester.o
 OBJECTS_IR_GENERATOR_TESTER+=parser.o
@@ -40,6 +42,7 @@ OBJECTS_IR_GENERATOR_TESTER+=scope.o
 OBJECTS_IR_GENERATOR_TESTER+=identifier.o
 OBJECTS_IR_GENERATOR_TESTER+=print.o
 OBJECTS_IR_GENERATOR_TESTER+=ir.o
+OBJECTS_IR_GENERATOR_TESTER+=util.o
 
 OBJECTS_TARGET_CODE_GENERATOR_TESTER+=$(TESTERS)target-code-generator-tester.o
 OBJECTS_TARGET_CODE_GENERATOR_TESTER+=parser.o
@@ -52,6 +55,7 @@ OBJECTS_TARGET_CODE_GENERATOR_TESTER+=identifier.o
 OBJECTS_TARGET_CODE_GENERATOR_TESTER+=print.o
 OBJECTS_TARGET_CODE_GENERATOR_TESTER+=ir.o
 OBJECTS_TARGET_CODE_GENERATOR_TESTER+=target-arm64.o
+OBJECTS_TARGET_CODE_GENERATOR_TESTER+=util.o
 
 OBJECTS+=allocator.o
 OBJECTS+=identifier.o
@@ -63,6 +67,7 @@ OBJECTS+=tokenizer.o
 OBJECTS+=parser.o
 OBJECTS+=ir.o
 OBJECTS+=target-arm64.o
+OBJECTS+=util.o
 OBJECTS+=main.o
 
 tokenizer-tester: $(addprefix $(OBJ), $(OBJECTS_TOKENIZER_TESTER))
@@ -84,8 +89,8 @@ build-testers: tokenizer-tester parser-tester ir-generator-tester target-code-ge
 
 clean:
 	rm -rfv $(BIN)$(PROGRAM)
-	rm -rfv $(BIN)tokenizer-tester
-	rm -rfv $(OBJ)$(TESTERS)tokenizer-tester.o
+	rm -rfv $(BIN)*-tester
+	rm -rfv $(OBJ)$(TESTERS)*.o
 	rm -rfv $(OBJ)*.o
 
 $(OBJ)%.o: %.c

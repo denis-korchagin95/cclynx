@@ -1,0 +1,39 @@
+@test("It should generate IR code when returning variable with a constant")
+@given("file")
+int main() {
+    int x;
+    x = 10;
+    return x;
+}
+@whenRun("./bin/ir-generator-tester")
+@expectOutput("stdout")
+OP_FUNC "main"
+OP_CONST 10, t1
+OP_STORE x, t1
+OP_LOAD x, t2
+OP_RETURN t2
+OP_FUNC_END
+
+@endtest
+
+@test("It should generate IR code when returning a variable with an expression")
+@given("file")
+int main() {
+    int x;
+    x = 7 * 8;
+    return x / 2;
+}
+@whenRun("./bin/ir-generator-tester")
+@expectOutput("stdout")
+OP_FUNC "main"
+OP_CONST 7, t1
+OP_CONST 8, t2
+OP_MUL t1, t2, t3
+OP_STORE x, t3
+OP_LOAD x, t4
+OP_CONST 2, t5
+OP_DIV t4, t5, t6
+OP_RETURN t6
+OP_FUNC_END
+
+@endtest

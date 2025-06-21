@@ -14,14 +14,22 @@ enum operand_kind
     OPERAND_KIND_CONSTANT = 1,
     OPERAND_KIND_TEMPORARY,
     OPERAND_KIND_FUNCTION_NAME,
+    OPERAND_KIND_VARIABLE,
 };
 
 struct ir_operand
 {
     union
     {
+        struct variable {
+            struct symbol * symbol;
+            size_t offset;
+        } variable;
+        struct function {
+            struct identifier * identifier;
+            size_t local_vars_size;
+        } function;
         unsigned long long int temp_id;
-        struct identifier * function_name;
         long long int llic;
     } content;
     struct type * type;
@@ -34,6 +42,8 @@ enum opcode
     OP_CONST = 1,
     OP_FUNC,
     OP_FUNC_END,
+    OP_LOAD,
+    OP_STORE,
     OP_RETURN,
     OP_ADD,
     OP_MUL,

@@ -5,6 +5,7 @@
 #include "target-arm64.h"
 #include "ir.h"
 #include "identifier.h"
+#include "util.h"
 
 static unsigned int regs[5] = {0};
 static const char * reg_names[] = {"x9", "x10", "x11", "x12", "x13"};
@@ -13,23 +14,23 @@ static unsigned int stack_pos = 0;
 
 static void push_reg(unsigned int reg)
 {
-	if (stack_pos >= 16) {
-		fprintf(stderr, "ERROR: reg stack overflow for target arm64 generator\n");
-		exit(1);
-	}
-	stack[stack_pos++] = reg;
+    if (stack_pos >= 16) {
+        fprintf(stderr, "ERROR: reg stack overflow for target arm64 generator\n");
+        exit(1);
+    }
+    stack[stack_pos++] = reg;
 }
 
 static unsigned int pop_reg(void)
 {
-	if (stack_pos <= 0) {
-		fprintf(stderr, "ERROR: reg stack underflow for target arm64 generator\n");
-		exit(1);
-	}
-	unsigned int reg = stack[stack_pos - 1];
-	stack[stack_pos - 1] = 0;
-	--stack_pos;
-	return reg;
+    if (stack_pos <= 0) {
+        fprintf(stderr, "ERROR: reg stack underflow for target arm64 generator\n");
+        exit(1);
+    }
+    unsigned int reg = stack[stack_pos - 1];
+    stack[stack_pos - 1] = 0;
+    --stack_pos;
+    return reg;
 }
 
 static unsigned int alloc_reg(void)
@@ -47,10 +48,10 @@ static unsigned int alloc_reg(void)
 
 static void free_reg(unsigned int reg)
 {
-	if (reg >= 1 && reg <= 5) {
-    	regs[reg - 1] = 0;
-		return;
-	}
+    if (reg >= 1 && reg <= 5) {
+        regs[reg - 1] = 0;
+        return;
+    }
 
     fprintf(stderr, "ERROR: unknown register\n");
     exit(1);
@@ -58,9 +59,9 @@ static void free_reg(unsigned int reg)
 
 static const char * get_reg_name(unsigned int reg)
 {
-	if (reg >= 1 && reg <= 5) {
-		return reg_names[reg - 1];
-	}
+    if (reg >= 1 && reg <= 5) {
+        return reg_names[reg - 1];
+    }
 
     fprintf(stderr, "ERROR: unknown register\n");
     exit(1);
@@ -75,7 +76,7 @@ void target_arm64_generate(struct ir_program * program, FILE * file)
     static char buf[1024] = {'\0'};
 
     fprintf(file, ".text\n");
-    fprintf(file, ".globl _main\n");
+    fprintf(file, ".global _main\n");
     fprintf(file, ".align 2\n");
     fprintf(file, "\n");
 
@@ -84,69 +85,90 @@ void target_arm64_generate(struct ir_program * program, FILE * file)
 
         switch (instruction->code) {
             case OP_FUNC:
-                fprintf(file, "_%s:\n", instruction->result->content.function_name->name);
+                fprintf(file, "_%s:\n", instruction->result->content.function.identifier->name);
+                fprintf(file, "    stp x29, x30, [sp, -16]!\n");
+                fprintf(file, "    mov x29, sp\n");
+                if (instruction->result->content.function.local_vars_size > 0) {
+                    fprintf(file, "    sub sp, sp, #%zu\n", align_up(instruction->result->content.function.local_vars_size, 16));
+                }
                 break;
             case OP_FUNC_END:
+                fprintf(file, "    add sp, sp, #16\n");
+                fprintf(file, "    ldp x29, x30, [sp], #16\n");
+                fprintf(file, "    ret\n");
+                break;
+            case OP_STORE:
+                {
+                    unsigned int op_reg = pop_reg();
+                    fprintf(file, "    str %s, [sp, #%zu]\n", get_reg_name(op_reg), instruction->op1->content.variable.offset);
+                    free_reg(op_reg);
+                }
+                break;
+            case OP_LOAD:
+                {
+                    unsigned int op_reg = alloc_reg();
+                    fprintf(file, "    ldr %s, [sp, #%zu]\n", get_reg_name(op_reg), instruction->op1->content.variable.offset);
+                    push_reg(op_reg);
+                }
                 break;
             case OP_CONST:
-				{
-                	unsigned int op_reg = alloc_reg();
-                	sprintf(buf, "%lli", instruction->op1->content.llic);
-                	fprintf(file, "%smov %s, #%s\n", "    ", get_reg_name(op_reg), buf);
-					push_reg(op_reg);
-				}
+                {
+                    unsigned int op_reg = alloc_reg();
+                    sprintf(buf, "%lli", instruction->op1->content.llic);
+                    fprintf(file, "    mov %s, #%s\n", get_reg_name(op_reg), buf);
+                    push_reg(op_reg);
+                }
                 break;
             case OP_MUL:
-				{
-                	unsigned int op_reg = alloc_reg();
-					unsigned int op2_reg = pop_reg();
-					unsigned int op1_reg = pop_reg();
-                	fprintf(file, "%smul %s, %s, %s\n", "    ", get_reg_name(op_reg), get_reg_name(op1_reg), get_reg_name(op2_reg));
-					free_reg(op1_reg);
-					free_reg(op2_reg);
-					push_reg(op_reg);
-				}
+                {
+                    unsigned int op_reg = alloc_reg();
+                    unsigned int op2_reg = pop_reg();
+                    unsigned int op1_reg = pop_reg();
+                    fprintf(file, "    mul %s, %s, %s\n", get_reg_name(op_reg), get_reg_name(op1_reg), get_reg_name(op2_reg));
+                    free_reg(op1_reg);
+                    free_reg(op2_reg);
+                    push_reg(op_reg);
+                }
                 break;
             case OP_DIV:
                 {
-                	unsigned int op_reg = alloc_reg();
-					unsigned int op2_reg = pop_reg();
-					unsigned int op1_reg = pop_reg();
-                	fprintf(file, "%ssdiv %s, %s, %s\n", "    ", get_reg_name(op_reg), get_reg_name(op1_reg), get_reg_name(op2_reg));
-					free_reg(op1_reg);
-					free_reg(op2_reg);
-					push_reg(op_reg);
+                    unsigned int op_reg = alloc_reg();
+                    unsigned int op2_reg = pop_reg();
+                    unsigned int op1_reg = pop_reg();
+                    fprintf(file, "    sdiv %s, %s, %s\n", get_reg_name(op_reg), get_reg_name(op1_reg), get_reg_name(op2_reg));
+                    free_reg(op1_reg);
+                    free_reg(op2_reg);
+                    push_reg(op_reg);
                 }
                 break;
             case OP_SUB:
                 {
-                	unsigned int op_reg = alloc_reg();
-					unsigned int op2_reg = pop_reg();
-					unsigned int op1_reg = pop_reg();
-                	fprintf(file, "%ssub %s, %s, %s\n", "    ", get_reg_name(op_reg), get_reg_name(op1_reg), get_reg_name(op2_reg));
-					free_reg(op1_reg);
-					free_reg(op2_reg);
-					push_reg(op_reg);
+                    unsigned int op_reg = alloc_reg();
+                    unsigned int op2_reg = pop_reg();
+                    unsigned int op1_reg = pop_reg();
+                    fprintf(file, "    sub %s, %s, %s\n", get_reg_name(op_reg), get_reg_name(op1_reg), get_reg_name(op2_reg));
+                    free_reg(op1_reg);
+                    free_reg(op2_reg);
+                    push_reg(op_reg);
                 }
                 break;
             case OP_ADD:
-				{
-                	unsigned int op_reg = alloc_reg();
-					unsigned int op2_reg = pop_reg();
-					unsigned int op1_reg = pop_reg();
-                	fprintf(file, "%sadd %s, %s, %s\n", "    ", get_reg_name(op_reg), get_reg_name(op1_reg), get_reg_name(op2_reg));
-					free_reg(op1_reg);
-					free_reg(op2_reg);
-					push_reg(op_reg);
-				}
+                {
+                    unsigned int op_reg = alloc_reg();
+                    unsigned int op2_reg = pop_reg();
+                    unsigned int op1_reg = pop_reg();
+                    fprintf(file, "    add %s, %s, %s\n", get_reg_name(op_reg), get_reg_name(op1_reg), get_reg_name(op2_reg));
+                    free_reg(op1_reg);
+                    free_reg(op2_reg);
+                    push_reg(op_reg);
+                }
                 break;
             case OP_RETURN:
-				{
-					unsigned int op_reg = pop_reg();
-                	fprintf(file, "%smov x0, %s\n", "    ", get_reg_name(op_reg));
-                	fprintf(file, "%sret\n", "    ");
-                	free_reg(op_reg);
-				}
+                {
+                    unsigned int op_reg = pop_reg();
+                    fprintf(file, "    mov x0, %s\n", get_reg_name(op_reg));
+                    free_reg(op_reg);
+                }
                 break;
             default:
                 fprintf(stderr, "ERROR: unkown instruction\n");

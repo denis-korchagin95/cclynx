@@ -56,7 +56,7 @@ void print_ast(const struct ast_node * ast, FILE * file)
 
     ancestors_info[0] = 1;
 
-	do_print_ast(ast, file, 0, ancestors_info, NULL);
+    do_print_ast(ast, file, 0, ancestors_info, NULL);
 }
 
 void do_print_ast(const struct ast_node * ast, FILE * file, int depth, unsigned int * ancestors_info, const char * node_label)
@@ -80,9 +80,9 @@ void do_print_ast(const struct ast_node * ast, FILE * file, int depth, unsigned 
         }
     }
 
-	if (depth > 0) {
-		fprintf(file, "+-> %s", node_label == NULL ? "" : node_label);
-	}
+    if (depth > 0) {
+        fprintf(file, "+-> %s", node_label == NULL ? "" : node_label);
+    }
 
     switch (ast->kind) {
         case AST_NODE_KIND_IF_STATEMENT:
@@ -196,8 +196,16 @@ void print_ir_program(const struct ir_program * program, FILE * file)
         struct ir_instruction * instruction = program->instructions[i];
 
         switch (instruction->code) {
+            case OP_STORE:
+                sprintf(buf, "t%llu", instruction->op2->content.temp_id);
+                fprintf(file, "OP_STORE %s, %s\n", instruction->op1->content.variable.symbol->identifier->name, buf);
+                break;
+            case OP_LOAD:
+                sprintf(buf, "t%llu", instruction->result->content.temp_id);
+                fprintf(file, "OP_LOAD %s, %s\n", instruction->op1->content.variable.symbol->identifier->name, buf);
+                break;
             case OP_FUNC:
-                fprintf(file, "OP_FUNC \"%s\"\n", instruction->result->content.function_name->name);
+                fprintf(file, "OP_FUNC \"%s\"\n", instruction->result->content.function.identifier->name);
                 break;
             case OP_FUNC_END:
                 fprintf(file, "OP_FUNC_END\n");
@@ -227,7 +235,7 @@ void print_ir_program(const struct ir_program * program, FILE * file)
                 fprintf(file, "OP_MUL %s\n", buf);
             break;
             default:
-                fprintf(file, "ERROR: Unknown instruction for IR program\n");
+                fprintf(stderr, "ERROR: Unknown instruction for IR program\n");
                 exit(1);
         }
     }

@@ -3,15 +3,11 @@
 #include <stdlib.h>
 
 #include "allocator.h"
+#include "util.h"
 
 
 struct memory_blob_pool main_pool = {0};
 
-
-static size_t align_up(const size_t size, const size_t alignment)
-{
-    return (size + alignment - 1) & ~(alignment - 1);
-}
 
 struct memory_blob * alloc_new_blob(size_t size)
 {
