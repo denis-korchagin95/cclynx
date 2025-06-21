@@ -198,41 +198,41 @@ void print_ir_program(const struct ir_program * program, FILE * file)
         switch (instruction->code) {
             case OP_STORE:
                 sprintf(buf, "t%llu", instruction->op2->content.temp_id);
-                fprintf(file, "OP_STORE %s, %s\n", instruction->op1->content.variable.symbol->identifier->name, buf);
+                fprintf(file, "%04zu OP_STORE %s, %s\n", i, instruction->op1->content.variable.symbol->identifier->name, buf);
                 break;
             case OP_LOAD:
                 sprintf(buf, "t%llu", instruction->result->content.temp_id);
-                fprintf(file, "OP_LOAD %s, %s\n", instruction->op1->content.variable.symbol->identifier->name, buf);
+                fprintf(file, "%04zu OP_LOAD %s, %s\n", i, instruction->op1->content.variable.symbol->identifier->name, buf);
                 break;
             case OP_FUNC:
-                fprintf(file, "OP_FUNC \"%s\"\n", instruction->result->content.function.identifier->name);
+                fprintf(file, "%04zu OP_FUNC \"%s\"\n", i, instruction->result->content.function.identifier->name);
                 break;
             case OP_FUNC_END:
-                fprintf(file, "OP_FUNC_END\n");
+                fprintf(file, "%04zu OP_FUNC_END\n", i);
                 break;
             case OP_SUB:
                 sprintf(buf, "t%llu, t%llu, t%llu", instruction->op1->content.temp_id, instruction->op2->content.temp_id, instruction->result->content.temp_id);
-                fprintf(file, "OP_SUB %s\n", buf);
+                fprintf(file, "%04zu OP_SUB %s\n", i, buf);
             break;
             case OP_DIV:
                 sprintf(buf, "t%llu, t%llu, t%llu", instruction->op1->content.temp_id, instruction->op2->content.temp_id, instruction->result->content.temp_id);
-                fprintf(file, "OP_DIV %s\n", buf);
+                fprintf(file, "%04zu OP_DIV %s\n", i, buf);
                 break;
             case OP_CONST:
                 sprintf(buf, "%lli, t%llu", instruction->op1->content.llic, instruction->result->content.temp_id);
-                fprintf(file, "OP_CONST %s\n", buf);
+                fprintf(file, "%04zu OP_CONST %s\n", i, buf);
             break;
             case OP_RETURN:
                 sprintf(buf, "t%llu", instruction->op1->content.temp_id);
-                fprintf(file, "OP_RETURN %s\n", buf);
+                fprintf(file, "%04zu OP_RETURN %s\n", i, buf);
             break;
             case OP_ADD:
                 sprintf(buf, "t%llu, t%llu, t%llu", instruction->op1->content.temp_id, instruction->op2->content.temp_id, instruction->result->content.temp_id);
-                fprintf(file, "OP_ADD %s\n", buf);
+                fprintf(file, "%04zu OP_ADD %s\n", i, buf);
             break;
             case OP_MUL:
                 sprintf(buf, "t%llu, t%llu, t%llu", instruction->op1->content.temp_id, instruction->op2->content.temp_id, instruction->result->content.temp_id);
-                fprintf(file, "OP_MUL %s\n", buf);
+                fprintf(file, "%04zu OP_MUL %s\n", i, buf);
             break;
             default:
                 fprintf(stderr, "ERROR: Unknown instruction for IR program\n");
