@@ -12,8 +12,8 @@ int main() {
 _main:
     stp x29, x30, [sp, -16]!
     mov x29, sp
-    mov x9, #7
-    mov x0, x9
+    mov w9, #7
+    mov w0, w9
     add sp, sp, #16
     ldp x29, x30, [sp], #16
     ret
@@ -34,12 +34,12 @@ int main() {
 _main:
     stp x29, x30, [sp, -16]!
     mov x29, sp
-    mov x9, #2
-    mov x10, #3
-    mul x11, x9, x10
-    mov x9, #1
-    add x10, x11, x9
-    mov x0, x10
+    mov w9, #2
+    mov w10, #3
+    mul w11, w9, w10
+    mov w9, #1
+    add w10, w11, w9
+    mov w0, w10
     add sp, sp, #16
     ldp x29, x30, [sp], #16
     ret
@@ -60,12 +60,12 @@ int main() {
 _main:
     stp x29, x30, [sp, -16]!
     mov x29, sp
-    mov x9, #12
-    mov x10, #3
-    sdiv x11, x9, x10
-    mov x9, #1
-    sub x10, x11, x9
-    mov x0, x10
+    mov w9, #12
+    mov w10, #3
+    sdiv w11, w9, w10
+    mov w9, #1
+    sub w10, w11, w9
+    mov w0, w10
     add sp, sp, #16
     ldp x29, x30, [sp], #16
     ret
@@ -86,18 +86,18 @@ int main() {
 _main:
     stp x29, x30, [sp, -16]!
     mov x29, sp
-    mov x9, #2
-    mov x10, #3
-    mov x11, #4
-    mul x12, x10, x11
-    mov x10, #20
-    add x11, x12, x10
-    mov x10, #1
-    add x12, x11, x10
-    mul x10, x9, x12
-    mov x9, #15
-    mul x11, x10, x9
-    mov x0, x11
+    mov w9, #2
+    mov w10, #3
+    mov w11, #4
+    mul w12, w10, w11
+    mov w10, #20
+    add w11, w12, w10
+    mov w10, #1
+    add w12, w11, w10
+    mul w10, w9, w12
+    mov w9, #15
+    mul w11, w10, w9
+    mov w0, w11
     add sp, sp, #16
     ldp x29, x30, [sp], #16
     ret
@@ -118,11 +118,11 @@ int main() {
 _main:
     stp x29, x30, [sp, -16]!
     mov x29, sp
-    mov x9, #12
-    mov x10, #3
-    cmp x9, x10
-    cset x11, gt
-    mov x0, x11
+    mov w9, #12
+    mov w10, #3
+    cmp w9, w10
+    cset w11, gt
+    mov w0, w11
     add sp, sp, #16
     ldp x29, x30, [sp], #16
     ret
@@ -143,11 +143,11 @@ int main() {
 _main:
     stp x29, x30, [sp, -16]!
     mov x29, sp
-    mov x9, #12
-    mov x10, #3
-    cmp x9, x10
-    cset x11, lt
-    mov x0, x11
+    mov w9, #12
+    mov w10, #3
+    cmp w9, w10
+    cset w11, lt
+    mov w0, w11
     add sp, sp, #16
     ldp x29, x30, [sp], #16
     ret
@@ -168,11 +168,11 @@ int main() {
 _main:
     stp x29, x30, [sp, -16]!
     mov x29, sp
-    mov x9, #12
-    mov x10, #3
-    cmp x9, x10
-    cset x11, eq
-    mov x0, x11
+    mov w9, #12
+    mov w10, #3
+    cmp w9, w10
+    cset w11, eq
+    mov w0, w11
     add sp, sp, #16
     ldp x29, x30, [sp], #16
     ret
@@ -193,11 +193,11 @@ int main() {
 _main:
     stp x29, x30, [sp, -16]!
     mov x29, sp
-    mov x9, #12
-    mov x10, #3
-    cmp x9, x10
-    cset x11, ne
-    mov x0, x11
+    mov w9, #12
+    mov w10, #3
+    cmp w9, w10
+    cset w11, ne
+    mov w0, w11
     add sp, sp, #16
     ldp x29, x30, [sp], #16
     ret

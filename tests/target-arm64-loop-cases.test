@@ -18,25 +18,25 @@ _main:
     stp x29, x30, [sp, -16]!
     mov x29, sp
     sub sp, sp, #16
-    mov x9, #0
-    str x9, [sp, #0]
+    mov w9, #0
+    str w9, [sp, #0]
 .L1:
-    ldr x9, [sp, #0]
-    mov x10, #10
-    cmp x9, x10
+    ldr w9, [sp, #0]
+    mov w10, #10
+    cmp w9, w10
     b.ge .L2
-    ldr x9, [sp, #0]
-    mov x10, #1
-    add x11, x9, x10
-    str x11, [sp, #0]
+    ldr w9, [sp, #0]
+    mov w10, #1
+    add w11, w9, w10
+    str w11, [sp, #0]
     b .L1
 .L2:
-    ldr x9, [sp, #0]
-    mov x10, #7
-    mul x11, x9, x10
-    mov x9, #7
-    add x10, x11, x9
-    mov x0, x10
+    ldr w9, [sp, #0]
+    mov w10, #7
+    mul w11, w9, w10
+    mov w9, #7
+    add w10, w11, w9
+    mov w0, w10
     add sp, sp, #16
     ldp x29, x30, [sp], #16
     ret
@@ -63,25 +63,25 @@ _main:
     stp x29, x30, [sp, -16]!
     mov x29, sp
     sub sp, sp, #16
-    mov x9, #20
-    str x9, [sp, #0]
+    mov w9, #20
+    str w9, [sp, #0]
 .L1:
-    ldr x9, [sp, #0]
-    mov x10, #10
-    cmp x9, x10
+    ldr w9, [sp, #0]
+    mov w10, #10
+    cmp w9, w10
     b.le .L2
-    ldr x9, [sp, #0]
-    mov x10, #1
-    sub x11, x9, x10
-    str x11, [sp, #0]
+    ldr w9, [sp, #0]
+    mov w10, #1
+    sub w11, w9, w10
+    str w11, [sp, #0]
     b .L1
 .L2:
-    ldr x9, [sp, #0]
-    mov x10, #7
-    mul x11, x9, x10
-    mov x9, #7
-    add x10, x11, x9
-    mov x0, x10
+    ldr w9, [sp, #0]
+    mov w10, #7
+    mul w11, w9, w10
+    mov w9, #7
+    add w10, w11, w9
+    mov w0, w10
     add sp, sp, #16
     ldp x29, x30, [sp], #16
     ret

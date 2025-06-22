@@ -8,7 +8,7 @@
 #include "util.h"
 
 static unsigned int regs[5] = {0};
-static const char * reg_names[] = {"x9", "x10", "x11", "x12", "x13"};
+static const char * reg_names[] = {"w9", "w10", "w11", "w12", "w13", "w14", "w15"};
 static unsigned int stack[16] = {0};
 static unsigned int stack_pos = 0;
 
@@ -249,7 +249,7 @@ void target_arm64_generate(struct ir_program * program, FILE * file)
             case OP_RETURN:
                 {
                     unsigned int op_reg = pop_reg();
-                    fprintf(file, "    mov x0, %s\n", get_reg_name(op_reg));
+                    fprintf(file, "    mov w0, %s\n", get_reg_name(op_reg));
                     free_reg(op_reg);
                 }
                 break;

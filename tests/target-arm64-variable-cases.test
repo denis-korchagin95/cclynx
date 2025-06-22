@@ -15,10 +15,10 @@ _main:
     stp x29, x30, [sp, -16]!
     mov x29, sp
     sub sp, sp, #16
-    mov x9, #10
-    str x9, [sp, #0]
-    ldr x9, [sp, #0]
-    mov x0, x9
+    mov w9, #10
+    str w9, [sp, #0]
+    ldr w9, [sp, #0]
+    mov w0, w9
     add sp, sp, #16
     ldp x29, x30, [sp], #16
     ret
@@ -42,14 +42,14 @@ _main:
     stp x29, x30, [sp, -16]!
     mov x29, sp
     sub sp, sp, #16
-    mov x9, #7
-    mov x10, #8
-    mul x11, x9, x10
-    str x11, [sp, #0]
-    ldr x9, [sp, #0]
-    mov x10, #2
-    sdiv x11, x9, x10
-    mov x0, x11
+    mov w9, #7
+    mov w10, #8
+    mul w11, w9, w10
+    str w11, [sp, #0]
+    ldr w9, [sp, #0]
+    mov w10, #2
+    sdiv w11, w9, w10
+    mov w0, w11
     add sp, sp, #16
     ldp x29, x30, [sp], #16
     ret
