@@ -84,6 +84,89 @@ void target_arm64_generate(struct ir_program * program, FILE * file)
         struct ir_instruction * instruction = program->instructions[i];
 
         switch (instruction->code) {
+            case OP_JUMP:
+                {
+                    fprintf(file, "    b .L%llu\n", instruction->op1->content.label_id);
+                }
+                break;
+            case OP_JUMP_IF_FALSE:
+                {
+                    fprintf(file, "    b.ne .L%llu\n", instruction->op2->content.label_id);
+                }
+                break;
+            case OP_LABEL:
+                {
+                    fprintf(file, ".L%llu:\n", instruction->op1->content.label_id);
+                }
+                break;
+            case OP_BRANCH_GREATER_THAN:
+                {
+                    unsigned int op2_reg = pop_reg();
+                    unsigned int op1_reg = pop_reg();
+                    fprintf(file, "    cmp %s, %s\n", get_reg_name(op1_reg), get_reg_name(op2_reg));
+                    fprintf(file, "    b.le .L%llu\n", instruction->result->content.label_id);
+                    free_reg(op1_reg);
+                    free_reg(op2_reg);
+                }
+                break;
+            case OP_BRANCH_LESS_THAN:
+                {
+                    unsigned int op2_reg = pop_reg();
+                    unsigned int op1_reg = pop_reg();
+                    fprintf(file, "    cmp %s, %s\n", get_reg_name(op1_reg), get_reg_name(op2_reg));
+                    fprintf(file, "    b.ge .L%llu\n", instruction->result->content.label_id);
+                    free_reg(op1_reg);
+                    free_reg(op2_reg);
+                }
+                break;
+            case OP_IS_GREATER_THAN:
+                {
+                    unsigned int op_reg = alloc_reg();
+                    unsigned int op2_reg = pop_reg();
+                    unsigned int op1_reg = pop_reg();
+                    fprintf(file, "    cmp %s, %s\n", get_reg_name(op1_reg), get_reg_name(op2_reg));
+                    fprintf(file, "    cset %s, gt\n", get_reg_name(op_reg));
+                    free_reg(op1_reg);
+                    free_reg(op2_reg);
+                    push_reg(op_reg);
+                }
+                break;
+            case OP_IS_LESS_THAN:
+                {
+                    unsigned int op_reg = alloc_reg();
+                    unsigned int op2_reg = pop_reg();
+                    unsigned int op1_reg = pop_reg();
+                    fprintf(file, "    cmp %s, %s\n", get_reg_name(op1_reg), get_reg_name(op2_reg));
+                    fprintf(file, "    cset %s, lt\n", get_reg_name(op_reg));
+                    free_reg(op1_reg);
+                    free_reg(op2_reg);
+                    push_reg(op_reg);
+                }
+                break;
+            case OP_IS_EQUAL:
+                {
+                    unsigned int op_reg = alloc_reg();
+                    unsigned int op2_reg = pop_reg();
+                    unsigned int op1_reg = pop_reg();
+                    fprintf(file, "    cmp %s, %s\n", get_reg_name(op1_reg), get_reg_name(op2_reg));
+                    fprintf(file, "    cset %s, eq\n", get_reg_name(op_reg));
+                    free_reg(op1_reg);
+                    free_reg(op2_reg);
+                    push_reg(op_reg);
+                }
+                break;
+            case OP_IS_NOT_EQUAL:
+                {
+                    unsigned int op_reg = alloc_reg();
+                    unsigned int op2_reg = pop_reg();
+                    unsigned int op1_reg = pop_reg();
+                    fprintf(file, "    cmp %s, %s\n", get_reg_name(op1_reg), get_reg_name(op2_reg));
+                    fprintf(file, "    cset %s, ne\n", get_reg_name(op_reg));
+                    free_reg(op1_reg);
+                    free_reg(op2_reg);
+                    push_reg(op_reg);
+                }
+                break;
             case OP_FUNC:
                 fprintf(file, "_%s:\n", instruction->result->content.function.identifier->name);
                 fprintf(file, "    stp x29, x30, [sp, -16]!\n");
@@ -171,7 +254,7 @@ void target_arm64_generate(struct ir_program * program, FILE * file)
                 }
                 break;
             default:
-                fprintf(stderr, "ERROR: unkown instruction\n");
+                fprintf(stderr, "ERROR: unknown instruction\n");
                 exit(1);
         }
     }

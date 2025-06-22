@@ -1,0 +1,89 @@
+@test("It should generate target arm64 with while loop statement with expression <")
+@given("file")
+int main() {
+    int i;
+    i = 0;
+    while (i < 10) {
+        i = i + 1;
+    }
+    return i * 7 + 7;
+}
+@whenRun("./bin/target-code-generator-tester")
+@expectOutput("stdout")
+.text
+.global _main
+.align 2
+
+_main:
+    stp x29, x30, [sp, -16]!
+    mov x29, sp
+    sub sp, sp, #16
+    mov x9, #0
+    str x9, [sp, #0]
+.L1:
+    ldr x9, [sp, #0]
+    mov x10, #10
+    cmp x9, x10
+    b.ge .L2
+    ldr x9, [sp, #0]
+    mov x10, #1
+    add x11, x9, x10
+    str x11, [sp, #0]
+    b .L1
+.L2:
+    ldr x9, [sp, #0]
+    mov x10, #7
+    mul x11, x9, x10
+    mov x9, #7
+    add x10, x11, x9
+    mov x0, x10
+    add sp, sp, #16
+    ldp x29, x30, [sp], #16
+    ret
+
+@endtest
+
+@test("It should generate target arm64 with while loop statement with expression >")
+@given("file")
+int main() {
+    int i;
+    i = 20;
+    while (i > 10) {
+        i = i - 1;
+    }
+    return i * 7 + 7;
+}
+@whenRun("./bin/target-code-generator-tester")
+@expectOutput("stdout")
+.text
+.global _main
+.align 2
+
+_main:
+    stp x29, x30, [sp, -16]!
+    mov x29, sp
+    sub sp, sp, #16
+    mov x9, #20
+    str x9, [sp, #0]
+.L1:
+    ldr x9, [sp, #0]
+    mov x10, #10
+    cmp x9, x10
+    b.le .L2
+    ldr x9, [sp, #0]
+    mov x10, #1
+    sub x11, x9, x10
+    str x11, [sp, #0]
+    b .L1
+.L2:
+    ldr x9, [sp, #0]
+    mov x10, #7
+    mul x11, x9, x10
+    mov x9, #7
+    add x10, x11, x9
+    mov x0, x10
+    add sp, sp, #16
+    ldp x29, x30, [sp], #16
+    ret
+
+@endtest

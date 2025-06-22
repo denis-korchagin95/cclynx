@@ -103,3 +103,103 @@ _main:
     ret
 
 @endtest
+
+@test("It should generate IR code on return trivial expression (without variables, >)")
+@given("file")
+int main() {
+    return 12 > 3;
+}
+@whenRun("./bin/target-code-generator-tester")
+@expectOutput("stdout")
+.text
+.global _main
+.align 2
+
+_main:
+    stp x29, x30, [sp, -16]!
+    mov x29, sp
+    mov x9, #12
+    mov x10, #3
+    cmp x9, x10
+    cset x11, gt
+    mov x0, x11
+    add sp, sp, #16
+    ldp x29, x30, [sp], #16
+    ret
+
+@endtest
+
+@test("It should generate IR code on return trivial expression (without variables, <)")
+@given("file")
+int main() {
+    return 12 < 3;
+}
+@whenRun("./bin/target-code-generator-tester")
+@expectOutput("stdout")
+.text
+.global _main
+.align 2
+
+_main:
+    stp x29, x30, [sp, -16]!
+    mov x29, sp
+    mov x9, #12
+    mov x10, #3
+    cmp x9, x10
+    cset x11, lt
+    mov x0, x11
+    add sp, sp, #16
+    ldp x29, x30, [sp], #16
+    ret
+
+@endtest
+
+@test("It should generate IR code on return trivial expression (without variables, ==)")
+@given("file")
+int main() {
+    return 12 == 3;
+}
+@whenRun("./bin/target-code-generator-tester")
+@expectOutput("stdout")
+.text
+.global _main
+.align 2
+
+_main:
+    stp x29, x30, [sp, -16]!
+    mov x29, sp
+    mov x9, #12
+    mov x10, #3
+    cmp x9, x10
+    cset x11, eq
+    mov x0, x11
+    add sp, sp, #16
+    ldp x29, x30, [sp], #16
+    ret
+
+@endtest
+
+@test("It should generate IR code on return trivial expression (without variables, !=)")
+@given("file")
+int main() {
+    return 12 != 3;
+}
+@whenRun("./bin/target-code-generator-tester")
+@expectOutput("stdout")
+.text
+.global _main
+.align 2
+
+_main:
+    stp x29, x30, [sp, -16]!
+    mov x29, sp
+    mov x9, #12
+    mov x10, #3
+    cmp x9, x10
+    cset x11, ne
+    mov x0, x11
+    add sp, sp, #16
+    ldp x29, x30, [sp], #16
+    ret
+
+@endtest

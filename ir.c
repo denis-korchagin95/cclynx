@@ -11,6 +11,7 @@
 #define MAX_OPERAND_COUNT (1024)
 
 static unsigned long long int temp_id = 0;
+static unsigned long long int label_id = 0;
 static struct ir_operand * last_variable = NULL;
 static unsigned int is_assign = 0;
 static struct ir_instruction * current_func = NULL;
@@ -77,6 +78,83 @@ void do_generate_ir(struct ir_program * program, const struct ast_node * node)
     assert(node != NULL);
 
     switch(node->kind) {
+        case AST_NODE_KIND_WHILE_STATEMENT:
+            {
+                main_pool_alloc(struct ir_operand, start_of_loop_label)
+                start_of_loop_label->content.label_id = ++label_id;
+                start_of_loop_label->type = &type_void;
+                start_of_loop_label->kind = OPERAND_KIND_LABEL;
+
+                {
+                    main_pool_alloc(struct ir_instruction, instruction)
+                    instruction->code = OP_LABEL;
+                    instruction->op1 = start_of_loop_label;
+
+                    ir_emit(program, instruction);
+                }
+
+                main_pool_alloc(struct ir_operand, end_of_loop_label)
+                end_of_loop_label->content.label_id = ++label_id;
+                end_of_loop_label->type = &type_void;
+                end_of_loop_label->kind = OPERAND_KIND_LABEL;
+
+                {
+                    struct ast_node * condition = node->content.while_statement.condition;
+
+                    enum opcode cmp_opcode;
+                    struct ir_operand * op1 = NULL, * op2 = NULL;
+
+                    if (
+                        condition->kind == AST_NODE_KIND_RELATIONAL_EXPRESSION
+                        && condition->content.binary_expression.operation == BINARY_OPERATION_LESS_THAN
+                    ) {
+                        cmp_opcode = OP_BRANCH_LESS_THAN;
+                        do_generate_ir(program, condition->content.binary_expression.lhs);
+                        op1 = program->instructions[program->position - 1]->result;
+                        do_generate_ir(program, condition->content.binary_expression.rhs);
+                        op2 = program->instructions[program->position - 1]->result;
+                    } else if (
+                        condition->kind == AST_NODE_KIND_RELATIONAL_EXPRESSION
+                        && condition->content.binary_expression.operation == BINARY_OPERATION_GREATER_THAN
+                    ) {
+                        cmp_opcode = OP_BRANCH_GREATER_THAN;
+                        do_generate_ir(program, condition->content.binary_expression.lhs);
+                        op1 = program->instructions[program->position - 1]->result;
+                        do_generate_ir(program, condition->content.binary_expression.rhs);
+                        op2 = program->instructions[program->position - 1]->result;
+                    } else {
+                        fprintf(stderr, "ERROR: unsupported expression for while loop\n");
+                        exit(1);
+                    }
+
+                    main_pool_alloc(struct ir_instruction, instruction)
+                    instruction->code = cmp_opcode;
+                    instruction->op1 = op1;
+                    instruction->op2 = op2;
+                    instruction->result = end_of_loop_label;
+
+                    ir_emit(program, instruction);
+                }
+
+                do_generate_ir(program, node->content.while_statement.body);
+
+                {
+                    main_pool_alloc(struct ir_instruction, instruction)
+                    instruction->code = OP_JUMP;
+                    instruction->op1 = start_of_loop_label;
+
+                    ir_emit(program, instruction);
+                }
+
+                {
+                    main_pool_alloc(struct ir_instruction, instruction)
+                    instruction->code = OP_LABEL;
+                    instruction->op1 = end_of_loop_label;
+
+                    ir_emit(program, instruction);
+                }
+            }
+            break;
         case AST_NODE_KIND_VARIABLE:
             {
                 struct ir_operand * variable = find_variable_operand_by_symbol(node->content.variable);
@@ -138,6 +216,9 @@ void do_generate_ir(struct ir_program * program, const struct ast_node * node)
         case AST_NODE_KIND_VARIABLE_DECLARATION:
             break;
         case AST_NODE_KIND_MULTIPLICATIVE_EXPRESSION:
+        case AST_NODE_KIND_EQUALITY_EXPRESSION:
+        case AST_NODE_KIND_ADDITIVE_EXPRESSION:
+        case AST_NODE_KIND_RELATIONAL_EXPRESSION:
             {
                 main_pool_alloc(struct ir_instruction, instruction)
 
@@ -148,27 +229,18 @@ void do_generate_ir(struct ir_program * program, const struct ast_node * node)
                     case BINARY_OPERATION_DIVIDE:
                         instruction->code = OP_DIV;
                         break;
-                    default:
-                        fprintf(stderr, "ERROR: unknown operation\n");
-                        exit(1);
-                }
-
-                do_generate_ir(program, node->content.binary_expression.lhs);
-                instruction->op1 = program->instructions[program->position - 1]->result;
-
-                do_generate_ir(program, node->content.binary_expression.rhs);
-                instruction->op2 = program->instructions[program->position - 1]->result;
-
-                instruction->result = new_temporary_operand();
-
-                ir_emit(program, instruction);
-            }
-            break;
-        case AST_NODE_KIND_ADDITIVE_EXPRESSION:
-            {
-                main_pool_alloc(struct ir_instruction, instruction)
-
-                switch (node->content.binary_expression.operation) {
+                    case BINARY_OPERATION_EQUALITY:
+                        instruction->code = OP_IS_EQUAL;
+                        break;
+                    case BINARY_OPERATION_INEQUALITY:
+                        instruction->code = OP_IS_NOT_EQUAL;
+                        break;
+                    case BINARY_OPERATION_LESS_THAN:
+                        instruction->code = OP_IS_LESS_THAN;
+                        break;
+                    case BINARY_OPERATION_GREATER_THAN:
+                        instruction->code = OP_IS_GREATER_THAN;
+                        break;
                     case BINARY_OPERATION_ADDITION:
                         instruction->code = OP_ADD;
                         break;

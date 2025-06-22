@@ -196,6 +196,42 @@ void print_ir_program(const struct ir_program * program, FILE * file)
         struct ir_instruction * instruction = program->instructions[i];
 
         switch (instruction->code) {
+            case OP_BRANCH_LESS_THAN:
+                sprintf(buf, "t%llu, t%llu, \".L%llu\"", instruction->op1->content.temp_id, instruction->op2->content.temp_id, instruction->result->content.label_id);
+                fprintf(file, "%04zu OP_BRANCH_LESS_THAN %s\n", i, buf);
+                break;
+            case OP_BRANCH_GREATER_THAN:
+                sprintf(buf, "t%llu, t%llu, \".L%llu\"", instruction->op1->content.temp_id, instruction->op2->content.temp_id, instruction->result->content.label_id);
+                fprintf(file, "%04zu OP_BRANCH_GREATER_THAN %s\n", i, buf);
+                break;
+            case OP_LABEL:
+                sprintf(buf, "\".L%llu\"", instruction->op1->content.label_id);
+                fprintf(file, "%04zu OP_LABEL %s\n", i, buf);
+                break;
+            case OP_JUMP:
+                sprintf(buf, "\".L%llu\"", instruction->op1->content.label_id);
+                fprintf(file, "%04zu OP_JUMP %s\n", i, buf);
+                break;
+            case OP_JUMP_IF_FALSE:
+                sprintf(buf, "t%llu, \".L%llu\"", instruction->op1->content.temp_id, instruction->op2->content.label_id);
+                fprintf(file, "%04zu OP_JUMP_IF_FALSE %s\n", i, buf);
+                break;
+            case OP_IS_LESS_THAN:
+                sprintf(buf, "t%llu, t%llu, t%llu", instruction->op1->content.temp_id, instruction->op2->content.temp_id, instruction->result->content.temp_id);
+                fprintf(file, "%04zu OP_IS_LESS_THAN %s\n", i, buf);
+                break;
+            case OP_IS_GREATER_THAN:
+                sprintf(buf, "t%llu, t%llu, t%llu", instruction->op1->content.temp_id, instruction->op2->content.temp_id, instruction->result->content.temp_id);
+                fprintf(file, "%04zu OP_IS_GREATER_THAN %s\n", i, buf);
+                break;
+            case OP_IS_EQUAL:
+                sprintf(buf, "t%llu, t%llu, t%llu", instruction->op1->content.temp_id, instruction->op2->content.temp_id, instruction->result->content.temp_id);
+                fprintf(file, "%04zu OP_IS_EQUAL %s\n", i, buf);
+                break;
+            case OP_IS_NOT_EQUAL:
+                sprintf(buf, "t%llu, t%llu, t%llu", instruction->op1->content.temp_id, instruction->op2->content.temp_id, instruction->result->content.temp_id);
+                fprintf(file, "%04zu OP_IS_NOT_EQUAL %s\n", i, buf);
+                break;
             case OP_STORE:
                 sprintf(buf, "t%llu", instruction->op2->content.temp_id);
                 fprintf(file, "%04zu OP_STORE %s, %s\n", i, instruction->op1->content.variable.symbol->identifier->name, buf);
