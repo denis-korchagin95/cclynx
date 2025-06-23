@@ -91,7 +91,9 @@ void target_arm64_generate(struct ir_program * program, FILE * file)
                 break;
             case OP_JUMP_IF_FALSE:
                 {
-                    fprintf(file, "    b.ne .L%llu\n", instruction->op2->content.label_id);
+                    unsigned int op_reg = pop_reg();
+                    fprintf(file, "    cbz %s, .L%llu\n", get_reg_name(op_reg), instruction->op2->content.label_id);
+                    free_reg(op_reg);
                 }
                 break;
             case OP_LABEL:

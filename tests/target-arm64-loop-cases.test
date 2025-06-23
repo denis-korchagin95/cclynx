@@ -169,3 +169,81 @@ _main:
     ret
 
 @endtest
+
+@test("It should generate target arm64 with while loop statement with constant false condition")
+@given("file")
+int main() {
+    int i;
+    i = 1;
+    while (0) {
+        i = i + 1;
+    }
+    return i;
+}
+@whenRun("./bin/target-code-generator-tester")
+@expectOutput("stdout")
+.text
+.global _main
+.align 2
+
+_main:
+    stp x29, x30, [sp, -16]!
+    mov x29, sp
+    sub sp, sp, #16
+    mov w9, #1
+    str w9, [sp, #0]
+.L1:
+    mov w9, #0
+    cbz w9, .L2
+    ldr w9, [sp, #0]
+    mov w10, #1
+    add w11, w9, w10
+    str w11, [sp, #0]
+    b .L1
+.L2:
+    ldr w9, [sp, #0]
+    mov w0, w9
+    add sp, sp, #16
+    ldp x29, x30, [sp], #16
+    ret
+
+@endtest
+
+@test("It should generate target arm64 with while loop statement with constant true condition")
+@given("file")
+int main() {
+    int i;
+    i = 1;
+    while (1) {
+        i = i + 1;
+    }
+    return i;
+}
+@whenRun("./bin/target-code-generator-tester")
+@expectOutput("stdout")
+.text
+.global _main
+.align 2
+
+_main:
+    stp x29, x30, [sp, -16]!
+    mov x29, sp
+    sub sp, sp, #16
+    mov w9, #1
+    str w9, [sp, #0]
+.L1:
+    mov w9, #1
+    cbz w9, .L2
+    ldr w9, [sp, #0]
+    mov w10, #1
+    add w11, w9, w10
+    str w11, [sp, #0]
+    b .L1
+.L2:
+    ldr w9, [sp, #0]
+    mov w0, w9
+    add sp, sp, #16
+    ldp x29, x30, [sp], #16
+    ret
+
+@endtest

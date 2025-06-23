@@ -101,57 +101,82 @@ void do_generate_ir(struct ir_program * program, const struct ast_node * node)
                 {
                     struct ast_node * condition = node->content.while_statement.condition;
 
-                    enum opcode cmp_opcode;
                     struct ir_operand * op1 = NULL, * op2 = NULL;
 
                     if (
                         condition->kind == AST_NODE_KIND_RELATIONAL_EXPRESSION
                         && condition->content.binary_expression.operation == BINARY_OPERATION_LESS_THAN
                     ) {
-                        cmp_opcode = OP_JUMP_IF_GREATER_OR_EQUAL;
                         do_generate_ir(program, condition->content.binary_expression.lhs);
                         op1 = program->instructions[program->position - 1]->result;
                         do_generate_ir(program, condition->content.binary_expression.rhs);
                         op2 = program->instructions[program->position - 1]->result;
+
+                        main_pool_alloc(struct ir_instruction, instruction)
+                        instruction->code = OP_JUMP_IF_GREATER_OR_EQUAL;
+                        instruction->op1 = op1;
+                        instruction->op2 = op2;
+                        instruction->result = end_of_loop_label;
+
+                        ir_emit(program, instruction);
                     } else if (
                         condition->kind == AST_NODE_KIND_RELATIONAL_EXPRESSION
                         && condition->content.binary_expression.operation == BINARY_OPERATION_GREATER_THAN
                     ) {
-                        cmp_opcode = OP_JUMP_IF_LESS_OR_EQUAL;
                         do_generate_ir(program, condition->content.binary_expression.lhs);
                         op1 = program->instructions[program->position - 1]->result;
                         do_generate_ir(program, condition->content.binary_expression.rhs);
                         op2 = program->instructions[program->position - 1]->result;
+
+                        main_pool_alloc(struct ir_instruction, instruction)
+                        instruction->code = OP_JUMP_IF_LESS_OR_EQUAL;
+                        instruction->op1 = op1;
+                        instruction->op2 = op2;
+                        instruction->result = end_of_loop_label;
+
+                        ir_emit(program, instruction);
                     } else if (
                         condition->kind == AST_NODE_KIND_EQUALITY_EXPRESSION
                         && condition->content.binary_expression.operation == BINARY_OPERATION_EQUALITY
                     ) {
-                        cmp_opcode = OP_JUMP_IF_NOT_EQUAL;
                         do_generate_ir(program, condition->content.binary_expression.lhs);
                         op1 = program->instructions[program->position - 1]->result;
                         do_generate_ir(program, condition->content.binary_expression.rhs);
                         op2 = program->instructions[program->position - 1]->result;
+
+                        main_pool_alloc(struct ir_instruction, instruction)
+                        instruction->code = OP_JUMP_IF_NOT_EQUAL;
+                        instruction->op1 = op1;
+                        instruction->op2 = op2;
+                        instruction->result = end_of_loop_label;
+
+                        ir_emit(program, instruction);
                     } else if (
                         condition->kind == AST_NODE_KIND_EQUALITY_EXPRESSION
                         && condition->content.binary_expression.operation == BINARY_OPERATION_INEQUALITY
                     ) {
-                        cmp_opcode = OP_JUMP_IF_EQUAL;
                         do_generate_ir(program, condition->content.binary_expression.lhs);
                         op1 = program->instructions[program->position - 1]->result;
                         do_generate_ir(program, condition->content.binary_expression.rhs);
                         op2 = program->instructions[program->position - 1]->result;
+
+                        main_pool_alloc(struct ir_instruction, instruction)
+                        instruction->code = OP_JUMP_IF_EQUAL;
+                        instruction->op1 = op1;
+                        instruction->op2 = op2;
+                        instruction->result = end_of_loop_label;
+
+                        ir_emit(program, instruction);
                     } else {
-                        fprintf(stderr, "ERROR: unsupported expression for while loop\n");
-                        exit(1);
+                        do_generate_ir(program, condition);
+
+                        main_pool_alloc(struct ir_instruction, instruction)
+                        instruction->code = OP_JUMP_IF_FALSE;
+                        instruction->op1 = program->instructions[program->position - 1]->result;
+                        instruction->op2 = end_of_loop_label;
+
+                        ir_emit(program, instruction);
                     }
-
-                    main_pool_alloc(struct ir_instruction, instruction)
-                    instruction->code = cmp_opcode;
-                    instruction->op1 = op1;
-                    instruction->op2 = op2;
-                    instruction->result = end_of_loop_label;
-
-                    ir_emit(program, instruction);
                 }
 
                 do_generate_ir(program, node->content.while_statement.body);
