@@ -179,7 +179,17 @@ void do_generate_ir(struct ir_program * program, const struct ast_node * node)
                     }
                 }
 
-                do_generate_ir(program, node->content.while_statement.body);
+                if (
+                    node->content.while_statement.body->kind == AST_NODE_KIND_EXPRESSION_STATEMENT
+                    && node->content.while_statement.body->content.node == NULL
+                ) {
+                    main_pool_alloc(struct ir_instruction, instruction)
+                    instruction->code = OP_NOP;
+
+                    ir_emit(program, instruction);
+                } else {
+                    do_generate_ir(program, node->content.while_statement.body);
+                }
 
                 {
                     main_pool_alloc(struct ir_instruction, instruction)
@@ -307,8 +317,22 @@ void do_generate_ir(struct ir_program * program, const struct ast_node * node)
             }
             break;
         case AST_NODE_KIND_COMPOUND_STATEMENT:
-            for (struct ast_node_list * it = node->content.list; it != NULL; it = it->next)
-                do_generate_ir(program, it->node);
+            {
+                struct ast_node_list * it = node->content.list;
+
+                if (it == NULL) {
+                    main_pool_alloc(struct ir_instruction, instruction)
+                    instruction->code = OP_NOP;
+
+                    ir_emit(program, instruction);
+                } else {
+                    while (it != NULL) {
+                        do_generate_ir(program, it->node);
+
+                        it = it->next;
+                    }
+                }
+            }
             break;
         case AST_NODE_KIND_RETURN_STATEMENT:
             {

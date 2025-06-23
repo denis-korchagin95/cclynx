@@ -247,3 +247,62 @@ _main:
     ret
 
 @endtest
+
+@test("It should generate target arm64 with while loop with empty expression statement")
+@given("file")
+int main() {
+    while (0);
+    return 0;
+}
+@whenRun("./bin/target-code-generator-tester")
+@expectOutput("stdout")
+.text
+.global _main
+.align 2
+
+_main:
+    stp x29, x30, [sp, -16]!
+    mov x29, sp
+.L1:
+    mov w9, #0
+    cbz w9, .L2
+    nop
+    b .L1
+.L2:
+    mov w9, #0
+    mov w0, w9
+    add sp, sp, #16
+    ldp x29, x30, [sp], #16
+    ret
+
+@endtest
+
+@test("It should generate target arm64 with while loop with empty compound statement")
+@given("file")
+int main() {
+    while (0) {
+    }
+    return 0;
+}
+@whenRun("./bin/target-code-generator-tester")
+@expectOutput("stdout")
+.text
+.global _main
+.align 2
+
+_main:
+    stp x29, x30, [sp, -16]!
+    mov x29, sp
+.L1:
+    mov w9, #0
+    cbz w9, .L2
+    nop
+    b .L1
+.L2:
+    mov w9, #0
+    mov w0, w9
+    add sp, sp, #16
+    ldp x29, x30, [sp], #16
+    ret
+
+@endtest

@@ -257,7 +257,7 @@ void print_ir_program(const struct ir_program * program, FILE * file)
             case OP_SUB:
                 sprintf(buf, "t%llu, t%llu, t%llu", instruction->op1->content.temp_id, instruction->op2->content.temp_id, instruction->result->content.temp_id);
                 fprintf(file, "%04zu OP_SUB %s\n", i, buf);
-            break;
+                break;
             case OP_DIV:
                 sprintf(buf, "t%llu, t%llu, t%llu", instruction->op1->content.temp_id, instruction->op2->content.temp_id, instruction->result->content.temp_id);
                 fprintf(file, "%04zu OP_DIV %s\n", i, buf);
@@ -265,19 +265,22 @@ void print_ir_program(const struct ir_program * program, FILE * file)
             case OP_CONST:
                 sprintf(buf, "%lli, t%llu", instruction->op1->content.llic, instruction->result->content.temp_id);
                 fprintf(file, "%04zu OP_CONST %s\n", i, buf);
-            break;
+                break;
             case OP_RETURN:
                 sprintf(buf, "t%llu", instruction->op1->content.temp_id);
                 fprintf(file, "%04zu OP_RETURN %s\n", i, buf);
-            break;
+                break;
             case OP_ADD:
                 sprintf(buf, "t%llu, t%llu, t%llu", instruction->op1->content.temp_id, instruction->op2->content.temp_id, instruction->result->content.temp_id);
                 fprintf(file, "%04zu OP_ADD %s\n", i, buf);
-            break;
+                break;
             case OP_MUL:
                 sprintf(buf, "t%llu, t%llu, t%llu", instruction->op1->content.temp_id, instruction->op2->content.temp_id, instruction->result->content.temp_id);
                 fprintf(file, "%04zu OP_MUL %s\n", i, buf);
-            break;
+                break;
+            case OP_NOP:
+                fprintf(file, "%04zu OP_NOP\n", i);
+                break;
             default:
                 fprintf(stderr, "ERROR: Unknown instruction for IR program\n");
                 exit(1);

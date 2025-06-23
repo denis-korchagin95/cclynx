@@ -275,6 +275,9 @@ void target_arm64_generate(struct ir_program * program, FILE * file)
                     free_reg(op_reg);
                 }
                 break;
+            case OP_NOP:
+                fprintf(file, "    nop\n");
+                break;
             default:
                 fprintf(stderr, "ERROR: unknown instruction\n");
                 exit(1);

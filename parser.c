@@ -77,6 +77,17 @@ struct ast_node * parse_compound_statement(struct parser_context * context)
         exit(1);
     }
 
+    current_token = parser_get_token(context);
+
+    if (current_token->kind == TOKEN_KIND_PUNCTUATOR && current_token->content.ch == '}') {
+        main_pool_alloc(struct ast_node, compound_statement)
+        compound_statement->kind = AST_NODE_KIND_COMPOUND_STATEMENT;
+        compound_statement->content.list = NULL;
+        return compound_statement;
+    }
+
+    parser_putback_token(current_token, context);
+
     struct ast_node_list * statement_list = NULL;
     struct ast_node_list ** statement_list_end = &statement_list;
 
@@ -101,6 +112,7 @@ struct ast_node * parse_compound_statement(struct parser_context * context)
     }
 
     (void)parser_get_token(context);
+
 
     main_pool_alloc(struct ast_node, compound_statement)
     compound_statement->kind = AST_NODE_KIND_COMPOUND_STATEMENT;
