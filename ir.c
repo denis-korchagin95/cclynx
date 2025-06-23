@@ -108,7 +108,7 @@ void do_generate_ir(struct ir_program * program, const struct ast_node * node)
                         condition->kind == AST_NODE_KIND_RELATIONAL_EXPRESSION
                         && condition->content.binary_expression.operation == BINARY_OPERATION_LESS_THAN
                     ) {
-                        cmp_opcode = OP_BRANCH_LESS_THAN;
+                        cmp_opcode = OP_BRANCH_GREATER_OR_EQUAL;
                         do_generate_ir(program, condition->content.binary_expression.lhs);
                         op1 = program->instructions[program->position - 1]->result;
                         do_generate_ir(program, condition->content.binary_expression.rhs);
@@ -117,7 +117,7 @@ void do_generate_ir(struct ir_program * program, const struct ast_node * node)
                         condition->kind == AST_NODE_KIND_RELATIONAL_EXPRESSION
                         && condition->content.binary_expression.operation == BINARY_OPERATION_GREATER_THAN
                     ) {
-                        cmp_opcode = OP_BRANCH_GREATER_THAN;
+                        cmp_opcode = OP_BRANCH_LESS_OR_EQUAL;
                         do_generate_ir(program, condition->content.binary_expression.lhs);
                         op1 = program->instructions[program->position - 1]->result;
                         do_generate_ir(program, condition->content.binary_expression.rhs);

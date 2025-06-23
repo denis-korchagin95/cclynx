@@ -196,13 +196,13 @@ void print_ir_program(const struct ir_program * program, FILE * file)
         struct ir_instruction * instruction = program->instructions[i];
 
         switch (instruction->code) {
-            case OP_BRANCH_LESS_THAN:
+            case OP_BRANCH_LESS_OR_EQUAL:
                 sprintf(buf, "t%llu, t%llu, \".L%llu\"", instruction->op1->content.temp_id, instruction->op2->content.temp_id, instruction->result->content.label_id);
-                fprintf(file, "%04zu OP_BRANCH_LESS_THAN %s\n", i, buf);
+                fprintf(file, "%04zu OP_BRANCH_LESS_OR_EQUAL %s\n", i, buf);
                 break;
-            case OP_BRANCH_GREATER_THAN:
+            case OP_BRANCH_GREATER_OR_EQUAL:
                 sprintf(buf, "t%llu, t%llu, \".L%llu\"", instruction->op1->content.temp_id, instruction->op2->content.temp_id, instruction->result->content.label_id);
-                fprintf(file, "%04zu OP_BRANCH_GREATER_THAN %s\n", i, buf);
+                fprintf(file, "%04zu OP_BRANCH_GREATER_OR_EQUAL %s\n", i, buf);
                 break;
             case OP_LABEL:
                 sprintf(buf, "\".L%llu\"", instruction->op1->content.label_id);
