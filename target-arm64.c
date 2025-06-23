@@ -99,7 +99,27 @@ void target_arm64_generate(struct ir_program * program, FILE * file)
                     fprintf(file, ".L%llu:\n", instruction->op1->content.label_id);
                 }
                 break;
-            case OP_BRANCH_LESS_OR_EQUAL:
+            case OP_JUMP_IF_EQUAL:
+                {
+                    unsigned int op2_reg = pop_reg();
+                    unsigned int op1_reg = pop_reg();
+                    fprintf(file, "    cmp %s, %s\n", get_reg_name(op1_reg), get_reg_name(op2_reg));
+                    fprintf(file, "    b.eq .L%llu\n", instruction->result->content.label_id);
+                    free_reg(op1_reg);
+                    free_reg(op2_reg);
+                }
+                break;
+            case OP_JUMP_IF_NOT_EQUAL:
+                {
+                    unsigned int op2_reg = pop_reg();
+                    unsigned int op1_reg = pop_reg();
+                    fprintf(file, "    cmp %s, %s\n", get_reg_name(op1_reg), get_reg_name(op2_reg));
+                    fprintf(file, "    b.ne .L%llu\n", instruction->result->content.label_id);
+                    free_reg(op1_reg);
+                    free_reg(op2_reg);
+                }
+                break;
+            case OP_JUMP_IF_LESS_OR_EQUAL:
                 {
                     unsigned int op2_reg = pop_reg();
                     unsigned int op1_reg = pop_reg();
@@ -109,7 +129,7 @@ void target_arm64_generate(struct ir_program * program, FILE * file)
                     free_reg(op2_reg);
                 }
                 break;
-            case OP_BRANCH_GREATER_OR_EQUAL:
+            case OP_JUMP_IF_GREATER_OR_EQUAL:
                 {
                     unsigned int op2_reg = pop_reg();
                     unsigned int op1_reg = pop_reg();
