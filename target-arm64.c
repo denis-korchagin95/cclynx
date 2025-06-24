@@ -7,7 +7,9 @@
 #include "identifier.h"
 #include "util.h"
 
-static unsigned int regs[5] = {0};
+#define INT32_REG_COUNT (7)
+
+static unsigned int regs[INT32_REG_COUNT] = {0};
 static const char * reg_names[] = {"w9", "w10", "w11", "w12", "w13", "w14", "w15"};
 static unsigned int stack[16] = {0};
 static unsigned int stack_pos = 0;
@@ -33,9 +35,9 @@ static unsigned int pop_reg(void)
     return reg;
 }
 
-static unsigned int alloc_reg(void)
+static unsigned int alloc_int32_reg(void)
 {
-    for (int i = 0; i < 5; ++i) {
+    for (int i = 0; i < INT32_REG_COUNT; ++i) {
         if (regs[i] == 0) {
             regs[i] = 1;
             return i + 1;
@@ -46,9 +48,9 @@ static unsigned int alloc_reg(void)
     exit(1);
 }
 
-static void free_reg(unsigned int reg)
+static void free_int32_reg(unsigned int reg)
 {
-    if (reg >= 1 && reg <= 5) {
+    if (reg >= 1 && reg <= INT32_REG_COUNT) {
         regs[reg - 1] = 0;
         return;
     }
@@ -57,9 +59,9 @@ static void free_reg(unsigned int reg)
     exit(1);
 }
 
-static const char * get_reg_name(unsigned int reg)
+static const char * get_int32_reg_name(unsigned int reg)
 {
-    if (reg >= 1 && reg <= 5) {
+    if (reg >= 1 && reg <= INT32_REG_COUNT) {
         return reg_names[reg - 1];
     }
 
@@ -92,8 +94,8 @@ void target_arm64_generate(struct ir_program * program, FILE * file)
             case OP_JUMP_IF_FALSE:
                 {
                     unsigned int op_reg = pop_reg();
-                    fprintf(file, "    cbz %s, .L%llu\n", get_reg_name(op_reg), instruction->op2->content.label_id);
-                    free_reg(op_reg);
+                    fprintf(file, "    cbz %s, .L%llu\n", get_int32_reg_name(op_reg), instruction->op2->content.label_id);
+                    free_int32_reg(op_reg);
                 }
                 break;
             case OP_LABEL:
@@ -105,87 +107,87 @@ void target_arm64_generate(struct ir_program * program, FILE * file)
                 {
                     unsigned int op2_reg = pop_reg();
                     unsigned int op1_reg = pop_reg();
-                    fprintf(file, "    cmp %s, %s\n", get_reg_name(op1_reg), get_reg_name(op2_reg));
+                    fprintf(file, "    cmp %s, %s\n", get_int32_reg_name(op1_reg), get_int32_reg_name(op2_reg));
                     fprintf(file, "    b.eq .L%llu\n", instruction->result->content.label_id);
-                    free_reg(op1_reg);
-                    free_reg(op2_reg);
+                    free_int32_reg(op1_reg);
+                    free_int32_reg(op2_reg);
                 }
                 break;
             case OP_JUMP_IF_NOT_EQUAL:
                 {
                     unsigned int op2_reg = pop_reg();
                     unsigned int op1_reg = pop_reg();
-                    fprintf(file, "    cmp %s, %s\n", get_reg_name(op1_reg), get_reg_name(op2_reg));
+                    fprintf(file, "    cmp %s, %s\n", get_int32_reg_name(op1_reg), get_int32_reg_name(op2_reg));
                     fprintf(file, "    b.ne .L%llu\n", instruction->result->content.label_id);
-                    free_reg(op1_reg);
-                    free_reg(op2_reg);
+                    free_int32_reg(op1_reg);
+                    free_int32_reg(op2_reg);
                 }
                 break;
             case OP_JUMP_IF_LESS_OR_EQUAL:
                 {
                     unsigned int op2_reg = pop_reg();
                     unsigned int op1_reg = pop_reg();
-                    fprintf(file, "    cmp %s, %s\n", get_reg_name(op1_reg), get_reg_name(op2_reg));
+                    fprintf(file, "    cmp %s, %s\n", get_int32_reg_name(op1_reg), get_int32_reg_name(op2_reg));
                     fprintf(file, "    b.le .L%llu\n", instruction->result->content.label_id);
-                    free_reg(op1_reg);
-                    free_reg(op2_reg);
+                    free_int32_reg(op1_reg);
+                    free_int32_reg(op2_reg);
                 }
                 break;
             case OP_JUMP_IF_GREATER_OR_EQUAL:
                 {
                     unsigned int op2_reg = pop_reg();
                     unsigned int op1_reg = pop_reg();
-                    fprintf(file, "    cmp %s, %s\n", get_reg_name(op1_reg), get_reg_name(op2_reg));
+                    fprintf(file, "    cmp %s, %s\n", get_int32_reg_name(op1_reg), get_int32_reg_name(op2_reg));
                     fprintf(file, "    b.ge .L%llu\n", instruction->result->content.label_id);
-                    free_reg(op1_reg);
-                    free_reg(op2_reg);
+                    free_int32_reg(op1_reg);
+                    free_int32_reg(op2_reg);
                 }
                 break;
             case OP_IS_GREATER_THAN:
                 {
-                    unsigned int op_reg = alloc_reg();
+                    unsigned int op_reg = alloc_int32_reg();
                     unsigned int op2_reg = pop_reg();
                     unsigned int op1_reg = pop_reg();
-                    fprintf(file, "    cmp %s, %s\n", get_reg_name(op1_reg), get_reg_name(op2_reg));
-                    fprintf(file, "    cset %s, gt\n", get_reg_name(op_reg));
-                    free_reg(op1_reg);
-                    free_reg(op2_reg);
+                    fprintf(file, "    cmp %s, %s\n", get_int32_reg_name(op1_reg), get_int32_reg_name(op2_reg));
+                    fprintf(file, "    cset %s, gt\n", get_int32_reg_name(op_reg));
+                    free_int32_reg(op1_reg);
+                    free_int32_reg(op2_reg);
                     push_reg(op_reg);
                 }
                 break;
             case OP_IS_LESS_THAN:
                 {
-                    unsigned int op_reg = alloc_reg();
+                    unsigned int op_reg = alloc_int32_reg();
                     unsigned int op2_reg = pop_reg();
                     unsigned int op1_reg = pop_reg();
-                    fprintf(file, "    cmp %s, %s\n", get_reg_name(op1_reg), get_reg_name(op2_reg));
-                    fprintf(file, "    cset %s, lt\n", get_reg_name(op_reg));
-                    free_reg(op1_reg);
-                    free_reg(op2_reg);
+                    fprintf(file, "    cmp %s, %s\n", get_int32_reg_name(op1_reg), get_int32_reg_name(op2_reg));
+                    fprintf(file, "    cset %s, lt\n", get_int32_reg_name(op_reg));
+                    free_int32_reg(op1_reg);
+                    free_int32_reg(op2_reg);
                     push_reg(op_reg);
                 }
                 break;
             case OP_IS_EQUAL:
                 {
-                    unsigned int op_reg = alloc_reg();
+                    unsigned int op_reg = alloc_int32_reg();
                     unsigned int op2_reg = pop_reg();
                     unsigned int op1_reg = pop_reg();
-                    fprintf(file, "    cmp %s, %s\n", get_reg_name(op1_reg), get_reg_name(op2_reg));
-                    fprintf(file, "    cset %s, eq\n", get_reg_name(op_reg));
-                    free_reg(op1_reg);
-                    free_reg(op2_reg);
+                    fprintf(file, "    cmp %s, %s\n", get_int32_reg_name(op1_reg), get_int32_reg_name(op2_reg));
+                    fprintf(file, "    cset %s, eq\n", get_int32_reg_name(op_reg));
+                    free_int32_reg(op1_reg);
+                    free_int32_reg(op2_reg);
                     push_reg(op_reg);
                 }
                 break;
             case OP_IS_NOT_EQUAL:
                 {
-                    unsigned int op_reg = alloc_reg();
+                    unsigned int op_reg = alloc_int32_reg();
                     unsigned int op2_reg = pop_reg();
                     unsigned int op1_reg = pop_reg();
-                    fprintf(file, "    cmp %s, %s\n", get_reg_name(op1_reg), get_reg_name(op2_reg));
-                    fprintf(file, "    cset %s, ne\n", get_reg_name(op_reg));
-                    free_reg(op1_reg);
-                    free_reg(op2_reg);
+                    fprintf(file, "    cmp %s, %s\n", get_int32_reg_name(op1_reg), get_int32_reg_name(op2_reg));
+                    fprintf(file, "    cset %s, ne\n", get_int32_reg_name(op_reg));
+                    free_int32_reg(op1_reg);
+                    free_int32_reg(op2_reg);
                     push_reg(op_reg);
                 }
                 break;
@@ -205,74 +207,74 @@ void target_arm64_generate(struct ir_program * program, FILE * file)
             case OP_STORE:
                 {
                     unsigned int op_reg = pop_reg();
-                    fprintf(file, "    str %s, [sp, #%zu]\n", get_reg_name(op_reg), instruction->op1->content.variable.offset);
-                    free_reg(op_reg);
+                    fprintf(file, "    str %s, [sp, #%zu]\n", get_int32_reg_name(op_reg), instruction->op1->content.variable.offset);
+                    free_int32_reg(op_reg);
                 }
                 break;
             case OP_LOAD:
                 {
-                    unsigned int op_reg = alloc_reg();
-                    fprintf(file, "    ldr %s, [sp, #%zu]\n", get_reg_name(op_reg), instruction->op1->content.variable.offset);
+                    unsigned int op_reg = alloc_int32_reg();
+                    fprintf(file, "    ldr %s, [sp, #%zu]\n", get_int32_reg_name(op_reg), instruction->op1->content.variable.offset);
                     push_reg(op_reg);
                 }
                 break;
             case OP_CONST:
                 {
-                    unsigned int op_reg = alloc_reg();
+                    unsigned int op_reg = alloc_int32_reg();
                     sprintf(buf, "%lli", instruction->op1->content.llic);
-                    fprintf(file, "    mov %s, #%s\n", get_reg_name(op_reg), buf);
+                    fprintf(file, "    mov %s, #%s\n", get_int32_reg_name(op_reg), buf);
                     push_reg(op_reg);
                 }
                 break;
             case OP_MUL:
                 {
-                    unsigned int op_reg = alloc_reg();
+                    unsigned int op_reg = alloc_int32_reg();
                     unsigned int op2_reg = pop_reg();
                     unsigned int op1_reg = pop_reg();
-                    fprintf(file, "    mul %s, %s, %s\n", get_reg_name(op_reg), get_reg_name(op1_reg), get_reg_name(op2_reg));
-                    free_reg(op1_reg);
-                    free_reg(op2_reg);
+                    fprintf(file, "    mul %s, %s, %s\n", get_int32_reg_name(op_reg), get_int32_reg_name(op1_reg), get_int32_reg_name(op2_reg));
+                    free_int32_reg(op1_reg);
+                    free_int32_reg(op2_reg);
                     push_reg(op_reg);
                 }
                 break;
             case OP_DIV:
                 {
-                    unsigned int op_reg = alloc_reg();
+                    unsigned int op_reg = alloc_int32_reg();
                     unsigned int op2_reg = pop_reg();
                     unsigned int op1_reg = pop_reg();
-                    fprintf(file, "    sdiv %s, %s, %s\n", get_reg_name(op_reg), get_reg_name(op1_reg), get_reg_name(op2_reg));
-                    free_reg(op1_reg);
-                    free_reg(op2_reg);
+                    fprintf(file, "    sdiv %s, %s, %s\n", get_int32_reg_name(op_reg), get_int32_reg_name(op1_reg), get_int32_reg_name(op2_reg));
+                    free_int32_reg(op1_reg);
+                    free_int32_reg(op2_reg);
                     push_reg(op_reg);
                 }
                 break;
             case OP_SUB:
                 {
-                    unsigned int op_reg = alloc_reg();
+                    unsigned int op_reg = alloc_int32_reg();
                     unsigned int op2_reg = pop_reg();
                     unsigned int op1_reg = pop_reg();
-                    fprintf(file, "    sub %s, %s, %s\n", get_reg_name(op_reg), get_reg_name(op1_reg), get_reg_name(op2_reg));
-                    free_reg(op1_reg);
-                    free_reg(op2_reg);
+                    fprintf(file, "    sub %s, %s, %s\n", get_int32_reg_name(op_reg), get_int32_reg_name(op1_reg), get_int32_reg_name(op2_reg));
+                    free_int32_reg(op1_reg);
+                    free_int32_reg(op2_reg);
                     push_reg(op_reg);
                 }
                 break;
             case OP_ADD:
                 {
-                    unsigned int op_reg = alloc_reg();
+                    unsigned int op_reg = alloc_int32_reg();
                     unsigned int op2_reg = pop_reg();
                     unsigned int op1_reg = pop_reg();
-                    fprintf(file, "    add %s, %s, %s\n", get_reg_name(op_reg), get_reg_name(op1_reg), get_reg_name(op2_reg));
-                    free_reg(op1_reg);
-                    free_reg(op2_reg);
+                    fprintf(file, "    add %s, %s, %s\n", get_int32_reg_name(op_reg), get_int32_reg_name(op1_reg), get_int32_reg_name(op2_reg));
+                    free_int32_reg(op1_reg);
+                    free_int32_reg(op2_reg);
                     push_reg(op_reg);
                 }
                 break;
             case OP_RETURN:
                 {
                     unsigned int op_reg = pop_reg();
-                    fprintf(file, "    mov w0, %s\n", get_reg_name(op_reg));
-                    free_reg(op_reg);
+                    fprintf(file, "    mov w0, %s\n", get_int32_reg_name(op_reg));
+                    free_int32_reg(op_reg);
                 }
                 break;
             case OP_NOP:
