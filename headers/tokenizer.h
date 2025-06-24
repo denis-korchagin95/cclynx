@@ -3,9 +3,6 @@
 
 #include <stdio.h>
 
-#define MAX_CHAR_BUFFER_SIZE (4)
-#define MAX_IDENTIFIER_BUFFER_SIZE (512)
-
 #define is_upper_char(ch) ((ch) >= 'A' && (ch) <= 'Z')
 #define is_lower_char(ch) ((ch) >= 'a' && (ch) <= 'z')
 #define is_char(ch) (is_lower_char(ch) || is_upper_char(ch))
