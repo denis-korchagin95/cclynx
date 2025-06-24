@@ -24,7 +24,7 @@ static struct ir_operand * find_variable_operand_by_symbol(struct symbol * symbo
 static void do_generate_ir(struct ir_program * program, const struct ast_node * node);
 static void ir_emit(struct ir_program * program, struct ir_instruction * instruction);
 static struct ir_operand * new_temporary_operand(void);
-
+static void ir_generate_condition(struct ir_program * program, struct ast_node * condition, struct ir_operand * jump_label);
 
 void ir_program_init(struct ir_program * program)
 {
@@ -78,6 +78,81 @@ void do_generate_ir(struct ir_program * program, const struct ast_node * node)
     assert(node != NULL);
 
     switch(node->kind) {
+        case AST_NODE_KIND_IF_STATEMENT:
+            {
+                struct ir_operand * end_of_condition_label = NULL;
+
+                main_pool_alloc(struct ir_operand, end_of_if_label)
+                end_of_if_label->content.label_id = ++label_id;
+                end_of_if_label->type = &type_void;
+                end_of_if_label->kind = OPERAND_KIND_LABEL;
+
+                ir_generate_condition(program, node->content.if_statement.condition, end_of_if_label);
+
+                if (
+                    node->content.if_statement.true_branch->kind == AST_NODE_KIND_EXPRESSION_STATEMENT
+                    && node->content.if_statement.true_branch->content.node == NULL
+                ) {
+                    main_pool_alloc(struct ir_instruction, instruction)
+                    instruction->code = OP_NOP;
+
+                    ir_emit(program, instruction);
+                } else {
+                    do_generate_ir(program, node->content.if_statement.true_branch);
+                }
+
+                if (node->content.if_statement.false_branch != NULL) {
+                    {
+                        main_pool_alloc(struct ir_operand, end_label)
+                        end_label->kind = OPERAND_KIND_LABEL;
+                        end_label->type = &type_void;
+                        end_label->content.label_id = ++label_id;
+                        end_of_condition_label = end_label;
+                    }
+                    {
+                        main_pool_alloc(struct ir_instruction, instruction)
+                        instruction->code = OP_JUMP;
+                        instruction->op1 = end_of_condition_label;
+
+                        ir_emit(program, instruction);
+                    }
+                    {
+                        main_pool_alloc(struct ir_instruction, instruction)
+                        instruction->code = OP_LABEL;
+                        instruction->op1 = end_of_if_label;
+
+                        ir_emit(program, instruction);
+                    }
+
+                    if (
+                        node->content.if_statement.false_branch->kind == AST_NODE_KIND_EXPRESSION_STATEMENT
+                        && node->content.if_statement.false_branch->content.node == NULL
+                    ) {
+                        main_pool_alloc(struct ir_instruction, instruction)
+                        instruction->code = OP_NOP;
+
+                        ir_emit(program, instruction);
+                    } else {
+                        do_generate_ir(program, node->content.if_statement.false_branch);
+                    }
+                }
+
+                if (end_of_condition_label != NULL) {
+                    main_pool_alloc(struct ir_instruction, instruction)
+                    instruction->code = OP_LABEL;
+                    instruction->op1 = end_of_condition_label;
+
+                    ir_emit(program, instruction);
+                } else {
+                    main_pool_alloc(struct ir_instruction, instruction)
+                    instruction->code = OP_LABEL;
+                    instruction->op1 = end_of_if_label;
+
+                    ir_emit(program, instruction);
+                }
+
+            }
+            break;
         case AST_NODE_KIND_WHILE_STATEMENT:
             {
                 main_pool_alloc(struct ir_operand, start_of_loop_label)
@@ -98,86 +173,7 @@ void do_generate_ir(struct ir_program * program, const struct ast_node * node)
                 end_of_loop_label->type = &type_void;
                 end_of_loop_label->kind = OPERAND_KIND_LABEL;
 
-                {
-                    struct ast_node * condition = node->content.while_statement.condition;
-
-                    struct ir_operand * op1 = NULL, * op2 = NULL;
-
-                    if (
-                        condition->kind == AST_NODE_KIND_RELATIONAL_EXPRESSION
-                        && condition->content.binary_expression.operation == BINARY_OPERATION_LESS_THAN
-                    ) {
-                        do_generate_ir(program, condition->content.binary_expression.lhs);
-                        op1 = program->instructions[program->position - 1]->result;
-                        do_generate_ir(program, condition->content.binary_expression.rhs);
-                        op2 = program->instructions[program->position - 1]->result;
-
-                        main_pool_alloc(struct ir_instruction, instruction)
-                        instruction->code = OP_JUMP_IF_GREATER_OR_EQUAL;
-                        instruction->op1 = op1;
-                        instruction->op2 = op2;
-                        instruction->result = end_of_loop_label;
-
-                        ir_emit(program, instruction);
-                    } else if (
-                        condition->kind == AST_NODE_KIND_RELATIONAL_EXPRESSION
-                        && condition->content.binary_expression.operation == BINARY_OPERATION_GREATER_THAN
-                    ) {
-                        do_generate_ir(program, condition->content.binary_expression.lhs);
-                        op1 = program->instructions[program->position - 1]->result;
-                        do_generate_ir(program, condition->content.binary_expression.rhs);
-                        op2 = program->instructions[program->position - 1]->result;
-
-                        main_pool_alloc(struct ir_instruction, instruction)
-                        instruction->code = OP_JUMP_IF_LESS_OR_EQUAL;
-                        instruction->op1 = op1;
-                        instruction->op2 = op2;
-                        instruction->result = end_of_loop_label;
-
-                        ir_emit(program, instruction);
-                    } else if (
-                        condition->kind == AST_NODE_KIND_EQUALITY_EXPRESSION
-                        && condition->content.binary_expression.operation == BINARY_OPERATION_EQUALITY
-                    ) {
-                        do_generate_ir(program, condition->content.binary_expression.lhs);
-                        op1 = program->instructions[program->position - 1]->result;
-                        do_generate_ir(program, condition->content.binary_expression.rhs);
-                        op2 = program->instructions[program->position - 1]->result;
-
-                        main_pool_alloc(struct ir_instruction, instruction)
-                        instruction->code = OP_JUMP_IF_NOT_EQUAL;
-                        instruction->op1 = op1;
-                        instruction->op2 = op2;
-                        instruction->result = end_of_loop_label;
-
-                        ir_emit(program, instruction);
-                    } else if (
-                        condition->kind == AST_NODE_KIND_EQUALITY_EXPRESSION
-                        && condition->content.binary_expression.operation == BINARY_OPERATION_INEQUALITY
-                    ) {
-                        do_generate_ir(program, condition->content.binary_expression.lhs);
-                        op1 = program->instructions[program->position - 1]->result;
-                        do_generate_ir(program, condition->content.binary_expression.rhs);
-                        op2 = program->instructions[program->position - 1]->result;
-
-                        main_pool_alloc(struct ir_instruction, instruction)
-                        instruction->code = OP_JUMP_IF_EQUAL;
-                        instruction->op1 = op1;
-                        instruction->op2 = op2;
-                        instruction->result = end_of_loop_label;
-
-                        ir_emit(program, instruction);
-                    } else {
-                        do_generate_ir(program, condition);
-
-                        main_pool_alloc(struct ir_instruction, instruction)
-                        instruction->code = OP_JUMP_IF_FALSE;
-                        instruction->op1 = program->instructions[program->position - 1]->result;
-                        instruction->op2 = end_of_loop_label;
-
-                        ir_emit(program, instruction);
-                    }
-                }
+                ir_generate_condition(program, node->content.while_statement.condition, end_of_loop_label);
 
                 if (
                     node->content.while_statement.body->kind == AST_NODE_KIND_EXPRESSION_STATEMENT
@@ -416,4 +412,87 @@ struct ir_operand * find_variable_operand_by_symbol(struct symbol * symbol)
     }
 
     return NULL;
+}
+
+void ir_generate_condition(struct ir_program * program, struct ast_node * condition, struct ir_operand * jump_label)
+{
+    assert(program != NULL);
+    assert(condition != NULL);
+
+    struct ir_operand * op1 = NULL, * op2 = NULL;
+
+    if (
+        condition->kind == AST_NODE_KIND_RELATIONAL_EXPRESSION
+        && condition->content.binary_expression.operation == BINARY_OPERATION_LESS_THAN
+    ) {
+        do_generate_ir(program, condition->content.binary_expression.lhs);
+        op1 = program->instructions[program->position - 1]->result;
+        do_generate_ir(program, condition->content.binary_expression.rhs);
+        op2 = program->instructions[program->position - 1]->result;
+
+        main_pool_alloc(struct ir_instruction, instruction)
+        instruction->code = OP_JUMP_IF_GREATER_OR_EQUAL;
+        instruction->op1 = op1;
+        instruction->op2 = op2;
+        instruction->result = jump_label;
+
+        ir_emit(program, instruction);
+    } else if (
+        condition->kind == AST_NODE_KIND_RELATIONAL_EXPRESSION
+        && condition->content.binary_expression.operation == BINARY_OPERATION_GREATER_THAN
+    ) {
+        do_generate_ir(program, condition->content.binary_expression.lhs);
+        op1 = program->instructions[program->position - 1]->result;
+        do_generate_ir(program, condition->content.binary_expression.rhs);
+        op2 = program->instructions[program->position - 1]->result;
+
+        main_pool_alloc(struct ir_instruction, instruction)
+        instruction->code = OP_JUMP_IF_LESS_OR_EQUAL;
+        instruction->op1 = op1;
+        instruction->op2 = op2;
+        instruction->result = jump_label;
+
+        ir_emit(program, instruction);
+    } else if (
+        condition->kind == AST_NODE_KIND_EQUALITY_EXPRESSION
+        && condition->content.binary_expression.operation == BINARY_OPERATION_EQUALITY
+    ) {
+        do_generate_ir(program, condition->content.binary_expression.lhs);
+        op1 = program->instructions[program->position - 1]->result;
+        do_generate_ir(program, condition->content.binary_expression.rhs);
+        op2 = program->instructions[program->position - 1]->result;
+
+        main_pool_alloc(struct ir_instruction, instruction)
+        instruction->code = OP_JUMP_IF_NOT_EQUAL;
+        instruction->op1 = op1;
+        instruction->op2 = op2;
+        instruction->result = jump_label;
+
+        ir_emit(program, instruction);
+    } else if (
+        condition->kind == AST_NODE_KIND_EQUALITY_EXPRESSION
+        && condition->content.binary_expression.operation == BINARY_OPERATION_INEQUALITY
+    ) {
+        do_generate_ir(program, condition->content.binary_expression.lhs);
+        op1 = program->instructions[program->position - 1]->result;
+        do_generate_ir(program, condition->content.binary_expression.rhs);
+        op2 = program->instructions[program->position - 1]->result;
+
+        main_pool_alloc(struct ir_instruction, instruction)
+        instruction->code = OP_JUMP_IF_EQUAL;
+        instruction->op1 = op1;
+        instruction->op2 = op2;
+        instruction->result = jump_label;
+
+        ir_emit(program, instruction);
+    } else {
+        do_generate_ir(program, condition);
+
+        main_pool_alloc(struct ir_instruction, instruction)
+        instruction->code = OP_JUMP_IF_FALSE;
+        instruction->op1 = program->instructions[program->position - 1]->result;
+        instruction->op2 = jump_label;
+
+        ir_emit(program, instruction);
+    }
 }
