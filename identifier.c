@@ -12,6 +12,7 @@ static struct keyword
     const char * name;
 } keywords[] = {
     {"int"},
+    {"float"},
     {"return"},
     {"while"},
     {"if"},

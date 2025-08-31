@@ -5,17 +5,17 @@ int main() {
 }
 @whenRun("./bin/parser-tester")
 @expectOutput("stdout")
-FunctionDefinition: {name: 'main', type: 'int'}
+FunctionDefinition: 'main' {type: 'int'}
 |
 +-> CompoundStatement
     |
     +-> ExpressionStatement
         |
-        +-> MultiplicativeExpression: '*'
+        +-> MultiplicativeExpression: '*' {type: 'int'}
             |
-            +-> IntegerConstant: '7'
+            +-> IntegerConstant: '7' {type: 'int'}
             |
-            +-> IntegerConstant: '8'
+            +-> IntegerConstant: '8' {type: 'int'}
 
 @endtest
 
@@ -27,13 +27,13 @@ int main() {
 }
 @whenRun("./bin/parser-tester")
 @expectOutput("stdout")
-FunctionDefinition: {name: 'main', type: 'int'}
+FunctionDefinition: 'main' {type: 'int'}
 |
 +-> CompoundStatement
     |
-    +-> VariableDeclaration: {name: 'x', type: 'int'}
+    +-> VariableDeclaration: 'x' {type: 'int'}
     |
-    +-> VariableDeclaration: {name: 'y', type: 'int'}
+    +-> VariableDeclaration: 'y' {type: 'int'}
 
 @endtest
 
@@ -44,13 +44,13 @@ int main() {
 }
 @whenRun("./bin/parser-tester")
 @expectOutput("stdout")
-FunctionDefinition: {name: 'main', type: 'int'}
+FunctionDefinition: 'main' {type: 'int'}
 |
 +-> CompoundStatement
     |
     +-> ReturnStatement
         |
-        +-> IntegerConstant: '7'
+        +-> IntegerConstant: '7' {type: 'int'}
 
 @endtest
 
@@ -61,7 +61,7 @@ int main() {
 }
 @whenRun("./bin/parser-tester")
 @expectOutput("stdout")
-FunctionDefinition: {name: 'main', type: 'int'}
+FunctionDefinition: 'main' {type: 'int'}
 |
 +-> CompoundStatement
     |
@@ -78,22 +78,22 @@ int main() {
 }
 @whenRun("./bin/parser-tester")
 @expectOutput("stdout")
-FunctionDefinition: {name: 'main', type: 'int'}
+FunctionDefinition: 'main' {type: 'int'}
 |
 +-> CompoundStatement
     |
-    +-> VariableDeclaration: {name: 'result', type: 'int'}
+    +-> VariableDeclaration: 'result' {type: 'int'}
     |
     +-> ExpressionStatement
     |   |
     |   +-> AssignmentExpression: '='
     |       |
-    |       +-> Variable: {name: 'result', type: 'int'}
+    |       +-> Variable: 'result' {type: 'int'}
     |       |
-    |       +-> IntegerConstant: '1'
+    |       +-> IntegerConstant: '1' {type: 'int'}
     |
     +-> ReturnStatement
         |
-        +-> Variable: {name: 'result', type: 'int'}
+        +-> Variable: 'result' {type: 'int'}
 
 @endtest

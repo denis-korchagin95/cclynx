@@ -16,6 +16,7 @@ static struct builtin_symbol
     struct type * type;
 } builtin_symbols[] = {
     {"int", SYMBOL_KIND_TYPE_SPECIFIER, &type_integer},
+    {"float", SYMBOL_KIND_TYPE_SPECIFIER, &type_float},
 };
 
 void init_symbols(void)

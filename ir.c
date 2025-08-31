@@ -7,6 +7,7 @@
 #include "parser.h"
 #include "type.h"
 #include "symbol.h"
+#include "type.h"
 
 #define MAX_OPERAND_COUNT (1024)
 
@@ -213,6 +214,7 @@ void do_generate_ir(struct ir_program * program, const struct ast_node * node)
                     variable->kind = OPERAND_KIND_VARIABLE;
                     variable->content.variable.symbol = node->content.variable;
                     variable->content.variable.offset = current_func->result->content.function.local_vars_size;
+                    variable->type = node->content.variable->type;
                     current_func->result->content.function.local_vars_size += node->content.variable->type->size;
                 }
 
@@ -234,6 +236,23 @@ void do_generate_ir(struct ir_program * program, const struct ast_node * node)
             break;
         case AST_NODE_KIND_EXPRESSION_STATEMENT:
             do_generate_ir(program, node->content.node);
+            break;
+        case AST_NODE_KIND_CAST_EXPRESSION:
+            {
+                if (node->type->kind != TYPE_KIND_INTEGER) {
+                    fprintf(stderr, "ERROR: unsupported cast to '%s' yet!\n", type_stringify(node->type));
+                    exit(1);
+                }
+
+                do_generate_ir(program, node->content.node);
+
+                main_pool_alloc(struct ir_instruction, instruction)
+                instruction->code = OP_INT_CAST;
+                instruction->op1 = program->instructions[program->position - 1]->result;
+                instruction->result = new_temporary_operand();
+
+                ir_emit(program, instruction);
+            }
             break;
         case AST_NODE_KIND_ASSIGNMENT_EXPRESSION:
             {
@@ -342,13 +361,20 @@ void do_generate_ir(struct ir_program * program, const struct ast_node * node)
             }
             break;
         case AST_NODE_KIND_INTEGER_CONSTANT:
+        case AST_NODE_KIND_FLOAT_CONSTANT:
             {
                 main_pool_alloc(struct ir_instruction, instruction)
                 instruction->code = OP_CONST;
 
                 main_pool_alloc(struct ir_operand, constant)
-                constant->content.llic = node->content.integer_constant;
-                constant->type = &type_integer;
+                constant->type = node->type;
+
+                if (constant->type->kind == TYPE_KIND_INTEGER) {
+                    constant->content.int_value = node->content.constant.value.integer_constant;
+                } else if (constant->type->kind == TYPE_KIND_FLOAT) {
+                    constant->content.float_value = node->content.constant.value.float_constant;
+                }
+
                 constant->kind = OPERAND_KIND_CONSTANT;
 
                 instruction->op1 = constant;

@@ -27,6 +27,7 @@ static size_t number_buffer_pos = 0;
 static int get_one_char(FILE * file);
 static void putback_one_char(int ch);
 static void read_identifier(FILE * file, struct token * token, int ch);
+static void read_number(FILE * file, struct token * token, int ch);
 
 
 struct token * tokenizer_tokenize_file(FILE * file)
@@ -76,41 +77,18 @@ void tokenizer_get_one_token(FILE * file, struct token * token)
         return;
     }
 
+    if (ch == '.') {
+        int next_char = get_one_char(file);
+        if (isdigit(next_char)) {
+            putback_one_char(next_char);
+            read_number(file, token, ch);
+            return;
+        }
+        putback_one_char(next_char);
+    }
+
     if (isdigit(ch)) {
-        size_t dot_count = 0;
-        number_buffer_pos = 0;
-        for (;;) {
-            if (number_buffer_pos >= MAX_NUMBER_BUFFER_SIZE - 1) {
-                fprintf(stderr, "ERROR: too long number!\n");
-                exit(1);
-            }
-
-            number_buffer[number_buffer_pos++] = ch;
-
-            ch = get_one_char(file);
-
-            if (ch == '.')
-                ++dot_count;
-
-            if (!isdigit(ch) && ch != '.') {
-                putback_one_char(ch);
-                break;
-            }
-        }
-        number_buffer[number_buffer_pos] = '\0';
-
-        if (dot_count > 1) {
-            fprintf(stderr, "ERROR: incorrect number '%s'\n", number_buffer);
-            exit(1);
-        }
-
-        if (dot_count == 1) {
-            fprintf(stderr, "ERROR: unsupported float yet!\n");
-            exit(1);
-        }
-
-        token->kind = TOKEN_KIND_NUMBER;
-        token->content.integer_constant = atoi(number_buffer);
+        read_number(file, token, ch);
         return;
     }
 
@@ -163,8 +141,57 @@ void tokenizer_get_one_token(FILE * file, struct token * token)
     }
 }
 
+void read_number(FILE * file, struct token * token, int ch)
+{
+    assert(file != NULL);
+    assert(token != NULL);
+
+    size_t dot_count = 0;
+    number_buffer_pos = 0;
+    for (;;) {
+        if (number_buffer_pos >= MAX_NUMBER_BUFFER_SIZE - 1) {
+            fprintf(stderr, "ERROR: too long number!\n");
+            exit(1);
+        }
+
+        if (ch == '.')
+            ++dot_count;
+
+        number_buffer[number_buffer_pos++] = ch;
+
+        ch = get_one_char(file);
+
+        if (!isdigit(ch) && ch != '.') {
+            putback_one_char(ch);
+            break;
+        }
+    }
+    number_buffer[number_buffer_pos] = '\0';
+
+    if (dot_count > 1) {
+        fprintf(stderr, "ERROR: incorrect number '%s'\n", number_buffer);
+        exit(1);
+    }
+
+    // TODO: implement storing the same number only for 1 time
+
+    char * number = memory_blob_pool_alloc(&main_pool, number_buffer_pos);
+    memcpy(number, number_buffer, number_buffer_pos);
+
+    token->kind = TOKEN_KIND_NUMBER;
+    token->content.number = number;
+
+    if (dot_count > 0) {
+        token->flags |= TOKEN_FLAG_IS_FLOAT;
+    }
+
+}
+
 void read_identifier(FILE * file, struct token * token, int ch)
 {
+    assert(file != NULL);
+    assert(token != NULL);
+
     unsigned int hash = 0;
 
     identifier_buffer_pos = 0;

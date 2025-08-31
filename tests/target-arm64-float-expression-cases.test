@@ -1,0 +1,130 @@
+@test("It should generate target arm64 code an additive expression with float and autocast type on return")
+@given("file")
+int main() {
+    float x;
+    x = 1.5;
+    float y;
+    y = 2.25;
+    float z;
+    z = x + y;
+    z = z - 1.0;
+    return (int)z;
+}
+@whenRun("./bin/target-code-generator-tester")
+@expectOutput("stdout")
+.text
+.global _main
+.align 2
+
+_main:
+    stp x29, x30, [sp, -16]!
+    mov x29, sp
+    sub sp, sp, #16
+    fmov s8, #1.500000
+    str s8, [sp, #0]
+    fmov s8, #2.250000
+    str s8, [sp, #4]
+    ldr s8, [sp, #0]
+    ldr s9, [sp, #4]
+    fadd s10, s8, s9
+    str s10, [sp, #8]
+    ldr s8, [sp, #8]
+    fmov s9, #1.000000
+    fsub s10, s8, s9
+    str s10, [sp, #8]
+    ldr s8, [sp, #8]
+    fcvtzs w9, s8
+    mov w0, w9
+    add sp, sp, #16
+    ldp x29, x30, [sp], #16
+    ret
+
+@endtest
+
+@test("It should generate target arm64 code a multiplicative expression with float and autocast type on return")
+@given("file")
+int main() {
+    float x;
+    x = 1.5;
+    float y;
+    y = 2.25;
+    float z;
+    z = x * y;
+    z = z / 2.0;
+    return (int)z;
+}
+@whenRun("./bin/target-code-generator-tester")
+@expectOutput("stdout")
+.text
+.global _main
+.align 2
+
+_main:
+    stp x29, x30, [sp, -16]!
+    mov x29, sp
+    sub sp, sp, #16
+    fmov s8, #1.500000
+    str s8, [sp, #0]
+    fmov s8, #2.250000
+    str s8, [sp, #4]
+    ldr s8, [sp, #0]
+    ldr s9, [sp, #4]
+    fmul s10, s8, s9
+    str s10, [sp, #8]
+    ldr s8, [sp, #8]
+    fmov s9, #2.000000
+    fdiv s10, s8, s9
+    str s10, [sp, #8]
+    ldr s8, [sp, #8]
+    fcvtzs w9, s8
+    mov w0, w9
+    add sp, sp, #16
+    ldp x29, x30, [sp], #16
+    ret
+
+@endtest
+
+@test("It should generate target arm64 code a relational expression with float and autocast type on return")
+@given("file")
+int main() {
+    float x;
+    x = 1.5;
+    float y;
+    y = 2.25;
+    int z;
+    z = x < y;
+    int w;
+    w = y > 2.0;
+    return w;
+}
+@whenRun("./bin/target-code-generator-tester")
+@expectOutput("stdout")
+.text
+.global _main
+.align 2
+
+_main:
+    stp x29, x30, [sp, -16]!
+    mov x29, sp
+    sub sp, sp, #16
+    fmov s8, #1.500000
+    str s8, [sp, #0]
+    fmov s8, #2.250000
+    str s8, [sp, #4]
+    ldr s8, [sp, #0]
+    ldr s9, [sp, #4]
+    fcmp s8, s9
+    cset w9, lt
+    str w9, [sp, #8]
+    ldr s8, [sp, #4]
+    fmov s9, #2.000000
+    fcmp s8, s9
+    cset w9, gt
+    str w9, [sp, #12]
+    ldr w9, [sp, #12]
+    mov w0, w9
+    add sp, sp, #16
+    ldp x29, x30, [sp], #16
+    ret
+
+@endtest

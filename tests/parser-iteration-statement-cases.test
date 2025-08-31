@@ -9,27 +9,27 @@ int main() {
 }
 @whenRun("./bin/parser-tester")
 @expectOutput("stdout")
-FunctionDefinition: {name: 'main', type: 'int'}
+FunctionDefinition: 'main' {type: 'int'}
 |
 +-> CompoundStatement
     |
-    +-> VariableDeclaration: {name: 'i', type: 'int'}
+    +-> VariableDeclaration: 'i' {type: 'int'}
     |
     +-> ExpressionStatement
     |   |
     |   +-> AssignmentExpression: '='
     |       |
-    |       +-> Variable: {name: 'i', type: 'int'}
+    |       +-> Variable: 'i' {type: 'int'}
     |       |
-    |       +-> IntegerConstant: '0'
+    |       +-> IntegerConstant: '0' {type: 'int'}
     |
     +-> WhileStatement
         |
-        +-> (condition) RelationalExpression: '<'
+        +-> (condition) RelationalExpression: '<' {type: 'int'}
         |   |
-        |   +-> Variable: {name: 'i', type: 'int'}
+        |   +-> Variable: 'i' {type: 'int'}
         |   |
-        |   +-> IntegerConstant: '10'
+        |   +-> IntegerConstant: '10' {type: 'int'}
         |
         +-> (body) CompoundStatement
             |
@@ -37,13 +37,13 @@ FunctionDefinition: {name: 'main', type: 'int'}
                 |
                 +-> AssignmentExpression: '='
                     |
-                    +-> Variable: {name: 'i', type: 'int'}
+                    +-> Variable: 'i' {type: 'int'}
                     |
-                    +-> AdditiveExpression: '+'
+                    +-> AdditiveExpression: '+' {type: 'int'}
                         |
-                        +-> Variable: {name: 'i', type: 'int'}
+                        +-> Variable: 'i' {type: 'int'}
                         |
-                        +-> IntegerConstant: '1'
+                        +-> IntegerConstant: '1' {type: 'int'}
 
 @endtest
 
@@ -56,27 +56,27 @@ int main() {
 }
 @whenRun("./bin/parser-tester")
 @expectOutput("stdout")
-FunctionDefinition: {name: 'main', type: 'int'}
+FunctionDefinition: 'main' {type: 'int'}
 |
 +-> CompoundStatement
     |
-    +-> VariableDeclaration: {name: 'i', type: 'int'}
+    +-> VariableDeclaration: 'i' {type: 'int'}
     |
     +-> ExpressionStatement
     |   |
     |   +-> AssignmentExpression: '='
     |       |
-    |       +-> Variable: {name: 'i', type: 'int'}
+    |       +-> Variable: 'i' {type: 'int'}
     |       |
-    |       +-> IntegerConstant: '0'
+    |       +-> IntegerConstant: '0' {type: 'int'}
     |
     +-> WhileStatement
         |
-        +-> (condition) RelationalExpression: '<'
+        +-> (condition) RelationalExpression: '<' {type: 'int'}
         |   |
-        |   +-> Variable: {name: 'i', type: 'int'}
+        |   +-> Variable: 'i' {type: 'int'}
         |   |
-        |   +-> IntegerConstant: '10'
+        |   +-> IntegerConstant: '10' {type: 'int'}
         |
         +-> (body) ExpressionStatement: {empty expression}
 
@@ -92,38 +92,38 @@ int main() {
 }
 @whenRun("./bin/parser-tester")
 @expectOutput("stdout")
-FunctionDefinition: {name: 'main', type: 'int'}
+FunctionDefinition: 'main' {type: 'int'}
 |
 +-> CompoundStatement
     |
-    +-> VariableDeclaration: {name: 'i', type: 'int'}
+    +-> VariableDeclaration: 'i' {type: 'int'}
     |
     +-> ExpressionStatement
     |   |
     |   +-> AssignmentExpression: '='
     |       |
-    |       +-> Variable: {name: 'i', type: 'int'}
+    |       +-> Variable: 'i' {type: 'int'}
     |       |
-    |       +-> IntegerConstant: '0'
+    |       +-> IntegerConstant: '0' {type: 'int'}
     |
     +-> WhileStatement
         |
-        +-> (condition) RelationalExpression: '<'
+        +-> (condition) RelationalExpression: '<' {type: 'int'}
         |   |
-        |   +-> Variable: {name: 'i', type: 'int'}
+        |   +-> Variable: 'i' {type: 'int'}
         |   |
-        |   +-> IntegerConstant: '10'
+        |   +-> IntegerConstant: '10' {type: 'int'}
         |
         +-> (body) ExpressionStatement
             |
             +-> AssignmentExpression: '='
                 |
-                +-> Variable: {name: 'i', type: 'int'}
+                +-> Variable: 'i' {type: 'int'}
                 |
-                +-> AdditiveExpression: '+'
+                +-> AdditiveExpression: '+' {type: 'int'}
                     |
-                    +-> Variable: {name: 'i', type: 'int'}
+                    +-> Variable: 'i' {type: 'int'}
                     |
-                    +-> IntegerConstant: '1'
+                    +-> IntegerConstant: '1' {type: 'int'}
 
 @endtest

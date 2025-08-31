@@ -8,6 +8,7 @@ struct symbol;
 enum ast_node_kind
 {
     AST_NODE_KIND_INTEGER_CONSTANT = 1,
+    AST_NODE_KIND_FLOAT_CONSTANT,
     AST_NODE_KIND_VARIABLE,
 
     AST_NODE_KIND_VARIABLE_DECLARATION,
@@ -19,6 +20,7 @@ enum ast_node_kind
     AST_NODE_KIND_RETURN_STATEMENT,
     AST_NODE_KIND_IF_STATEMENT,
 
+    AST_NODE_KIND_CAST_EXPRESSION,
     AST_NODE_KIND_ASSIGNMENT_EXPRESSION,
     AST_NODE_KIND_MULTIPLICATIVE_EXPRESSION,
     AST_NODE_KIND_ADDITIVE_EXPRESSION,
@@ -52,9 +54,15 @@ struct ast_node
     union
     {
         struct symbol * variable;
-        long long int integer_constant;
         struct ast_node_list * list;
         struct ast_node * node;
+        struct constant
+        {
+            union {
+                long long int integer_constant;
+                float float_constant;
+            } value;
+        } constant;
         struct binary_expression
         {
             enum binary_operation operation;
@@ -81,6 +89,7 @@ struct ast_node
             struct ast_node * false_branch;
         } if_statement;
     } content;
+    struct type * type;
     enum ast_node_kind kind;
 };
 

@@ -1,17 +1,34 @@
-@test("It should parse an integer number")
+@test("It should parse an integer constant")
 @given("file")
 int main() {
     777;
 }
 @whenRun("./bin/parser-tester")
 @expectOutput("stdout")
-FunctionDefinition: {name: 'main', type: 'int'}
+FunctionDefinition: 'main' {type: 'int'}
 |
 +-> CompoundStatement
     |
     +-> ExpressionStatement
         |
-        +-> IntegerConstant: '777'
+        +-> IntegerConstant: '777' {type: 'int'}
+
+@endtest
+
+@test("It should parse a float constant")
+@given("file")
+int main() {
+    12.512;
+}
+@whenRun("./bin/parser-tester")
+@expectOutput("stdout")
+FunctionDefinition: 'main' {type: 'int'}
+|
++-> CompoundStatement
+    |
+    +-> ExpressionStatement
+        |
+        +-> FloatConstant: '12.512000' {type: 'float'}
 
 @endtest
 
@@ -22,17 +39,17 @@ int main() {
 }
 @whenRun("./bin/parser-tester")
 @expectOutput("stdout")
-FunctionDefinition: {name: 'main', type: 'int'}
+FunctionDefinition: 'main' {type: 'int'}
 |
 +-> CompoundStatement
     |
     +-> ExpressionStatement
         |
-        +-> MultiplicativeExpression: '*'
+        +-> MultiplicativeExpression: '*' {type: 'int'}
             |
-            +-> IntegerConstant: '7'
+            +-> IntegerConstant: '7' {type: 'int'}
             |
-            +-> IntegerConstant: '8'
+            +-> IntegerConstant: '8' {type: 'int'}
 
 @endtest
 
@@ -43,21 +60,21 @@ int main() {
 }
 @whenRun("./bin/parser-tester")
 @expectOutput("stdout")
-FunctionDefinition: {name: 'main', type: 'int'}
+FunctionDefinition: 'main' {type: 'int'}
 |
 +-> CompoundStatement
     |
     +-> ExpressionStatement
         |
-        +-> MultiplicativeExpression: '*'
+        +-> MultiplicativeExpression: '*' {type: 'int'}
             |
-            +-> MultiplicativeExpression: '*'
+            +-> MultiplicativeExpression: '*' {type: 'int'}
             |   |
-            |   +-> IntegerConstant: '7'
+            |   +-> IntegerConstant: '7' {type: 'int'}
             |   |
-            |   +-> IntegerConstant: '6'
+            |   +-> IntegerConstant: '6' {type: 'int'}
             |
-            +-> IntegerConstant: '8'
+            +-> IntegerConstant: '8' {type: 'int'}
 
 @endtest
 
@@ -68,29 +85,29 @@ int main() {
 }
 @whenRun("./bin/parser-tester")
 @expectOutput("stdout")
-FunctionDefinition: {name: 'main', type: 'int'}
+FunctionDefinition: 'main' {type: 'int'}
 |
 +-> CompoundStatement
     |
     +-> ExpressionStatement
         |
-        +-> MultiplicativeExpression: '*'
+        +-> MultiplicativeExpression: '*' {type: 'int'}
             |
-            +-> MultiplicativeExpression: '*'
+            +-> MultiplicativeExpression: '*' {type: 'int'}
             |   |
-            |   +-> MultiplicativeExpression: '*'
+            |   +-> MultiplicativeExpression: '*' {type: 'int'}
             |   |   |
-            |   |   +-> MultiplicativeExpression: '*'
+            |   |   +-> MultiplicativeExpression: '*' {type: 'int'}
             |   |   |   |
-            |   |   |   +-> IntegerConstant: '7'
+            |   |   |   +-> IntegerConstant: '7' {type: 'int'}
             |   |   |   |
-            |   |   |   +-> IntegerConstant: '6'
+            |   |   |   +-> IntegerConstant: '6' {type: 'int'}
             |   |   |
-            |   |   +-> IntegerConstant: '8'
+            |   |   +-> IntegerConstant: '8' {type: 'int'}
             |   |
-            |   +-> IntegerConstant: '10'
+            |   +-> IntegerConstant: '10' {type: 'int'}
             |
-            +-> IntegerConstant: '15'
+            +-> IntegerConstant: '15' {type: 'int'}
 
 @endtest
 
@@ -101,21 +118,21 @@ int main() {
 }
 @whenRun("./bin/parser-tester")
 @expectOutput("stdout")
-FunctionDefinition: {name: 'main', type: 'int'}
+FunctionDefinition: 'main' {type: 'int'}
 |
 +-> CompoundStatement
     |
     +-> ExpressionStatement
         |
-        +-> MultiplicativeExpression: '*'
+        +-> MultiplicativeExpression: '*' {type: 'int'}
             |
-            +-> MultiplicativeExpression: '/'
+            +-> MultiplicativeExpression: '/' {type: 'int'}
             |   |
-            |   +-> IntegerConstant: '15'
+            |   +-> IntegerConstant: '15' {type: 'int'}
             |   |
-            |   +-> IntegerConstant: '3'
+            |   +-> IntegerConstant: '3' {type: 'int'}
             |
-            +-> IntegerConstant: '101'
+            +-> IntegerConstant: '101' {type: 'int'}
 
 @endtest
 
@@ -126,17 +143,17 @@ int main() {
 }
 @whenRun("./bin/parser-tester")
 @expectOutput("stdout")
-FunctionDefinition: {name: 'main', type: 'int'}
+FunctionDefinition: 'main' {type: 'int'}
 |
 +-> CompoundStatement
     |
     +-> ExpressionStatement
         |
-        +-> AdditiveExpression: '+'
+        +-> AdditiveExpression: '+' {type: 'int'}
             |
-            +-> IntegerConstant: '7'
+            +-> IntegerConstant: '7' {type: 'int'}
             |
-            +-> IntegerConstant: '8'
+            +-> IntegerConstant: '8' {type: 'int'}
 
 @endtest
 
@@ -147,21 +164,21 @@ int main() {
 }
 @whenRun("./bin/parser-tester")
 @expectOutput("stdout")
-FunctionDefinition: {name: 'main', type: 'int'}
+FunctionDefinition: 'main' {type: 'int'}
 |
 +-> CompoundStatement
     |
     +-> ExpressionStatement
         |
-        +-> AdditiveExpression: '+'
+        +-> AdditiveExpression: '+' {type: 'int'}
             |
-            +-> AdditiveExpression: '+'
+            +-> AdditiveExpression: '+' {type: 'int'}
             |   |
-            |   +-> IntegerConstant: '7'
+            |   +-> IntegerConstant: '7' {type: 'int'}
             |   |
-            |   +-> IntegerConstant: '6'
+            |   +-> IntegerConstant: '6' {type: 'int'}
             |
-            +-> IntegerConstant: '8'
+            +-> IntegerConstant: '8' {type: 'int'}
 
 @endtest
 
@@ -172,29 +189,29 @@ int main() {
 }
 @whenRun("./bin/parser-tester")
 @expectOutput("stdout")
-FunctionDefinition: {name: 'main', type: 'int'}
+FunctionDefinition: 'main' {type: 'int'}
 |
 +-> CompoundStatement
     |
     +-> ExpressionStatement
         |
-        +-> AdditiveExpression: '+'
+        +-> AdditiveExpression: '+' {type: 'int'}
             |
-            +-> AdditiveExpression: '+'
+            +-> AdditiveExpression: '+' {type: 'int'}
             |   |
-            |   +-> AdditiveExpression: '+'
+            |   +-> AdditiveExpression: '+' {type: 'int'}
             |   |   |
-            |   |   +-> AdditiveExpression: '+'
+            |   |   +-> AdditiveExpression: '+' {type: 'int'}
             |   |   |   |
-            |   |   |   +-> IntegerConstant: '7'
+            |   |   |   +-> IntegerConstant: '7' {type: 'int'}
             |   |   |   |
-            |   |   |   +-> IntegerConstant: '6'
+            |   |   |   +-> IntegerConstant: '6' {type: 'int'}
             |   |   |
-            |   |   +-> IntegerConstant: '8'
+            |   |   +-> IntegerConstant: '8' {type: 'int'}
             |   |
-            |   +-> IntegerConstant: '10'
+            |   +-> IntegerConstant: '10' {type: 'int'}
             |
-            +-> IntegerConstant: '15'
+            +-> IntegerConstant: '15' {type: 'int'}
 
 @endtest
 
@@ -205,21 +222,21 @@ int main() {
 }
 @whenRun("./bin/parser-tester")
 @expectOutput("stdout")
-FunctionDefinition: {name: 'main', type: 'int'}
+FunctionDefinition: 'main' {type: 'int'}
 |
 +-> CompoundStatement
     |
     +-> ExpressionStatement
         |
-        +-> AdditiveExpression: '-'
+        +-> AdditiveExpression: '-' {type: 'int'}
             |
-            +-> AdditiveExpression: '+'
+            +-> AdditiveExpression: '+' {type: 'int'}
             |   |
-            |   +-> IntegerConstant: '15'
+            |   +-> IntegerConstant: '15' {type: 'int'}
             |   |
-            |   +-> IntegerConstant: '3'
+            |   +-> IntegerConstant: '3' {type: 'int'}
             |
-            +-> IntegerConstant: '101'
+            +-> IntegerConstant: '101' {type: 'int'}
 
 @endtest
 
@@ -230,25 +247,25 @@ int main() {
 }
 @whenRun("./bin/parser-tester")
 @expectOutput("stdout")
-FunctionDefinition: {name: 'main', type: 'int'}
+FunctionDefinition: 'main' {type: 'int'}
 |
 +-> CompoundStatement
     |
     +-> ExpressionStatement
         |
-        +-> AdditiveExpression: '-'
+        +-> AdditiveExpression: '-' {type: 'int'}
             |
-            +-> AdditiveExpression: '+'
+            +-> AdditiveExpression: '+' {type: 'int'}
             |   |
-            |   +-> IntegerConstant: '1'
+            |   +-> IntegerConstant: '1' {type: 'int'}
             |   |
-            |   +-> MultiplicativeExpression: '*'
+            |   +-> MultiplicativeExpression: '*' {type: 'int'}
             |       |
-            |       +-> IntegerConstant: '7'
+            |       +-> IntegerConstant: '7' {type: 'int'}
             |       |
-            |       +-> IntegerConstant: '6'
+            |       +-> IntegerConstant: '6' {type: 'int'}
             |
-            +-> IntegerConstant: '4'
+            +-> IntegerConstant: '4' {type: 'int'}
 
 @endtest
 
@@ -259,17 +276,17 @@ int main() {
 }
 @whenRun("./bin/parser-tester")
 @expectOutput("stdout")
-FunctionDefinition: {name: 'main', type: 'int'}
+FunctionDefinition: 'main' {type: 'int'}
 |
 +-> CompoundStatement
     |
     +-> ExpressionStatement
         |
-        +-> RelationalExpression: '<'
+        +-> RelationalExpression: '<' {type: 'int'}
             |
-            +-> IntegerConstant: '7'
+            +-> IntegerConstant: '7' {type: 'int'}
             |
-            +-> IntegerConstant: '8'
+            +-> IntegerConstant: '8' {type: 'int'}
 
 @endtest
 
@@ -280,21 +297,21 @@ int main() {
 }
 @whenRun("./bin/parser-tester")
 @expectOutput("stdout")
-FunctionDefinition: {name: 'main', type: 'int'}
+FunctionDefinition: 'main' {type: 'int'}
 |
 +-> CompoundStatement
     |
     +-> ExpressionStatement
         |
-        +-> RelationalExpression: '<'
+        +-> RelationalExpression: '<' {type: 'int'}
             |
-            +-> RelationalExpression: '<'
+            +-> RelationalExpression: '<' {type: 'int'}
             |   |
-            |   +-> IntegerConstant: '7'
+            |   +-> IntegerConstant: '7' {type: 'int'}
             |   |
-            |   +-> IntegerConstant: '6'
+            |   +-> IntegerConstant: '6' {type: 'int'}
             |
-            +-> IntegerConstant: '8'
+            +-> IntegerConstant: '8' {type: 'int'}
 
 @endtest
 
@@ -305,29 +322,29 @@ int main() {
 }
 @whenRun("./bin/parser-tester")
 @expectOutput("stdout")
-FunctionDefinition: {name: 'main', type: 'int'}
+FunctionDefinition: 'main' {type: 'int'}
 |
 +-> CompoundStatement
     |
     +-> ExpressionStatement
         |
-        +-> RelationalExpression: '<'
+        +-> RelationalExpression: '<' {type: 'int'}
             |
-            +-> RelationalExpression: '<'
+            +-> RelationalExpression: '<' {type: 'int'}
             |   |
-            |   +-> RelationalExpression: '<'
+            |   +-> RelationalExpression: '<' {type: 'int'}
             |   |   |
-            |   |   +-> RelationalExpression: '<'
+            |   |   +-> RelationalExpression: '<' {type: 'int'}
             |   |   |   |
-            |   |   |   +-> IntegerConstant: '7'
+            |   |   |   +-> IntegerConstant: '7' {type: 'int'}
             |   |   |   |
-            |   |   |   +-> IntegerConstant: '6'
+            |   |   |   +-> IntegerConstant: '6' {type: 'int'}
             |   |   |
-            |   |   +-> IntegerConstant: '8'
+            |   |   +-> IntegerConstant: '8' {type: 'int'}
             |   |
-            |   +-> IntegerConstant: '10'
+            |   +-> IntegerConstant: '10' {type: 'int'}
             |
-            +-> IntegerConstant: '15'
+            +-> IntegerConstant: '15' {type: 'int'}
 
 @endtest
 
@@ -338,21 +355,21 @@ int main() {
 }
 @whenRun("./bin/parser-tester")
 @expectOutput("stdout")
-FunctionDefinition: {name: 'main', type: 'int'}
+FunctionDefinition: 'main' {type: 'int'}
 |
 +-> CompoundStatement
     |
     +-> ExpressionStatement
         |
-        +-> RelationalExpression: '>'
+        +-> RelationalExpression: '>' {type: 'int'}
             |
-            +-> RelationalExpression: '<'
+            +-> RelationalExpression: '<' {type: 'int'}
             |   |
-            |   +-> IntegerConstant: '15'
+            |   +-> IntegerConstant: '15' {type: 'int'}
             |   |
-            |   +-> IntegerConstant: '3'
+            |   +-> IntegerConstant: '3' {type: 'int'}
             |
-            +-> IntegerConstant: '101'
+            +-> IntegerConstant: '101' {type: 'int'}
 
 @endtest
 
@@ -363,17 +380,17 @@ int main() {
 }
 @whenRun("./bin/parser-tester")
 @expectOutput("stdout")
-FunctionDefinition: {name: 'main', type: 'int'}
+FunctionDefinition: 'main' {type: 'int'}
 |
 +-> CompoundStatement
     |
     +-> ExpressionStatement
         |
-        +-> EqualityExpression: '=='
+        +-> EqualityExpression: '==' {type: 'int'}
             |
-            +-> IntegerConstant: '7'
+            +-> IntegerConstant: '7' {type: 'int'}
             |
-            +-> IntegerConstant: '8'
+            +-> IntegerConstant: '8' {type: 'int'}
 
 @endtest
 
@@ -384,21 +401,21 @@ int main() {
 }
 @whenRun("./bin/parser-tester")
 @expectOutput("stdout")
-FunctionDefinition: {name: 'main', type: 'int'}
+FunctionDefinition: 'main' {type: 'int'}
 |
 +-> CompoundStatement
     |
     +-> ExpressionStatement
         |
-        +-> EqualityExpression: '=='
+        +-> EqualityExpression: '==' {type: 'int'}
             |
-            +-> EqualityExpression: '=='
+            +-> EqualityExpression: '==' {type: 'int'}
             |   |
-            |   +-> IntegerConstant: '7'
+            |   +-> IntegerConstant: '7' {type: 'int'}
             |   |
-            |   +-> IntegerConstant: '6'
+            |   +-> IntegerConstant: '6' {type: 'int'}
             |
-            +-> IntegerConstant: '8'
+            +-> IntegerConstant: '8' {type: 'int'}
 
 @endtest
 
@@ -409,29 +426,29 @@ int main() {
 }
 @whenRun("./bin/parser-tester")
 @expectOutput("stdout")
-FunctionDefinition: {name: 'main', type: 'int'}
+FunctionDefinition: 'main' {type: 'int'}
 |
 +-> CompoundStatement
     |
     +-> ExpressionStatement
         |
-        +-> EqualityExpression: '=='
+        +-> EqualityExpression: '==' {type: 'int'}
             |
-            +-> EqualityExpression: '=='
+            +-> EqualityExpression: '==' {type: 'int'}
             |   |
-            |   +-> EqualityExpression: '=='
+            |   +-> EqualityExpression: '==' {type: 'int'}
             |   |   |
-            |   |   +-> EqualityExpression: '=='
+            |   |   +-> EqualityExpression: '==' {type: 'int'}
             |   |   |   |
-            |   |   |   +-> IntegerConstant: '7'
+            |   |   |   +-> IntegerConstant: '7' {type: 'int'}
             |   |   |   |
-            |   |   |   +-> IntegerConstant: '6'
+            |   |   |   +-> IntegerConstant: '6' {type: 'int'}
             |   |   |
-            |   |   +-> IntegerConstant: '8'
+            |   |   +-> IntegerConstant: '8' {type: 'int'}
             |   |
-            |   +-> IntegerConstant: '10'
+            |   +-> IntegerConstant: '10' {type: 'int'}
             |
-            +-> IntegerConstant: '15'
+            +-> IntegerConstant: '15' {type: 'int'}
 
 @endtest
 
@@ -442,21 +459,21 @@ int main() {
 }
 @whenRun("./bin/parser-tester")
 @expectOutput("stdout")
-FunctionDefinition: {name: 'main', type: 'int'}
+FunctionDefinition: 'main' {type: 'int'}
 |
 +-> CompoundStatement
     |
     +-> ExpressionStatement
         |
-        +-> EqualityExpression: '!='
+        +-> EqualityExpression: '!=' {type: 'int'}
             |
-            +-> EqualityExpression: '=='
+            +-> EqualityExpression: '==' {type: 'int'}
             |   |
-            |   +-> IntegerConstant: '15'
+            |   +-> IntegerConstant: '15' {type: 'int'}
             |   |
-            |   +-> IntegerConstant: '3'
+            |   +-> IntegerConstant: '3' {type: 'int'}
             |
-            +-> IntegerConstant: '101'
+            +-> IntegerConstant: '101' {type: 'int'}
 
 @endtest
 
@@ -468,19 +485,19 @@ int main() {
 }
 @whenRun("./bin/parser-tester")
 @expectOutput("stdout")
-FunctionDefinition: {name: 'main', type: 'int'}
+FunctionDefinition: 'main' {type: 'int'}
 |
 +-> CompoundStatement
     |
-    +-> VariableDeclaration: {name: 'x', type: 'int'}
+    +-> VariableDeclaration: 'x' {type: 'int'}
     |
     +-> ExpressionStatement
         |
         +-> AssignmentExpression: '='
             |
-            +-> Variable: {name: 'x', type: 'int'}
+            +-> Variable: 'x' {type: 'int'}
             |
-            +-> IntegerConstant: '3'
+            +-> IntegerConstant: '3' {type: 'int'}
 
 @endtest
 
@@ -491,20 +508,20 @@ int main() {
 }
 @whenRun("./bin/parser-tester")
 @expectOutput("stdout")
-FunctionDefinition: {name: 'main', type: 'int'}
+FunctionDefinition: 'main' {type: 'int'}
 |
 +-> CompoundStatement
     |
     +-> ExpressionStatement
         |
-        +-> MultiplicativeExpression: '*'
+        +-> MultiplicativeExpression: '*' {type: 'int'}
             |
-            +-> IntegerConstant: '77'
+            +-> IntegerConstant: '77' {type: 'int'}
             |
-            +-> AdditiveExpression: '+'
+            +-> AdditiveExpression: '+' {type: 'int'}
                 |
-                +-> IntegerConstant: '1'
+                +-> IntegerConstant: '1' {type: 'int'}
                 |
-                +-> IntegerConstant: '23'
+                +-> IntegerConstant: '23' {type: 'int'}
 
 @endtest

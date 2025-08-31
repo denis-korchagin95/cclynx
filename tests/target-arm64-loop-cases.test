@@ -1,4 +1,4 @@
-@test("It should generate target arm64 with while loop statement with expression <")
+@test("It should generate target arm64 code with while loop statement with expression <")
 @given("file")
 int main() {
     int i;
@@ -43,7 +43,7 @@ _main:
 
 @endtest
 
-@test("It should generate target arm64 with while loop statement with expression >")
+@test("It should generate target arm64 code with while loop statement with expression >")
 @given("file")
 int main() {
     int i;
@@ -88,7 +88,7 @@ _main:
 
 @endtest
 
-@test("It should generate target arm64 with while loop statement with expression ==")
+@test("It should generate target arm64 code with while loop statement with expression ==")
 @given("file")
 int main() {
     int i;
@@ -129,7 +129,7 @@ _main:
 
 @endtest
 
-@test("It should generate target arm64 with while loop statement with expression !=")
+@test("It should generate target arm64 code with while loop statement with expression !=")
 @given("file")
 int main() {
     int i;
@@ -170,7 +170,7 @@ _main:
 
 @endtest
 
-@test("It should generate target arm64 with while loop statement with constant false condition")
+@test("It should generate target arm64 code with while loop statement with constant false condition")
 @given("file")
 int main() {
     int i;
@@ -209,7 +209,7 @@ _main:
 
 @endtest
 
-@test("It should generate target arm64 with while loop statement with constant true condition")
+@test("It should generate target arm64 code with while loop statement with constant true condition")
 @given("file")
 int main() {
     int i;
@@ -248,7 +248,7 @@ _main:
 
 @endtest
 
-@test("It should generate target arm64 with while loop with empty expression statement")
+@test("It should generate target arm64 code with while loop with empty expression statement")
 @given("file")
 int main() {
     while (0);
@@ -277,7 +277,7 @@ _main:
 
 @endtest
 
-@test("It should generate target arm64 with while loop with empty compound statement")
+@test("It should generate target arm64 code with while loop with empty compound statement")
 @given("file")
 int main() {
     while (0) {

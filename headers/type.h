@@ -7,6 +7,7 @@ enum type_kind
 {
     TYPE_KIND_VOID = 0,
     TYPE_KIND_INTEGER,
+    TYPE_KIND_FLOAT,
 };
 
 struct type
@@ -18,5 +19,8 @@ struct type
 
 extern struct type type_integer;
 extern struct type type_void;
+extern struct type type_float;
+
+const char * type_stringify(const struct type * type);
 
 #endif /* TYPE_H */

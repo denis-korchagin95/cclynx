@@ -32,7 +32,8 @@ struct ir_operand
         } function;
         unsigned long long int temp_id;
         unsigned long long int label_id;
-        long long int llic;
+        int int_value;
+        float float_value;
     } content;
     struct type * type;
     enum operand_kind kind;
@@ -62,6 +63,7 @@ enum opcode
     OP_MUL,
     OP_DIV,
     OP_SUB,
+    OP_INT_CAST,
 };
 
 struct ir_instruction

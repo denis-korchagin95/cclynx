@@ -88,6 +88,11 @@ superVar_2
 10
 777
 10000780
+1.
+0.
+0.12
+.5
+12.565
 @whenRun("./bin/tokenizer-tester")
 @expectOutput("stdout")
 <TOKEN_NUMBER '0'>
@@ -96,6 +101,11 @@ superVar_2
 <TOKEN_NUMBER '10'>
 <TOKEN_NUMBER '777'>
 <TOKEN_NUMBER '10000780'>
+<TOKEN_NUMBER '1.'>
+<TOKEN_NUMBER '0.'>
+<TOKEN_NUMBER '0.12'>
+<TOKEN_NUMBER '.5'>
+<TOKEN_NUMBER '12.565'>
 <TOKEN_EOS>
 
 @endtest

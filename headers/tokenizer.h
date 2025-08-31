@@ -9,6 +9,8 @@
 #define is_start_identifier_char(ch) (is_char(ch))
 #define is_identifier_char(ch) (is_char(ch) || (ch) == '_')
 
+#define TOKEN_FLAG_IS_FLOAT (1 << 0)
+
 struct identifier;
 
 enum token_kind
@@ -29,9 +31,10 @@ struct token
     union {
         int ch;
         struct identifier * identifier;
-        long long int integer_constant;
+        char * number;
     } content;
     struct token * next;
+    unsigned int flags;
     unsigned int kind;
 };
 

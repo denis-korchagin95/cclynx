@@ -8,35 +8,35 @@ int main() {
 }
 @whenRun("./bin/parser-tester")
 @expectOutput("stdout")
-FunctionDefinition: {name: 'main', type: 'int'}
+FunctionDefinition: 'main' {type: 'int'}
 |
 +-> CompoundStatement
     |
-    +-> VariableDeclaration: {name: 'x', type: 'int'}
+    +-> VariableDeclaration: 'x' {type: 'int'}
     |
     +-> ExpressionStatement
     |   |
     |   +-> AssignmentExpression: '='
     |       |
-    |       +-> Variable: {name: 'x', type: 'int'}
+    |       +-> Variable: 'x' {type: 'int'}
     |       |
-    |       +-> IntegerConstant: '10'
+    |       +-> IntegerConstant: '10' {type: 'int'}
     |
     +-> IfStatement
         |
-        +-> (condition) RelationalExpression: '<'
+        +-> (condition) RelationalExpression: '<' {type: 'int'}
         |   |
-        |   +-> Variable: {name: 'x', type: 'int'}
+        |   +-> Variable: 'x' {type: 'int'}
         |   |
-        |   +-> IntegerConstant: '5'
+        |   +-> IntegerConstant: '5' {type: 'int'}
         |
         +-> (true branch) ExpressionStatement
             |
             +-> AssignmentExpression: '='
                 |
-                +-> Variable: {name: 'x', type: 'int'}
+                +-> Variable: 'x' {type: 'int'}
                 |
-                +-> IntegerConstant: '10'
+                +-> IntegerConstant: '10' {type: 'int'}
 
 @endtest
 
@@ -49,27 +49,27 @@ int main() {
 }
 @whenRun("./bin/parser-tester")
 @expectOutput("stdout")
-FunctionDefinition: {name: 'main', type: 'int'}
+FunctionDefinition: 'main' {type: 'int'}
 |
 +-> CompoundStatement
     |
-    +-> VariableDeclaration: {name: 'x', type: 'int'}
+    +-> VariableDeclaration: 'x' {type: 'int'}
     |
     +-> ExpressionStatement
     |   |
     |   +-> AssignmentExpression: '='
     |       |
-    |       +-> Variable: {name: 'x', type: 'int'}
+    |       +-> Variable: 'x' {type: 'int'}
     |       |
-    |       +-> IntegerConstant: '10'
+    |       +-> IntegerConstant: '10' {type: 'int'}
     |
     +-> IfStatement
         |
-        +-> (condition) RelationalExpression: '<'
+        +-> (condition) RelationalExpression: '<' {type: 'int'}
         |   |
-        |   +-> Variable: {name: 'x', type: 'int'}
+        |   +-> Variable: 'x' {type: 'int'}
         |   |
-        |   +-> IntegerConstant: '5'
+        |   +-> IntegerConstant: '5' {type: 'int'}
         |
         +-> (true branch) ExpressionStatement: {empty expression}
 
@@ -87,27 +87,27 @@ int main() {
 }
 @whenRun("./bin/parser-tester")
 @expectOutput("stdout")
-FunctionDefinition: {name: 'main', type: 'int'}
+FunctionDefinition: 'main' {type: 'int'}
 |
 +-> CompoundStatement
     |
-    +-> VariableDeclaration: {name: 'x', type: 'int'}
+    +-> VariableDeclaration: 'x' {type: 'int'}
     |
     +-> ExpressionStatement
     |   |
     |   +-> AssignmentExpression: '='
     |       |
-    |       +-> Variable: {name: 'x', type: 'int'}
+    |       +-> Variable: 'x' {type: 'int'}
     |       |
-    |       +-> IntegerConstant: '10'
+    |       +-> IntegerConstant: '10' {type: 'int'}
     |
     +-> IfStatement
         |
-        +-> (condition) RelationalExpression: '<'
+        +-> (condition) RelationalExpression: '<' {type: 'int'}
         |   |
-        |   +-> Variable: {name: 'x', type: 'int'}
+        |   +-> Variable: 'x' {type: 'int'}
         |   |
-        |   +-> IntegerConstant: '5'
+        |   +-> IntegerConstant: '5' {type: 'int'}
         |
         +-> (true branch) CompoundStatement
             |
@@ -115,21 +115,21 @@ FunctionDefinition: {name: 'main', type: 'int'}
             |   |
             |   +-> AssignmentExpression: '='
             |       |
-            |       +-> Variable: {name: 'x', type: 'int'}
+            |       +-> Variable: 'x' {type: 'int'}
             |       |
-            |       +-> IntegerConstant: '10'
+            |       +-> IntegerConstant: '10' {type: 'int'}
             |
             +-> ExpressionStatement
                 |
                 +-> AssignmentExpression: '='
                     |
-                    +-> Variable: {name: 'x', type: 'int'}
+                    +-> Variable: 'x' {type: 'int'}
                     |
-                    +-> AdditiveExpression: '+'
+                    +-> AdditiveExpression: '+' {type: 'int'}
                         |
-                        +-> Variable: {name: 'x', type: 'int'}
+                        +-> Variable: 'x' {type: 'int'}
                         |
-                        +-> IntegerConstant: '15'
+                        +-> IntegerConstant: '15' {type: 'int'}
 
 @endtest
 
@@ -145,43 +145,43 @@ int main() {
 }
 @whenRun("./bin/parser-tester")
 @expectOutput("stdout")
-FunctionDefinition: {name: 'main', type: 'int'}
+FunctionDefinition: 'main' {type: 'int'}
 |
 +-> CompoundStatement
     |
-    +-> VariableDeclaration: {name: 'x', type: 'int'}
+    +-> VariableDeclaration: 'x' {type: 'int'}
     |
     +-> ExpressionStatement
     |   |
     |   +-> AssignmentExpression: '='
     |       |
-    |       +-> Variable: {name: 'x', type: 'int'}
+    |       +-> Variable: 'x' {type: 'int'}
     |       |
-    |       +-> IntegerConstant: '10'
+    |       +-> IntegerConstant: '10' {type: 'int'}
     |
     +-> IfStatement
         |
-        +-> (condition) RelationalExpression: '<'
+        +-> (condition) RelationalExpression: '<' {type: 'int'}
         |   |
-        |   +-> Variable: {name: 'x', type: 'int'}
+        |   +-> Variable: 'x' {type: 'int'}
         |   |
-        |   +-> IntegerConstant: '5'
+        |   +-> IntegerConstant: '5' {type: 'int'}
         |
         +-> (true branch) ExpressionStatement
         |   |
         |   +-> AssignmentExpression: '='
         |       |
-        |       +-> Variable: {name: 'x', type: 'int'}
+        |       +-> Variable: 'x' {type: 'int'}
         |       |
-        |       +-> IntegerConstant: '10'
+        |       +-> IntegerConstant: '10' {type: 'int'}
         |
         +-> (false branch) ExpressionStatement
             |
             +-> AssignmentExpression: '='
                 |
-                +-> Variable: {name: 'x', type: 'int'}
+                +-> Variable: 'x' {type: 'int'}
                 |
-                +-> IntegerConstant: '77'
+                +-> IntegerConstant: '77' {type: 'int'}
 
 @endtest
 
@@ -196,35 +196,35 @@ int main() {
 }
 @whenRun("./bin/parser-tester")
 @expectOutput("stdout")
-FunctionDefinition: {name: 'main', type: 'int'}
+FunctionDefinition: 'main' {type: 'int'}
 |
 +-> CompoundStatement
     |
-    +-> VariableDeclaration: {name: 'x', type: 'int'}
+    +-> VariableDeclaration: 'x' {type: 'int'}
     |
     +-> ExpressionStatement
     |   |
     |   +-> AssignmentExpression: '='
     |       |
-    |       +-> Variable: {name: 'x', type: 'int'}
+    |       +-> Variable: 'x' {type: 'int'}
     |       |
-    |       +-> IntegerConstant: '10'
+    |       +-> IntegerConstant: '10' {type: 'int'}
     |
     +-> IfStatement
         |
-        +-> (condition) RelationalExpression: '<'
+        +-> (condition) RelationalExpression: '<' {type: 'int'}
         |   |
-        |   +-> Variable: {name: 'x', type: 'int'}
+        |   +-> Variable: 'x' {type: 'int'}
         |   |
-        |   +-> IntegerConstant: '5'
+        |   +-> IntegerConstant: '5' {type: 'int'}
         |
         +-> (true branch) ExpressionStatement
         |   |
         |   +-> AssignmentExpression: '='
         |       |
-        |       +-> Variable: {name: 'x', type: 'int'}
+        |       +-> Variable: 'x' {type: 'int'}
         |       |
-        |       +-> IntegerConstant: '10'
+        |       +-> IntegerConstant: '10' {type: 'int'}
         |
         +-> (false branch) ExpressionStatement: {empty expression}
 
@@ -244,35 +244,35 @@ int main() {
 }
 @whenRun("./bin/parser-tester")
 @expectOutput("stdout")
-FunctionDefinition: {name: 'main', type: 'int'}
+FunctionDefinition: 'main' {type: 'int'}
 |
 +-> CompoundStatement
     |
-    +-> VariableDeclaration: {name: 'x', type: 'int'}
+    +-> VariableDeclaration: 'x' {type: 'int'}
     |
     +-> ExpressionStatement
     |   |
     |   +-> AssignmentExpression: '='
     |       |
-    |       +-> Variable: {name: 'x', type: 'int'}
+    |       +-> Variable: 'x' {type: 'int'}
     |       |
-    |       +-> IntegerConstant: '10'
+    |       +-> IntegerConstant: '10' {type: 'int'}
     |
     +-> IfStatement
         |
-        +-> (condition) RelationalExpression: '<'
+        +-> (condition) RelationalExpression: '<' {type: 'int'}
         |   |
-        |   +-> Variable: {name: 'x', type: 'int'}
+        |   +-> Variable: 'x' {type: 'int'}
         |   |
-        |   +-> IntegerConstant: '5'
+        |   +-> IntegerConstant: '5' {type: 'int'}
         |
         +-> (true branch) ExpressionStatement
         |   |
         |   +-> AssignmentExpression: '='
         |       |
-        |       +-> Variable: {name: 'x', type: 'int'}
+        |       +-> Variable: 'x' {type: 'int'}
         |       |
-        |       +-> IntegerConstant: '10'
+        |       +-> IntegerConstant: '10' {type: 'int'}
         |
         +-> (false branch) CompoundStatement
             |
@@ -280,20 +280,20 @@ FunctionDefinition: {name: 'main', type: 'int'}
             |   |
             |   +-> AssignmentExpression: '='
             |       |
-            |       +-> Variable: {name: 'x', type: 'int'}
+            |       +-> Variable: 'x' {type: 'int'}
             |       |
-            |       +-> IntegerConstant: '77'
+            |       +-> IntegerConstant: '77' {type: 'int'}
             |
             +-> ExpressionStatement
                 |
                 +-> AssignmentExpression: '='
                     |
-                    +-> Variable: {name: 'x', type: 'int'}
+                    +-> Variable: 'x' {type: 'int'}
                     |
-                    +-> AdditiveExpression: '-'
+                    +-> AdditiveExpression: '-' {type: 'int'}
                         |
-                        +-> Variable: {name: 'x', type: 'int'}
+                        +-> Variable: 'x' {type: 'int'}
                         |
-                        +-> IntegerConstant: '1'
+                        +-> IntegerConstant: '1' {type: 'int'}
 
 @endtest

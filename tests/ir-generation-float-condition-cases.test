@@ -1,0 +1,27 @@
+@test("It should generate IR code for if statement with float constant condition")
+@given("file")
+int main() {
+    float x;
+    x = 10;
+    if (x > 3.0) {
+        x = 777.0;
+    }
+    return (int)x;
+}
+@whenRun("./bin/ir-generator-tester")
+@expectOutput("stdout")
+0000 OP_FUNC "main"
+0001 OP_CONST 10, t1
+0002 OP_STORE x, t1
+0003 OP_LOAD x, t2
+0004 OP_CONST 3.000000, t3
+0005 OP_JUMP_IF_LESS_OR_EQUAL t2, t3, ".L1"
+0006 OP_CONST 777.000000, t4
+0007 OP_STORE x, t4
+0008 OP_LABEL ".L1"
+0009 OP_LOAD x, t5
+0010 OP_INT_CAST t5, t6
+0011 OP_RETURN t6
+0012 OP_FUNC_END
+
+@endtest

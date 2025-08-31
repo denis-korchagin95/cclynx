@@ -1,0 +1,31 @@
+@test("It should generate IR code for while loop with float condition")
+@given("file")
+int main() {
+    float n;
+    n = 10.0;
+    while (n > 5.0) {
+        n = n - 1.0;
+    }
+    return (int)n;
+}
+@whenRun("./bin/ir-generator-tester")
+@expectOutput("stdout")
+0000 OP_FUNC "main"
+0001 OP_CONST 10.000000, t1
+0002 OP_STORE n, t1
+0003 OP_LABEL ".L1"
+0004 OP_LOAD n, t2
+0005 OP_CONST 5.000000, t3
+0006 OP_JUMP_IF_LESS_OR_EQUAL t2, t3, ".L2"
+0007 OP_LOAD n, t4
+0008 OP_CONST 1.000000, t5
+0009 OP_SUB t4, t5, t6
+0010 OP_STORE n, t6
+0011 OP_JUMP ".L1"
+0012 OP_LABEL ".L2"
+0013 OP_LOAD n, t7
+0014 OP_INT_CAST t7, t8
+0015 OP_RETURN t8
+0016 OP_FUNC_END
+
+@endtest
