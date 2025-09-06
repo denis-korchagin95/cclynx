@@ -2,7 +2,7 @@ CC=gcc
 SRC=./
 BIN=./bin/
 OBJ=./obj/
-PROGRAM=cminx
+PROGRAM=cclynx
 CFLAGS=-std=c11 -g2 -Wall -O0
 HEADERS=./headers/
 TESTERS=./testers/
