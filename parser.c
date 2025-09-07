@@ -297,7 +297,7 @@ struct ast_node * parse_function_definition(struct parser_context * context)
     struct ast_node * function_definition = create_ast_node(AST_NODE_KIND_FUNCTION_DEFINITION);
     function_definition->content.function_definition.name = identifier;
     function_definition->content.function_definition.body = compound_statement;
-    function_definition->type = &type_integer;
+    function_definition->type = symbol->type;
 
     return function_definition;
 }

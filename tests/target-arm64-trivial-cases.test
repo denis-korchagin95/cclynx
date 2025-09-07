@@ -226,3 +226,30 @@ _main:
     ret
 
 @endtest
+
+@test("It should generate target arm64 code on returning float constant from function")
+@given("file")
+float test() {
+    float a;
+    a = 4.65;
+    return a;
+}
+@whenRun("./bin/target-code-generator-tester")
+@expectOutput("stdout")
+.text
+.global _main
+.align 2
+
+_test:
+    stp x29, x30, [sp, -16]!
+    mov x29, sp
+    sub sp, sp, #16
+    fmov s8, #4.650000
+    str s8, [sp, #0]
+    ldr s8, [sp, #0]
+    mov s0, s8
+    add sp, sp, #16
+    ldp x29, x30, [sp], #16
+    ret
+
+@endtest
