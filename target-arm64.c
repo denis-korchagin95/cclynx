@@ -139,52 +139,117 @@ void target_arm64_generate(struct ir_program * program, FILE * file)
                 break;
             case OP_JUMP_IF_FALSE:
                 {
-// TODO: implement float type support
-                    struct reg * result_reg = pop_reg();
-                    fprintf(file, "    cbz %s, .L%llu\n", result_reg->name, instruction->op2->content.label_id);
-                    free_reg(result_reg);
+                    struct reg * op1_reg = pop_reg();
+
+                    if (op1_reg->kind == REG_KIND_INTEGER) {
+                        fprintf(file, "    cbz %s, .L%llu\n", op1_reg->name, instruction->op2->content.label_id);
+                    } else if (op1_reg->kind == REG_KIND_FLOAT) {
+                        fprintf(file, "    fcmp %s, #0.0\n", op1_reg->name);
+                        fprintf(file, "    b.eq .L%llu\n", instruction->op2->content.label_id);
+                    } else {
+                        fprintf(stderr, "ERROR: unsupported reg kind (OP_JUMP_IF_FALSE)!\n");
+                        exit(1);
+                    }
+
+                    free_reg(op1_reg);
                 }
                 break;
             case OP_JUMP_IF_EQUAL:
                 {
-// TODO: implement float type support
                     struct reg * op2_reg = pop_reg();
                     struct reg * op1_reg = pop_reg();
-                    fprintf(file, "    cmp %s, %s\n", op1_reg->name, op2_reg->name);
-                    fprintf(file, "    b.eq .L%llu\n", instruction->result->content.label_id);
+
+                    if (op1_reg->kind != op2_reg->kind) {
+                        fprintf(stderr, "ERROR: register type mismatch (OP_JUMP_IF_EQUAL)!\n");
+                        exit(1);
+                    }
+
+                    if (op1_reg->kind == REG_KIND_INTEGER) {
+                        fprintf(file, "    cmp %s, %s\n", op1_reg->name, op2_reg->name);
+                        fprintf(file, "    b.eq .L%llu\n", instruction->result->content.label_id);
+                    } else if (op1_reg->kind == REG_KIND_FLOAT) {
+                        fprintf(file, "    fcmp %s, %s\n", op1_reg->name, op2_reg->name);
+                        fprintf(file, "    b.eq .L%llu\n", instruction->result->content.label_id);
+                    } else {
+                        fprintf(stderr, "ERROR: unsupported reg kind (OP_JUMP_IF_EQUAL)!\n");
+                        exit(1);
+                    }
+
                     free_reg(op1_reg);
                     free_reg(op2_reg);
                 }
                 break;
             case OP_JUMP_IF_NOT_EQUAL:
                 {
-// TODO: implement float type support
                     struct reg * op2_reg = pop_reg();
                     struct reg * op1_reg = pop_reg();
-                    fprintf(file, "    cmp %s, %s\n", op1_reg->name, op2_reg->name);
-                    fprintf(file, "    b.ne .L%llu\n", instruction->result->content.label_id);
+
+                    if (op1_reg->kind != op2_reg->kind) {
+                        fprintf(stderr, "ERROR: register type mismatch (OP_JUMP_IF_NOT_EQUAL)!\n");
+                        exit(1);
+                    }
+
+                    if (op1_reg->kind == REG_KIND_INTEGER) {
+                        fprintf(file, "    cmp %s, %s\n", op1_reg->name, op2_reg->name);
+                        fprintf(file, "    b.ne .L%llu\n", instruction->result->content.label_id);
+                    } else if (op1_reg->kind == REG_KIND_FLOAT) {
+                        fprintf(file, "    fcmp %s, %s\n", op1_reg->name, op2_reg->name);
+                        fprintf(file, "    b.ne .L%llu\n", instruction->result->content.label_id);
+                    } else {
+                        fprintf(stderr, "ERROR: unsupported reg kind (OP_JUMP_IF_NOT_EQUAL)!\n");
+                        exit(1);
+                    }
+
                     free_reg(op1_reg);
                     free_reg(op2_reg);
                 }
                 break;
             case OP_JUMP_IF_LESS_OR_EQUAL:
                 {
-// TODO: implement float type support
                     struct reg * op2_reg = pop_reg();
                     struct reg * op1_reg = pop_reg();
-                    fprintf(file, "    cmp %s, %s\n", op1_reg->name, op2_reg->name);
-                    fprintf(file, "    b.le .L%llu\n", instruction->result->content.label_id);
+
+                    if (op1_reg->kind != op2_reg->kind) {
+                        fprintf(stderr, "ERROR: register type mismatch (OP_JUMP_IF_LESS_OR_EQUAL)!\n");
+                        exit(1);
+                    }
+
+                    if (op1_reg->kind == REG_KIND_INTEGER) {
+                        fprintf(file, "    cmp %s, %s\n", op1_reg->name, op2_reg->name);
+                        fprintf(file, "    b.le .L%llu\n", instruction->result->content.label_id);
+                    } else if (op1_reg->kind == REG_KIND_FLOAT) {
+                        fprintf(file, "    fcmp %s, %s\n", op1_reg->name, op2_reg->name);
+                        fprintf(file, "    b.le .L%llu\n", instruction->result->content.label_id);
+                    } else {
+                        fprintf(stderr, "ERROR: unsupported reg kind (OP_JUMP_IF_LESS_OR_EQUAL)!\n");
+                        exit(1);
+                    }
+
                     free_reg(op1_reg);
                     free_reg(op2_reg);
                 }
                 break;
             case OP_JUMP_IF_GREATER_OR_EQUAL:
                 {
-// TODO: implement float type support
                     struct reg * op2_reg = pop_reg();
                     struct reg * op1_reg = pop_reg();
-                    fprintf(file, "    cmp %s, %s\n", op1_reg->name, op2_reg->name);
-                    fprintf(file, "    b.ge .L%llu\n", instruction->result->content.label_id);
+
+                    if (op1_reg->kind != op2_reg->kind) {
+                        fprintf(stderr, "ERROR: register type mismatch (OP_JUMP_IF_GREATER_OR_EQUAL)!\n");
+                        exit(1);
+                    }
+
+                    if (op1_reg->kind == REG_KIND_INTEGER) {
+                        fprintf(file, "    cmp %s, %s\n", op1_reg->name, op2_reg->name);
+                        fprintf(file, "    b.ge .L%llu\n", instruction->result->content.label_id);
+                    } else if (op1_reg->kind == REG_KIND_FLOAT) {
+                        fprintf(file, "    fcmp %s, %s\n", op1_reg->name, op2_reg->name);
+                        fprintf(file, "    b.ge .L%llu\n", instruction->result->content.label_id);
+                    } else {
+                        fprintf(stderr, "ERROR: unsupported reg kind (OP_JUMP_IF_GREATER_OR_EQUAL)!\n");
+                        exit(1);
+                    }
+
                     free_reg(op1_reg);
                     free_reg(op2_reg);
                 }
@@ -247,12 +312,27 @@ void target_arm64_generate(struct ir_program * program, FILE * file)
                 break;
             case OP_IS_EQUAL:
                 {
-// TODO: implement float type support
-                    struct reg * result_reg = alloc_reg(REG_KIND_INTEGER);
                     struct reg * op2_reg = pop_reg();
                     struct reg * op1_reg = pop_reg();
-                    fprintf(file, "    cmp %s, %s\n", op1_reg->name, op2_reg->name);
-                    fprintf(file, "    cset %s, eq\n", result_reg->name);
+
+                    if (op1_reg->kind != op2_reg->kind) {
+                        fprintf(stderr, "ERROR: register type mismatch (OP_IS_EQUAL)!\n");
+                        exit(1);
+                    }
+
+                    struct reg * result_reg = alloc_reg(REG_KIND_INTEGER);
+
+                    if (op1_reg->kind == REG_KIND_INTEGER) {
+                        fprintf(file, "    cmp %s, %s\n", op1_reg->name, op2_reg->name);
+                        fprintf(file, "    cset %s, eq\n", result_reg->name);
+                    } else if (op1_reg->kind == REG_KIND_FLOAT) {
+                        fprintf(file, "    fcmp %s, %s\n", op1_reg->name, op2_reg->name);
+                        fprintf(file, "    cset %s, eq\n", result_reg->name);
+                    } else {
+                        fprintf(stderr, "ERROR: unsupported reg kind (OP_IS_EQUAL)!\n");
+                        exit(1);
+                    }
+
                     free_reg(op1_reg);
                     free_reg(op2_reg);
                     push_reg(result_reg);
@@ -260,12 +340,27 @@ void target_arm64_generate(struct ir_program * program, FILE * file)
                 break;
             case OP_IS_NOT_EQUAL:
                 {
-// TODO: implement float type support
-                    struct reg * result_reg = alloc_reg(REG_KIND_INTEGER);
                     struct reg * op2_reg = pop_reg();
                     struct reg * op1_reg = pop_reg();
-                    fprintf(file, "    cmp %s, %s\n", op1_reg->name, op2_reg->name);
-                    fprintf(file, "    cset %s, ne\n", result_reg->name);
+
+                    if (op1_reg->kind != op2_reg->kind) {
+                        fprintf(stderr, "ERROR: register type mismatch (OP_IS_NOT_EQUAL)!\n");
+                        exit(1);
+                    }
+
+                    struct reg * result_reg = alloc_reg(REG_KIND_INTEGER);
+
+                    if (op1_reg->kind == REG_KIND_INTEGER) {
+                        fprintf(file, "    cmp %s, %s\n", op1_reg->name, op2_reg->name);
+                        fprintf(file, "    cset %s, ne\n", result_reg->name);
+                    } else if (op1_reg->kind == REG_KIND_FLOAT) {
+                        fprintf(file, "    fcmp %s, %s\n", op1_reg->name, op2_reg->name);
+                        fprintf(file, "    cset %s, ne\n", result_reg->name);
+                    } else {
+                        fprintf(stderr, "ERROR: unsupported reg kind (OP_IS_NOT_EQUAL)!\n");
+                        exit(1);
+                    }
+
                     free_reg(op1_reg);
                     free_reg(op2_reg);
                     push_reg(result_reg);

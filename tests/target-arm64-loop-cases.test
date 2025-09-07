@@ -332,11 +332,168 @@ _main:
 .L1:
     ldr s8, [sp, #0]
     fmov s9, #5.000000
-    cmp s8, s9
+    fcmp s8, s9
     b.le .L2
     ldr s8, [sp, #0]
     fmov s9, #1.000000
     fsub s10, s8, s9
+    str s10, [sp, #0]
+    b .L1
+.L2:
+    ldr s8, [sp, #0]
+    fcvtzs w9, s8
+    mov w0, w9
+    add sp, sp, #16
+    ldp x29, x30, [sp], #16
+    ret
+
+@endtest
+
+@test("It should generate target arm64 code for while loop with float zero expression")
+@given("file")
+int main() {
+    while (0.0)
+        ;
+    return 0;
+}
+@whenRun("./bin/target-code-generator-tester")
+@expectOutput("stdout")
+.text
+.global _main
+.align 2
+
+_main:
+    stp x29, x30, [sp, -16]!
+    mov x29, sp
+.L1:
+    fmov s8, #0.000000
+    fcmp s8, #0.0
+    b.eq .L2
+    nop
+    b .L1
+.L2:
+    mov w9, #0
+    mov w0, w9
+    add sp, sp, #16
+    ldp x29, x30, [sp], #16
+    ret
+
+@endtest
+
+@test("It should generate target arm64 code when using float not equal condition in while loop")
+@given("file")
+int main() {
+    float i;
+    i = 10.0;
+    while (i != 3.0) {
+        i = i - 1.0;
+    }
+    return (int)i;
+}
+@whenRun("./bin/target-code-generator-tester")
+@expectOutput("stdout")
+.text
+.global _main
+.align 2
+
+_main:
+    stp x29, x30, [sp, -16]!
+    mov x29, sp
+    sub sp, sp, #16
+    fmov s8, #10.000000
+    str s8, [sp, #0]
+.L1:
+    ldr s8, [sp, #0]
+    fmov s9, #3.000000
+    fcmp s8, s9
+    b.eq .L2
+    ldr s8, [sp, #0]
+    fmov s9, #1.000000
+    fsub s10, s8, s9
+    str s10, [sp, #0]
+    b .L1
+.L2:
+    ldr s8, [sp, #0]
+    fcvtzs w9, s8
+    mov w0, w9
+    add sp, sp, #16
+    ldp x29, x30, [sp], #16
+    ret
+
+@endtest
+
+@test("It should generate target arm64 code with float greater than condition in while loop")
+@given("file")
+int main() {
+    float n;
+    n = 10.0;
+    while (n > 5.0) {
+        n = n - 1.0;
+    }
+    return (int)n;
+}
+@whenRun("./bin/target-code-generator-tester")
+@expectOutput("stdout")
+.text
+.global _main
+.align 2
+
+_main:
+    stp x29, x30, [sp, -16]!
+    mov x29, sp
+    sub sp, sp, #16
+    fmov s8, #10.000000
+    str s8, [sp, #0]
+.L1:
+    ldr s8, [sp, #0]
+    fmov s9, #5.000000
+    fcmp s8, s9
+    b.le .L2
+    ldr s8, [sp, #0]
+    fmov s9, #1.000000
+    fsub s10, s8, s9
+    str s10, [sp, #0]
+    b .L1
+.L2:
+    ldr s8, [sp, #0]
+    fcvtzs w9, s8
+    mov w0, w9
+    add sp, sp, #16
+    ldp x29, x30, [sp], #16
+    ret
+
+@endtest
+
+@test("It should generate target arm64 code with float less than condition in while loop")
+@given("file")
+int main() {
+    float n;
+    n = 0.0;
+    while (n < 10.0) {
+        n = n + 1.0;
+    }
+    return (int)n;
+}
+@whenRun("./bin/target-code-generator-tester")
+@expectOutput("stdout")
+.text
+.global _main
+.align 2
+
+_main:
+    stp x29, x30, [sp, -16]!
+    mov x29, sp
+    sub sp, sp, #16
+    fmov s8, #0.000000
+    str s8, [sp, #0]
+.L1:
+    ldr s8, [sp, #0]
+    fmov s9, #10.000000
+    fcmp s8, s9
+    b.ge .L2
+    ldr s8, [sp, #0]
+    fmov s9, #1.000000
+    fadd s10, s8, s9
     str s10, [sp, #0]
     b .L1
 .L2:
