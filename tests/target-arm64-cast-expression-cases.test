@@ -1,4 +1,4 @@
-@test("It should generate target arm64 code an additive expression with float and autocast type on return")
+@test("It should generate target arm64 code an additive expression with float and cast type on return")
 @given("file")
 int main() {
     float x;
@@ -41,7 +41,7 @@ _main:
 
 @endtest
 
-@test("It should generate target arm64 code a multiplicative expression with float and autocast type on return")
+@test("It should generate target arm64 code a multiplicative expression with float and cast type on return")
 @given("file")
 int main() {
     float x;
@@ -84,7 +84,7 @@ _main:
 
 @endtest
 
-@test("It should generate target arm64 code a relational expression with float and autocast type on return")
+@test("It should generate target arm64 code a relational expression with float and cast type on return")
 @given("file")
 int main() {
     float x;
@@ -123,6 +123,38 @@ _main:
     str w9, [sp, #12]
     ldr w9, [sp, #12]
     mov w0, w9
+    add sp, sp, #16
+    ldp x29, x30, [sp], #16
+    ret
+
+@endtest
+
+@test("It should generate target arm64 code for an integer cast to a float")
+@given("file")
+float test() {
+    int y;
+    y = 777;
+    float x;
+    x = (float)y;
+    return x;
+}
+@whenRun("./bin/target-code-generator-tester")
+@expectOutput("stdout")
+.text
+.global _main
+.align 2
+
+_test:
+    stp x29, x30, [sp, -16]!
+    mov x29, sp
+    sub sp, sp, #16
+    mov w9, #777
+    str w9, [sp, #0]
+    ldr w9, [sp, #0]
+    scvtf s8, w9
+    str s8, [sp, #4]
+    ldr s8, [sp, #4]
+    mov s0, s8
     add sp, sp, #16
     ldp x29, x30, [sp], #16
     ret

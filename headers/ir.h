@@ -64,6 +64,7 @@ enum opcode
     OP_DIV,
     OP_SUB,
     OP_INT_CAST,
+    OP_FLOAT_CAST,
 };
 
 struct ir_instruction

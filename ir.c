@@ -239,7 +239,13 @@ void do_generate_ir(struct ir_program * program, const struct ast_node * node)
             break;
         case AST_NODE_KIND_CAST_EXPRESSION:
             {
-                if (node->type->kind != TYPE_KIND_INTEGER) {
+                enum opcode cast_opcode = OP_NOP;
+
+                if (node->type->kind == TYPE_KIND_INTEGER) {
+                    cast_opcode = OP_INT_CAST;
+                } else if (node->type->kind == TYPE_KIND_FLOAT) {
+                    cast_opcode = OP_FLOAT_CAST;
+                } else {
                     fprintf(stderr, "ERROR: unsupported cast to '%s' yet!\n", type_stringify(node->type));
                     exit(1);
                 }
@@ -247,7 +253,7 @@ void do_generate_ir(struct ir_program * program, const struct ast_node * node)
                 do_generate_ir(program, node->content.node);
 
                 main_pool_alloc(struct ir_instruction, instruction)
-                instruction->code = OP_INT_CAST;
+                instruction->code = cast_opcode;
                 instruction->op1 = program->instructions[program->position - 1]->result;
                 instruction->result = new_temporary_operand();
 

@@ -8,8 +8,6 @@
 #include "util.h"
 #include "type.h"
 
-#define INT32_REG_COUNT (7)
-
 enum reg_kind
 {
     REG_KIND_INTEGER,
@@ -48,6 +46,7 @@ static enum reg_kind get_reg_kind(struct type * type);
 
 static void op_const(FILE * output, char * buf, struct ir_operand * op1);
 static void op_load(FILE * output, struct ir_operand * op1);
+static const char * reg_kind_stringify(enum reg_kind kind);
 
 static void push_reg(struct reg * reg)
 {
@@ -405,13 +404,32 @@ void target_arm64_generate(struct ir_program * program, FILE * file)
                     struct reg * result_reg = NULL;
 
                     if (op_reg->kind != REG_KIND_FLOAT) {
-                        fprintf(stderr, "ERROR: unsupported reg kind (OP_INT_CAST)!\n");
+                        fprintf(stderr, "ERROR: unsupported reg kind '%s' for OP_INT_CAST operation!\n", reg_kind_stringify(op_reg->kind));
                         exit(1);
                     }
 
                     result_reg = alloc_reg(REG_KIND_INTEGER);
 
                     fprintf(file, "    fcvtzs %s, %s\n", result_reg->name, op_reg->name);
+
+                    free_reg(op_reg);
+                    push_reg(result_reg);
+                }
+                break;
+            case OP_FLOAT_CAST:
+                {
+                    struct reg * op_reg = pop_reg();
+
+                    struct reg * result_reg = NULL;
+
+                    if (op_reg->kind != REG_KIND_INTEGER) {
+                        fprintf(stderr, "ERROR: unsupported reg kind '%s' for OP_FLOAT_CAST operation!\n", reg_kind_stringify(op_reg->kind));
+                        exit(1);
+                    }
+
+                    result_reg = alloc_reg(REG_KIND_FLOAT);
+
+                    fprintf(file, "    scvtf %s, %s\n", result_reg->name, op_reg->name);
 
                     free_reg(op_reg);
                     push_reg(result_reg);
@@ -474,4 +492,15 @@ void op_load(FILE * output, struct ir_operand * op1)
     struct reg * result_reg = alloc_reg(get_reg_kind(op1->type));
     fprintf(output, "    ldr %s, [sp, #%zu]\n", result_reg->name, op1->content.variable.offset);
     push_reg(result_reg);
+}
+
+const char * reg_kind_stringify(enum reg_kind kind)
+{
+    if (kind == REG_KIND_INTEGER)
+        return "int";
+
+    if (kind == REG_KIND_FLOAT)
+        return "float";
+
+    return "<unknown reg kind>";
 }

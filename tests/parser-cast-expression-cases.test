@@ -1,4 +1,4 @@
-@test("A float value can be casted to integer")
+@test("A float can be cast to an integer")
 @given("file")
 int main() {
     float y;
@@ -38,5 +38,48 @@ FunctionDefinition: 'main' {type: 'int'}
     +-> ReturnStatement
         |
         +-> Variable: 'x' {type: 'int'}
+
+@endtest
+
+@test("An integer can be cast to a float")
+@given("file")
+float test() {
+    int y;
+    y = 777;
+    float x;
+    x = (float)y;
+    return x;
+}
+@whenRun("./bin/parser-tester")
+@expectOutput("stdout")
+FunctionDefinition: 'test' {type: 'float'}
+|
++-> CompoundStatement
+    |
+    +-> VariableDeclaration: 'y' {type: 'int'}
+    |
+    +-> ExpressionStatement
+    |   |
+    |   +-> AssignmentExpression: '='
+    |       |
+    |       +-> Variable: 'y' {type: 'int'}
+    |       |
+    |       +-> IntegerConstant: '777' {type: 'int'}
+    |
+    +-> VariableDeclaration: 'x' {type: 'float'}
+    |
+    +-> ExpressionStatement
+    |   |
+    |   +-> AssignmentExpression: '='
+    |       |
+    |       +-> Variable: 'x' {type: 'float'}
+    |       |
+    |       +-> CastExpression {type: 'float'}
+    |           |
+    |           +-> Variable: 'y' {type: 'int'}
+    |
+    +-> ReturnStatement
+        |
+        +-> Variable: 'x' {type: 'float'}
 
 @endtest

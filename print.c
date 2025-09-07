@@ -224,6 +224,10 @@ void print_ir_program(const struct ir_program * program, FILE * file)
         struct ir_instruction * instruction = program->instructions[i];
 
         switch (instruction->code) {
+            case OP_FLOAT_CAST:
+                sprintf(buf, "t%llu, t%llu", instruction->op1->content.temp_id, instruction->result->content.temp_id);
+                fprintf(file, "%04zu OP_FLOAT_CAST %s\n", i, buf);
+                break;
             case OP_INT_CAST:
                 sprintf(buf, "t%llu, t%llu", instruction->op1->content.temp_id, instruction->result->content.temp_id);
                 fprintf(file, "%04zu OP_INT_CAST %s\n", i, buf);
@@ -322,7 +326,7 @@ void print_ir_program(const struct ir_program * program, FILE * file)
                 fprintf(file, "%04zu OP_NOP\n", i);
                 break;
             default:
-                fprintf(stderr, "ERROR: Unknown instruction for IR program\n");
+                fprintf(stderr, "ERROR(print): Unknown instruction for IR program\n");
                 exit(1);
         }
     }
