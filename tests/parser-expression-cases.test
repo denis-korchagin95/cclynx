@@ -525,3 +525,243 @@ FunctionDefinition: 'main' {type: 'int'}
                 +-> IntegerConstant: '23' {type: 'int'}
 
 @endtest
+
+@test("An additive expression (+, -) should have the same type as operands")
+@given("file")
+int main() {
+    float x;
+    x = 4.5;
+    12.3 + .2;
+    12.7 - 12.2;
+    .5 + x;
+    x - .5;
+}
+@whenRun("./bin/parser-tester")
+@expectOutput("stdout")
+FunctionDefinition: 'main' {type: 'int'}
+|
++-> CompoundStatement
+    |
+    +-> VariableDeclaration: 'x' {type: 'float'}
+    |
+    +-> ExpressionStatement
+    |   |
+    |   +-> AssignmentExpression: '='
+    |       |
+    |       +-> Variable: 'x' {type: 'float'}
+    |       |
+    |       +-> FloatConstant: '4.500000' {type: 'float'}
+    |
+    +-> ExpressionStatement
+    |   |
+    |   +-> AdditiveExpression: '+' {type: 'float'}
+    |       |
+    |       +-> FloatConstant: '12.300000' {type: 'float'}
+    |       |
+    |       +-> FloatConstant: '0.200000' {type: 'float'}
+    |
+    +-> ExpressionStatement
+    |   |
+    |   +-> AdditiveExpression: '-' {type: 'float'}
+    |       |
+    |       +-> FloatConstant: '12.700000' {type: 'float'}
+    |       |
+    |       +-> FloatConstant: '12.200000' {type: 'float'}
+    |
+    +-> ExpressionStatement
+    |   |
+    |   +-> AdditiveExpression: '+' {type: 'float'}
+    |       |
+    |       +-> FloatConstant: '0.500000' {type: 'float'}
+    |       |
+    |       +-> Variable: 'x' {type: 'float'}
+    |
+    +-> ExpressionStatement
+        |
+        +-> AdditiveExpression: '-' {type: 'float'}
+            |
+            +-> Variable: 'x' {type: 'float'}
+            |
+            +-> FloatConstant: '0.500000' {type: 'float'}
+
+@endtest
+
+@test("An multiplicative expression (*, /) should have the same type as operands")
+@given("file")
+int main() {
+    float x;
+    x = 4.5;
+    12.3 * .2;
+    12.7 / 12.2;
+    .5 * x;
+    x / .5;
+}
+@whenRun("./bin/parser-tester")
+@expectOutput("stdout")
+FunctionDefinition: 'main' {type: 'int'}
+|
++-> CompoundStatement
+    |
+    +-> VariableDeclaration: 'x' {type: 'float'}
+    |
+    +-> ExpressionStatement
+    |   |
+    |   +-> AssignmentExpression: '='
+    |       |
+    |       +-> Variable: 'x' {type: 'float'}
+    |       |
+    |       +-> FloatConstant: '4.500000' {type: 'float'}
+    |
+    +-> ExpressionStatement
+    |   |
+    |   +-> MultiplicativeExpression: '*' {type: 'float'}
+    |       |
+    |       +-> FloatConstant: '12.300000' {type: 'float'}
+    |       |
+    |       +-> FloatConstant: '0.200000' {type: 'float'}
+    |
+    +-> ExpressionStatement
+    |   |
+    |   +-> MultiplicativeExpression: '/' {type: 'float'}
+    |       |
+    |       +-> FloatConstant: '12.700000' {type: 'float'}
+    |       |
+    |       +-> FloatConstant: '12.200000' {type: 'float'}
+    |
+    +-> ExpressionStatement
+    |   |
+    |   +-> MultiplicativeExpression: '*' {type: 'float'}
+    |       |
+    |       +-> FloatConstant: '0.500000' {type: 'float'}
+    |       |
+    |       +-> Variable: 'x' {type: 'float'}
+    |
+    +-> ExpressionStatement
+        |
+        +-> MultiplicativeExpression: '/' {type: 'float'}
+            |
+            +-> Variable: 'x' {type: 'float'}
+            |
+            +-> FloatConstant: '0.500000' {type: 'float'}
+
+@endtest
+
+@test("An relational expression (<, >) should have the same type as operands")
+@given("file")
+int main() {
+    float x;
+    x = 4.5;
+    12.3 < .2;
+    12.7 > 12.2;
+    .5 < x;
+    x > .5;
+}
+@whenRun("./bin/parser-tester")
+@expectOutput("stdout")
+FunctionDefinition: 'main' {type: 'int'}
+|
++-> CompoundStatement
+    |
+    +-> VariableDeclaration: 'x' {type: 'float'}
+    |
+    +-> ExpressionStatement
+    |   |
+    |   +-> AssignmentExpression: '='
+    |       |
+    |       +-> Variable: 'x' {type: 'float'}
+    |       |
+    |       +-> FloatConstant: '4.500000' {type: 'float'}
+    |
+    +-> ExpressionStatement
+    |   |
+    |   +-> RelationalExpression: '<' {type: 'float'}
+    |       |
+    |       +-> FloatConstant: '12.300000' {type: 'float'}
+    |       |
+    |       +-> FloatConstant: '0.200000' {type: 'float'}
+    |
+    +-> ExpressionStatement
+    |   |
+    |   +-> RelationalExpression: '>' {type: 'float'}
+    |       |
+    |       +-> FloatConstant: '12.700000' {type: 'float'}
+    |       |
+    |       +-> FloatConstant: '12.200000' {type: 'float'}
+    |
+    +-> ExpressionStatement
+    |   |
+    |   +-> RelationalExpression: '<' {type: 'float'}
+    |       |
+    |       +-> FloatConstant: '0.500000' {type: 'float'}
+    |       |
+    |       +-> Variable: 'x' {type: 'float'}
+    |
+    +-> ExpressionStatement
+        |
+        +-> RelationalExpression: '>' {type: 'float'}
+            |
+            +-> Variable: 'x' {type: 'float'}
+            |
+            +-> FloatConstant: '0.500000' {type: 'float'}
+
+@endtest
+
+@test("An equality expression (==, !=) should have the same type as operands")
+@given("file")
+int main() {
+    float x;
+    x = 4.5;
+    12.3 == .2;
+    12.7 != 12.2;
+    .5 == x;
+    x != .5;
+}
+@whenRun("./bin/parser-tester")
+@expectOutput("stdout")
+FunctionDefinition: 'main' {type: 'int'}
+|
++-> CompoundStatement
+    |
+    +-> VariableDeclaration: 'x' {type: 'float'}
+    |
+    +-> ExpressionStatement
+    |   |
+    |   +-> AssignmentExpression: '='
+    |       |
+    |       +-> Variable: 'x' {type: 'float'}
+    |       |
+    |       +-> FloatConstant: '4.500000' {type: 'float'}
+    |
+    +-> ExpressionStatement
+    |   |
+    |   +-> EqualityExpression: '==' {type: 'float'}
+    |       |
+    |       +-> FloatConstant: '12.300000' {type: 'float'}
+    |       |
+    |       +-> FloatConstant: '0.200000' {type: 'float'}
+    |
+    +-> ExpressionStatement
+    |   |
+    |   +-> EqualityExpression: '!=' {type: 'float'}
+    |       |
+    |       +-> FloatConstant: '12.700000' {type: 'float'}
+    |       |
+    |       +-> FloatConstant: '12.200000' {type: 'float'}
+    |
+    +-> ExpressionStatement
+    |   |
+    |   +-> EqualityExpression: '==' {type: 'float'}
+    |       |
+    |       +-> FloatConstant: '0.500000' {type: 'float'}
+    |       |
+    |       +-> Variable: 'x' {type: 'float'}
+    |
+    +-> ExpressionStatement
+        |
+        +-> EqualityExpression: '!=' {type: 'float'}
+            |
+            +-> Variable: 'x' {type: 'float'}
+            |
+            +-> FloatConstant: '0.500000' {type: 'float'}
+
+@endtest
