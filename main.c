@@ -58,7 +58,6 @@ int main(int argc, const char * argv[])
     parser_init_context(&context, tokens);
 
     if (show_tokens) {
-        fprintf(stdout, "Tokens:\n\n");
         struct token * it = tokens;
         while (it != &eos_token) {
             print_token(it, stdout);
@@ -70,7 +69,6 @@ int main(int argc, const char * argv[])
     struct ast_node * ast = parser_parse(&context);
 
     if (show_ast) {
-        fprintf(stdout, "AST:\n\n");
         print_ast(ast, stdout);
         exit(0);
     }
@@ -81,12 +79,10 @@ int main(int argc, const char * argv[])
     ir_program_generate(&ir_program, ast);
 
     if (show_ir) {
-        fprintf(stdout, "IR:\n\n");
         print_ir_program(&ir_program, stdout);
         exit(0);
     }
 
-    fprintf(stdout, "ARM64 Assembly:\n\n");
     target_arm64_generate(&ir_program, stdout);
 
     memory_blob_pool_free(&main_pool, false);
