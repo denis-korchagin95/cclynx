@@ -3,3 +3,4 @@
 !/bin/.gitkeep
 /obj/*
 !/obj/.gitkeep
+.jcunit_cache
