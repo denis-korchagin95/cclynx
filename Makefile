@@ -18,72 +18,6 @@ OBJECTS_HASHMAP_TESTER+=allocator.o
 OBJECTS_HASHMAP_TESTER+=errors.o
 OBJECTS_HASHMAP_TESTER+=util.o
 
-OBJECTS_TOKENIZER_TESTER+=$(TESTERS)tokenizer-tester.o
-OBJECTS_TOKENIZER_TESTER+=tokenizer.o
-OBJECTS_TOKENIZER_TESTER+=allocator.o
-OBJECTS_TOKENIZER_TESTER+=errors.o
-OBJECTS_TOKENIZER_TESTER+=print.o
-OBJECTS_TOKENIZER_TESTER+=identifier.o
-OBJECTS_TOKENIZER_TESTER+=hashmap.o
-OBJECTS_TOKENIZER_TESTER+=symbol.o
-OBJECTS_TOKENIZER_TESTER+=type.o
-OBJECTS_TOKENIZER_TESTER+=scope.o
-OBJECTS_TOKENIZER_TESTER+=util.o
-
-OBJECTS_PARSER_TESTER+=$(TESTERS)parser-tester.o
-OBJECTS_PARSER_TESTER+=parser.o
-OBJECTS_PARSER_TESTER+=allocator.o
-OBJECTS_PARSER_TESTER+=errors.o
-OBJECTS_PARSER_TESTER+=tokenizer.o
-OBJECTS_PARSER_TESTER+=identifier.o
-OBJECTS_PARSER_TESTER+=hashmap.o
-OBJECTS_PARSER_TESTER+=symbol.o
-OBJECTS_PARSER_TESTER+=print.o
-OBJECTS_PARSER_TESTER+=type.o
-OBJECTS_PARSER_TESTER+=scope.o
-OBJECTS_PARSER_TESTER+=util.o
-
-OBJECTS_PARSER_DOT_TESTER+=$(TESTERS)parser-dot-tester.o
-OBJECTS_PARSER_DOT_TESTER+=parser.o
-OBJECTS_PARSER_DOT_TESTER+=allocator.o
-OBJECTS_PARSER_DOT_TESTER+=errors.o
-OBJECTS_PARSER_DOT_TESTER+=tokenizer.o
-OBJECTS_PARSER_DOT_TESTER+=identifier.o
-OBJECTS_PARSER_DOT_TESTER+=hashmap.o
-OBJECTS_PARSER_DOT_TESTER+=symbol.o
-OBJECTS_PARSER_DOT_TESTER+=print.o
-OBJECTS_PARSER_DOT_TESTER+=type.o
-OBJECTS_PARSER_DOT_TESTER+=scope.o
-OBJECTS_PARSER_DOT_TESTER+=util.o
-
-OBJECTS_IR_GENERATOR_TESTER+=$(TESTERS)ir-generator-tester.o
-OBJECTS_IR_GENERATOR_TESTER+=parser.o
-OBJECTS_IR_GENERATOR_TESTER+=tokenizer.o
-OBJECTS_IR_GENERATOR_TESTER+=symbol.o
-OBJECTS_IR_GENERATOR_TESTER+=type.o
-OBJECTS_IR_GENERATOR_TESTER+=allocator.o
-OBJECTS_IR_GENERATOR_TESTER+=errors.o
-OBJECTS_IR_GENERATOR_TESTER+=scope.o
-OBJECTS_IR_GENERATOR_TESTER+=identifier.o
-OBJECTS_IR_GENERATOR_TESTER+=hashmap.o
-OBJECTS_IR_GENERATOR_TESTER+=print.o
-OBJECTS_IR_GENERATOR_TESTER+=ir.o
-OBJECTS_IR_GENERATOR_TESTER+=util.o
-
-OBJECTS_TARGET_CODE_GENERATOR_TESTER+=$(TESTERS)target-code-generator-tester.o
-OBJECTS_TARGET_CODE_GENERATOR_TESTER+=parser.o
-OBJECTS_TARGET_CODE_GENERATOR_TESTER+=tokenizer.o
-OBJECTS_TARGET_CODE_GENERATOR_TESTER+=symbol.o
-OBJECTS_TARGET_CODE_GENERATOR_TESTER+=type.o
-OBJECTS_TARGET_CODE_GENERATOR_TESTER+=allocator.o
-OBJECTS_TARGET_CODE_GENERATOR_TESTER+=errors.o
-OBJECTS_TARGET_CODE_GENERATOR_TESTER+=scope.o
-OBJECTS_TARGET_CODE_GENERATOR_TESTER+=identifier.o
-OBJECTS_TARGET_CODE_GENERATOR_TESTER+=hashmap.o
-OBJECTS_TARGET_CODE_GENERATOR_TESTER+=print.o
-OBJECTS_TARGET_CODE_GENERATOR_TESTER+=ir.o
-OBJECTS_TARGET_CODE_GENERATOR_TESTER+=target-arm64.o
-OBJECTS_TARGET_CODE_GENERATOR_TESTER+=util.o
 
 OBJECTS+=allocator.o
 OBJECTS+=errors.o
@@ -104,30 +38,11 @@ hashmap-tester: $(addprefix $(OBJ), $(OBJECTS_HASHMAP_TESTER))
 	@mkdir -p $(BIN_TESTERS)
 	$(CC) $(LFLAGS) $^ -o $(BIN_TESTERS)hashmap-tester
 
-tokenizer-tester: $(addprefix $(OBJ), $(OBJECTS_TOKENIZER_TESTER))
-	@mkdir -p $(BIN_TESTERS)
-	$(CC) $(LFLAGS) $^ -o $(BIN_TESTERS)tokenizer-tester
-
-parser-tester: $(addprefix $(OBJ), $(OBJECTS_PARSER_TESTER))
-	@mkdir -p $(BIN_TESTERS)
-	$(CC) $(LFLAGS) $^ -o $(BIN_TESTERS)parser-tester
-
-parser-dot-tester: $(addprefix $(OBJ), $(OBJECTS_PARSER_DOT_TESTER))
-	@mkdir -p $(BIN_TESTERS)
-	$(CC) $(LFLAGS) $^ -o $(BIN_TESTERS)parser-dot-tester
-
-ir-generator-tester: $(addprefix $(OBJ), $(OBJECTS_IR_GENERATOR_TESTER))
-	@mkdir -p $(BIN_TESTERS)
-	$(CC) $(LFLAGS) $^ -o $(BIN_TESTERS)ir-generator-tester
-
-target-code-generator-tester: $(addprefix $(OBJ), $(OBJECTS_TARGET_CODE_GENERATOR_TESTER))
-	@mkdir -p $(BIN_TESTERS)
-	$(CC) $(LFLAGS) $^ -o $(BIN_TESTERS)target-code-generator-tester
 
 build: $(addprefix $(OBJ), $(OBJECTS))
 	$(CC) $(LFLAGS) $^ -o $(BIN)$(PROGRAM)
 
-build-testers: hashmap-tester tokenizer-tester parser-tester parser-dot-tester ir-generator-tester target-code-generator-tester
+build-testers: hashmap-tester
 
 test: clean build build-testers
 	jcunit --no-cache tests/

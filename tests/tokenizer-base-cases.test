@@ -1,6 +1,6 @@
 @test("It should tokenize an 'EOS' token on empty file")
 @given("file")
-@whenRun("./bin/testers/tokenizer-tester")
+@whenRun("./bin/cclynx", args="--emit-tokens")
 @expectOutput("stdout")
 <TOKEN_EOS>
 
@@ -23,7 +23,7 @@
 !
 !=
 ==
-@whenRun("./bin/testers/tokenizer-tester")
+@whenRun("./bin/cclynx", args="--emit-tokens")
 @expectOutput("stdout")
 <TOKEN_PUNCTUATOR '+'>
 <TOKEN_PUNCTUATOR '-'>
@@ -51,7 +51,7 @@ return
 while
 if
 else
-@whenRun("./bin/testers/tokenizer-tester")
+@whenRun("./bin/cclynx", args="--emit-tokens")
 @expectOutput("stdout")
 <TOKEN_KEYWORD 'int'>
 <TOKEN_KEYWORD 'return'>
@@ -69,7 +69,7 @@ name
 super_cool_name
 superVar1
 superVar_2
-@whenRun("./bin/testers/tokenizer-tester")
+@whenRun("./bin/cclynx", args="--emit-tokens")
 @expectOutput("stdout")
 <TOKEN_IDENTIFIER 'a'>
 <TOKEN_IDENTIFIER 'name'>
@@ -93,7 +93,7 @@ superVar_2
 0.12
 .5
 12.565
-@whenRun("./bin/testers/tokenizer-tester")
+@whenRun("./bin/cclynx", args="--emit-tokens")
 @expectOutput("stdout")
 <TOKEN_NUMBER '0'>
 <TOKEN_NUMBER '1'>

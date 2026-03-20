@@ -7,7 +7,7 @@ int main() {
     x = (int)y;
     return x;
 }
-@whenRun("./bin/testers/parser-tester")
+@whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
 FunctionDefinition: 'main' {type: 'int'}
 |
@@ -50,7 +50,7 @@ float test() {
     x = (float)y;
     return x;
 }
-@whenRun("./bin/testers/parser-tester")
+@whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
 FunctionDefinition: 'test' {type: 'float'}
 |

@@ -3,7 +3,7 @@
 int main() {
     777;
 }
-@whenRun("./bin/testers/parser-tester")
+@whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
 FunctionDefinition: 'main' {type: 'int'}
 |
@@ -20,7 +20,7 @@ FunctionDefinition: 'main' {type: 'int'}
 int main() {
     12.512;
 }
-@whenRun("./bin/testers/parser-tester")
+@whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
 FunctionDefinition: 'main' {type: 'int'}
 |
@@ -37,7 +37,7 @@ FunctionDefinition: 'main' {type: 'int'}
 int main() {
     7 * 8;
 }
-@whenRun("./bin/testers/parser-tester")
+@whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
 FunctionDefinition: 'main' {type: 'int'}
 |
@@ -58,7 +58,7 @@ FunctionDefinition: 'main' {type: 'int'}
 int main() {
     7 * 6 * 8;
 }
-@whenRun("./bin/testers/parser-tester")
+@whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
 FunctionDefinition: 'main' {type: 'int'}
 |
@@ -83,7 +83,7 @@ FunctionDefinition: 'main' {type: 'int'}
 int main() {
     7 * 6 * 8 * 10 * 15;
 }
-@whenRun("./bin/testers/parser-tester")
+@whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
 FunctionDefinition: 'main' {type: 'int'}
 |
@@ -116,7 +116,7 @@ FunctionDefinition: 'main' {type: 'int'}
 int main() {
     15 / 3 * 101;
 }
-@whenRun("./bin/testers/parser-tester")
+@whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
 FunctionDefinition: 'main' {type: 'int'}
 |
@@ -141,7 +141,7 @@ FunctionDefinition: 'main' {type: 'int'}
 int main() {
     7 + 8;
 }
-@whenRun("./bin/testers/parser-tester")
+@whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
 FunctionDefinition: 'main' {type: 'int'}
 |
@@ -162,7 +162,7 @@ FunctionDefinition: 'main' {type: 'int'}
 int main() {
     7 + 6 + 8;
 }
-@whenRun("./bin/testers/parser-tester")
+@whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
 FunctionDefinition: 'main' {type: 'int'}
 |
@@ -187,7 +187,7 @@ FunctionDefinition: 'main' {type: 'int'}
 int main() {
     7 + 6 + 8 + 10 + 15;
 }
-@whenRun("./bin/testers/parser-tester")
+@whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
 FunctionDefinition: 'main' {type: 'int'}
 |
@@ -220,7 +220,7 @@ FunctionDefinition: 'main' {type: 'int'}
 int main() {
     15 + 3 - 101;
 }
-@whenRun("./bin/testers/parser-tester")
+@whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
 FunctionDefinition: 'main' {type: 'int'}
 |
@@ -245,7 +245,7 @@ FunctionDefinition: 'main' {type: 'int'}
 int main() {
     1 + 7 * 6 - 4;
 }
-@whenRun("./bin/testers/parser-tester")
+@whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
 FunctionDefinition: 'main' {type: 'int'}
 |
@@ -274,7 +274,7 @@ FunctionDefinition: 'main' {type: 'int'}
 int main() {
     7 < 8;
 }
-@whenRun("./bin/testers/parser-tester")
+@whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
 FunctionDefinition: 'main' {type: 'int'}
 |
@@ -295,7 +295,7 @@ FunctionDefinition: 'main' {type: 'int'}
 int main() {
     7 < 6 < 8;
 }
-@whenRun("./bin/testers/parser-tester")
+@whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
 FunctionDefinition: 'main' {type: 'int'}
 |
@@ -320,7 +320,7 @@ FunctionDefinition: 'main' {type: 'int'}
 int main() {
     7 < 6 < 8 < 10 < 15;
 }
-@whenRun("./bin/testers/parser-tester")
+@whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
 FunctionDefinition: 'main' {type: 'int'}
 |
@@ -353,7 +353,7 @@ FunctionDefinition: 'main' {type: 'int'}
 int main() {
     15 < 3 > 101;
 }
-@whenRun("./bin/testers/parser-tester")
+@whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
 FunctionDefinition: 'main' {type: 'int'}
 |
@@ -378,7 +378,7 @@ FunctionDefinition: 'main' {type: 'int'}
 int main() {
     7 == 8;
 }
-@whenRun("./bin/testers/parser-tester")
+@whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
 FunctionDefinition: 'main' {type: 'int'}
 |
@@ -399,7 +399,7 @@ FunctionDefinition: 'main' {type: 'int'}
 int main() {
     7 == 6 == 8;
 }
-@whenRun("./bin/testers/parser-tester")
+@whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
 FunctionDefinition: 'main' {type: 'int'}
 |
@@ -424,7 +424,7 @@ FunctionDefinition: 'main' {type: 'int'}
 int main() {
     7 == 6 == 8 == 10 == 15;
 }
-@whenRun("./bin/testers/parser-tester")
+@whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
 FunctionDefinition: 'main' {type: 'int'}
 |
@@ -457,7 +457,7 @@ FunctionDefinition: 'main' {type: 'int'}
 int main() {
     15 == 3 != 101;
 }
-@whenRun("./bin/testers/parser-tester")
+@whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
 FunctionDefinition: 'main' {type: 'int'}
 |
@@ -482,7 +482,7 @@ FunctionDefinition: 'main' {type: 'int'}
 int main() {
     1 == 2 + 3;
 }
-@whenRun("./bin/testers/parser-tester")
+@whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
 FunctionDefinition: 'main' {type: 'int'}
 |
@@ -507,7 +507,7 @@ FunctionDefinition: 'main' {type: 'int'}
 int main() {
     1 < 2 + 3;
 }
-@whenRun("./bin/testers/parser-tester")
+@whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
 FunctionDefinition: 'main' {type: 'int'}
 |
@@ -533,7 +533,7 @@ int main() {
     int x;
     x = 3;
 }
-@whenRun("./bin/testers/parser-tester")
+@whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
 FunctionDefinition: 'main' {type: 'int'}
 |
@@ -556,7 +556,7 @@ FunctionDefinition: 'main' {type: 'int'}
 int main() {
     77 * (1 + 23);
 }
-@whenRun("./bin/testers/parser-tester")
+@whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
 FunctionDefinition: 'main' {type: 'int'}
 |
@@ -586,7 +586,7 @@ int main() {
     .5 + x;
     x - .5;
 }
-@whenRun("./bin/testers/parser-tester")
+@whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
 FunctionDefinition: 'main' {type: 'int'}
 |
@@ -646,7 +646,7 @@ int main() {
     .5 * x;
     x / .5;
 }
-@whenRun("./bin/testers/parser-tester")
+@whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
 FunctionDefinition: 'main' {type: 'int'}
 |
@@ -706,7 +706,7 @@ int main() {
     .5 < x;
     x > .5;
 }
-@whenRun("./bin/testers/parser-tester")
+@whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
 FunctionDefinition: 'main' {type: 'int'}
 |
@@ -766,7 +766,7 @@ int main() {
     .5 == x;
     x != .5;
 }
-@whenRun("./bin/testers/parser-tester")
+@whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
 FunctionDefinition: 'main' {type: 'int'}
 |

@@ -8,7 +8,7 @@ int main() {
     }
     return i;
 }
-@whenRun("./bin/testers/target-code-generator-tester")
+@whenRun("./bin/cclynx", args="--emit-asm")
 @expectOutput("stdout")
 .text
 .align 2
@@ -43,7 +43,7 @@ int main() {
     }
     return i;
 }
-@whenRun("./bin/testers/target-code-generator-tester")
+@whenRun("./bin/cclynx", args="--emit-asm")
 @expectOutput("stdout")
 .text
 .align 2
@@ -74,7 +74,7 @@ int main() {
     if (0);
     return 0;
 }
-@whenRun("./bin/testers/target-code-generator-tester")
+@whenRun("./bin/cclynx", args="--emit-asm")
 @expectOutput("stdout")
 .text
 .align 2
@@ -101,7 +101,7 @@ int main() {
     }
     return 0;
 }
-@whenRun("./bin/testers/target-code-generator-tester")
+@whenRun("./bin/cclynx", args="--emit-asm")
 @expectOutput("stdout")
 .text
 .align 2
@@ -131,7 +131,7 @@ int main() {
     }
     return i;
 }
-@whenRun("./bin/testers/target-code-generator-tester")
+@whenRun("./bin/cclynx", args="--emit-asm")
 @expectOutput("stdout")
 .text
 .align 2
@@ -170,7 +170,7 @@ int main() {
     }
     return i;
 }
-@whenRun("./bin/testers/target-code-generator-tester")
+@whenRun("./bin/cclynx", args="--emit-asm")
 @expectOutput("stdout")
 .text
 .align 2
@@ -209,7 +209,7 @@ int main() {
     }
     return i;
 }
-@whenRun("./bin/testers/target-code-generator-tester")
+@whenRun("./bin/cclynx", args="--emit-asm")
 @expectOutput("stdout")
 .text
 .align 2
@@ -248,7 +248,7 @@ int main() {
     }
     return i;
 }
-@whenRun("./bin/testers/target-code-generator-tester")
+@whenRun("./bin/cclynx", args="--emit-asm")
 @expectOutput("stdout")
 .text
 .align 2
@@ -289,7 +289,7 @@ int main() {
     }
     return i;
 }
-@whenRun("./bin/testers/target-code-generator-tester")
+@whenRun("./bin/cclynx", args="--emit-asm")
 @expectOutput("stdout")
 .text
 .align 2
@@ -333,7 +333,7 @@ int main() {
     }
     return i;
 }
-@whenRun("./bin/testers/target-code-generator-tester")
+@whenRun("./bin/cclynx", args="--emit-asm")
 @expectOutput("stdout")
 .text
 .align 2
@@ -374,7 +374,7 @@ int main() {
         ;
     return i;
 }
-@whenRun("./bin/testers/target-code-generator-tester")
+@whenRun("./bin/cclynx", args="--emit-asm")
 @expectOutput("stdout")
 .text
 .align 2
@@ -414,7 +414,7 @@ int main() {
     }
     return (int)x;
 }
-@whenRun("./bin/testers/target-code-generator-tester")
+@whenRun("./bin/cclynx", args="--emit-asm")
 @expectOutput("stdout")
 .text
 .align 2
@@ -456,7 +456,7 @@ int main() {
     }
     return (int)x;
 }
-@whenRun("./bin/testers/target-code-generator-tester")
+@whenRun("./bin/cclynx", args="--emit-asm")
 @expectOutput("stdout")
 .text
 .align 2
@@ -496,7 +496,7 @@ int main() {
     y = x == 3.0;
     return y;
 }
-@whenRun("./bin/testers/target-code-generator-tester")
+@whenRun("./bin/cclynx", args="--emit-asm")
 @expectOutput("stdout")
 .text
 .align 2
@@ -529,7 +529,7 @@ int main() {
     y = x != 3.0;
     return y;
 }
-@whenRun("./bin/testers/target-code-generator-tester")
+@whenRun("./bin/cclynx", args="--emit-asm")
 @expectOutput("stdout")
 .text
 .align 2

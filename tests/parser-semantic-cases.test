@@ -4,7 +4,7 @@ int main() {
     int result;
     int result;
 }
-@whenRun("./bin/testers/parser-tester")
+@whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stderr")
 ERROR: variable 'result' already declared!
 
@@ -15,7 +15,7 @@ ERROR: variable 'result' already declared!
 int main() {
     int while;
 }
-@whenRun("./bin/testers/parser-tester")
+@whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stderr")
 ERROR: expected identifier but not a keyword!
 
@@ -27,7 +27,7 @@ int main() {
     int result;
     result = x + 1;
 }
-@whenRun("./bin/testers/parser-tester")
+@whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stderr")
 ERROR: undeclared variable "x"!
 
@@ -39,7 +39,7 @@ int main() {
     int result;
     result = int + 1;
 }
-@whenRun("./bin/testers/parser-tester")
+@whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stderr")
 ERROR: expected identifier but not a keyword!
 

@@ -10,7 +10,7 @@ int main() {
     z = z - 1.0;
     return (int)z;
 }
-@whenRun("./bin/testers/target-code-generator-tester")
+@whenRun("./bin/cclynx", args="--emit-asm")
 @expectOutput("stdout")
 .text
 .align 2
@@ -59,7 +59,7 @@ int main() {
     z = z / 2.0;
     return (int)z;
 }
-@whenRun("./bin/testers/target-code-generator-tester")
+@whenRun("./bin/cclynx", args="--emit-asm")
 @expectOutput("stdout")
 .text
 .align 2
@@ -109,7 +109,7 @@ int main() {
     w = y > 2.0;
     return w;
 }
-@whenRun("./bin/testers/target-code-generator-tester")
+@whenRun("./bin/cclynx", args="--emit-asm")
 @expectOutput("stdout")
 .text
 .align 2
@@ -156,7 +156,7 @@ float test() {
     x = (float)y;
     return x;
 }
-@whenRun("./bin/testers/target-code-generator-tester")
+@whenRun("./bin/cclynx", args="--emit-asm")
 @expectOutput("stdout")
 .text
 .align 2

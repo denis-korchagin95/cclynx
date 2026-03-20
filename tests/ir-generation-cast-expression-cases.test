@@ -10,7 +10,7 @@ int main() {
     z = z - 1.0;
     return (int)z;
 }
-@whenRun("./bin/testers/ir-generator-tester")
+@whenRun("./bin/cclynx", args="--emit-ir")
 @expectOutput("stdout")
 0000 OP_FUNC "main"
 0001 OP_CONST 1.500000, t1
@@ -44,7 +44,7 @@ int main() {
     z = z / 2.0;
     return (int)z;
 }
-@whenRun("./bin/testers/ir-generator-tester")
+@whenRun("./bin/cclynx", args="--emit-ir")
 @expectOutput("stdout")
 0000 OP_FUNC "main"
 0001 OP_CONST 1.500000, t1
@@ -79,7 +79,7 @@ int main() {
     w = y > 2.0;
     return (int)w;
 }
-@whenRun("./bin/testers/ir-generator-tester")
+@whenRun("./bin/cclynx", args="--emit-ir")
 @expectOutput("stdout")
 0000 OP_FUNC "main"
 0001 OP_CONST 1.500000, t1
@@ -110,7 +110,7 @@ float test() {
     x = (float)y;
     return x;
 }
-@whenRun("./bin/testers/ir-generator-tester")
+@whenRun("./bin/cclynx", args="--emit-ir")
 @expectOutput("stdout")
 0000 OP_FUNC "test"
 0001 OP_CONST 777, t1
