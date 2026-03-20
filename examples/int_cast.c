@@ -1,3 +1,4 @@
+// expected return: 10
 int main() {
     float a;
     a = 10.7;

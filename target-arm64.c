@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <assert.h>
 
 #include "target-arm64.h"
@@ -98,7 +99,6 @@ void target_arm64_generate(struct ir_program * program, FILE * file)
     static char buf[1024] = {'\0'};
 
     fprintf(file, ".text\n");
-    fprintf(file, ".global _main\n");
     fprintf(file, ".align 2\n");
     fprintf(file, "\n");
 
@@ -113,6 +113,7 @@ void target_arm64_generate(struct ir_program * program, FILE * file)
                 fprintf(file, "    b .L%llu\n", instruction->op1->content.label_id);
                 break;
             case OP_FUNC:
+                fprintf(file, ".global _%s\n", instruction->result->content.function.identifier->name);
                 fprintf(file, "_%s:\n", instruction->result->content.function.identifier->name);
                 fprintf(file, "    stp x29, x30, [sp, -16]!\n");
                 fprintf(file, "    mov x29, sp\n");
@@ -454,7 +455,7 @@ void target_arm64_generate(struct ir_program * program, FILE * file)
                         if (result_reg->kind == REG_KIND_INTEGER) {
                             fprintf(file, "    mov w0, %s\n", result_reg->name);
                         } else if (result_reg->kind == REG_KIND_FLOAT) {
-                            fprintf(file, "    mov s0, %s\n", result_reg->name);
+                            fprintf(file, "    fmov s0, %s\n", result_reg->name);
                         } else {
                             cclynx_fatal_error("ERROR: unsupported reg kind (OP_RETURN)!\n");
                         }
@@ -541,8 +542,19 @@ void op_const(FILE * output, char * buf, size_t buf_size, struct ir_operand * op
         return;
     }
     else if (result_reg->kind == REG_KIND_FLOAT) {
-        snprintf(buf, buf_size, "%f", op1->content.float_value);
-        fprintf(output, "    fmov %s, #%s\n", result_reg->name, buf);
+        unsigned int bits;
+        memcpy(&bits, &op1->content.float_value, sizeof(bits));
+
+        unsigned int lo = bits & 0xFFFF;
+        unsigned int hi = (bits >> 16) & 0xFFFF;
+
+        struct reg * tmp_reg = alloc_reg(REG_KIND_INTEGER);
+        fprintf(output, "    movz %s, #0x%x\n", tmp_reg->name, lo);
+        if (hi != 0) {
+            fprintf(output, "    movk %s, #0x%x, lsl #16\n", tmp_reg->name, hi);
+        }
+        fprintf(output, "    fmov %s, %s\n", result_reg->name, tmp_reg->name);
+        free_reg(tmp_reg);
         push_reg(result_reg);
         return;
     }

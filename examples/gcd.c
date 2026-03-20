@@ -1,3 +1,4 @@
+// expected return: 6
 int main() {
     int a;
     int b;

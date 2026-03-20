@@ -106,6 +106,14 @@ build: $(addprefix $(OBJ), $(OBJECTS))
 
 build-testers: hashmap-tester tokenizer-tester parser-tester ir-generator-tester target-code-generator-tester
 
+test: clean build build-testers
+	jcunit --no-cache tests/
+
+test-examples: build
+	./scripts/check-examples.sh
+
+test-all: test test-examples
+
 clean:
 	rm -rfv $(BIN)$(PROGRAM)
 	rm -rfv $(BIN)*-tester

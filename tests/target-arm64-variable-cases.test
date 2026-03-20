@@ -8,9 +8,9 @@ int main() {
 @whenRun("./bin/target-code-generator-tester")
 @expectOutput("stdout")
 .text
-.global _main
 .align 2
 
+.global _main
 _main:
     stp x29, x30, [sp, -16]!
     mov x29, sp
@@ -35,9 +35,9 @@ int main() {
 @whenRun("./bin/target-code-generator-tester")
 @expectOutput("stdout")
 .text
-.global _main
 .align 2
 
+.global _main
 _main:
     stp x29, x30, [sp, -16]!
     mov x29, sp
@@ -74,9 +74,9 @@ int main() {
 @whenRun("./bin/target-code-generator-tester")
 @expectOutput("stdout")
 .text
-.global _main
 .align 2
 
+.global _main
 _main:
     stp x29, x30, [sp, -16]!
     mov x29, sp

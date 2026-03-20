@@ -1,3 +1,4 @@
+// expected return: 142
 int main() {
     int sum;
     int i;

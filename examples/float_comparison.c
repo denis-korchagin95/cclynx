@@ -1,3 +1,4 @@
+// expected return: 4
 int main() {
     float x;
     float threshold;

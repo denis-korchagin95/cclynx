@@ -1,3 +1,4 @@
+// expected return: 120
 int main() {
     int n;
     int result;

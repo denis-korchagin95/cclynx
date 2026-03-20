@@ -1,3 +1,4 @@
+// expected return: 7.75 (float)
 float test() {
     float a;
     float b;

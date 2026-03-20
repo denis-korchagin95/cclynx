@@ -1,3 +1,4 @@
+// expected return: 32
 int main() {
     int base;
     int exp;
