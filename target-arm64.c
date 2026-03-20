@@ -536,8 +536,18 @@ void op_const(FILE * output, char * buf, size_t buf_size, struct ir_operand * op
     struct reg * result_reg = alloc_reg(get_reg_kind(op1->type));
 
     if (result_reg->kind == REG_KIND_INTEGER) {
-        snprintf(buf, buf_size, "%lld", op1->content.int_value);
-        fprintf(output, "    mov %s, #%s\n", result_reg->name, buf);
+        unsigned int bits = (unsigned int) op1->content.int_value;
+        unsigned int lo = bits & 0xFFFF;
+        unsigned int hi = (bits >> 16) & 0xFFFF;
+
+        if (hi == 0) {
+            snprintf(buf, buf_size, "%lld", op1->content.int_value);
+            fprintf(output, "    mov %s, #%s\n", result_reg->name, buf);
+        } else {
+            fprintf(output, "    movz %s, #0x%x\n", result_reg->name, lo);
+            fprintf(output, "    movk %s, #0x%x, lsl #16\n", result_reg->name, hi);
+        }
+
         push_reg(result_reg);
         return;
     }

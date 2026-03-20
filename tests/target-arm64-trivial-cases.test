@@ -288,3 +288,25 @@ _test:
     ret
 
 @endtest
+
+@test("It should generate target arm64 code on return 32-bit integer constant")
+@given("file")
+int main() {
+    return 100000;
+}
+@whenRun("./bin/cclynx", args="--emit-asm")
+@expectOutput("stdout")
+.text
+.align 2
+
+.global _main
+_main:
+    stp x29, x30, [sp, -16]!
+    mov x29, sp
+    movz w9, #0x86a0
+    movk w9, #0x1, lsl #16
+    mov w0, w9
+    ldp x29, x30, [sp], #16
+    ret
+
+@endtest
