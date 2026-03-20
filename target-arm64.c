@@ -566,7 +566,7 @@ void op_const(FILE * output, char * buf, size_t buf_size, struct ir_operand * op
     struct reg * result_reg = alloc_reg(get_reg_kind(op1->type));
 
     if (result_reg->kind == REG_KIND_INTEGER) {
-        snprintf(buf, buf_size, "%d", op1->content.int_value);
+        snprintf(buf, buf_size, "%lld", op1->content.int_value);
         fprintf(output, "    mov %s, #%s\n", result_reg->name, buf);
         push_reg(result_reg);
         return;

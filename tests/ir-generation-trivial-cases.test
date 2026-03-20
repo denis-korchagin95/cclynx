@@ -11,6 +11,20 @@ int main() {
 
 @endtest
 
+@test("It should generate IR code on return large integer constant")
+@given("file")
+int main() {
+    return 100000;
+}
+@whenRun("./bin/ir-generator-tester")
+@expectOutput("stdout")
+0000 OP_FUNC "main"
+0001 OP_CONST 100000, t1
+0002 OP_RETURN t1
+0003 OP_FUNC_END
+
+@endtest
+
 @test("It should generate IR code on return integer constant")
 @given("file")
 int main() {

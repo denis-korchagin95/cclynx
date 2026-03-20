@@ -176,7 +176,7 @@ void do_print_ast(const struct ast_node * ast, FILE * file, int depth, unsigned 
             break;
         case AST_NODE_KIND_INTEGER_CONSTANT:
             {
-                fprintf(file, "IntegerConstant: '%llu' {type: '%s'}\n", ast->content.constant.value.integer_constant, type_stringify(ast->type));
+                fprintf(file, "IntegerConstant: '%lld' {type: '%s'}\n", ast->content.constant.value.integer_constant, type_stringify(ast->type));
             }
             break;
         case AST_NODE_KIND_FLOAT_CONSTANT:
@@ -301,7 +301,7 @@ void print_ir_program(const struct ir_program * program, FILE * file)
             case OP_CONST:
                 {
                     if (instruction->op1->type->kind == TYPE_KIND_INTEGER) {
-                        snprintf(buf, sizeof(buf), "%d, t%llu", instruction->op1->content.int_value, instruction->result->content.temp_id);
+                        snprintf(buf, sizeof(buf), "%lld, t%llu", instruction->op1->content.int_value, instruction->result->content.temp_id);
                     } else if (instruction->op1->type->kind == TYPE_KIND_FLOAT) {
                         snprintf(buf, sizeof(buf), "%f, t%llu", instruction->op1->content.float_value, instruction->result->content.temp_id);
                     } else {

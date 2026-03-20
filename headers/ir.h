@@ -32,7 +32,7 @@ struct ir_operand
         } function;
         unsigned long long int temp_id;
         unsigned long long int label_id;
-        int int_value;
+        long long int int_value;
         float float_value;
     } content;
     struct type * type;
