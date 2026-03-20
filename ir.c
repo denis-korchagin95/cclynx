@@ -66,6 +66,7 @@ void ir_program_generate(struct ir_program * program, const struct ast_node * as
     {
         main_pool_alloc(struct ir_instruction, instruction)
         instruction->code = OP_FUNC_END;
+        instruction->result = current_func->result;
 
         ir_emit(program, instruction);
     }

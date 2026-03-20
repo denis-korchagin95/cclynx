@@ -89,7 +89,6 @@ _main:
 .L1:
     mov w9, #0
     mov w0, w9
-    add sp, sp, #16
     ldp x29, x30, [sp], #16
     ret
 
@@ -117,7 +116,6 @@ _main:
 .L1:
     mov w9, #0
     mov w0, w9
-    add sp, sp, #16
     ldp x29, x30, [sp], #16
     ret
 

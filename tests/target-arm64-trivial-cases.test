@@ -14,7 +14,6 @@ _main:
     mov x29, sp
     mov w9, #7
     mov w0, w9
-    add sp, sp, #16
     ldp x29, x30, [sp], #16
     ret
 
@@ -37,7 +36,6 @@ _main:
     fmov s8, #4.650000
     fcvtzs w9, s8
     mov w0, w9
-    add sp, sp, #16
     ldp x29, x30, [sp], #16
     ret
 
@@ -63,7 +61,6 @@ _main:
     mov w9, #1
     add w10, w11, w9
     mov w0, w10
-    add sp, sp, #16
     ldp x29, x30, [sp], #16
     ret
 
@@ -89,7 +86,6 @@ _main:
     mov w9, #1
     sub w10, w11, w9
     mov w0, w10
-    add sp, sp, #16
     ldp x29, x30, [sp], #16
     ret
 
@@ -121,7 +117,6 @@ _main:
     mov w9, #15
     mul w11, w10, w9
     mov w0, w11
-    add sp, sp, #16
     ldp x29, x30, [sp], #16
     ret
 
@@ -146,7 +141,6 @@ _main:
     cmp w9, w10
     cset w11, gt
     mov w0, w11
-    add sp, sp, #16
     ldp x29, x30, [sp], #16
     ret
 
@@ -171,7 +165,6 @@ _main:
     cmp w9, w10
     cset w11, lt
     mov w0, w11
-    add sp, sp, #16
     ldp x29, x30, [sp], #16
     ret
 
@@ -196,7 +189,6 @@ _main:
     cmp w9, w10
     cset w11, eq
     mov w0, w11
-    add sp, sp, #16
     ldp x29, x30, [sp], #16
     ret
 
@@ -221,7 +213,6 @@ _main:
     cmp w9, w10
     cset w11, ne
     mov w0, w11
-    add sp, sp, #16
     ldp x29, x30, [sp], #16
     ret
 
