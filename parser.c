@@ -2,6 +2,7 @@
 #include <stddef.h>
 #include <memory.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "parser.h"
 
@@ -50,11 +51,11 @@ struct ast_node * parse_statement(struct parser_context * context)
     struct ast_node * statement = NULL;
 
     if (current_token->kind == TOKEN_KIND_IDENTIFIER && current_token->content.identifier->is_keyword) {
-        if (strncmp("while", current_token->content.identifier->name, 5) == 0) {
+        if (strcmp("while", current_token->content.identifier->name) == 0) {
             statement = parse_while_statement(context);
-        } else if (strncmp("return", current_token->content.identifier->name, 6) == 0) {
+        } else if (strcmp("return", current_token->content.identifier->name) == 0) {
             statement = parse_return_statement(context);
-        } else if (strncmp("if", current_token->content.identifier->name, 2) == 0) {
+        } else if (strcmp("if", current_token->content.identifier->name) == 0) {
             statement = parse_if_statement(context);
         } else {
             parser_putback_token(current_token, context);
@@ -152,7 +153,7 @@ struct ast_node * parse_if_statement(struct parser_context * context)
     if (
         current_token->kind == TOKEN_KIND_IDENTIFIER
         && current_token->content.identifier->is_keyword
-        && strncmp("else", current_token->content.identifier->name, 4) == 0
+        && strcmp("else", current_token->content.identifier->name) == 0
     ) {
         false_branch = parse_statement(context);
     } else {
@@ -599,7 +600,7 @@ struct ast_node * parse_primary_expression(struct parser_context * context)
         }
 
         struct ast_node * number = create_ast_node(AST_NODE_KIND_INTEGER_CONSTANT);
-        number->content.constant.value.integer_constant = atoi(current_token->content.number);
+        number->content.constant.value.integer_constant = (int)strtol(current_token->content.number, NULL, 10);
         number->type = &type_integer;
         return number;
     }

@@ -44,7 +44,7 @@ static unsigned int reg_stack_pos = 0;
 
 static enum reg_kind get_reg_kind(struct type * type);
 
-static void op_const(FILE * output, char * buf, struct ir_operand * op1);
+static void op_const(FILE * output, char * buf, size_t buf_size, struct ir_operand * op1);
 static void op_load(FILE * output, struct ir_operand * op1);
 static const char * reg_kind_stringify(enum reg_kind kind);
 
@@ -370,7 +370,7 @@ void target_arm64_generate(struct ir_program * program, FILE * file)
                 op_load(file, instruction->op1);
                 break;
             case OP_CONST:
-                op_const(file, buf, instruction->op1);
+                op_const(file, buf, sizeof(buf), instruction->op1);
                 break;
             case OP_MUL:
                 {
@@ -555,7 +555,7 @@ enum reg_kind get_reg_kind(struct type * type)
     exit(1);
 }
 
-void op_const(FILE * output, char * buf, struct ir_operand * op1)
+void op_const(FILE * output, char * buf, size_t buf_size, struct ir_operand * op1)
 {
     assert(output != NULL);
     assert(op1 != NULL);
@@ -564,13 +564,13 @@ void op_const(FILE * output, char * buf, struct ir_operand * op1)
     struct reg * result_reg = alloc_reg(get_reg_kind(op1->type));
 
     if (result_reg->kind == REG_KIND_INTEGER) {
-        sprintf(buf, "%d", op1->content.int_value);
+        snprintf(buf, buf_size, "%d", op1->content.int_value);
         fprintf(output, "    mov %s, #%s\n", result_reg->name, buf);
         push_reg(result_reg);
         return;
     }
     else if (result_reg->kind == REG_KIND_FLOAT) {
-        sprintf(buf, "%f", op1->content.float_value);
+        snprintf(buf, buf_size, "%f", op1->content.float_value);
         fprintf(output, "    fmov %s, #%s\n", result_reg->name, buf);
         push_reg(result_reg);
         return;

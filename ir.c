@@ -7,7 +7,6 @@
 #include "parser.h"
 #include "type.h"
 #include "symbol.h"
-#include "type.h"
 
 #define MAX_OPERAND_COUNT (1024)
 
