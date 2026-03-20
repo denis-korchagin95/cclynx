@@ -7,6 +7,7 @@
 #include "parser.h"
 #include "type.h"
 #include "symbol.h"
+#include "errors.h"
 
 #define MAX_OPERAND_COUNT (1024)
 
@@ -42,8 +43,7 @@ void ir_program_generate(struct ir_program * program, const struct ast_node * as
     assert(ast != NULL);
 
     if (ast->kind != AST_NODE_KIND_FUNCTION_DEFINITION) {
-        fprintf(stderr, "ERROR: expected function to generate it to IR\n");
-        exit(1);
+        cclynx_fatal_error("ERROR: expected function to generate it to IR\n");
     }
 
     {
@@ -246,8 +246,7 @@ void do_generate_ir(struct ir_program * program, const struct ast_node * node)
                 } else if (node->type->kind == TYPE_KIND_FLOAT) {
                     cast_opcode = OP_FLOAT_CAST;
                 } else {
-                    fprintf(stderr, "ERROR: unsupported cast to '%s' yet!\n", type_stringify(node->type));
-                    exit(1);
+                    cclynx_fatal_error("ERROR: unsupported cast to '%s' yet!\n", type_stringify(node->type));
                 }
 
                 do_generate_ir(program, node->content.node);
@@ -269,8 +268,7 @@ void do_generate_ir(struct ir_program * program, const struct ast_node * node)
                         instruction->code = OP_STORE;
                         break;
                     default:
-                        fprintf(stderr, "ERROR: unknown assignment\n");
-                        exit(1);
+                        cclynx_fatal_error("ERROR: unknown assignment\n");
                 }
 
                 is_assign = 1;
@@ -322,8 +320,7 @@ void do_generate_ir(struct ir_program * program, const struct ast_node * node)
                         instruction->code = OP_SUB;
                         break;
                     default:
-                        fprintf(stderr, "ERROR: unknown operation\n");
-                        exit(1);
+                        cclynx_fatal_error("ERROR: unknown operation\n");
                 }
 
                 do_generate_ir(program, node->content.binary_expression.lhs);
@@ -392,8 +389,7 @@ void do_generate_ir(struct ir_program * program, const struct ast_node * node)
             }
             break;
         default:
-            fprintf(stderr, "ERROR: unknown ast node for IR generator\n");
-            exit(1);
+            cclynx_fatal_error("ERROR: unknown ast node for IR generator\n");
     }
 }
 
@@ -403,8 +399,7 @@ void ir_emit(struct ir_program * program, struct ir_instruction * instruction)
     assert(instruction != NULL);
 
     if (program->position == program->capacity) {
-        fprintf(stderr, "ERROR: too many instructions\n");
-        exit(1);
+        cclynx_fatal_error("ERROR: too many instructions\n");
     }
 
     program->instructions[program->position++] = instruction;
@@ -421,8 +416,7 @@ struct ir_operand * new_temporary_operand(void)
 struct ir_operand * alloc_operand(void)
 {
     if (operand_pos >= MAX_OPERAND_COUNT) {
-        fprintf(stderr, "ERROR: too many operands!\n");
-        exit(1);
+        cclynx_fatal_error("ERROR: too many operands!\n");
     }
     struct ir_operand * operand = &operands[operand_pos++];
     memset(operand, 0, sizeof(struct ir_operand));

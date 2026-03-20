@@ -1,5 +1,5 @@
-#ifndef SYMBOL_H
-#define SYMBOL_H 1
+#ifndef CCLYNX_SYMBOL_H
+#define CCLYNX_SYMBOL_H 1
 
 struct type;
 
@@ -25,4 +25,4 @@ struct symbol_list
 void init_symbols(void);
 struct symbol * symbol_lookup(const struct identifier * identifier, enum symbol_kind kind);
 
-#endif /* SYMBOL_H */
+#endif /* CCLYNX_SYMBOL_H */

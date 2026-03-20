@@ -1,5 +1,5 @@
-#ifndef TOKENIZER_H
-#define TOKENIZER_H 1
+#ifndef CCLYNX_TOKENIZER_H
+#define CCLYNX_TOKENIZER_H 1
 
 #include <stdio.h>
 
@@ -44,4 +44,4 @@ void tokenizer_init(void);
 void tokenizer_get_one_token(FILE * file, struct token * token);
 struct token * tokenizer_tokenize_file(FILE * file);
 
-#endif /* TOKENIZER_H */
+#endif /* CCLYNX_TOKENIZER_H */

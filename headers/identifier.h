@@ -1,5 +1,5 @@
-#ifndef IDENTIFIER_H
-#define IDENTIFIER_H 1
+#ifndef CCLYNX_IDENTIFIER_H
+#define CCLYNX_IDENTIFIER_H 1
 
 struct symbol_list;
 
@@ -25,4 +25,4 @@ struct identifier * identifier_create(const char * name);
 struct identifier * identifier_lookup(const char * name);
 struct identifier * identifier_insert(const char * name, unsigned int len);
 
-#endif /* IDENTIFIER_H */
+#endif /* CCLYNX_IDENTIFIER_H */

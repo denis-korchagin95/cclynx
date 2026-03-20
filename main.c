@@ -2,6 +2,7 @@
 #include <stdlib.h>
 
 #include "allocator.h"
+#include "errors.h"
 #include "identifier.h"
 #include "symbol.h"
 #include "tokenizer.h"
@@ -35,15 +36,13 @@ int main(int argc, const char * argv[])
     }
 
     if (source_filename == NULL) {
-        fprintf(stderr, "No source given!\n");
-        exit(1);
+        cclynx_fatal_error("No source given!\n");
     }
 
     FILE * source = fopen(source_filename, "r");
 
     if (source == NULL) {
-        fprintf(stderr, "Could not open file %s\n", source_filename);
-        exit(1);
+        cclynx_fatal_error("Could not open file %s\n", source_filename);
     }
 
     memory_blob_pool_init(&main_pool, DEFAULT_MEMORY_BLOB_SIZE, DEFAULT_MEMORY_BLOB_ALIGNMENT);
@@ -118,8 +117,7 @@ void parse_options(const int argc, const char * argv[])
         }
 
         if (strncmp(arg, "--", sizeof("--") - 1) == 0) {
-            fprintf(stderr, "ERROR: unknown option \"%s\"\n", arg);
-            exit(1);
+            cclynx_fatal_error("ERROR: unknown option \"%s\"\n", arg);
         }
     }
 }

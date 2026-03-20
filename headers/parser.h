@@ -1,5 +1,5 @@
-#ifndef PARSER_H
-#define PARSER_H 1
+#ifndef CCLYNX_PARSER_H
+#define CCLYNX_PARSER_H 1
 
 #define MAX_TOKEN_BUFFER_SIZE (4)
 
@@ -107,4 +107,4 @@ struct ast_node * parser_parse(struct parser_context * context);
 struct token * parser_get_token(struct parser_context * context);
 void parser_putback_token(struct token * token, struct parser_context * context);
 
-#endif /* PARSER_H */
+#endif /* CCLYNX_PARSER_H */

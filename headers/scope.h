@@ -1,5 +1,5 @@
-#ifndef SCOPE_H
-#define SCOPE_H 1
+#ifndef CCLYNX_SCOPE_H
+#define CCLYNX_SCOPE_H 1
 
 struct scope
 {
@@ -9,4 +9,4 @@ struct scope
 
 extern struct scope global_scope;
 
-#endif /* SCOPE_H */
+#endif /* CCLYNX_SCOPE_H */

@@ -1,5 +1,5 @@
-#ifndef HASHMAP_H
-#define HASHMAP_H 1
+#ifndef CCLYNX_HASHMAP_H
+#define CCLYNX_HASHMAP_H 1
 
 #include <stddef.h>
 
@@ -22,4 +22,4 @@ void hashmap_init(struct hashmap * map, size_t capacity);
 void * hashmap_find(struct hashmap * map, const char * key);
 void hashmap_insert(struct hashmap * map, const char * key, void * value);
 
-#endif /* HASHMAP_H */
+#endif /* CCLYNX_HASHMAP_H */

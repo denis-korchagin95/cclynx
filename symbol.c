@@ -1,11 +1,10 @@
 #include <assert.h>
 #include <memory.h>
-#include <stdio.h>
-#include <stdlib.h>
 
 #include "symbol.h"
 #include "identifier.h"
 #include "allocator.h"
+#include "errors.h"
 #include "type.h"
 
 
@@ -27,8 +26,7 @@ void init_symbols(void)
         struct identifier * identifier = identifier_lookup(builtin_symbol->name);
 
         if (identifier == NULL) {
-            fprintf(stderr, "ERROR: not found identifier for symbol \"%s\"\n", builtin_symbol->name);
-            exit(1);
+            cclynx_fatal_error("ERROR: not found identifier for symbol \"%s\"\n", builtin_symbol->name);
         }
 
         main_pool_alloc(struct symbol, symbol)

@@ -1,5 +1,5 @@
-#ifndef ALLOCATOR_H
-#define ALLOCATOR_H 1
+#ifndef CCLYNX_ALLOCATOR_H
+#define CCLYNX_ALLOCATOR_H 1
 
 #include <stdbool.h>
 #include <memory.h>
@@ -34,4 +34,4 @@ void memory_blob_pool_init(struct memory_blob_pool * pool, size_t blob_size, siz
 void * memory_blob_pool_alloc(struct memory_blob_pool * pool, size_t size);
 void memory_blob_pool_free(struct memory_blob_pool * pool, bool free_pool);
 
-#endif /* ALLOCATOR_H */
+#endif /* CCLYNX_ALLOCATOR_H */

@@ -1,5 +1,5 @@
-#ifndef PRINT_H
-#define PRINT_H 1
+#ifndef CCLYNX_PRINT_H
+#define CCLYNX_PRINT_H 1
 
 #include <stdio.h>
 
@@ -11,4 +11,4 @@ void print_token(const struct token * token, FILE * file);
 void print_ast(const struct ast_node * ast, FILE * file);
 void print_ir_program(const struct ir_program * program, FILE * file);
 
-#endif /* PRINT_H */
+#endif /* CCLYNX_PRINT_H */

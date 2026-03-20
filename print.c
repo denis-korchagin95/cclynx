@@ -9,6 +9,7 @@
 #include "symbol.h"
 #include "ir.h"
 #include "type.h"
+#include "errors.h"
 
 static void do_print_ast(const struct ast_node * ast, FILE * file, int depth, unsigned int * ancestors_info, const char * node_label);
 
@@ -330,8 +331,7 @@ void print_ir_program(const struct ir_program * program, FILE * file)
                 fprintf(file, "%04zu OP_NOP\n", i);
                 break;
             default:
-                fprintf(stderr, "ERROR(print): Unknown instruction for IR program\n");
-                exit(1);
+                cclynx_fatal_error("ERROR(print): Unknown instruction for IR program\n");
         }
     }
 

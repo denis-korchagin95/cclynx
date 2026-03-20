@@ -9,6 +9,7 @@
 #include "allocator.h"
 #include "hashmap.h"
 #include "identifier.h"
+#include "errors.h"
 
 #define MAX_CHAR_BUFFER_SIZE (4)
 #define MAX_IDENTIFIER_BUFFER_SIZE (512)
@@ -160,8 +161,7 @@ void read_number(FILE * file, struct token * token, int ch)
     number_buffer_pos = 0;
     for (;;) {
         if (number_buffer_pos >= MAX_NUMBER_BUFFER_SIZE - 1) {
-            fprintf(stderr, "ERROR: too long number!\n");
-            exit(1);
+            cclynx_fatal_error("ERROR: too long number!\n");
         }
 
         if (ch == '.')
@@ -179,8 +179,7 @@ void read_number(FILE * file, struct token * token, int ch)
     number_buffer[number_buffer_pos] = '\0';
 
     if (dot_count > 1) {
-        fprintf(stderr, "ERROR: incorrect number '%s'\n", number_buffer);
-        exit(1);
+        cclynx_fatal_error("ERROR: incorrect number '%s'\n", number_buffer);
     }
 
     char * number = hashmap_find(&number_table, number_buffer);

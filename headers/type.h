@@ -1,5 +1,5 @@
-#ifndef TYPE_H
-#define TYPE_H 1
+#ifndef CCLYNX_TYPE_H
+#define CCLYNX_TYPE_H 1
 
 #include <stddef.h>
 
@@ -23,4 +23,4 @@ extern struct type type_float;
 
 const char * type_stringify(const struct type * type);
 
-#endif /* TYPE_H */
+#endif /* CCLYNX_TYPE_H */

@@ -13,6 +13,7 @@
 #include "print.h"
 #include "symbol.h"
 #include "type.h"
+#include "errors.h"
 
 static struct ast_node * create_ast_node(enum ast_node_kind kind);
 
@@ -79,8 +80,7 @@ struct ast_node * parse_compound_statement(struct parser_context * context)
     struct token * current_token = parser_get_token(context);
 
     if (!(current_token->kind == TOKEN_KIND_PUNCTUATOR && current_token->content.ch == '{')) {
-        fprintf(stderr, "ERROR: expected '{'!\n");
-        exit(1);
+        cclynx_fatal_error("ERROR: expected '{'!\n");
     }
 
     current_token = parser_get_token(context);
@@ -112,8 +112,7 @@ struct ast_node * parse_compound_statement(struct parser_context * context)
     while (!(current_token->kind == TOKEN_KIND_PUNCTUATOR && current_token->content.ch == '}'));
 
     if (!(current_token->kind == TOKEN_KIND_PUNCTUATOR && current_token->content.ch == '}')) {
-        fprintf(stderr, "ERROR: expected '}'!\n");
-        exit(1);
+        cclynx_fatal_error("ERROR: expected '}'!\n");
     }
 
     (void)parser_get_token(context);
@@ -132,8 +131,7 @@ struct ast_node * parse_if_statement(struct parser_context * context)
     struct token * current_token = parser_get_token(context);
 
     if (!(current_token->kind == TOKEN_KIND_PUNCTUATOR && current_token->content.ch == '(')) {
-        fprintf(stderr, "ERROR: expected '('!\n");
-        exit(1);
+        cclynx_fatal_error("ERROR: expected '('!\n");
     }
 
     struct ast_node * condition = parse_expression(context);
@@ -141,8 +139,7 @@ struct ast_node * parse_if_statement(struct parser_context * context)
     current_token = parser_get_token(context);
 
     if (!(current_token->kind == TOKEN_KIND_PUNCTUATOR && current_token->content.ch == ')')) {
-        fprintf(stderr, "ERROR: expected ')'!\n");
-        exit(1);
+        cclynx_fatal_error("ERROR: expected ')'!\n");
     }
 
     struct ast_node * true_branch = parse_statement(context);
@@ -183,8 +180,7 @@ struct ast_node * parse_return_statement(struct parser_context * context)
     }
 
     if (!(current_token->kind == TOKEN_KIND_PUNCTUATOR && current_token->content.ch == ';')) {
-        fprintf(stderr, "ERROR: expected ';'!\n");
-        exit(1);
+        cclynx_fatal_error("ERROR: expected ';'!\n");
     }
 
     struct ast_node * return_statement = create_ast_node(AST_NODE_KIND_RETURN_STATEMENT);
@@ -200,8 +196,7 @@ struct ast_node * parse_while_statement(struct parser_context * context)
     const struct token * current_token = parser_get_token(context);
 
     if (!(current_token->kind == TOKEN_KIND_PUNCTUATOR && current_token->content.ch == '(')) {
-        fprintf(stderr, "ERROR: expected '('!\n");
-        exit(1);
+        cclynx_fatal_error("ERROR: expected '('!\n");
     }
 
     struct ast_node * expression = parse_expression(context);
@@ -209,8 +204,7 @@ struct ast_node * parse_while_statement(struct parser_context * context)
     current_token = parser_get_token(context);
 
     if (!(current_token->kind == TOKEN_KIND_PUNCTUATOR && current_token->content.ch == ')')) {
-        fprintf(stderr, "ERROR: expected ')'!\n");
-        exit(1);
+        cclynx_fatal_error("ERROR: expected ')'!\n");
     }
 
     struct ast_node * statement = parse_statement(context);
@@ -237,8 +231,7 @@ struct ast_node * parse_expression_statement(struct parser_context * context)
     }
 
     if (!(current_token->kind == TOKEN_KIND_PUNCTUATOR && current_token->content.ch == ';')) {
-        fprintf(stderr, "ERROR: expected ';'!\n");
-        exit(1);
+        cclynx_fatal_error("ERROR: expected ';'!\n");
     }
 
     struct ast_node * expression_statement = create_ast_node(AST_NODE_KIND_EXPRESSION_STATEMENT);
@@ -254,27 +247,23 @@ struct ast_node * parse_function_definition(struct parser_context * context)
     struct token * current_token = parser_get_token(context);
 
     if (current_token->kind != TOKEN_KIND_IDENTIFIER) {
-        fprintf(stderr, "ERROR: expected identifier!\n");
-        exit(1);
+        cclynx_fatal_error("ERROR: expected identifier!\n");
     }
 
     const struct symbol * symbol = symbol_lookup(current_token->content.identifier, SYMBOL_KIND_TYPE_SPECIFIER);
 
     if (symbol == NULL) {
-        fprintf(stderr, "ERROR: expected type specifier!\n");
-        exit(1);
+        cclynx_fatal_error("ERROR: expected type specifier!\n");
     }
 
     current_token = parser_get_token(context);
 
     if (current_token->kind != TOKEN_KIND_IDENTIFIER) {
-        fprintf(stderr, "ERROR: expected identifier!\n");
-        exit(1);
+        cclynx_fatal_error("ERROR: expected identifier!\n");
     }
 
     if (current_token->content.identifier->is_keyword) {
-        fprintf(stderr, "ERROR: expected identifier but not a keyword!\n");
-        exit(1);
+        cclynx_fatal_error("ERROR: expected identifier but not a keyword!\n");
     }
 
     struct identifier * identifier = current_token->content.identifier;
@@ -282,15 +271,13 @@ struct ast_node * parse_function_definition(struct parser_context * context)
     current_token = parser_get_token(context);
 
     if (!(current_token->kind == TOKEN_KIND_PUNCTUATOR && current_token->content.ch == '(')) {
-        fprintf(stderr, "ERROR: expected '('!\n");
-        exit(1);
+        cclynx_fatal_error("ERROR: expected '('!\n");
     }
 
     current_token = parser_get_token(context);
 
     if (!(current_token->kind == TOKEN_KIND_PUNCTUATOR && current_token->content.ch == ')')) {
-        fprintf(stderr, "ERROR: expected ')'!\n");
-        exit(1);
+        cclynx_fatal_error("ERROR: expected ')'!\n");
     }
 
     struct ast_node * compound_statement = parse_compound_statement(context);
@@ -310,15 +297,13 @@ struct ast_node * parse_declaration(struct parser_context * context)
     const struct token * current_token = parser_get_token(context);
 
     if (current_token->kind != TOKEN_KIND_IDENTIFIER) {
-        fprintf(stderr, "ERROR: expected identifier!\n");
-        exit(1);
+        cclynx_fatal_error("ERROR: expected identifier!\n");
     }
 
     const struct symbol * symbol = symbol_lookup(current_token->content.identifier, SYMBOL_KIND_TYPE_SPECIFIER);
 
     if (symbol == NULL) {
-        fprintf(stderr, "ERROR: expected type specifier!\n");
-        exit(1);
+        cclynx_fatal_error("ERROR: expected type specifier!\n");
     }
 
     struct type * type = symbol->type;
@@ -326,13 +311,11 @@ struct ast_node * parse_declaration(struct parser_context * context)
     current_token = parser_get_token(context);
 
     if (current_token->kind != TOKEN_KIND_IDENTIFIER) {
-        fprintf(stderr, "ERROR: expected identifier!\n");
-        exit(1);
+        cclynx_fatal_error("ERROR: expected identifier!\n");
     }
 
     if (current_token->content.identifier->is_keyword) {
-        fprintf(stderr, "ERROR: expected identifier but not a keyword!\n");
-        exit(1);
+        cclynx_fatal_error("ERROR: expected identifier but not a keyword!\n");
     }
 
     struct identifier * identifier = current_token->content.identifier;
@@ -340,15 +323,13 @@ struct ast_node * parse_declaration(struct parser_context * context)
     symbol = symbol_lookup(identifier, SYMBOL_KIND_VARIABLE);
 
     if (symbol != NULL) {
-        fprintf(stderr, "ERROR: variable '%s' already declared!\n", identifier->name);
-        exit(1);
+        cclynx_fatal_error("ERROR: variable '%s' already declared!\n", identifier->name);
     }
 
     current_token = parser_get_token(context);
 
     if (!(current_token->kind == TOKEN_KIND_PUNCTUATOR && current_token->content.ch == ';')) {
-        fprintf(stderr, "ERROR: expected ';'!\n");
-        exit(1);
+        cclynx_fatal_error("ERROR: expected ';'!\n");
     }
 
     main_pool_alloc(struct symbol, variable)
@@ -572,8 +553,7 @@ struct ast_node * parse_cast_expression(struct parser_context * context)
     current_token = parser_get_token(context);
 
     if (!(current_token->kind == TOKEN_KIND_PUNCTUATOR && current_token->content.ch == ')')) {
-        fprintf(stderr, "ERROR: expected ')'!\n");
-        exit(1);
+        cclynx_fatal_error("ERROR: expected ')'!\n");
     }
 
     struct ast_node * expression = parse_primary_expression(context);
@@ -607,15 +587,13 @@ struct ast_node * parse_primary_expression(struct parser_context * context)
 
     if (current_token->kind == TOKEN_KIND_IDENTIFIER) {
         if (current_token->content.identifier->is_keyword) {
-            fprintf(stderr, "ERROR: expected identifier but not a keyword!\n");
-            exit(1);
+            cclynx_fatal_error("ERROR: expected identifier but not a keyword!\n");
         }
 
         struct symbol * symbol = symbol_lookup(current_token->content.identifier, SYMBOL_KIND_VARIABLE);
 
         if (symbol == NULL) {
-            fprintf(stderr, "ERROR: undeclared variable \"%s\"!\n", current_token->content.identifier->name);
-            exit(1);
+            cclynx_fatal_error("ERROR: undeclared variable \"%s\"!\n", current_token->content.identifier->name);
         }
 
         struct ast_node * variable = create_ast_node(AST_NODE_KIND_VARIABLE);
@@ -630,15 +608,13 @@ struct ast_node * parse_primary_expression(struct parser_context * context)
         current_token = parser_get_token(context);
 
         if (!(current_token->kind == TOKEN_KIND_PUNCTUATOR && current_token->content.ch == ')')) {
-            fprintf(stderr, "ERROR: expected ')'!\n");
-            exit(1);
+            cclynx_fatal_error("ERROR: expected ')'!\n");
         }
 
         return expression;
     }
 
-    fprintf(stderr, "ERROR: expected number or variable!\n");
-    exit(1);
+    cclynx_fatal_error("ERROR: expected number or variable!\n");
 }
 
 struct token * parser_get_token(struct parser_context * context)
@@ -660,13 +636,11 @@ void parser_putback_token(struct token * token, struct parser_context * context)
     assert(context != NULL);
 
     if (token == &eos_token) {
-        fprintf(stderr, "ERROR: Trying to putback EOS token!\n");
-        exit(1);
+        cclynx_fatal_error("ERROR: Trying to putback EOS token!\n");
     }
 
     if (context->token_buffer_pos >= MAX_TOKEN_BUFFER_SIZE) {
-        fprintf(stderr, "ERROR: Maximum token buffer size reached!\n");
-        exit(1);
+        cclynx_fatal_error("ERROR: Maximum token buffer size reached!\n");
     }
 
     context->token_buffer[context->token_buffer_pos++] = token;
@@ -696,8 +670,7 @@ struct type * check_type(struct type * lhs, struct type * rhs)
     assert(rhs != NULL);
 
     if (lhs->kind != rhs->kind) {
-        fprintf(stderr, "ERROR: type mismatch between '%s' and '%s'\n", type_stringify(lhs), type_stringify(rhs));
-        exit(1);
+        cclynx_fatal_error("ERROR: type mismatch between '%s' and '%s'\n", type_stringify(lhs), type_stringify(rhs));
     }
 
     return lhs;

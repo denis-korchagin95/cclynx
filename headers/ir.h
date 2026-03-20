@@ -1,5 +1,5 @@
-#ifndef IR_H
-#define IR_H 1
+#ifndef CCLYNX_IR_H
+#define CCLYNX_IR_H 1
 
 #include <stddef.h>
 
@@ -85,4 +85,4 @@ struct ir_program
 void ir_program_init(struct ir_program * program);
 void ir_program_generate(struct ir_program * program, const struct ast_node * ast);
 
-#endif /* IR_H */
+#endif /* CCLYNX_IR_H */
