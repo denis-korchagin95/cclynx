@@ -32,12 +32,11 @@ int main(int argc, const char * argv[])
     parse_options(argc, argv);
 
     for (int i = 1; i < argc; ++i) {
-        source_filename = argv[i];
-
-        if (strncmp(source_filename, "--", sizeof("--") - 1) == 0) {
+        if (strncmp(argv[i], "--", sizeof("--") - 1) == 0) {
             continue;
         }
 
+        source_filename = argv[i];
         break;
     }
 
