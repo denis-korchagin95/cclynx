@@ -356,6 +356,7 @@ void do_generate_ir(struct ir_program * program, const struct ast_node * node)
             {
                 main_pool_alloc(struct ir_instruction, instruction)
                 instruction->code = OP_RETURN;
+                instruction->result = current_func->result;
 
                 if (node->content.node != NULL) {
                     do_generate_ir(program, node->content.node);

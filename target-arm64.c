@@ -121,11 +121,6 @@ void target_arm64_generate(struct ir_program * program, FILE * file)
                 }
                 break;
             case OP_FUNC_END:
-                if (instruction->result->content.function.local_vars_size > 0) {
-                    fprintf(file, "    add sp, sp, #%zu\n", align_up(instruction->result->content.function.local_vars_size, 16));
-                }
-                fprintf(file, "    ldp x29, x30, [sp], #16\n");
-                fprintf(file, "    ret\n");
                 break;
             case OP_NOP:
                 fprintf(file, "    nop\n");
@@ -466,6 +461,12 @@ void target_arm64_generate(struct ir_program * program, FILE * file)
 
                         free_reg(result_reg);
                     }
+
+                    if (instruction->result->content.function.local_vars_size > 0) {
+                        fprintf(file, "    add sp, sp, #%zu\n", align_up(instruction->result->content.function.local_vars_size, 16));
+                    }
+                    fprintf(file, "    ldp x29, x30, [sp], #16\n");
+                    fprintf(file, "    ret\n");
                 }
                 break;
             case OP_INT_CAST:
