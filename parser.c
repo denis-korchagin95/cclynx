@@ -415,7 +415,7 @@ struct ast_node * parse_equality_expression(struct parser_context * context)
         const enum binary_operation operation = current_token->kind == TOKEN_KIND_EQUAL_PUNCTUATOR
             ? BINARY_OPERATION_EQUALITY
             : BINARY_OPERATION_INEQUALITY;
-        struct ast_node * rhs = parse_multiplicative_expression(context);
+        struct ast_node * rhs = parse_relational_expression(context);
 
         struct ast_node * binary_expression = create_ast_node(AST_NODE_KIND_EQUALITY_EXPRESSION);
         binary_expression->content.binary_expression.operation = operation;
@@ -449,7 +449,7 @@ struct ast_node * parse_relational_expression(struct parser_context * context) {
         const enum binary_operation operation = current_token->content.ch == '<'
             ? BINARY_OPERATION_LESS_THAN
             : BINARY_OPERATION_GREATER_THAN;
-        struct ast_node * rhs = parse_multiplicative_expression(context);
+        struct ast_node * rhs = parse_additive_expression(context);
 
         struct ast_node * binary_expression = create_ast_node(AST_NODE_KIND_RELATIONAL_EXPRESSION);
         binary_expression->content.binary_expression.operation = operation;

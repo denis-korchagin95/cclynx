@@ -477,6 +477,56 @@ FunctionDefinition: 'main' {type: 'int'}
 
 @endtest
 
+@test("It should parse an equality expression with additive RHS (operator precedence)")
+@given("file")
+int main() {
+    1 == 2 + 3;
+}
+@whenRun("./bin/parser-tester")
+@expectOutput("stdout")
+FunctionDefinition: 'main' {type: 'int'}
+|
++-> CompoundStatement
+    |
+    +-> ExpressionStatement
+        |
+        +-> EqualityExpression: '==' {type: 'int'}
+            |
+            +-> IntegerConstant: '1' {type: 'int'}
+            |
+            +-> AdditiveExpression: '+' {type: 'int'}
+                |
+                +-> IntegerConstant: '2' {type: 'int'}
+                |
+                +-> IntegerConstant: '3' {type: 'int'}
+
+@endtest
+
+@test("It should parse a relational expression with additive RHS (operator precedence)")
+@given("file")
+int main() {
+    1 < 2 + 3;
+}
+@whenRun("./bin/parser-tester")
+@expectOutput("stdout")
+FunctionDefinition: 'main' {type: 'int'}
+|
++-> CompoundStatement
+    |
+    +-> ExpressionStatement
+        |
+        +-> RelationalExpression: '<' {type: 'int'}
+            |
+            +-> IntegerConstant: '1' {type: 'int'}
+            |
+            +-> AdditiveExpression: '+' {type: 'int'}
+                |
+                +-> IntegerConstant: '2' {type: 'int'}
+                |
+                +-> IntegerConstant: '3' {type: 'int'}
+
+@endtest
+
 @test("It should parse an assignment expression (simple version)")
 @given("file")
 int main() {
