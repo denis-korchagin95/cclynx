@@ -12,11 +12,16 @@
 #include "target-arm64.h"
 
 
+enum output_stage {
+    STAGE_ASM,
+    STAGE_TOKENS,
+    STAGE_AST,
+    STAGE_AST_DOT,
+    STAGE_IR,
+};
+
 const char * source_filename = NULL;
-bool show_tokens = false;
-bool show_ast = false;
-bool show_ast_dot = false;
-bool show_ir = false;
+enum output_stage output_stage = STAGE_ASM;
 
 static void parse_options(const int argc, const char * argv[]);
 static void show_usage(const char * program_name, FILE * output);
@@ -58,7 +63,7 @@ int main(int argc, const char * argv[])
     struct parser_context context;
     parser_init_context(&context, tokens);
 
-    if (show_tokens) {
+    if (output_stage == STAGE_TOKENS) {
         struct token * it = tokens;
         while (it != &eos_token) {
             print_token(it, stdout);
@@ -69,12 +74,12 @@ int main(int argc, const char * argv[])
 
     struct ast_node * ast = parser_parse(&context);
 
-    if (show_ast) {
+    if (output_stage == STAGE_AST) {
         print_ast(ast, stdout);
         exit(0);
     }
 
-    if (show_ast_dot) {
+    if (output_stage == STAGE_AST_DOT) {
         print_ast_dot(ast, stdout);
         exit(0);
     }
@@ -84,7 +89,7 @@ int main(int argc, const char * argv[])
 
     ir_program_generate(&ir_program, ast);
 
-    if (show_ir) {
+    if (output_stage == STAGE_IR) {
         print_ir_program(&ir_program, stdout);
         exit(0);
     }
@@ -102,23 +107,28 @@ void parse_options(const int argc, const char * argv[])
     for(int i = 1; i < argc; ++i) {
         const char * arg = argv[i];
 
-        if (strncmp(arg, "--show-tokens", sizeof("--show-tokens") - 1) == 0) {
-            show_tokens = true;
+        if (strncmp(arg, "--emit-tokens", sizeof("--emit-tokens") - 1) == 0) {
+            output_stage = STAGE_TOKENS;
             continue;
         }
 
-        if (strncmp(arg, "--show-ast-dot", sizeof("--show-ast-dot") - 1) == 0) {
-            show_ast_dot = true;
+        if (strncmp(arg, "--emit-ast-dot", sizeof("--emit-ast-dot") - 1) == 0) {
+            output_stage = STAGE_AST_DOT;
             continue;
         }
 
-        if (strncmp(arg, "--show-ast", sizeof("--show-ast") - 1) == 0) {
-            show_ast = true;
+        if (strncmp(arg, "--emit-ast", sizeof("--emit-ast") - 1) == 0) {
+            output_stage = STAGE_AST;
             continue;
         }
 
-        if (strncmp(arg, "--show-ir", sizeof("--show-ir") - 1) == 0) {
-            show_ir = true;
+        if (strncmp(arg, "--emit-ir", sizeof("--emit-ir") - 1) == 0) {
+            output_stage = STAGE_IR;
+            continue;
+        }
+
+        if (strncmp(arg, "--emit-asm", sizeof("--emit-asm") - 1) == 0) {
+            output_stage = STAGE_ASM;
             continue;
         }
 
@@ -138,8 +148,9 @@ void show_usage(const char * program_name, FILE * output)
     fprintf(output, "Usage: %s [options] path\n\n\n", program_name);
     fprintf(output, "OPTIONS\n");
     fprintf(output, "\t--help\n\t    Show this message.\n\n");
-    fprintf(output, "\t--show-tokens\n\t    Print tokens from lexer.\n\n");
-    fprintf(output, "\t--show-ast\n\t    Print abstract syntax tree.\n\n");
-    fprintf(output, "\t--show-ast-dot\n\t    Print abstract syntax tree in DOT format.\n\n");
-    fprintf(output, "\t--show-ir\n\t    Print intermediate representation.\n\n");
+    fprintf(output, "\t--emit-tokens\n\t    Produces tokens.\n\n");
+    fprintf(output, "\t--emit-ast\n\t    Produces abstract syntax tree.\n\n");
+    fprintf(output, "\t--emit-ast-dot\n\t    Produces abstract syntax tree in DOT format.\n\n");
+    fprintf(output, "\t--emit-ir\n\t    Produces intermediate representation.\n\n");
+    fprintf(output, "\t--emit-asm\n\t    Produces assembly (default).\n\n");
 }
