@@ -21,7 +21,7 @@ static struct builtin_symbol
 
 void init_symbols(void)
 {
-    for (int i = 0; i < sizeof(builtin_symbols) / sizeof(builtin_symbols[0]); ++i) {
+    for (size_t i = 0; i < sizeof(builtin_symbols) / sizeof(builtin_symbols[0]); ++i) {
         struct builtin_symbol * builtin_symbol = &builtin_symbols[i];
 
         struct identifier * identifier = identifier_lookup(builtin_symbol->name);

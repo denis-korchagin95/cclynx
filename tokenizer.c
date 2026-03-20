@@ -18,7 +18,7 @@
 static struct hashmap number_table;
 
 
-struct token eos_token = {{0}, &eos_token, TOKEN_KIND_EOS};
+struct token eos_token = {{0}, &eos_token, 0, TOKEN_KIND_EOS};
 
 static char char_buffer[MAX_CHAR_BUFFER_SIZE] = {0};
 static size_t char_buffer_pos = 0;
@@ -56,7 +56,7 @@ struct token * tokenizer_tokenize_file(FILE * file)
 
         tokenizer_get_one_token(file, token);
 
-        if (token->kind == TOKEN_KIND_EOS) {
+        if (token->kind == (unsigned int)TOKEN_KIND_EOS) {
             break;
         }
     }

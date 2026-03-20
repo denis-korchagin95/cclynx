@@ -72,7 +72,7 @@ static struct reg * pop_reg(void)
 static struct reg * alloc_reg(enum reg_kind kind)
 {
     size_t reg_count = sizeof(regs) / sizeof(struct reg);
-    for (int i = 0; i < reg_count; ++i) {
+    for (size_t i = 0; i < reg_count; ++i) {
         struct reg * reg = &regs[i];
         if (reg->kind == kind && reg->busy == 0) {
             reg->busy = 1;

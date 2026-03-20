@@ -3,7 +3,7 @@ SRC=./
 BIN=./bin/
 OBJ=./obj/
 PROGRAM=cclynx
-CFLAGS=-std=c11 -g2 -Wall -O0
+CFLAGS=-std=c11 -g2 -Wall -Wextra -pedantic -O0
 HEADERS=./headers/
 TESTERS=./testers/
 

@@ -53,7 +53,7 @@ void init_keywords(void)
 {
     hashmap_init(&identifier_table, IDENTIFIER_TABLE_SIZE);
 
-    for (int i = 0; i < sizeof(keywords) / sizeof(keywords[0]); ++i) {
+    for (size_t i = 0; i < sizeof(keywords) / sizeof(keywords[0]); ++i) {
         const struct keyword * keyword = &keywords[i];
 
         struct identifier * identifier = identifier_create(keyword->name);
