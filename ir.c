@@ -427,7 +427,7 @@ struct ir_operand * find_variable_operand_by_symbol(struct symbol * symbol)
 {
     assert(symbol != NULL);
 
-    for (size_t i = 0; i < MAX_OPERAND_COUNT; ++i) {
+    for (size_t i = 0; i < operand_pos; ++i) {
         struct ir_operand * operand = &operands[i];
 
         if (operand->kind != OPERAND_KIND_VARIABLE)
