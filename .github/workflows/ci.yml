@@ -1,0 +1,30 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build jcunit
+        run: |
+          git clone --branch v1.0.0 --depth 1 https://github.com/denis-korchagin95/jcunit.git /tmp/jcunit
+          make -C /tmp/jcunit
+          sudo make -C /tmp/jcunit install
+
+      - name: Build
+        run: make build
+
+      - name: Build testers
+        run: make build-testers
+
+      - name: Run tests
+        run: jcunit tests/
