@@ -1,5 +1,6 @@
 #include <assert.h>
 #include <memory.h>
+#include <stdio.h>
 #include <stdlib.h>
 
 #include "allocator.h"
@@ -12,8 +13,16 @@ struct memory_blob_pool main_pool = {0};
 struct memory_blob * alloc_new_blob(size_t size)
 {
     struct memory_blob * blob = malloc(sizeof(struct memory_blob));
+    if (blob == NULL) {
+        fprintf(stderr, "ERROR: failed to allocate memory blob\n");
+        exit(1);
+    }
     memset(blob, 0, sizeof(struct memory_blob));
     blob->memory = malloc(size);
+    if (blob->memory == NULL) {
+        fprintf(stderr, "ERROR: failed to allocate memory blob data (%zu bytes)\n", size);
+        exit(1);
+    }
     blob->capacity = size;
     return blob;
 }
@@ -21,11 +30,19 @@ struct memory_blob * alloc_new_blob(size_t size)
 struct memory_blob_pool * memory_blob_pool_create(size_t blob_size, size_t alignment)
 {
     struct memory_blob_pool * pool = malloc(sizeof(struct memory_blob_pool));
+    if (pool == NULL) {
+        fprintf(stderr, "ERROR: failed to allocate memory blob pool\n");
+        exit(1);
+    }
     memset(pool, 0, sizeof(struct memory_blob_pool));
     pool->blob_size = blob_size;
     pool->alignment = alignment;
     pool->blob_capacity = DEFAULT_MEMORY_BLOB_CAPACITY;
     pool->blobs = malloc(sizeof(struct memory_blob *) * pool->blob_capacity);
+    if (pool->blobs == NULL) {
+        fprintf(stderr, "ERROR: failed to allocate memory blob pool entries\n");
+        exit(1);
+    }
     return pool;
 }
 
@@ -38,6 +55,10 @@ void memory_blob_pool_init(struct memory_blob_pool * pool, size_t blob_size, siz
     pool->alignment = alignment;
     pool->blob_capacity = DEFAULT_MEMORY_BLOB_CAPACITY;
     pool->blobs = malloc(sizeof(struct memory_blob *) * pool->blob_capacity);
+    if (pool->blobs == NULL) {
+        fprintf(stderr, "ERROR: failed to allocate memory blob pool entries\n");
+        exit(1);
+    }
 }
 
 void * memory_blob_pool_alloc(struct memory_blob_pool * pool, size_t size)
@@ -52,14 +73,19 @@ void * memory_blob_pool_alloc(struct memory_blob_pool * pool, size_t size)
 
         if (aligned_offset + aligned_size <= blob->capacity) {
             void * ptr = (char *)blob->memory + aligned_offset;
-            blob->used += aligned_offset + aligned_size;
+            blob->used = aligned_offset + aligned_size;
             return ptr;
         }
     }
 
     if (pool->blob_count >= pool->blob_capacity) {
         pool->blob_capacity *= 2;
-        pool->blobs = realloc(pool->blobs, sizeof(struct memory_blob *) * pool->blob_capacity);
+        struct memory_blob ** new_blobs = realloc(pool->blobs, sizeof(struct memory_blob *) * pool->blob_capacity);
+        if (new_blobs == NULL) {
+            fprintf(stderr, "ERROR: failed to reallocate memory blob pool entries\n");
+            exit(1);
+        }
+        pool->blobs = new_blobs;
     }
 
     struct memory_blob * new_blob = alloc_new_blob(pool->blob_size);
@@ -67,7 +93,7 @@ void * memory_blob_pool_alloc(struct memory_blob_pool * pool, size_t size)
 
     size_t aligned_offset = align_up(new_blob->used, pool->alignment);
     void * ptr = (char *)new_blob->memory + aligned_offset;
-    new_blob->used += aligned_offset + aligned_size;
+    new_blob->used = aligned_offset + aligned_size;
 
     return ptr;
 }
