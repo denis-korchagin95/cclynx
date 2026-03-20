@@ -175,8 +175,8 @@ void read_number(FILE * file, struct token * token, int ch)
 
     // TODO: implement storing the same number only for 1 time
 
-    char * number = memory_blob_pool_alloc(&main_pool, number_buffer_pos);
-    memcpy(number, number_buffer, number_buffer_pos);
+    char * number = memory_blob_pool_alloc(&main_pool, number_buffer_pos + 1);
+    memcpy(number, number_buffer, number_buffer_pos + 1);
 
     token->kind = TOKEN_KIND_NUMBER;
     token->content.number = number;
