@@ -113,4 +113,5 @@ clean:
 	rm -rfv $(OBJ)*.o
 
 $(OBJ)%.o: %.c
+	@mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) -I$(HEADERS) -c $(SRC)$*.c -o $@
