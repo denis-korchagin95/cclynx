@@ -311,8 +311,12 @@ void print_ir_program(const struct ir_program * program, FILE * file)
                 }
                 break;
             case OP_RETURN:
-                sprintf(buf, "t%llu", instruction->op1->content.temp_id);
-                fprintf(file, "%04zu OP_RETURN %s\n", i, buf);
+                if (instruction->op1 != NULL) {
+                    sprintf(buf, "t%llu", instruction->op1->content.temp_id);
+                    fprintf(file, "%04zu OP_RETURN %s\n", i, buf);
+                } else {
+                    fprintf(file, "%04zu OP_RETURN\n", i);
+                }
                 break;
             case OP_ADD:
                 sprintf(buf, "t%llu, t%llu, t%llu", instruction->op1->content.temp_id, instruction->op2->content.temp_id, instruction->result->content.temp_id);

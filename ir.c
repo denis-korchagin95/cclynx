@@ -357,11 +357,13 @@ void do_generate_ir(struct ir_program * program, const struct ast_node * node)
             break;
         case AST_NODE_KIND_RETURN_STATEMENT:
             {
-                do_generate_ir(program, node->content.node);
-
                 main_pool_alloc(struct ir_instruction, instruction)
                 instruction->code = OP_RETURN;
-                instruction->op1 = program->instructions[program->position - 1]->result;
+
+                if (node->content.node != NULL) {
+                    do_generate_ir(program, node->content.node);
+                    instruction->op1 = program->instructions[program->position - 1]->result;
+                }
 
                 ir_emit(program, instruction);
             }

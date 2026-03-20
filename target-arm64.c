@@ -478,18 +478,20 @@ void target_arm64_generate(struct ir_program * program, FILE * file)
                 break;
             case OP_RETURN:
                 {
-                    struct reg * result_reg = pop_reg();
+                    if (instruction->op1 != NULL) {
+                        struct reg * result_reg = pop_reg();
 
-                    if (result_reg->kind == REG_KIND_INTEGER) {
-                        fprintf(file, "    mov w0, %s\n", result_reg->name);
-                    } else if (result_reg->kind == REG_KIND_FLOAT) {
-                        fprintf(file, "    mov s0, %s\n", result_reg->name);
-                    } else {
-                        fprintf(stderr, "ERROR: unsupported reg kind (OP_RETURN)!\n");
-                        exit(1);
+                        if (result_reg->kind == REG_KIND_INTEGER) {
+                            fprintf(file, "    mov w0, %s\n", result_reg->name);
+                        } else if (result_reg->kind == REG_KIND_FLOAT) {
+                            fprintf(file, "    mov s0, %s\n", result_reg->name);
+                        } else {
+                            fprintf(stderr, "ERROR: unsupported reg kind (OP_RETURN)!\n");
+                            exit(1);
+                        }
+
+                        free_reg(result_reg);
                     }
-
-                    free_reg(result_reg);
                 }
                 break;
             case OP_INT_CAST:
