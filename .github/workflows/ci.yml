@@ -27,4 +27,4 @@ jobs:
         run: make build-testers
 
       - name: Run tests
-        run: jcunit tests/
+        run: jcunit --no-cache tests/
