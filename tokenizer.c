@@ -3,14 +3,19 @@
 #include <ctype.h>
 #include <memory.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "tokenizer.h"
 #include "allocator.h"
+#include "hashmap.h"
 #include "identifier.h"
 
 #define MAX_CHAR_BUFFER_SIZE (4)
 #define MAX_IDENTIFIER_BUFFER_SIZE (512)
 #define MAX_NUMBER_BUFFER_SIZE (512)
+#define NUMBER_TABLE_SIZE (101)
+
+static struct hashmap number_table;
 
 
 struct token eos_token = {{0}, &eos_token, TOKEN_KIND_EOS};
@@ -29,6 +34,11 @@ static void putback_one_char(int ch);
 static void read_identifier(FILE * file, struct token * token, int ch);
 static void read_number(FILE * file, struct token * token, int ch);
 
+
+void tokenizer_init(void)
+{
+    hashmap_init(&number_table, NUMBER_TABLE_SIZE);
+}
 
 struct token * tokenizer_tokenize_file(FILE * file)
 {
@@ -173,10 +183,13 @@ void read_number(FILE * file, struct token * token, int ch)
         exit(1);
     }
 
-    // TODO: implement storing the same number only for 1 time
+    char * number = hashmap_find(&number_table, number_buffer);
 
-    char * number = memory_blob_pool_alloc(&main_pool, number_buffer_pos + 1);
-    memcpy(number, number_buffer, number_buffer_pos + 1);
+    if (number == NULL) {
+        number = memory_blob_pool_alloc(&main_pool, number_buffer_pos + 1);
+        memcpy(number, number_buffer, number_buffer_pos + 1);
+        hashmap_insert(&number_table, number, number);
+    }
 
     token->kind = TOKEN_KIND_NUMBER;
     token->content.number = number;
@@ -192,13 +205,10 @@ void read_identifier(FILE * file, struct token * token, int ch)
     assert(file != NULL);
     assert(token != NULL);
 
-    unsigned int hash = 0;
-
     identifier_buffer_pos = 0;
 
     do {
         identifier_buffer[identifier_buffer_pos++] = ch;
-        hash = ch + 31 * hash;
         ch = get_one_char(file);
     }
     while(ch != EOF && (is_identifier_char(ch) || isdigit(ch)) && identifier_buffer_pos < MAX_IDENTIFIER_BUFFER_SIZE - 1);
@@ -212,10 +222,10 @@ void read_identifier(FILE * file, struct token * token, int ch)
         putback_one_char(ch);
     }
 
-    struct identifier * identifier = identifier_find(hash, identifier_buffer);
+    struct identifier * identifier = identifier_lookup(identifier_buffer);
 
     if (identifier == NULL) {
-        identifier = identifier_insert(hash, identifier_buffer, identifier_buffer_pos);
+        identifier = identifier_insert(identifier_buffer, identifier_buffer_pos);
     }
 
     token->kind = TOKEN_KIND_IDENTIFIER;

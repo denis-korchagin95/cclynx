@@ -11,11 +11,17 @@ vpath %.c $(SRC) $(TESTERS)
 
 all: build
 
+OBJECTS_HASHMAP_TESTER+=$(TESTERS)hashmap-tester.o
+OBJECTS_HASHMAP_TESTER+=hashmap.o
+OBJECTS_HASHMAP_TESTER+=allocator.o
+OBJECTS_HASHMAP_TESTER+=util.o
+
 OBJECTS_TOKENIZER_TESTER+=$(TESTERS)tokenizer-tester.o
 OBJECTS_TOKENIZER_TESTER+=tokenizer.o
 OBJECTS_TOKENIZER_TESTER+=allocator.o
 OBJECTS_TOKENIZER_TESTER+=print.o
 OBJECTS_TOKENIZER_TESTER+=identifier.o
+OBJECTS_TOKENIZER_TESTER+=hashmap.o
 OBJECTS_TOKENIZER_TESTER+=symbol.o
 OBJECTS_TOKENIZER_TESTER+=type.o
 OBJECTS_TOKENIZER_TESTER+=scope.o
@@ -26,6 +32,7 @@ OBJECTS_PARSER_TESTER+=parser.o
 OBJECTS_PARSER_TESTER+=allocator.o
 OBJECTS_PARSER_TESTER+=tokenizer.o
 OBJECTS_PARSER_TESTER+=identifier.o
+OBJECTS_PARSER_TESTER+=hashmap.o
 OBJECTS_PARSER_TESTER+=symbol.o
 OBJECTS_PARSER_TESTER+=print.o
 OBJECTS_PARSER_TESTER+=type.o
@@ -40,6 +47,7 @@ OBJECTS_IR_GENERATOR_TESTER+=type.o
 OBJECTS_IR_GENERATOR_TESTER+=allocator.o
 OBJECTS_IR_GENERATOR_TESTER+=scope.o
 OBJECTS_IR_GENERATOR_TESTER+=identifier.o
+OBJECTS_IR_GENERATOR_TESTER+=hashmap.o
 OBJECTS_IR_GENERATOR_TESTER+=print.o
 OBJECTS_IR_GENERATOR_TESTER+=ir.o
 OBJECTS_IR_GENERATOR_TESTER+=util.o
@@ -52,12 +60,14 @@ OBJECTS_TARGET_CODE_GENERATOR_TESTER+=type.o
 OBJECTS_TARGET_CODE_GENERATOR_TESTER+=allocator.o
 OBJECTS_TARGET_CODE_GENERATOR_TESTER+=scope.o
 OBJECTS_TARGET_CODE_GENERATOR_TESTER+=identifier.o
+OBJECTS_TARGET_CODE_GENERATOR_TESTER+=hashmap.o
 OBJECTS_TARGET_CODE_GENERATOR_TESTER+=print.o
 OBJECTS_TARGET_CODE_GENERATOR_TESTER+=ir.o
 OBJECTS_TARGET_CODE_GENERATOR_TESTER+=target-arm64.o
 OBJECTS_TARGET_CODE_GENERATOR_TESTER+=util.o
 
 OBJECTS+=allocator.o
+OBJECTS+=hashmap.o
 OBJECTS+=identifier.o
 OBJECTS+=symbol.o
 OBJECTS+=type.o
@@ -69,6 +79,9 @@ OBJECTS+=ir.o
 OBJECTS+=target-arm64.o
 OBJECTS+=util.o
 OBJECTS+=main.o
+
+hashmap-tester: $(addprefix $(OBJ), $(OBJECTS_HASHMAP_TESTER))
+	$(CC) $(LFLAGS) $^ -o $(BIN)hashmap-tester
 
 tokenizer-tester: $(addprefix $(OBJ), $(OBJECTS_TOKENIZER_TESTER))
 	$(CC) $(LFLAGS) $^ -o $(BIN)tokenizer-tester
@@ -85,7 +98,7 @@ target-code-generator-tester: $(addprefix $(OBJ), $(OBJECTS_TARGET_CODE_GENERATO
 build: $(addprefix $(OBJ), $(OBJECTS))
 	$(CC) $(LFLAGS) $^ -o $(BIN)$(PROGRAM)
 
-build-testers: tokenizer-tester parser-tester ir-generator-tester target-code-generator-tester
+build-testers: hashmap-tester tokenizer-tester parser-tester ir-generator-tester target-code-generator-tester
 
 clean:
 	rm -rfv $(BIN)$(PROGRAM)

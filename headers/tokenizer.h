@@ -40,6 +40,7 @@ struct token
 
 extern struct token eos_token;
 
+void tokenizer_init(void);
 void tokenizer_get_one_token(FILE * file, struct token * token);
 struct token * tokenizer_tokenize_file(FILE * file);
 

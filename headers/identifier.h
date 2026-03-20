@@ -15,7 +15,6 @@ struct identifier
 {
     char * name;
     struct symbol_list * symbols;
-    struct identifier * next;
     unsigned int is_keyword:1;
     unsigned int reserved:31;
 };
@@ -24,7 +23,6 @@ void init_keywords(void);
 
 struct identifier * identifier_create(const char * name);
 struct identifier * identifier_lookup(const char * name);
-struct identifier * identifier_find(unsigned int hash, const char * name);
-struct identifier * identifier_insert(unsigned int hash, const char * name, unsigned int len);
+struct identifier * identifier_insert(const char * name, unsigned int len);
 
 #endif /* IDENTIFIER_H */

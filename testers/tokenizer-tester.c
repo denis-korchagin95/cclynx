@@ -23,6 +23,7 @@ int main(const int argc, const char * argv[])
 
     memory_blob_pool_init(&main_pool, DEFAULT_MEMORY_BLOB_SIZE, DEFAULT_MEMORY_BLOB_ALIGNMENT);
     init_keywords();
+    tokenizer_init();
 
     const struct token * tokens = tokenizer_tokenize_file(file);
 

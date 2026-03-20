@@ -1,0 +1,148 @@
+@test("It should return NULL when finding in an empty map")
+@given("file")
+init 16
+find 0 hello
+@whenRun("./bin/hashmap-tester")
+@expectOutput("stdout")
+map0 = init(16)
+map0.find("hello") = NULL
+
+@endtest
+
+@test("It should insert and find a value")
+@given("file")
+init 16
+insert 0 key1 value1
+find 0 key1
+@whenRun("./bin/hashmap-tester")
+@expectOutput("stdout")
+map0 = init(16)
+map0.insert("key1", "value1")
+map0.find("key1") = "value1"
+
+@endtest
+
+@test("It should return NULL for a missing key")
+@given("file")
+init 16
+insert 0 exists found
+find 0 missing
+@whenRun("./bin/hashmap-tester")
+@expectOutput("stdout")
+map0 = init(16)
+map0.insert("exists", "found")
+map0.find("missing") = NULL
+
+@endtest
+
+@test("It should handle multiple inserts and finds")
+@given("file")
+init 16
+insert 0 a alpha
+insert 0 b bravo
+insert 0 c charlie
+find 0 a
+find 0 b
+find 0 c
+@whenRun("./bin/hashmap-tester")
+@expectOutput("stdout")
+map0 = init(16)
+map0.insert("a", "alpha")
+map0.insert("b", "bravo")
+map0.insert("c", "charlie")
+map0.find("a") = "alpha"
+map0.find("b") = "bravo"
+map0.find("c") = "charlie"
+
+@endtest
+
+@test("It should handle hash collisions with capacity 1")
+@given("file")
+init 1
+insert 0 x val_x
+insert 0 y val_y
+insert 0 z val_z
+find 0 x
+find 0 y
+find 0 z
+@whenRun("./bin/hashmap-tester")
+@expectOutput("stdout")
+map0 = init(1)
+map0.insert("x", "val_x")
+map0.insert("y", "val_y")
+map0.insert("z", "val_z")
+map0.find("x") = "val_x"
+map0.find("y") = "val_y"
+map0.find("z") = "val_z"
+
+@endtest
+
+@test("It should return the latest value for duplicate keys")
+@given("file")
+init 16
+insert 0 dup first
+insert 0 dup second
+find 0 dup
+@whenRun("./bin/hashmap-tester")
+@expectOutput("stdout")
+map0 = init(16)
+map0.insert("dup", "first")
+map0.insert("dup", "second")
+map0.find("dup") = "second"
+
+@endtest
+
+@test("It should compute deterministic hash values")
+@given("file")
+hash hello
+hash hello
+hash world
+@whenRun("./bin/hashmap-tester")
+@expectOutput("stdout")
+hash("hello") = 99162322
+hash("hello") = 99162322
+hash("world") = 113318802
+
+@endtest
+
+@test("It should support multiple independent maps")
+@given("file")
+init 16
+init 16
+insert 0 key map0_val
+insert 1 key map1_val
+find 0 key
+find 1 key
+@whenRun("./bin/hashmap-tester")
+@expectOutput("stdout")
+map0 = init(16)
+map1 = init(16)
+map0.insert("key", "map0_val")
+map1.insert("key", "map1_val")
+map0.find("key") = "map0_val"
+map1.find("key") = "map1_val"
+
+@endtest
+
+@test("It should work with a large capacity map")
+@given("file")
+init 101
+insert 0 abc val_abc
+insert 0 test val_test
+insert 0 hello val_hello
+find 0 abc
+find 0 test
+find 0 hello
+find 0 nonexistent
+@whenRun("./bin/hashmap-tester")
+@expectOutput("stdout")
+map0 = init(101)
+map0.insert("abc", "val_abc")
+map0.insert("test", "val_test")
+map0.insert("hello", "val_hello")
+map0.find("abc") = "val_abc"
+map0.find("test") = "val_test"
+map0.find("hello") = "val_hello"
+map0.find("nonexistent") = NULL
+
+@endtest
