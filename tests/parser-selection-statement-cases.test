@@ -6,7 +6,7 @@ int main() {
     if (x < 5)
         x = 10;
 }
-@whenRun("./bin/parser-tester")
+@whenRun("./bin/testers/parser-tester")
 @expectOutput("stdout")
 FunctionDefinition: 'main' {type: 'int'}
 |
@@ -47,7 +47,7 @@ int main() {
     x = 10;
     if (x < 5);
 }
-@whenRun("./bin/parser-tester")
+@whenRun("./bin/testers/parser-tester")
 @expectOutput("stdout")
 FunctionDefinition: 'main' {type: 'int'}
 |
@@ -85,7 +85,7 @@ int main() {
         x = x + 15;
     }
 }
-@whenRun("./bin/parser-tester")
+@whenRun("./bin/testers/parser-tester")
 @expectOutput("stdout")
 FunctionDefinition: 'main' {type: 'int'}
 |
@@ -143,7 +143,7 @@ int main() {
     else
         x = 77;
 }
-@whenRun("./bin/parser-tester")
+@whenRun("./bin/testers/parser-tester")
 @expectOutput("stdout")
 FunctionDefinition: 'main' {type: 'int'}
 |
@@ -194,7 +194,7 @@ int main() {
         x = 10;
     else;
 }
-@whenRun("./bin/parser-tester")
+@whenRun("./bin/testers/parser-tester")
 @expectOutput("stdout")
 FunctionDefinition: 'main' {type: 'int'}
 |
@@ -242,7 +242,7 @@ int main() {
         x = x - 1;
     }
 }
-@whenRun("./bin/parser-tester")
+@whenRun("./bin/testers/parser-tester")
 @expectOutput("stdout")
 FunctionDefinition: 'main' {type: 'int'}
 |

@@ -1,6 +1,7 @@
 CC=gcc
 SRC=./
 BIN=./bin/
+BIN_TESTERS=./bin/testers/
 OBJ=./obj/
 PROGRAM=cclynx
 CFLAGS=-std=c11 -g2 -Wall -Wextra -pedantic -O0
@@ -41,6 +42,19 @@ OBJECTS_PARSER_TESTER+=print.o
 OBJECTS_PARSER_TESTER+=type.o
 OBJECTS_PARSER_TESTER+=scope.o
 OBJECTS_PARSER_TESTER+=util.o
+
+OBJECTS_PARSER_DOT_TESTER+=$(TESTERS)parser-dot-tester.o
+OBJECTS_PARSER_DOT_TESTER+=parser.o
+OBJECTS_PARSER_DOT_TESTER+=allocator.o
+OBJECTS_PARSER_DOT_TESTER+=errors.o
+OBJECTS_PARSER_DOT_TESTER+=tokenizer.o
+OBJECTS_PARSER_DOT_TESTER+=identifier.o
+OBJECTS_PARSER_DOT_TESTER+=hashmap.o
+OBJECTS_PARSER_DOT_TESTER+=symbol.o
+OBJECTS_PARSER_DOT_TESTER+=print.o
+OBJECTS_PARSER_DOT_TESTER+=type.o
+OBJECTS_PARSER_DOT_TESTER+=scope.o
+OBJECTS_PARSER_DOT_TESTER+=util.o
 
 OBJECTS_IR_GENERATOR_TESTER+=$(TESTERS)ir-generator-tester.o
 OBJECTS_IR_GENERATOR_TESTER+=parser.o
@@ -87,24 +101,33 @@ OBJECTS+=util.o
 OBJECTS+=main.o
 
 hashmap-tester: $(addprefix $(OBJ), $(OBJECTS_HASHMAP_TESTER))
-	$(CC) $(LFLAGS) $^ -o $(BIN)hashmap-tester
+	@mkdir -p $(BIN_TESTERS)
+	$(CC) $(LFLAGS) $^ -o $(BIN_TESTERS)hashmap-tester
 
 tokenizer-tester: $(addprefix $(OBJ), $(OBJECTS_TOKENIZER_TESTER))
-	$(CC) $(LFLAGS) $^ -o $(BIN)tokenizer-tester
+	@mkdir -p $(BIN_TESTERS)
+	$(CC) $(LFLAGS) $^ -o $(BIN_TESTERS)tokenizer-tester
 
 parser-tester: $(addprefix $(OBJ), $(OBJECTS_PARSER_TESTER))
-	$(CC) $(LFLAGS) $^ -o $(BIN)parser-tester
+	@mkdir -p $(BIN_TESTERS)
+	$(CC) $(LFLAGS) $^ -o $(BIN_TESTERS)parser-tester
+
+parser-dot-tester: $(addprefix $(OBJ), $(OBJECTS_PARSER_DOT_TESTER))
+	@mkdir -p $(BIN_TESTERS)
+	$(CC) $(LFLAGS) $^ -o $(BIN_TESTERS)parser-dot-tester
 
 ir-generator-tester: $(addprefix $(OBJ), $(OBJECTS_IR_GENERATOR_TESTER))
-	$(CC) $(LFLAGS) $^ -o $(BIN)ir-generator-tester
+	@mkdir -p $(BIN_TESTERS)
+	$(CC) $(LFLAGS) $^ -o $(BIN_TESTERS)ir-generator-tester
 
 target-code-generator-tester: $(addprefix $(OBJ), $(OBJECTS_TARGET_CODE_GENERATOR_TESTER))
-	$(CC) $(LFLAGS) $^ -o $(BIN)target-code-generator-tester
+	@mkdir -p $(BIN_TESTERS)
+	$(CC) $(LFLAGS) $^ -o $(BIN_TESTERS)target-code-generator-tester
 
 build: $(addprefix $(OBJ), $(OBJECTS))
 	$(CC) $(LFLAGS) $^ -o $(BIN)$(PROGRAM)
 
-build-testers: hashmap-tester tokenizer-tester parser-tester ir-generator-tester target-code-generator-tester
+build-testers: hashmap-tester tokenizer-tester parser-tester parser-dot-tester ir-generator-tester target-code-generator-tester
 
 test: clean build build-testers
 	jcunit --no-cache tests/
@@ -116,7 +139,7 @@ test-all: test test-examples
 
 clean:
 	rm -rfv $(BIN)$(PROGRAM)
-	rm -rfv $(BIN)*-tester
+	rm -rfv $(BIN_TESTERS)
 	rm -rfv $(OBJ)$(TESTERS)*.o
 	rm -rfv $(OBJ)*.o
 

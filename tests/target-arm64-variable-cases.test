@@ -5,7 +5,7 @@ int main() {
     x = 10;
     return x;
 }
-@whenRun("./bin/target-code-generator-tester")
+@whenRun("./bin/testers/target-code-generator-tester")
 @expectOutput("stdout")
 .text
 .align 2
@@ -32,7 +32,7 @@ int main() {
     x = 7 * 8;
     return x / 2;
 }
-@whenRun("./bin/target-code-generator-tester")
+@whenRun("./bin/testers/target-code-generator-tester")
 @expectOutput("stdout")
 .text
 .align 2
@@ -71,7 +71,7 @@ int main() {
     e = 5;
     return a + b + c + d + e;
 }
-@whenRun("./bin/target-code-generator-tester")
+@whenRun("./bin/testers/target-code-generator-tester")
 @expectOutput("stdout")
 .text
 .align 2

@@ -2,7 +2,7 @@
 @given("file")
 init 16
 find 0 hello
-@whenRun("./bin/hashmap-tester")
+@whenRun("./bin/testers/hashmap-tester")
 @expectOutput("stdout")
 map0 = init(16)
 map0.find("hello") = NULL
@@ -14,7 +14,7 @@ map0.find("hello") = NULL
 init 16
 insert 0 key1 value1
 find 0 key1
-@whenRun("./bin/hashmap-tester")
+@whenRun("./bin/testers/hashmap-tester")
 @expectOutput("stdout")
 map0 = init(16)
 map0.insert("key1", "value1")
@@ -27,7 +27,7 @@ map0.find("key1") = "value1"
 init 16
 insert 0 exists found
 find 0 missing
-@whenRun("./bin/hashmap-tester")
+@whenRun("./bin/testers/hashmap-tester")
 @expectOutput("stdout")
 map0 = init(16)
 map0.insert("exists", "found")
@@ -44,7 +44,7 @@ insert 0 c charlie
 find 0 a
 find 0 b
 find 0 c
-@whenRun("./bin/hashmap-tester")
+@whenRun("./bin/testers/hashmap-tester")
 @expectOutput("stdout")
 map0 = init(16)
 map0.insert("a", "alpha")
@@ -65,7 +65,7 @@ insert 0 z val_z
 find 0 x
 find 0 y
 find 0 z
-@whenRun("./bin/hashmap-tester")
+@whenRun("./bin/testers/hashmap-tester")
 @expectOutput("stdout")
 map0 = init(1)
 map0.insert("x", "val_x")
@@ -83,7 +83,7 @@ init 16
 insert 0 dup first
 insert 0 dup second
 find 0 dup
-@whenRun("./bin/hashmap-tester")
+@whenRun("./bin/testers/hashmap-tester")
 @expectOutput("stdout")
 map0 = init(16)
 map0.insert("dup", "first")
@@ -97,7 +97,7 @@ map0.find("dup") = "second"
 hash hello
 hash hello
 hash world
-@whenRun("./bin/hashmap-tester")
+@whenRun("./bin/testers/hashmap-tester")
 @expectOutput("stdout")
 hash("hello") = 99162322
 hash("hello") = 99162322
@@ -113,7 +113,7 @@ insert 0 key map0_val
 insert 1 key map1_val
 find 0 key
 find 1 key
-@whenRun("./bin/hashmap-tester")
+@whenRun("./bin/testers/hashmap-tester")
 @expectOutput("stdout")
 map0 = init(16)
 map1 = init(16)
@@ -134,7 +134,7 @@ find 0 abc
 find 0 test
 find 0 hello
 find 0 nonexistent
-@whenRun("./bin/hashmap-tester")
+@whenRun("./bin/testers/hashmap-tester")
 @expectOutput("stdout")
 map0 = init(101)
 map0.insert("abc", "val_abc")

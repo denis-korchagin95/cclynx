@@ -15,6 +15,7 @@
 const char * source_filename = NULL;
 bool show_tokens = false;
 bool show_ast = false;
+bool show_ast_dot = false;
 bool show_ir = false;
 
 static void parse_options(const int argc, const char * argv[]);
@@ -73,6 +74,11 @@ int main(int argc, const char * argv[])
         exit(0);
     }
 
+    if (show_ast_dot) {
+        print_ast_dot(ast, stdout);
+        exit(0);
+    }
+
     struct ir_program ir_program;
     ir_program_init(&ir_program);
 
@@ -98,6 +104,11 @@ void parse_options(const int argc, const char * argv[])
 
         if (strncmp(arg, "--show-tokens", sizeof("--show-tokens") - 1) == 0) {
             show_tokens = true;
+            continue;
+        }
+
+        if (strncmp(arg, "--show-ast-dot", sizeof("--show-ast-dot") - 1) == 0) {
+            show_ast_dot = true;
             continue;
         }
 
@@ -129,5 +140,6 @@ void show_usage(const char * program_name, FILE * output)
     fprintf(output, "\t--help\n\t    Show this message.\n\n");
     fprintf(output, "\t--show-tokens\n\t    Print tokens from lexer.\n\n");
     fprintf(output, "\t--show-ast\n\t    Print abstract syntax tree.\n\n");
+    fprintf(output, "\t--show-ast-dot\n\t    Print abstract syntax tree in DOT format.\n\n");
     fprintf(output, "\t--show-ir\n\t    Print intermediate representation.\n\n");
 }

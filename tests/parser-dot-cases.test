@@ -1,0 +1,329 @@
+@test("DOT: integer constant")
+@given("file")
+int main() {
+    42;
+}
+@whenRun("./bin/testers/parser-dot-tester")
+@expectOutput("stdout")
+digraph AST {
+    node [shape=box, fontname="monospace"];
+    n0 [label="FunctionDefinition\n'main' : int"];
+    n1 [label="CompoundStatement"];
+    n2 [label="ExpressionStatement"];
+    n3 [label="IntegerConstant\n42 : int"];
+    n2 -> n3;
+    n1 -> n2;
+    n0 -> n1;
+}
+
+@endtest
+
+@test("DOT: float constant")
+@given("file")
+int main() {
+    3.14;
+}
+@whenRun("./bin/testers/parser-dot-tester")
+@expectOutput("stdout")
+digraph AST {
+    node [shape=box, fontname="monospace"];
+    n0 [label="FunctionDefinition\n'main' : int"];
+    n1 [label="CompoundStatement"];
+    n2 [label="ExpressionStatement"];
+    n3 [label="FloatConstant\n3.140000 : float"];
+    n2 -> n3;
+    n1 -> n2;
+    n0 -> n1;
+}
+
+@endtest
+
+@test("DOT: variable declaration, assignment, and reference")
+@given("file")
+int main() {
+    int x;
+    x = 5;
+    return x;
+}
+@whenRun("./bin/testers/parser-dot-tester")
+@expectOutput("stdout")
+digraph AST {
+    node [shape=box, fontname="monospace"];
+    n0 [label="FunctionDefinition\n'main' : int"];
+    n1 [label="CompoundStatement"];
+    n2 [label="VariableDeclaration\n'x' : int"];
+    n1 -> n2;
+    n3 [label="ExpressionStatement"];
+    n4 [label="AssignmentExpression '='"];
+    n5 [label="Variable\n'x' : int"];
+    n4 -> n5 [label="lhs"];
+    n6 [label="IntegerConstant\n5 : int"];
+    n4 -> n6 [label="rhs"];
+    n3 -> n4;
+    n1 -> n3;
+    n7 [label="ReturnStatement"];
+    n8 [label="Variable\n'x' : int"];
+    n7 -> n8;
+    n1 -> n7;
+    n0 -> n1;
+}
+
+@endtest
+
+@test("DOT: additive expression")
+@given("file")
+int main() {
+    return 2 + 3;
+}
+@whenRun("./bin/testers/parser-dot-tester")
+@expectOutput("stdout")
+digraph AST {
+    node [shape=box, fontname="monospace"];
+    n0 [label="FunctionDefinition\n'main' : int"];
+    n1 [label="CompoundStatement"];
+    n2 [label="ReturnStatement"];
+    n3 [label="AdditiveExpression '+'\n: int"];
+    n4 [label="IntegerConstant\n2 : int"];
+    n3 -> n4 [label="lhs"];
+    n5 [label="IntegerConstant\n3 : int"];
+    n3 -> n5 [label="rhs"];
+    n2 -> n3;
+    n1 -> n2;
+    n0 -> n1;
+}
+
+@endtest
+
+@test("DOT: multiplicative expression")
+@given("file")
+int main() {
+    return 2 * 3;
+}
+@whenRun("./bin/testers/parser-dot-tester")
+@expectOutput("stdout")
+digraph AST {
+    node [shape=box, fontname="monospace"];
+    n0 [label="FunctionDefinition\n'main' : int"];
+    n1 [label="CompoundStatement"];
+    n2 [label="ReturnStatement"];
+    n3 [label="MultiplicativeExpression '*'\n: int"];
+    n4 [label="IntegerConstant\n2 : int"];
+    n3 -> n4 [label="lhs"];
+    n5 [label="IntegerConstant\n3 : int"];
+    n3 -> n5 [label="rhs"];
+    n2 -> n3;
+    n1 -> n2;
+    n0 -> n1;
+}
+
+@endtest
+
+@test("DOT: relational expression")
+@given("file")
+int main() {
+    return 2 < 3;
+}
+@whenRun("./bin/testers/parser-dot-tester")
+@expectOutput("stdout")
+digraph AST {
+    node [shape=box, fontname="monospace"];
+    n0 [label="FunctionDefinition\n'main' : int"];
+    n1 [label="CompoundStatement"];
+    n2 [label="ReturnStatement"];
+    n3 [label="RelationalExpression '<'\n: int"];
+    n4 [label="IntegerConstant\n2 : int"];
+    n3 -> n4 [label="lhs"];
+    n5 [label="IntegerConstant\n3 : int"];
+    n3 -> n5 [label="rhs"];
+    n2 -> n3;
+    n1 -> n2;
+    n0 -> n1;
+}
+
+@endtest
+
+@test("DOT: equality expression")
+@given("file")
+int main() {
+    return 2 == 3;
+}
+@whenRun("./bin/testers/parser-dot-tester")
+@expectOutput("stdout")
+digraph AST {
+    node [shape=box, fontname="monospace"];
+    n0 [label="FunctionDefinition\n'main' : int"];
+    n1 [label="CompoundStatement"];
+    n2 [label="ReturnStatement"];
+    n3 [label="EqualityExpression '=='\n: int"];
+    n4 [label="IntegerConstant\n2 : int"];
+    n3 -> n4 [label="lhs"];
+    n5 [label="IntegerConstant\n3 : int"];
+    n3 -> n5 [label="rhs"];
+    n2 -> n3;
+    n1 -> n2;
+    n0 -> n1;
+}
+
+@endtest
+
+@test("DOT: if-else statement")
+@given("file")
+int main() {
+    int x;
+    x = 1;
+    if (x == 1) {
+        x = 2;
+    } else {
+        x = 3;
+    }
+    return x;
+}
+@whenRun("./bin/testers/parser-dot-tester")
+@expectOutput("stdout")
+digraph AST {
+    node [shape=box, fontname="monospace"];
+    n0 [label="FunctionDefinition\n'main' : int"];
+    n1 [label="CompoundStatement"];
+    n2 [label="VariableDeclaration\n'x' : int"];
+    n1 -> n2;
+    n3 [label="ExpressionStatement"];
+    n4 [label="AssignmentExpression '='"];
+    n5 [label="Variable\n'x' : int"];
+    n4 -> n5 [label="lhs"];
+    n6 [label="IntegerConstant\n1 : int"];
+    n4 -> n6 [label="rhs"];
+    n3 -> n4;
+    n1 -> n3;
+    n7 [label="IfStatement"];
+    n8 [label="EqualityExpression '=='\n: int"];
+    n9 [label="Variable\n'x' : int"];
+    n8 -> n9 [label="lhs"];
+    n10 [label="IntegerConstant\n1 : int"];
+    n8 -> n10 [label="rhs"];
+    n7 -> n8 [label="condition"];
+    n11 [label="CompoundStatement"];
+    n12 [label="ExpressionStatement"];
+    n13 [label="AssignmentExpression '='"];
+    n14 [label="Variable\n'x' : int"];
+    n13 -> n14 [label="lhs"];
+    n15 [label="IntegerConstant\n2 : int"];
+    n13 -> n15 [label="rhs"];
+    n12 -> n13;
+    n11 -> n12;
+    n7 -> n11 [label="true"];
+    n16 [label="CompoundStatement"];
+    n17 [label="ExpressionStatement"];
+    n18 [label="AssignmentExpression '='"];
+    n19 [label="Variable\n'x' : int"];
+    n18 -> n19 [label="lhs"];
+    n20 [label="IntegerConstant\n3 : int"];
+    n18 -> n20 [label="rhs"];
+    n17 -> n18;
+    n16 -> n17;
+    n7 -> n16 [label="false"];
+    n1 -> n7;
+    n21 [label="ReturnStatement"];
+    n22 [label="Variable\n'x' : int"];
+    n21 -> n22;
+    n1 -> n21;
+    n0 -> n1;
+}
+
+@endtest
+
+@test("DOT: while statement")
+@given("file")
+int main() {
+    int i;
+    i = 0;
+    while (i < 3) {
+        i = i + 1;
+    }
+    return i;
+}
+@whenRun("./bin/testers/parser-dot-tester")
+@expectOutput("stdout")
+digraph AST {
+    node [shape=box, fontname="monospace"];
+    n0 [label="FunctionDefinition\n'main' : int"];
+    n1 [label="CompoundStatement"];
+    n2 [label="VariableDeclaration\n'i' : int"];
+    n1 -> n2;
+    n3 [label="ExpressionStatement"];
+    n4 [label="AssignmentExpression '='"];
+    n5 [label="Variable\n'i' : int"];
+    n4 -> n5 [label="lhs"];
+    n6 [label="IntegerConstant\n0 : int"];
+    n4 -> n6 [label="rhs"];
+    n3 -> n4;
+    n1 -> n3;
+    n7 [label="WhileStatement"];
+    n8 [label="RelationalExpression '<'\n: int"];
+    n9 [label="Variable\n'i' : int"];
+    n8 -> n9 [label="lhs"];
+    n10 [label="IntegerConstant\n3 : int"];
+    n8 -> n10 [label="rhs"];
+    n7 -> n8 [label="condition"];
+    n11 [label="CompoundStatement"];
+    n12 [label="ExpressionStatement"];
+    n13 [label="AssignmentExpression '='"];
+    n14 [label="Variable\n'i' : int"];
+    n13 -> n14 [label="lhs"];
+    n15 [label="AdditiveExpression '+'\n: int"];
+    n16 [label="Variable\n'i' : int"];
+    n15 -> n16 [label="lhs"];
+    n17 [label="IntegerConstant\n1 : int"];
+    n15 -> n17 [label="rhs"];
+    n13 -> n15 [label="rhs"];
+    n12 -> n13;
+    n11 -> n12;
+    n7 -> n11 [label="body"];
+    n1 -> n7;
+    n18 [label="ReturnStatement"];
+    n19 [label="Variable\n'i' : int"];
+    n18 -> n19;
+    n1 -> n18;
+    n0 -> n1;
+}
+
+@endtest
+
+@test("DOT: cast expression")
+@given("file")
+int main() {
+    return (int)3.14;
+}
+@whenRun("./bin/testers/parser-dot-tester")
+@expectOutput("stdout")
+digraph AST {
+    node [shape=box, fontname="monospace"];
+    n0 [label="FunctionDefinition\n'main' : int"];
+    n1 [label="CompoundStatement"];
+    n2 [label="ReturnStatement"];
+    n3 [label="CastExpression\n: int"];
+    n4 [label="FloatConstant\n3.140000 : float"];
+    n3 -> n4;
+    n2 -> n3;
+    n1 -> n2;
+    n0 -> n1;
+}
+
+@endtest
+
+@test("DOT: bare return statement")
+@given("file")
+int main() {
+    return;
+}
+@whenRun("./bin/testers/parser-dot-tester")
+@expectOutput("stdout")
+digraph AST {
+    node [shape=box, fontname="monospace"];
+    n0 [label="FunctionDefinition\n'main' : int"];
+    n1 [label="CompoundStatement"];
+    n2 [label="ReturnStatement"];
+    n1 -> n2;
+    n0 -> n1;
+}
+
+@endtest

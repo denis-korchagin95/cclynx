@@ -5,7 +5,7 @@ int main() {
     x = 10;
     return x;
 }
-@whenRun("./bin/ir-generator-tester")
+@whenRun("./bin/testers/ir-generator-tester")
 @expectOutput("stdout")
 0000 OP_FUNC "main"
 0001 OP_CONST 10, t1
@@ -23,7 +23,7 @@ int main() {
     x = 7 * 8;
     return x / 2;
 }
-@whenRun("./bin/ir-generator-tester")
+@whenRun("./bin/testers/ir-generator-tester")
 @expectOutput("stdout")
 0000 OP_FUNC "main"
 0001 OP_CONST 7, t1

@@ -3,7 +3,7 @@
 int main() {
     return;
 }
-@whenRun("./bin/ir-generator-tester")
+@whenRun("./bin/testers/ir-generator-tester")
 @expectOutput("stdout")
 0000 OP_FUNC "main"
 0001 OP_RETURN
@@ -16,7 +16,7 @@ int main() {
 int main() {
     return 100000;
 }
-@whenRun("./bin/ir-generator-tester")
+@whenRun("./bin/testers/ir-generator-tester")
 @expectOutput("stdout")
 0000 OP_FUNC "main"
 0001 OP_CONST 100000, t1
@@ -30,7 +30,7 @@ int main() {
 int main() {
     return 7;
 }
-@whenRun("./bin/ir-generator-tester")
+@whenRun("./bin/testers/ir-generator-tester")
 @expectOutput("stdout")
 0000 OP_FUNC "main"
 0001 OP_CONST 7, t1
@@ -44,7 +44,7 @@ int main() {
 int main() {
     return 2 * 3 + 1;
 }
-@whenRun("./bin/ir-generator-tester")
+@whenRun("./bin/testers/ir-generator-tester")
 @expectOutput("stdout")
 0000 OP_FUNC "main"
 0001 OP_CONST 2, t1
@@ -62,7 +62,7 @@ int main() {
 int main() {
     return 2 * ((3 * 4 + 20) + 1) * 15;
 }
-@whenRun("./bin/ir-generator-tester")
+@whenRun("./bin/testers/ir-generator-tester")
 @expectOutput("stdout")
 0000 OP_FUNC "main"
 0001 OP_CONST 2, t1
@@ -86,7 +86,7 @@ int main() {
 int main() {
     return 12 / 3 - 1;
 }
-@whenRun("./bin/ir-generator-tester")
+@whenRun("./bin/testers/ir-generator-tester")
 @expectOutput("stdout")
 0000 OP_FUNC "main"
 0001 OP_CONST 12, t1
@@ -104,7 +104,7 @@ int main() {
 int main() {
     return 12 > 3;
 }
-@whenRun("./bin/ir-generator-tester")
+@whenRun("./bin/testers/ir-generator-tester")
 @expectOutput("stdout")
 0000 OP_FUNC "main"
 0001 OP_CONST 12, t1
@@ -120,7 +120,7 @@ int main() {
 int main() {
     return 12 < 3;
 }
-@whenRun("./bin/ir-generator-tester")
+@whenRun("./bin/testers/ir-generator-tester")
 @expectOutput("stdout")
 0000 OP_FUNC "main"
 0001 OP_CONST 12, t1
@@ -136,7 +136,7 @@ int main() {
 int main() {
     return 12 == 3;
 }
-@whenRun("./bin/ir-generator-tester")
+@whenRun("./bin/testers/ir-generator-tester")
 @expectOutput("stdout")
 0000 OP_FUNC "main"
 0001 OP_CONST 12, t1
@@ -152,7 +152,7 @@ int main() {
 int main() {
     return 12 != 3;
 }
-@whenRun("./bin/ir-generator-tester")
+@whenRun("./bin/testers/ir-generator-tester")
 @expectOutput("stdout")
 0000 OP_FUNC "main"
 0001 OP_CONST 12, t1

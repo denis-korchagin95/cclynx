@@ -9,6 +9,7 @@ struct ir_program;
 
 void print_token(const struct token * token, FILE * file);
 void print_ast(const struct ast_node * ast, FILE * file);
+void print_ast_dot(const struct ast_node * ast, FILE * file);
 void print_ir_program(const struct ir_program * program, FILE * file);
 
 #endif /* CCLYNX_PRINT_H */

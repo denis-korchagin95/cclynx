@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <stdio.h>
 #include <stdlib.h>
 
 #include "print.h"
@@ -12,6 +13,7 @@
 #include "errors.h"
 
 static void do_print_ast(const struct ast_node * ast, FILE * file, int depth, unsigned int * ancestors_info, const char * node_label);
+static int do_print_ast_dot(const struct ast_node * ast, FILE * file, int next_id);
 
 void print_token(const struct token * token, FILE * file)
 {
@@ -211,6 +213,160 @@ void do_print_ast(const struct ast_node * ast, FILE * file, int depth, unsigned 
     }
 
     fflush(file);
+}
+
+void print_ast_dot(const struct ast_node * ast, FILE * file)
+{
+    assert(ast != NULL);
+    assert(file != NULL);
+
+    fprintf(file, "digraph AST {\n");
+    fprintf(file, "    node [shape=box, fontname=\"monospace\"];\n");
+    do_print_ast_dot(ast, file, 0);
+    fprintf(file, "}\n");
+
+    fflush(file);
+}
+
+int do_print_ast_dot(const struct ast_node * ast, FILE * file, int next_id)
+{
+    int id = next_id++;
+
+    switch (ast->kind) {
+        case AST_NODE_KIND_FUNCTION_DEFINITION:
+            fprintf(file, "    n%d [label=\"FunctionDefinition\\n'%s' : %s\"];\n", id, ast->content.function_definition.name->name, type_stringify(ast->type));
+            if (ast->content.function_definition.body != NULL) {
+                int child_id = next_id;
+                next_id = do_print_ast_dot(ast->content.function_definition.body, file, next_id);
+                fprintf(file, "    n%d -> n%d;\n", id, child_id);
+            }
+            break;
+        case AST_NODE_KIND_COMPOUND_STATEMENT:
+            fprintf(file, "    n%d [label=\"CompoundStatement\"];\n", id);
+            for (struct ast_node_list * it = ast->content.list; it != NULL; it = it->next) {
+                int child_id = next_id;
+                next_id = do_print_ast_dot(it->node, file, next_id);
+                fprintf(file, "    n%d -> n%d;\n", id, child_id);
+            }
+            break;
+        case AST_NODE_KIND_IF_STATEMENT:
+            fprintf(file, "    n%d [label=\"IfStatement\"];\n", id);
+            {
+                int cond_id = next_id;
+                next_id = do_print_ast_dot(ast->content.if_statement.condition, file, next_id);
+                fprintf(file, "    n%d -> n%d [label=\"condition\"];\n", id, cond_id);
+                int true_id = next_id;
+                next_id = do_print_ast_dot(ast->content.if_statement.true_branch, file, next_id);
+                fprintf(file, "    n%d -> n%d [label=\"true\"];\n", id, true_id);
+                if (ast->content.if_statement.false_branch != NULL) {
+                    int false_id = next_id;
+                    next_id = do_print_ast_dot(ast->content.if_statement.false_branch, file, next_id);
+                    fprintf(file, "    n%d -> n%d [label=\"false\"];\n", id, false_id);
+                }
+            }
+            break;
+        case AST_NODE_KIND_WHILE_STATEMENT:
+            fprintf(file, "    n%d [label=\"WhileStatement\"];\n", id);
+            {
+                int cond_id = next_id;
+                next_id = do_print_ast_dot(ast->content.while_statement.condition, file, next_id);
+                fprintf(file, "    n%d -> n%d [label=\"condition\"];\n", id, cond_id);
+                int body_id = next_id;
+                next_id = do_print_ast_dot(ast->content.while_statement.body, file, next_id);
+                fprintf(file, "    n%d -> n%d [label=\"body\"];\n", id, body_id);
+            }
+            break;
+        case AST_NODE_KIND_RETURN_STATEMENT:
+            fprintf(file, "    n%d [label=\"ReturnStatement\"];\n", id);
+            if (ast->content.node != NULL) {
+                int child_id = next_id;
+                next_id = do_print_ast_dot(ast->content.node, file, next_id);
+                fprintf(file, "    n%d -> n%d;\n", id, child_id);
+            }
+            break;
+        case AST_NODE_KIND_EXPRESSION_STATEMENT:
+            fprintf(file, "    n%d [label=\"ExpressionStatement\"];\n", id);
+            if (ast->content.node != NULL) {
+                int child_id = next_id;
+                next_id = do_print_ast_dot(ast->content.node, file, next_id);
+                fprintf(file, "    n%d -> n%d;\n", id, child_id);
+            }
+            break;
+        case AST_NODE_KIND_ASSIGNMENT_EXPRESSION:
+            fprintf(file, "    n%d [label=\"AssignmentExpression '='\"];\n", id);
+            {
+                int lhs_id = next_id;
+                next_id = do_print_ast_dot(ast->content.assignment.lhs, file, next_id);
+                fprintf(file, "    n%d -> n%d [label=\"lhs\"];\n", id, lhs_id);
+                if (ast->content.assignment.initializer != NULL) {
+                    int rhs_id = next_id;
+                    next_id = do_print_ast_dot(ast->content.assignment.initializer, file, next_id);
+                    fprintf(file, "    n%d -> n%d [label=\"rhs\"];\n", id, rhs_id);
+                }
+            }
+            break;
+        case AST_NODE_KIND_EQUALITY_EXPRESSION:
+        case AST_NODE_KIND_RELATIONAL_EXPRESSION:
+        case AST_NODE_KIND_ADDITIVE_EXPRESSION:
+        case AST_NODE_KIND_MULTIPLICATIVE_EXPRESSION:
+            {
+                const char * kind_name = "";
+                char op[3] = {0};
+                switch (ast->kind) {
+                    case AST_NODE_KIND_EQUALITY_EXPRESSION:
+                        kind_name = "EqualityExpression";
+                        snprintf(op, sizeof(op), "%s", ast->content.binary_expression.operation == BINARY_OPERATION_EQUALITY ? "==" : "!=");
+                        break;
+                    case AST_NODE_KIND_RELATIONAL_EXPRESSION:
+                        kind_name = "RelationalExpression";
+                        op[0] = ast->content.binary_expression.operation == BINARY_OPERATION_LESS_THAN ? '<' : '>';
+                        break;
+                    case AST_NODE_KIND_ADDITIVE_EXPRESSION:
+                        kind_name = "AdditiveExpression";
+                        op[0] = ast->content.binary_expression.operation == BINARY_OPERATION_ADDITION ? '+' : '-';
+                        break;
+                    case AST_NODE_KIND_MULTIPLICATIVE_EXPRESSION:
+                        kind_name = "MultiplicativeExpression";
+                        op[0] = ast->content.binary_expression.operation == BINARY_OPERATION_MULTIPLY ? '*' : '/';
+                        break;
+                    default:
+                        break;
+                }
+                fprintf(file, "    n%d [label=\"%s '%s'\\n: %s\"];\n", id, kind_name, op, type_stringify(ast->type));
+                int lhs_id = next_id;
+                next_id = do_print_ast_dot(ast->content.binary_expression.lhs, file, next_id);
+                fprintf(file, "    n%d -> n%d [label=\"lhs\"];\n", id, lhs_id);
+                int rhs_id = next_id;
+                next_id = do_print_ast_dot(ast->content.binary_expression.rhs, file, next_id);
+                fprintf(file, "    n%d -> n%d [label=\"rhs\"];\n", id, rhs_id);
+            }
+            break;
+        case AST_NODE_KIND_INTEGER_CONSTANT:
+            fprintf(file, "    n%d [label=\"IntegerConstant\\n%lld : %s\"];\n", id, ast->content.constant.value.integer_constant, type_stringify(ast->type));
+            break;
+        case AST_NODE_KIND_FLOAT_CONSTANT:
+            fprintf(file, "    n%d [label=\"FloatConstant\\n%f : %s\"];\n", id, ast->content.constant.value.float_constant, type_stringify(ast->type));
+            break;
+        case AST_NODE_KIND_VARIABLE:
+            fprintf(file, "    n%d [label=\"Variable\\n'%s' : %s\"];\n", id, ast->content.variable->identifier->name, type_stringify(ast->type));
+            break;
+        case AST_NODE_KIND_VARIABLE_DECLARATION:
+            fprintf(file, "    n%d [label=\"VariableDeclaration\\n'%s' : %s\"];\n", id, ast->content.variable->identifier->name, type_stringify(ast->type));
+            break;
+        case AST_NODE_KIND_CAST_EXPRESSION:
+            fprintf(file, "    n%d [label=\"CastExpression\\n: %s\"];\n", id, type_stringify(ast->type));
+            if (ast->content.node != NULL) {
+                int child_id = next_id;
+                next_id = do_print_ast_dot(ast->content.node, file, next_id);
+                fprintf(file, "    n%d -> n%d;\n", id, child_id);
+            }
+            break;
+        default:
+            fprintf(file, "    n%d [label=\"Unknown\"];\n", id);
+            break;
+    }
+
+    return next_id;
 }
 
 void print_ir_program(const struct ir_program * program, FILE * file)

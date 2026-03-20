@@ -8,7 +8,7 @@ int main() {
     }
     return i * 7 + 7;
 }
-@whenRun("./bin/ir-generator-tester")
+@whenRun("./bin/testers/ir-generator-tester")
 @expectOutput("stdout")
 0000 OP_FUNC "main"
 0001 OP_CONST 0, t1
@@ -43,7 +43,7 @@ int main() {
     }
     return i * 7 + 7;
 }
-@whenRun("./bin/ir-generator-tester")
+@whenRun("./bin/testers/ir-generator-tester")
 @expectOutput("stdout")
 0000 OP_FUNC "main"
 0001 OP_CONST 20, t1
@@ -78,7 +78,7 @@ int main() {
     }
     return i;
 }
-@whenRun("./bin/ir-generator-tester")
+@whenRun("./bin/testers/ir-generator-tester")
 @expectOutput("stdout")
 0000 OP_FUNC "main"
 0001 OP_CONST 0, t1
@@ -109,7 +109,7 @@ int main() {
     }
     return i;
 }
-@whenRun("./bin/ir-generator-tester")
+@whenRun("./bin/testers/ir-generator-tester")
 @expectOutput("stdout")
 0000 OP_FUNC "main"
 0001 OP_CONST 10, t1
@@ -140,7 +140,7 @@ int main() {
     }
     return i;
 }
-@whenRun("./bin/ir-generator-tester")
+@whenRun("./bin/testers/ir-generator-tester")
 @expectOutput("stdout")
 0000 OP_FUNC "main"
 0001 OP_CONST 1, t1
@@ -170,7 +170,7 @@ int main() {
     }
     return i;
 }
-@whenRun("./bin/ir-generator-tester")
+@whenRun("./bin/testers/ir-generator-tester")
 @expectOutput("stdout")
 0000 OP_FUNC "main"
 0001 OP_CONST 1, t1
@@ -196,7 +196,7 @@ int main() {
     while (0);
     return 0;
 }
-@whenRun("./bin/ir-generator-tester")
+@whenRun("./bin/testers/ir-generator-tester")
 @expectOutput("stdout")
 0000 OP_FUNC "main"
 0001 OP_LABEL ".L1"
@@ -218,7 +218,7 @@ int main() {
     }
     return 0;
 }
-@whenRun("./bin/ir-generator-tester")
+@whenRun("./bin/testers/ir-generator-tester")
 @expectOutput("stdout")
 0000 OP_FUNC "main"
 0001 OP_LABEL ".L1"
@@ -243,7 +243,7 @@ int main() {
     }
     return (int)n;
 }
-@whenRun("./bin/ir-generator-tester")
+@whenRun("./bin/testers/ir-generator-tester")
 @expectOutput("stdout")
 0000 OP_FUNC "main"
 0001 OP_CONST 10.000000, t1
