@@ -60,7 +60,18 @@ void print_ast(const struct ast_node * ast, FILE * file)
 
     ancestors_info[0] = 1;
 
-    do_print_ast(ast, file, 0, ancestors_info, NULL);
+    if (ast->kind == AST_NODE_KIND_TRANSLATION_UNIT) {
+        struct ast_node_list * iterator = ast->content.list;
+        while (iterator != NULL) {
+            if (iterator != ast->content.list) {
+                fprintf(file, "\n");
+            }
+            do_print_ast(iterator->node, file, 0, ancestors_info, NULL);
+            iterator = iterator->next;
+        }
+    } else {
+        do_print_ast(ast, file, 0, ancestors_info, NULL);
+    }
 }
 
 void do_print_ast(const struct ast_node * ast, FILE * file, int depth, unsigned int * ancestors_info, const char * node_label)
@@ -223,7 +234,16 @@ void print_ast_dot(const struct ast_node * ast, FILE * file)
 
     fprintf(file, "digraph AST {\n");
     fprintf(file, "    node [shape=box, fontname=\"monospace\"];\n");
-    do_print_ast_dot(ast, file, 0);
+    if (ast->kind == AST_NODE_KIND_TRANSLATION_UNIT) {
+        int next_id = 0;
+        struct ast_node_list * iterator = ast->content.list;
+        while (iterator != NULL) {
+            next_id = do_print_ast_dot(iterator->node, file, next_id);
+            iterator = iterator->next;
+        }
+    } else {
+        do_print_ast_dot(ast, file, 0);
+    }
     fprintf(file, "}\n");
 
     fflush(file);

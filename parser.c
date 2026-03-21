@@ -1,16 +1,13 @@
 #include <assert.h>
-#include <stddef.h>
 #include <memory.h>
 #include <stdlib.h>
 #include <string.h>
 
 #include "parser.h"
-
 #include "tokenizer.h"
 #include "allocator.h"
 #include "identifier.h"
-
-#include "print.h"
+#include "scope.h"
 #include "symbol.h"
 #include "type.h"
 #include "errors.h"
@@ -40,7 +37,29 @@ struct ast_node * parser_parse(struct parser_context * ctx)
 {
     assert(ctx!= NULL);
 
-    return parse_function_definition(ctx);
+    struct ast_node_list * function_list = NULL;
+    struct ast_node_list ** tail = &function_list;
+
+    struct token * current_token = parser_get_token(ctx);
+
+    while (current_token->kind != (unsigned int)TOKEN_KIND_EOS) {
+        parser_putback_token(current_token, ctx);
+
+        struct ast_node * function_def = parse_function_definition(ctx);
+
+        struct ast_node_list * element = memory_blob_pool_alloc(ctx->pool, sizeof(struct ast_node_list));
+        memset(element, 0, sizeof(struct ast_node_list));
+        element->node = function_def;
+        *tail = element;
+        tail = &element->next;
+
+        current_token = parser_get_token(ctx);
+    }
+
+    struct ast_node * translation_unit = create_ast_node(ctx, AST_NODE_KIND_TRANSLATION_UNIT);
+    translation_unit->content.list = function_list;
+
+    return translation_unit;
 }
 
 struct ast_node * parse_statement(struct parser_context * ctx)
@@ -91,6 +110,8 @@ struct ast_node * parse_compound_statement(struct parser_context * ctx)
         return compound_statement;
     }
 
+    ctx->current_scope = scope_push(ctx->current_scope, ctx->pool);
+
     parser_putback_token(current_token, ctx);
 
     struct ast_node_list * statement_list = NULL;
@@ -99,7 +120,7 @@ struct ast_node * parse_compound_statement(struct parser_context * ctx)
     do {
         struct ast_node * statement = parse_statement(ctx);
 
-        struct ast_node_list * list = (struct ast_node_list *) memory_blob_pool_alloc(ctx->pool, sizeof(struct ast_node_list));
+        struct ast_node_list * list = memory_blob_pool_alloc(ctx->pool, sizeof(struct ast_node_list));
         memset(list, 0, sizeof(struct ast_node_list));
         list->node = statement;
         list->next = NULL;
@@ -118,6 +139,7 @@ struct ast_node * parse_compound_statement(struct parser_context * ctx)
 
     (void)parser_get_token(ctx);
 
+    ctx->current_scope = scope_pop(ctx->current_scope);
 
     struct ast_node * compound_statement = create_ast_node(ctx, AST_NODE_KIND_COMPOUND_STATEMENT);
     compound_statement->content.list = statement_list;
@@ -269,11 +291,28 @@ struct ast_node * parse_function_definition(struct parser_context * ctx)
 
     struct identifier * identifier = current_token->content.identifier;
 
+    struct symbol * func_symbol = scope_find_symbol(ctx->current_scope, identifier, SYMBOL_KIND_FUNCTION);
+
+    if (func_symbol != NULL) {
+        cclynx_fatal_error("ERROR: function '%s' already defined!\n", identifier->name);
+    }
+
+    func_symbol = (struct symbol *) memory_blob_pool_alloc(ctx->pool, sizeof(struct symbol));
+    memset(func_symbol, 0, sizeof(struct symbol));
+    func_symbol->identifier = identifier;
+    func_symbol->type = symbol->type;
+    func_symbol->kind = SYMBOL_KIND_FUNCTION;
+
+    identifier_attach_symbol(ctx->pool, identifier, func_symbol)
+    scope_add_symbol(ctx->current_scope, func_symbol, ctx->pool);
+
     current_token = parser_get_token(ctx);
 
     if (!(current_token->kind == TOKEN_KIND_PUNCTUATOR && current_token->content.ch == '(')) {
         cclynx_fatal_error("ERROR: expected '('!\n");
     }
+
+    ctx->current_scope = scope_push(ctx->current_scope, ctx->pool);
 
     int parameter_presence = PARAMETER_PRESENCE_UNSPECIFIED;
 
@@ -293,6 +332,8 @@ struct ast_node * parse_function_definition(struct parser_context * ctx)
     }
 
     struct ast_node * compound_statement = parse_compound_statement(ctx);
+
+    ctx->current_scope = scope_pop(ctx->current_scope);
 
     struct ast_node * function_definition = create_ast_node(ctx, AST_NODE_KIND_FUNCTION_DEFINITION);
     function_definition->content.function_definition.name = identifier;
@@ -333,7 +374,7 @@ struct ast_node * parse_declaration(struct parser_context * ctx)
 
     struct identifier * identifier = current_token->content.identifier;
 
-    symbol = symbol_lookup(identifier, SYMBOL_KIND_VARIABLE);
+    symbol = scope_find_symbol(ctx->current_scope, identifier, SYMBOL_KIND_VARIABLE);
 
     if (symbol != NULL) {
         cclynx_fatal_error("ERROR: variable '%s' already declared!\n", identifier->name);
@@ -345,13 +386,14 @@ struct ast_node * parse_declaration(struct parser_context * ctx)
         cclynx_fatal_error("ERROR: expected ';'!\n");
     }
 
-    struct symbol * variable = (struct symbol *) memory_blob_pool_alloc(ctx->pool, sizeof(struct symbol));
+    struct symbol * variable = memory_blob_pool_alloc(ctx->pool, sizeof(struct symbol));
     memset(variable, 0, sizeof(struct symbol));
     variable->kind = SYMBOL_KIND_VARIABLE;
     variable->identifier = identifier;
     variable->type = type;
 
     identifier_attach_symbol(ctx->pool, identifier, variable)
+    scope_add_symbol(ctx->current_scope, variable, ctx->pool);
 
     struct ast_node * declaration = create_ast_node(ctx, AST_NODE_KIND_VARIABLE_DECLARATION);
     declaration->content.variable = variable;
@@ -660,7 +702,7 @@ void parser_putback_token(struct token * token, struct parser_context * ctx)
     ctx->token_buffer[ctx->token_buffer_pos++] = token;
 }
 
-void parser_init_context(struct parser_context * ctx, struct token * tokens, struct memory_blob_pool * pool)
+void parser_init_context(struct parser_context * ctx, struct token * tokens, struct memory_blob_pool * pool, struct scope * file_scope)
 {
     assert(ctx!= NULL);
     assert(tokens != NULL);
@@ -670,6 +712,7 @@ void parser_init_context(struct parser_context * ctx, struct token * tokens, str
     ctx->pool = pool;
     ctx->tokens = tokens;
     ctx->iterator = ctx->tokens;
+    ctx->current_scope = file_scope;
 }
 
 struct ast_node * create_ast_node(struct parser_context * ctx, enum ast_node_kind kind)

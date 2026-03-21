@@ -5,6 +5,7 @@
 #include "identifier.h"
 #include "hashmap.h"
 #include "allocator.h"
+#include "symbol.h"
 
 #define IDENTIFIER_TABLE_SIZE  (101)
 
@@ -70,5 +71,22 @@ void init_keywords(struct hashmap * identifier_table, struct memory_blob_pool * 
 
         struct identifier * identifier = identifier_create(identifier_table, pool, keyword->name);
         identifier->is_keyword = 1;
+    }
+}
+
+void identifier_detach_symbol(struct identifier * identifier, const struct symbol * symbol)
+{
+    assert(identifier != NULL);
+    assert(symbol != NULL);
+
+    struct symbol_list ** it = &identifier->symbols;
+
+    while (*it != NULL) {
+        if ((*it)->symbol == symbol) {
+            *it = (*it)->next;
+            return;
+        }
+
+        it = &(*it)->next;
     }
 }
