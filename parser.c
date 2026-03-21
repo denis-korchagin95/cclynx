@@ -42,7 +42,7 @@ struct ast_node * parser_parse(struct parser_context * ctx)
 
     struct token * current_token = parser_get_token(ctx);
 
-    while (current_token->kind != (unsigned int)TOKEN_KIND_EOS) {
+    while (current_token != &eos_token) {
         parser_putback_token(current_token, ctx);
 
         struct ast_node * function_def = parse_function_definition(ctx);

@@ -70,6 +70,7 @@ int main(const int argc, const char * argv[])
             print_token(it, stdout);
             it = it->next;
         }
+        print_token(&eos_token, stdout);
         goto cleanup;
     }
 

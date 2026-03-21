@@ -44,18 +44,21 @@ struct token * tokenizer_tokenize_file(struct tokenizer_context * ctx, FILE * fi
     struct token ** next_token = &tokens;
 
     for (;;) {
-        struct token * token = (struct token *) memory_blob_pool_alloc(ctx->pool, sizeof(struct token));
-        memset(token, 0, sizeof(struct token));
+        struct token temp;
+        memset(&temp, 0, sizeof(struct token));
 
-        token->next = (*next_token)->next;
-        *next_token = token;
-        next_token = &token->next;
+        tokenizer_get_one_token(ctx, file, &temp);
 
-        tokenizer_get_one_token(ctx, file, token);
-
-        if (token->kind == (unsigned int)TOKEN_KIND_EOS) {
+        if (temp.kind == (unsigned int)TOKEN_KIND_EOS) {
+            *next_token = &eos_token;
             break;
         }
+
+        struct token * token = (struct token *) memory_blob_pool_alloc(ctx->pool, sizeof(struct token));
+        *token = temp;
+        token->next = &eos_token;
+        *next_token = token;
+        next_token = &token->next;
     }
 
     return tokens;
