@@ -185,7 +185,7 @@ void read_number(FILE * file, struct token * token, int ch)
     char * number = hashmap_find(&number_table, number_buffer);
 
     if (number == NULL) {
-        number = memory_blob_pool_alloc(&main_pool, number_buffer_pos + 1);
+        number = memory_blob_pool_alloc(main_pool, number_buffer_pos + 1);
         memcpy(number, number_buffer, number_buffer_pos + 1);
         hashmap_insert(&number_table, number, number);
     }

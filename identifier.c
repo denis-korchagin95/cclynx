@@ -41,7 +41,7 @@ struct identifier * identifier_insert(const char * name, unsigned int len)
 {
     main_pool_alloc(struct identifier, identifier)
 
-    identifier->name = (char *) memory_blob_pool_alloc(&main_pool, len + 1);
+    identifier->name = (char *) memory_blob_pool_alloc(main_pool, len + 1);
     strncpy(identifier->name, name, len);
     identifier->name[len] = '\0';
 

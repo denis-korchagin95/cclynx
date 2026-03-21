@@ -17,7 +17,7 @@ unsigned int hashmap_hash(const char * key)
 void hashmap_init(struct hashmap * map, size_t capacity)
 {
     map->capacity = capacity;
-    map->buckets = memory_blob_pool_alloc(&main_pool, sizeof(struct hashmap_entry *) * capacity);
+    map->buckets = memory_blob_pool_alloc(main_pool, sizeof(struct hashmap_entry *) * capacity);
     memset(map->buckets, 0, sizeof(struct hashmap_entry *) * capacity);
 }
 

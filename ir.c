@@ -33,7 +33,7 @@ void ir_program_init(struct ir_program * program)
 
     program->capacity = INITIAL_INSTRUCTION_COUNT;
     program->position = 0;
-    program->instructions = (struct ir_instruction **) memory_blob_pool_alloc(&main_pool, program->capacity * sizeof(struct ir_instruction *));
+    program->instructions = (struct ir_instruction **) memory_blob_pool_alloc(main_pool, program->capacity * sizeof(struct ir_instruction *));
     memset(program->instructions, 0, program->capacity * sizeof(struct ir_instruction *));
 }
 

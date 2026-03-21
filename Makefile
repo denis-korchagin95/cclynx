@@ -14,11 +14,13 @@ all: build
 
 OBJECTS_HASHMAP_TESTER+=$(TESTERS)hashmap-tester.o
 OBJECTS_HASHMAP_TESTER+=hashmap.o
+OBJECTS_HASHMAP_TESTER+=cclynx.o
 OBJECTS_HASHMAP_TESTER+=allocator.o
 OBJECTS_HASHMAP_TESTER+=errors.o
 OBJECTS_HASHMAP_TESTER+=util.o
 
 
+OBJECTS+=cclynx.o
 OBJECTS+=allocator.o
 OBJECTS+=errors.o
 OBJECTS+=hashmap.o

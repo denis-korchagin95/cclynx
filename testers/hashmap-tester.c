@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "allocator.h"
+#include "cclynx.h"
 #include "hashmap.h"
 
 #define MAX_LINE_SIZE (1024)
@@ -38,10 +38,10 @@ static void process_command(const char * line)
         char value[256] = {0};
         sscanf(line, "insert %d %255s %255s", &map_id, key, value);
 
-        char * stored_key = memory_blob_pool_alloc(&main_pool, strlen(key) + 1);
+        char * stored_key = memory_blob_pool_alloc(main_pool, strlen(key) + 1);
         strcpy(stored_key, key);
 
-        char * stored_value = memory_blob_pool_alloc(&main_pool, strlen(value) + 1);
+        char * stored_value = memory_blob_pool_alloc(main_pool, strlen(value) + 1);
         strcpy(stored_value, value);
 
         hashmap_insert(&maps[map_id], stored_key, stored_value);
@@ -89,7 +89,8 @@ int main(const int argc, const char * argv[])
         exit(1);
     }
 
-    memory_blob_pool_init(&main_pool, DEFAULT_MEMORY_BLOB_SIZE, DEFAULT_MEMORY_BLOB_ALIGNMENT);
+    struct cclynx_context ctx;
+    cclynx_init(&ctx);
 
     char line[MAX_LINE_SIZE];
     while (fgets(line, MAX_LINE_SIZE, file) != NULL) {
@@ -105,7 +106,7 @@ int main(const int argc, const char * argv[])
         process_command(line);
     }
 
-    memory_blob_pool_free(&main_pool, false);
+    cclynx_free(&ctx);
 
     fclose(file);
 
