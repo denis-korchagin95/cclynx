@@ -23,11 +23,11 @@ enum output_stage {
 const char * source_filename = NULL;
 enum output_stage output_stage = STAGE_ASM;
 
-static void parse_options(const int argc, const char * argv[]);
+static void parse_options(int argc, const char * argv[]);
 static void show_usage(const char * program_name, FILE * output);
 
 
-int main(int argc, const char * argv[])
+int main(const int argc, const char * argv[])
 {
     parse_options(argc, argv);
 
@@ -62,7 +62,7 @@ int main(int argc, const char * argv[])
     fclose(source);
 
     struct parser_context parser_ctx;
-    parser_init_context(&parser_ctx, tokens, &ctx.pool);
+    parser_init_context(&parser_ctx, tokens, &ctx.pool, &ctx.global_scope);
 
     if (output_stage == STAGE_TOKENS) {
         struct token * it = tokens;
@@ -70,6 +70,7 @@ int main(int argc, const char * argv[])
             print_token(it, stdout);
             it = it->next;
         }
+        print_token(&eos_token, stdout);
         goto cleanup;
     }
 
@@ -91,7 +92,13 @@ int main(int argc, const char * argv[])
     struct ir_program ir_program;
     ir_program_init(&ir_program, &ctx.pool);
 
-    ir_program_generate(&ir_ctx, &ir_program, ast);
+    {
+        struct ast_node_list * iterator = ast->content.list;
+        while (iterator != NULL) {
+            ir_program_generate(&ir_ctx, &ir_program, iterator->node);
+            iterator = iterator->next;
+        }
+    }
 
     if (output_stage == STAGE_IR) {
         print_ir_program(&ir_program, stdout);

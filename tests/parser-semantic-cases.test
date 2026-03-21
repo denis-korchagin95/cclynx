@@ -45,3 +45,220 @@ ERROR: expected identifier but not a keyword!
 
 @endtest
 
+@test("It should raise an error on function redefinition")
+@given("file")
+int foo() {
+    return 1;
+}
+
+int foo() {
+    return 2;
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stderr")
+ERROR: function 'foo' already defined!
+
+@endtest
+
+@test("It should raise an error when function name is a keyword")
+@given("file")
+int while() {
+    return 1;
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stderr")
+ERROR: expected identifier but not a keyword!
+
+@endtest
+
+@test("It should allow the same variable name in two different function bodies")
+@given("file")
+int foo() {
+    int x;
+    x = 1;
+    return x;
+}
+
+int bar() {
+    int x;
+    x = 2;
+    return x;
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stdout")
+FunctionDefinition: 'foo' {type: 'int'} <unspecified-parameters>
+|
++-> CompoundStatement
+    |
+    +-> VariableDeclaration: 'x' {type: 'int'}
+    |
+    +-> ExpressionStatement
+    |   |
+    |   +-> AssignmentExpression: '='
+    |       |
+    |       +-> Variable: 'x' {type: 'int'}
+    |       |
+    |       +-> IntegerConstant: '1' {type: 'int'}
+    |
+    +-> ReturnStatement
+        |
+        +-> Variable: 'x' {type: 'int'}
+
+FunctionDefinition: 'bar' {type: 'int'} <unspecified-parameters>
+|
++-> CompoundStatement
+    |
+    +-> VariableDeclaration: 'x' {type: 'int'}
+    |
+    +-> ExpressionStatement
+    |   |
+    |   +-> AssignmentExpression: '='
+    |       |
+    |       +-> Variable: 'x' {type: 'int'}
+    |       |
+    |       +-> IntegerConstant: '2' {type: 'int'}
+    |
+    +-> ReturnStatement
+        |
+        +-> Variable: 'x' {type: 'int'}
+
+@endtest
+
+@test("It should raise an error when variable is not visible outside its block")
+@given("file")
+int main() {
+    int x;
+    x = 1;
+    {
+        int y;
+        y = 2;
+    }
+    x = y;
+    return x;
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stderr")
+ERROR: undeclared variable "y"!
+
+@endtest
+
+@test("It should allow outer variable to be visible inside nested block")
+@given("file")
+int main() {
+    int x;
+    x = 1;
+    {
+        x = 2;
+    }
+    return x;
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stdout")
+FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
+|
++-> CompoundStatement
+    |
+    +-> VariableDeclaration: 'x' {type: 'int'}
+    |
+    +-> ExpressionStatement
+    |   |
+    |   +-> AssignmentExpression: '='
+    |       |
+    |       +-> Variable: 'x' {type: 'int'}
+    |       |
+    |       +-> IntegerConstant: '1' {type: 'int'}
+    |
+    +-> CompoundStatement
+    |   |
+    |   +-> ExpressionStatement
+    |       |
+    |       +-> AssignmentExpression: '='
+    |           |
+    |           +-> Variable: 'x' {type: 'int'}
+    |           |
+    |           +-> IntegerConstant: '2' {type: 'int'}
+    |
+    +-> ReturnStatement
+        |
+        +-> Variable: 'x' {type: 'int'}
+
+@endtest
+
+@test("It should raise an error on variable redeclaration in nested block")
+@given("file")
+int main() {
+    {
+        int y;
+        int y;
+    }
+    return 0;
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stderr")
+ERROR: variable 'y' already declared!
+
+@endtest
+
+@test("It should raise an error when variable from sibling block is not visible")
+@given("file")
+int main() {
+    {
+        int y;
+        y = 1;
+    }
+    {
+        y = 2;
+    }
+    return 0;
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stderr")
+ERROR: undeclared variable "y"!
+
+@endtest
+
+@test("It should allow variable shadowing in nested block")
+@given("file")
+int main() {
+    int x;
+    x = 1;
+    {
+        int x;
+        x = 2;
+    }
+    return x;
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stdout")
+FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
+|
++-> CompoundStatement
+    |
+    +-> VariableDeclaration: 'x' {type: 'int'}
+    |
+    +-> ExpressionStatement
+    |   |
+    |   +-> AssignmentExpression: '='
+    |       |
+    |       +-> Variable: 'x' {type: 'int'}
+    |       |
+    |       +-> IntegerConstant: '1' {type: 'int'}
+    |
+    +-> CompoundStatement
+    |   |
+    |   +-> VariableDeclaration: 'x' {type: 'int'}
+    |   |
+    |   +-> ExpressionStatement
+    |       |
+    |       +-> AssignmentExpression: '='
+    |           |
+    |           +-> Variable: 'x' {type: 'int'}
+    |           |
+    |           +-> IntegerConstant: '2' {type: 'int'}
+    |
+    +-> ReturnStatement
+        |
+        +-> Variable: 'x' {type: 'int'}
+
+@endtest
+

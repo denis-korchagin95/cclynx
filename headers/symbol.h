@@ -9,6 +9,7 @@ enum symbol_kind
 {
     SYMBOL_KIND_TYPE_SPECIFIER = 1,
     SYMBOL_KIND_VARIABLE,
+    SYMBOL_KIND_FUNCTION,
 };
 
 struct symbol

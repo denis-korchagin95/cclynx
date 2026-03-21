@@ -46,8 +46,11 @@ build: $(addprefix $(OBJ), $(OBJECTS))
 
 build-testers: hashmap-tester
 
+testf:
+	jcunit --colors $(FILE)
+
 test: clean build build-testers
-	jcunit --no-cache tests/
+	jcunit --colors tests/
 
 test-examples: build
 	./scripts/check-examples.sh

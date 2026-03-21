@@ -7,7 +7,8 @@ struct symbol;
 
 enum ast_node_kind
 {
-    AST_NODE_KIND_INTEGER_CONSTANT = 1,
+    AST_NODE_KIND_TRANSLATION_UNIT = 1,
+    AST_NODE_KIND_INTEGER_CONSTANT,
     AST_NODE_KIND_FLOAT_CONSTANT,
     AST_NODE_KIND_VARIABLE,
 
@@ -106,9 +107,10 @@ struct parser_context
     struct token * iterator;
     struct token * token_buffer[MAX_TOKEN_BUFFER_SIZE];
     unsigned int token_buffer_pos;
+    struct scope * current_scope;
 };
 
-void parser_init_context(struct parser_context * ctx, struct token * tokens, struct memory_blob_pool * pool);
+void parser_init_context(struct parser_context * ctx, struct token * tokens, struct memory_blob_pool * pool, struct scope * file_scope);
 struct ast_node * parser_parse(struct parser_context * ctx);
 
 struct token * parser_get_token(struct parser_context * ctx);

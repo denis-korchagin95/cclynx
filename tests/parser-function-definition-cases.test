@@ -114,3 +114,67 @@ FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
         +-> Variable: 'result' {type: 'int'}
 
 @endtest
+
+@test("It should parse multiple function definitions")
+@given("file")
+int foo() {
+    return 1;
+}
+
+int bar() {
+    return 2;
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stdout")
+FunctionDefinition: 'foo' {type: 'int'} <unspecified-parameters>
+|
++-> CompoundStatement
+    |
+    +-> ReturnStatement
+        |
+        +-> IntegerConstant: '1' {type: 'int'}
+
+FunctionDefinition: 'bar' {type: 'int'} <unspecified-parameters>
+|
++-> CompoundStatement
+    |
+    +-> ReturnStatement
+        |
+        +-> IntegerConstant: '2' {type: 'int'}
+
+@endtest
+
+@test("It should parse multiple functions with same variable names in different scopes")
+@given("file")
+int foo() {
+    int x;
+    return x;
+}
+
+int bar() {
+    int x;
+    return x;
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stdout")
+FunctionDefinition: 'foo' {type: 'int'} <unspecified-parameters>
+|
++-> CompoundStatement
+    |
+    +-> VariableDeclaration: 'x' {type: 'int'}
+    |
+    +-> ReturnStatement
+        |
+        +-> Variable: 'x' {type: 'int'}
+
+FunctionDefinition: 'bar' {type: 'int'} <unspecified-parameters>
+|
++-> CompoundStatement
+    |
+    +-> VariableDeclaration: 'x' {type: 'int'}
+    |
+    +-> ReturnStatement
+        |
+        +-> Variable: 'x' {type: 'int'}
+
+@endtest
