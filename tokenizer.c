@@ -24,6 +24,9 @@ static void read_number(struct tokenizer_context * ctx, FILE * file, struct toke
 
 void tokenizer_init(struct tokenizer_context * ctx, struct hashmap * identifier_table, struct memory_blob_pool * pool)
 {
+    assert(ctx != NULL);
+    assert(identifier_table != NULL);
+    assert(pool != NULL);
     memset(ctx, 0, sizeof(struct tokenizer_context));
     ctx->pool = pool;
     ctx->identifier_table = identifier_table;
@@ -32,6 +35,7 @@ void tokenizer_init(struct tokenizer_context * ctx, struct hashmap * identifier_
 
 struct token * tokenizer_tokenize_file(struct tokenizer_context * ctx, FILE * file)
 {
+    assert(ctx != NULL);
     assert(file != NULL);
 
     struct token * tokens = &eos_token;
@@ -58,6 +62,7 @@ struct token * tokenizer_tokenize_file(struct tokenizer_context * ctx, FILE * fi
 
 void tokenizer_get_one_token(struct tokenizer_context * ctx, FILE * file, struct token * token)
 {
+    assert(ctx != NULL);
     assert(file != NULL);
     assert(token != NULL);
 
@@ -144,6 +149,7 @@ void tokenizer_get_one_token(struct tokenizer_context * ctx, FILE * file, struct
 
 void read_number(struct tokenizer_context * ctx, FILE * file, struct token * token, int ch)
 {
+    assert(ctx != NULL);
     assert(file != NULL);
     assert(token != NULL);
 
@@ -191,6 +197,7 @@ void read_number(struct tokenizer_context * ctx, FILE * file, struct token * tok
 
 void read_identifier(struct tokenizer_context * ctx, FILE * file, struct token * token, int ch)
 {
+    assert(ctx != NULL);
     assert(file != NULL);
     assert(token != NULL);
 
@@ -223,6 +230,7 @@ void read_identifier(struct tokenizer_context * ctx, FILE * file, struct token *
 
 int get_one_char(struct tokenizer_context * ctx, FILE * file)
 {
+    assert(ctx != NULL);
     if (ctx->char_buffer_pos > 0) {
         return ctx->char_buffer[--ctx->char_buffer_pos];
     }
@@ -232,6 +240,7 @@ int get_one_char(struct tokenizer_context * ctx, FILE * file)
 
 void putback_one_char(struct tokenizer_context * ctx, int ch)
 {
+    assert(ctx != NULL);
     assert(ctx->char_buffer_pos < TOKENIZER_MAX_CHAR_BUFFER_SIZE);
     if (ch != EOF)
         ctx->char_buffer[ctx->char_buffer_pos++] = ch;

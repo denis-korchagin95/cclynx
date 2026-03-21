@@ -20,6 +20,8 @@ static struct builtin_symbol
 
 void init_symbols(struct hashmap * identifier_table, struct memory_blob_pool * pool)
 {
+    assert(identifier_table != NULL);
+    assert(pool != NULL);
     for (size_t i = 0; i < sizeof(builtin_symbols) / sizeof(builtin_symbols[0]); ++i) {
         struct builtin_symbol * builtin_symbol = &builtin_symbols[i];
 
