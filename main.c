@@ -98,7 +98,9 @@ int main(int argc, const char * argv[])
         goto cleanup;
     }
 
-    target_arm64_generate(&ir_program, stdout);
+    struct codegen_context codegen_ctx;
+    codegen_context_init(&codegen_ctx);
+    target_arm64_generate(&codegen_ctx, &ir_program, stdout);
 
 cleanup:
     cclynx_free(&ctx);
