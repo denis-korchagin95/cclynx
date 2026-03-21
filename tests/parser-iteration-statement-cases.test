@@ -9,41 +9,43 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
+TranslationUnit
 |
-+-> CompoundStatement
++-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
     |
-    +-> VariableDeclaration: 'i' {type: 'int'}
-    |
-    +-> ExpressionStatement
-    |   |
-    |   +-> AssignmentExpression: '='
-    |       |
-    |       +-> Variable: 'i' {type: 'int'}
-    |       |
-    |       +-> IntegerConstant: '0' {type: 'int'}
-    |
-    +-> WhileStatement
+    +-> CompoundStatement
         |
-        +-> (condition) RelationalExpression: '<' {type: 'int'}
-        |   |
-        |   +-> Variable: 'i' {type: 'int'}
-        |   |
-        |   +-> IntegerConstant: '10' {type: 'int'}
+        +-> VariableDeclaration: 'i' {type: 'int'}
         |
-        +-> (body) CompoundStatement
+        +-> ExpressionStatement
+        |   |
+        |   +-> AssignmentExpression: '='
+        |       |
+        |       +-> Variable: 'i' {type: 'int'}
+        |       |
+        |       +-> IntegerConstant: '0' {type: 'int'}
+        |
+        +-> WhileStatement
             |
-            +-> ExpressionStatement
+            +-> (condition) RelationalExpression: '<' {type: 'int'}
+            |   |
+            |   +-> Variable: 'i' {type: 'int'}
+            |   |
+            |   +-> IntegerConstant: '10' {type: 'int'}
+            |
+            +-> (body) CompoundStatement
                 |
-                +-> AssignmentExpression: '='
+                +-> ExpressionStatement
                     |
-                    +-> Variable: 'i' {type: 'int'}
-                    |
-                    +-> AdditiveExpression: '+' {type: 'int'}
+                    +-> AssignmentExpression: '='
                         |
                         +-> Variable: 'i' {type: 'int'}
                         |
-                        +-> IntegerConstant: '1' {type: 'int'}
+                        +-> AdditiveExpression: '+' {type: 'int'}
+                            |
+                            +-> Variable: 'i' {type: 'int'}
+                            |
+                            +-> IntegerConstant: '1' {type: 'int'}
 
 @endtest
 
@@ -56,29 +58,31 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
+TranslationUnit
 |
-+-> CompoundStatement
++-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
     |
-    +-> VariableDeclaration: 'i' {type: 'int'}
-    |
-    +-> ExpressionStatement
-    |   |
-    |   +-> AssignmentExpression: '='
-    |       |
-    |       +-> Variable: 'i' {type: 'int'}
-    |       |
-    |       +-> IntegerConstant: '0' {type: 'int'}
-    |
-    +-> WhileStatement
+    +-> CompoundStatement
         |
-        +-> (condition) RelationalExpression: '<' {type: 'int'}
-        |   |
-        |   +-> Variable: 'i' {type: 'int'}
-        |   |
-        |   +-> IntegerConstant: '10' {type: 'int'}
+        +-> VariableDeclaration: 'i' {type: 'int'}
         |
-        +-> (body) ExpressionStatement: {empty expression}
+        +-> ExpressionStatement
+        |   |
+        |   +-> AssignmentExpression: '='
+        |       |
+        |       +-> Variable: 'i' {type: 'int'}
+        |       |
+        |       +-> IntegerConstant: '0' {type: 'int'}
+        |
+        +-> WhileStatement
+            |
+            +-> (condition) RelationalExpression: '<' {type: 'int'}
+            |   |
+            |   +-> Variable: 'i' {type: 'int'}
+            |   |
+            |   +-> IntegerConstant: '10' {type: 'int'}
+            |
+            +-> (body) ExpressionStatement: {empty expression}
 
 @endtest
 
@@ -92,38 +96,40 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
+TranslationUnit
 |
-+-> CompoundStatement
++-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
     |
-    +-> VariableDeclaration: 'i' {type: 'int'}
-    |
-    +-> ExpressionStatement
-    |   |
-    |   +-> AssignmentExpression: '='
-    |       |
-    |       +-> Variable: 'i' {type: 'int'}
-    |       |
-    |       +-> IntegerConstant: '0' {type: 'int'}
-    |
-    +-> WhileStatement
+    +-> CompoundStatement
         |
-        +-> (condition) RelationalExpression: '<' {type: 'int'}
-        |   |
-        |   +-> Variable: 'i' {type: 'int'}
-        |   |
-        |   +-> IntegerConstant: '10' {type: 'int'}
+        +-> VariableDeclaration: 'i' {type: 'int'}
         |
-        +-> (body) ExpressionStatement
+        +-> ExpressionStatement
+        |   |
+        |   +-> AssignmentExpression: '='
+        |       |
+        |       +-> Variable: 'i' {type: 'int'}
+        |       |
+        |       +-> IntegerConstant: '0' {type: 'int'}
+        |
+        +-> WhileStatement
             |
-            +-> AssignmentExpression: '='
+            +-> (condition) RelationalExpression: '<' {type: 'int'}
+            |   |
+            |   +-> Variable: 'i' {type: 'int'}
+            |   |
+            |   +-> IntegerConstant: '10' {type: 'int'}
+            |
+            +-> (body) ExpressionStatement
                 |
-                +-> Variable: 'i' {type: 'int'}
-                |
-                +-> AdditiveExpression: '+' {type: 'int'}
+                +-> AssignmentExpression: '='
                     |
                     +-> Variable: 'i' {type: 'int'}
                     |
-                    +-> IntegerConstant: '1' {type: 'int'}
+                    +-> AdditiveExpression: '+' {type: 'int'}
+                        |
+                        +-> Variable: 'i' {type: 'int'}
+                        |
+                        +-> IntegerConstant: '1' {type: 'int'}
 
 @endtest

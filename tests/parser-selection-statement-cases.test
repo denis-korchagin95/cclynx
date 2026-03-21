@@ -8,35 +8,37 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
+TranslationUnit
 |
-+-> CompoundStatement
++-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
     |
-    +-> VariableDeclaration: 'x' {type: 'int'}
-    |
-    +-> ExpressionStatement
-    |   |
-    |   +-> AssignmentExpression: '='
-    |       |
-    |       +-> Variable: 'x' {type: 'int'}
-    |       |
-    |       +-> IntegerConstant: '10' {type: 'int'}
-    |
-    +-> IfStatement
+    +-> CompoundStatement
         |
-        +-> (condition) RelationalExpression: '<' {type: 'int'}
-        |   |
-        |   +-> Variable: 'x' {type: 'int'}
-        |   |
-        |   +-> IntegerConstant: '5' {type: 'int'}
+        +-> VariableDeclaration: 'x' {type: 'int'}
         |
-        +-> (true branch) ExpressionStatement
+        +-> ExpressionStatement
+        |   |
+        |   +-> AssignmentExpression: '='
+        |       |
+        |       +-> Variable: 'x' {type: 'int'}
+        |       |
+        |       +-> IntegerConstant: '10' {type: 'int'}
+        |
+        +-> IfStatement
             |
-            +-> AssignmentExpression: '='
+            +-> (condition) RelationalExpression: '<' {type: 'int'}
+            |   |
+            |   +-> Variable: 'x' {type: 'int'}
+            |   |
+            |   +-> IntegerConstant: '5' {type: 'int'}
+            |
+            +-> (true branch) ExpressionStatement
                 |
-                +-> Variable: 'x' {type: 'int'}
-                |
-                +-> IntegerConstant: '10' {type: 'int'}
+                +-> AssignmentExpression: '='
+                    |
+                    +-> Variable: 'x' {type: 'int'}
+                    |
+                    +-> IntegerConstant: '10' {type: 'int'}
 
 @endtest
 
@@ -49,29 +51,31 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
+TranslationUnit
 |
-+-> CompoundStatement
++-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
     |
-    +-> VariableDeclaration: 'x' {type: 'int'}
-    |
-    +-> ExpressionStatement
-    |   |
-    |   +-> AssignmentExpression: '='
-    |       |
-    |       +-> Variable: 'x' {type: 'int'}
-    |       |
-    |       +-> IntegerConstant: '10' {type: 'int'}
-    |
-    +-> IfStatement
+    +-> CompoundStatement
         |
-        +-> (condition) RelationalExpression: '<' {type: 'int'}
-        |   |
-        |   +-> Variable: 'x' {type: 'int'}
-        |   |
-        |   +-> IntegerConstant: '5' {type: 'int'}
+        +-> VariableDeclaration: 'x' {type: 'int'}
         |
-        +-> (true branch) ExpressionStatement: {empty expression}
+        +-> ExpressionStatement
+        |   |
+        |   +-> AssignmentExpression: '='
+        |       |
+        |       +-> Variable: 'x' {type: 'int'}
+        |       |
+        |       +-> IntegerConstant: '10' {type: 'int'}
+        |
+        +-> IfStatement
+            |
+            +-> (condition) RelationalExpression: '<' {type: 'int'}
+            |   |
+            |   +-> Variable: 'x' {type: 'int'}
+            |   |
+            |   +-> IntegerConstant: '5' {type: 'int'}
+            |
+            +-> (true branch) ExpressionStatement: {empty expression}
 
 @endtest
 
@@ -87,49 +91,51 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
+TranslationUnit
 |
-+-> CompoundStatement
++-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
     |
-    +-> VariableDeclaration: 'x' {type: 'int'}
-    |
-    +-> ExpressionStatement
-    |   |
-    |   +-> AssignmentExpression: '='
-    |       |
-    |       +-> Variable: 'x' {type: 'int'}
-    |       |
-    |       +-> IntegerConstant: '10' {type: 'int'}
-    |
-    +-> IfStatement
+    +-> CompoundStatement
         |
-        +-> (condition) RelationalExpression: '<' {type: 'int'}
-        |   |
-        |   +-> Variable: 'x' {type: 'int'}
-        |   |
-        |   +-> IntegerConstant: '5' {type: 'int'}
+        +-> VariableDeclaration: 'x' {type: 'int'}
         |
-        +-> (true branch) CompoundStatement
+        +-> ExpressionStatement
+        |   |
+        |   +-> AssignmentExpression: '='
+        |       |
+        |       +-> Variable: 'x' {type: 'int'}
+        |       |
+        |       +-> IntegerConstant: '10' {type: 'int'}
+        |
+        +-> IfStatement
             |
-            +-> ExpressionStatement
+            +-> (condition) RelationalExpression: '<' {type: 'int'}
             |   |
-            |   +-> AssignmentExpression: '='
-            |       |
-            |       +-> Variable: 'x' {type: 'int'}
-            |       |
-            |       +-> IntegerConstant: '10' {type: 'int'}
+            |   +-> Variable: 'x' {type: 'int'}
+            |   |
+            |   +-> IntegerConstant: '5' {type: 'int'}
             |
-            +-> ExpressionStatement
+            +-> (true branch) CompoundStatement
                 |
-                +-> AssignmentExpression: '='
+                +-> ExpressionStatement
+                |   |
+                |   +-> AssignmentExpression: '='
+                |       |
+                |       +-> Variable: 'x' {type: 'int'}
+                |       |
+                |       +-> IntegerConstant: '10' {type: 'int'}
+                |
+                +-> ExpressionStatement
                     |
-                    +-> Variable: 'x' {type: 'int'}
-                    |
-                    +-> AdditiveExpression: '+' {type: 'int'}
+                    +-> AssignmentExpression: '='
                         |
                         +-> Variable: 'x' {type: 'int'}
                         |
-                        +-> IntegerConstant: '15' {type: 'int'}
+                        +-> AdditiveExpression: '+' {type: 'int'}
+                            |
+                            +-> Variable: 'x' {type: 'int'}
+                            |
+                            +-> IntegerConstant: '15' {type: 'int'}
 
 @endtest
 
@@ -145,29 +151,15 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
+TranslationUnit
 |
-+-> CompoundStatement
++-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
     |
-    +-> VariableDeclaration: 'x' {type: 'int'}
-    |
-    +-> ExpressionStatement
-    |   |
-    |   +-> AssignmentExpression: '='
-    |       |
-    |       +-> Variable: 'x' {type: 'int'}
-    |       |
-    |       +-> IntegerConstant: '10' {type: 'int'}
-    |
-    +-> IfStatement
+    +-> CompoundStatement
         |
-        +-> (condition) RelationalExpression: '<' {type: 'int'}
-        |   |
-        |   +-> Variable: 'x' {type: 'int'}
-        |   |
-        |   +-> IntegerConstant: '5' {type: 'int'}
+        +-> VariableDeclaration: 'x' {type: 'int'}
         |
-        +-> (true branch) ExpressionStatement
+        +-> ExpressionStatement
         |   |
         |   +-> AssignmentExpression: '='
         |       |
@@ -175,13 +167,29 @@ FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
         |       |
         |       +-> IntegerConstant: '10' {type: 'int'}
         |
-        +-> (false branch) ExpressionStatement
+        +-> IfStatement
             |
-            +-> AssignmentExpression: '='
+            +-> (condition) RelationalExpression: '<' {type: 'int'}
+            |   |
+            |   +-> Variable: 'x' {type: 'int'}
+            |   |
+            |   +-> IntegerConstant: '5' {type: 'int'}
+            |
+            +-> (true branch) ExpressionStatement
+            |   |
+            |   +-> AssignmentExpression: '='
+            |       |
+            |       +-> Variable: 'x' {type: 'int'}
+            |       |
+            |       +-> IntegerConstant: '10' {type: 'int'}
+            |
+            +-> (false branch) ExpressionStatement
                 |
-                +-> Variable: 'x' {type: 'int'}
-                |
-                +-> IntegerConstant: '77' {type: 'int'}
+                +-> AssignmentExpression: '='
+                    |
+                    +-> Variable: 'x' {type: 'int'}
+                    |
+                    +-> IntegerConstant: '77' {type: 'int'}
 
 @endtest
 
@@ -196,29 +204,15 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
+TranslationUnit
 |
-+-> CompoundStatement
++-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
     |
-    +-> VariableDeclaration: 'x' {type: 'int'}
-    |
-    +-> ExpressionStatement
-    |   |
-    |   +-> AssignmentExpression: '='
-    |       |
-    |       +-> Variable: 'x' {type: 'int'}
-    |       |
-    |       +-> IntegerConstant: '10' {type: 'int'}
-    |
-    +-> IfStatement
+    +-> CompoundStatement
         |
-        +-> (condition) RelationalExpression: '<' {type: 'int'}
-        |   |
-        |   +-> Variable: 'x' {type: 'int'}
-        |   |
-        |   +-> IntegerConstant: '5' {type: 'int'}
+        +-> VariableDeclaration: 'x' {type: 'int'}
         |
-        +-> (true branch) ExpressionStatement
+        +-> ExpressionStatement
         |   |
         |   +-> AssignmentExpression: '='
         |       |
@@ -226,7 +220,23 @@ FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
         |       |
         |       +-> IntegerConstant: '10' {type: 'int'}
         |
-        +-> (false branch) ExpressionStatement: {empty expression}
+        +-> IfStatement
+            |
+            +-> (condition) RelationalExpression: '<' {type: 'int'}
+            |   |
+            |   +-> Variable: 'x' {type: 'int'}
+            |   |
+            |   +-> IntegerConstant: '5' {type: 'int'}
+            |
+            +-> (true branch) ExpressionStatement
+            |   |
+            |   +-> AssignmentExpression: '='
+            |       |
+            |       +-> Variable: 'x' {type: 'int'}
+            |       |
+            |       +-> IntegerConstant: '10' {type: 'int'}
+            |
+            +-> (false branch) ExpressionStatement: {empty expression}
 
 @endtest
 
@@ -244,29 +254,15 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
+TranslationUnit
 |
-+-> CompoundStatement
++-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
     |
-    +-> VariableDeclaration: 'x' {type: 'int'}
-    |
-    +-> ExpressionStatement
-    |   |
-    |   +-> AssignmentExpression: '='
-    |       |
-    |       +-> Variable: 'x' {type: 'int'}
-    |       |
-    |       +-> IntegerConstant: '10' {type: 'int'}
-    |
-    +-> IfStatement
+    +-> CompoundStatement
         |
-        +-> (condition) RelationalExpression: '<' {type: 'int'}
-        |   |
-        |   +-> Variable: 'x' {type: 'int'}
-        |   |
-        |   +-> IntegerConstant: '5' {type: 'int'}
+        +-> VariableDeclaration: 'x' {type: 'int'}
         |
-        +-> (true branch) ExpressionStatement
+        +-> ExpressionStatement
         |   |
         |   +-> AssignmentExpression: '='
         |       |
@@ -274,26 +270,42 @@ FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
         |       |
         |       +-> IntegerConstant: '10' {type: 'int'}
         |
-        +-> (false branch) CompoundStatement
+        +-> IfStatement
             |
-            +-> ExpressionStatement
+            +-> (condition) RelationalExpression: '<' {type: 'int'}
+            |   |
+            |   +-> Variable: 'x' {type: 'int'}
+            |   |
+            |   +-> IntegerConstant: '5' {type: 'int'}
+            |
+            +-> (true branch) ExpressionStatement
             |   |
             |   +-> AssignmentExpression: '='
             |       |
             |       +-> Variable: 'x' {type: 'int'}
             |       |
-            |       +-> IntegerConstant: '77' {type: 'int'}
+            |       +-> IntegerConstant: '10' {type: 'int'}
             |
-            +-> ExpressionStatement
+            +-> (false branch) CompoundStatement
                 |
-                +-> AssignmentExpression: '='
+                +-> ExpressionStatement
+                |   |
+                |   +-> AssignmentExpression: '='
+                |       |
+                |       +-> Variable: 'x' {type: 'int'}
+                |       |
+                |       +-> IntegerConstant: '77' {type: 'int'}
+                |
+                +-> ExpressionStatement
                     |
-                    +-> Variable: 'x' {type: 'int'}
-                    |
-                    +-> AdditiveExpression: '-' {type: 'int'}
+                    +-> AssignmentExpression: '='
                         |
                         +-> Variable: 'x' {type: 'int'}
                         |
-                        +-> IntegerConstant: '1' {type: 'int'}
+                        +-> AdditiveExpression: '-' {type: 'int'}
+                            |
+                            +-> Variable: 'x' {type: 'int'}
+                            |
+                            +-> IntegerConstant: '1' {type: 'int'}
 
 @endtest

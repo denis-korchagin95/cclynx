@@ -5,13 +5,15 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
+TranslationUnit
 |
-+-> CompoundStatement
++-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
     |
-    +-> ExpressionStatement
+    +-> CompoundStatement
         |
-        +-> IntegerConstant: '777' {type: 'int'}
+        +-> ExpressionStatement
+            |
+            +-> IntegerConstant: '777' {type: 'int'}
 
 @endtest
 
@@ -22,13 +24,15 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
+TranslationUnit
 |
-+-> CompoundStatement
++-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
     |
-    +-> ExpressionStatement
+    +-> CompoundStatement
         |
-        +-> FloatConstant: '12.512000' {type: 'float'}
+        +-> ExpressionStatement
+            |
+            +-> FloatConstant: '12.512000' {type: 'float'}
 
 @endtest
 
@@ -39,17 +43,19 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
+TranslationUnit
 |
-+-> CompoundStatement
++-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
     |
-    +-> ExpressionStatement
+    +-> CompoundStatement
         |
-        +-> MultiplicativeExpression: '*' {type: 'int'}
+        +-> ExpressionStatement
             |
-            +-> IntegerConstant: '7' {type: 'int'}
-            |
-            +-> IntegerConstant: '8' {type: 'int'}
+            +-> MultiplicativeExpression: '*' {type: 'int'}
+                |
+                +-> IntegerConstant: '7' {type: 'int'}
+                |
+                +-> IntegerConstant: '8' {type: 'int'}
 
 @endtest
 
@@ -60,21 +66,23 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
+TranslationUnit
 |
-+-> CompoundStatement
++-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
     |
-    +-> ExpressionStatement
+    +-> CompoundStatement
         |
-        +-> MultiplicativeExpression: '*' {type: 'int'}
+        +-> ExpressionStatement
             |
             +-> MultiplicativeExpression: '*' {type: 'int'}
-            |   |
-            |   +-> IntegerConstant: '7' {type: 'int'}
-            |   |
-            |   +-> IntegerConstant: '6' {type: 'int'}
-            |
-            +-> IntegerConstant: '8' {type: 'int'}
+                |
+                +-> MultiplicativeExpression: '*' {type: 'int'}
+                |   |
+                |   +-> IntegerConstant: '7' {type: 'int'}
+                |   |
+                |   +-> IntegerConstant: '6' {type: 'int'}
+                |
+                +-> IntegerConstant: '8' {type: 'int'}
 
 @endtest
 
@@ -85,29 +93,31 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
+TranslationUnit
 |
-+-> CompoundStatement
++-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
     |
-    +-> ExpressionStatement
+    +-> CompoundStatement
         |
-        +-> MultiplicativeExpression: '*' {type: 'int'}
+        +-> ExpressionStatement
             |
             +-> MultiplicativeExpression: '*' {type: 'int'}
-            |   |
-            |   +-> MultiplicativeExpression: '*' {type: 'int'}
-            |   |   |
-            |   |   +-> MultiplicativeExpression: '*' {type: 'int'}
-            |   |   |   |
-            |   |   |   +-> IntegerConstant: '7' {type: 'int'}
-            |   |   |   |
-            |   |   |   +-> IntegerConstant: '6' {type: 'int'}
-            |   |   |
-            |   |   +-> IntegerConstant: '8' {type: 'int'}
-            |   |
-            |   +-> IntegerConstant: '10' {type: 'int'}
-            |
-            +-> IntegerConstant: '15' {type: 'int'}
+                |
+                +-> MultiplicativeExpression: '*' {type: 'int'}
+                |   |
+                |   +-> MultiplicativeExpression: '*' {type: 'int'}
+                |   |   |
+                |   |   +-> MultiplicativeExpression: '*' {type: 'int'}
+                |   |   |   |
+                |   |   |   +-> IntegerConstant: '7' {type: 'int'}
+                |   |   |   |
+                |   |   |   +-> IntegerConstant: '6' {type: 'int'}
+                |   |   |
+                |   |   +-> IntegerConstant: '8' {type: 'int'}
+                |   |
+                |   +-> IntegerConstant: '10' {type: 'int'}
+                |
+                +-> IntegerConstant: '15' {type: 'int'}
 
 @endtest
 
@@ -118,21 +128,23 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
+TranslationUnit
 |
-+-> CompoundStatement
++-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
     |
-    +-> ExpressionStatement
+    +-> CompoundStatement
         |
-        +-> MultiplicativeExpression: '*' {type: 'int'}
+        +-> ExpressionStatement
             |
-            +-> MultiplicativeExpression: '/' {type: 'int'}
-            |   |
-            |   +-> IntegerConstant: '15' {type: 'int'}
-            |   |
-            |   +-> IntegerConstant: '3' {type: 'int'}
-            |
-            +-> IntegerConstant: '101' {type: 'int'}
+            +-> MultiplicativeExpression: '*' {type: 'int'}
+                |
+                +-> MultiplicativeExpression: '/' {type: 'int'}
+                |   |
+                |   +-> IntegerConstant: '15' {type: 'int'}
+                |   |
+                |   +-> IntegerConstant: '3' {type: 'int'}
+                |
+                +-> IntegerConstant: '101' {type: 'int'}
 
 @endtest
 
@@ -143,17 +155,19 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
+TranslationUnit
 |
-+-> CompoundStatement
++-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
     |
-    +-> ExpressionStatement
+    +-> CompoundStatement
         |
-        +-> AdditiveExpression: '+' {type: 'int'}
+        +-> ExpressionStatement
             |
-            +-> IntegerConstant: '7' {type: 'int'}
-            |
-            +-> IntegerConstant: '8' {type: 'int'}
+            +-> AdditiveExpression: '+' {type: 'int'}
+                |
+                +-> IntegerConstant: '7' {type: 'int'}
+                |
+                +-> IntegerConstant: '8' {type: 'int'}
 
 @endtest
 
@@ -164,21 +178,23 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
+TranslationUnit
 |
-+-> CompoundStatement
++-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
     |
-    +-> ExpressionStatement
+    +-> CompoundStatement
         |
-        +-> AdditiveExpression: '+' {type: 'int'}
+        +-> ExpressionStatement
             |
             +-> AdditiveExpression: '+' {type: 'int'}
-            |   |
-            |   +-> IntegerConstant: '7' {type: 'int'}
-            |   |
-            |   +-> IntegerConstant: '6' {type: 'int'}
-            |
-            +-> IntegerConstant: '8' {type: 'int'}
+                |
+                +-> AdditiveExpression: '+' {type: 'int'}
+                |   |
+                |   +-> IntegerConstant: '7' {type: 'int'}
+                |   |
+                |   +-> IntegerConstant: '6' {type: 'int'}
+                |
+                +-> IntegerConstant: '8' {type: 'int'}
 
 @endtest
 
@@ -189,29 +205,31 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
+TranslationUnit
 |
-+-> CompoundStatement
++-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
     |
-    +-> ExpressionStatement
+    +-> CompoundStatement
         |
-        +-> AdditiveExpression: '+' {type: 'int'}
+        +-> ExpressionStatement
             |
             +-> AdditiveExpression: '+' {type: 'int'}
-            |   |
-            |   +-> AdditiveExpression: '+' {type: 'int'}
-            |   |   |
-            |   |   +-> AdditiveExpression: '+' {type: 'int'}
-            |   |   |   |
-            |   |   |   +-> IntegerConstant: '7' {type: 'int'}
-            |   |   |   |
-            |   |   |   +-> IntegerConstant: '6' {type: 'int'}
-            |   |   |
-            |   |   +-> IntegerConstant: '8' {type: 'int'}
-            |   |
-            |   +-> IntegerConstant: '10' {type: 'int'}
-            |
-            +-> IntegerConstant: '15' {type: 'int'}
+                |
+                +-> AdditiveExpression: '+' {type: 'int'}
+                |   |
+                |   +-> AdditiveExpression: '+' {type: 'int'}
+                |   |   |
+                |   |   +-> AdditiveExpression: '+' {type: 'int'}
+                |   |   |   |
+                |   |   |   +-> IntegerConstant: '7' {type: 'int'}
+                |   |   |   |
+                |   |   |   +-> IntegerConstant: '6' {type: 'int'}
+                |   |   |
+                |   |   +-> IntegerConstant: '8' {type: 'int'}
+                |   |
+                |   +-> IntegerConstant: '10' {type: 'int'}
+                |
+                +-> IntegerConstant: '15' {type: 'int'}
 
 @endtest
 
@@ -222,21 +240,23 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
+TranslationUnit
 |
-+-> CompoundStatement
++-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
     |
-    +-> ExpressionStatement
+    +-> CompoundStatement
         |
-        +-> AdditiveExpression: '-' {type: 'int'}
+        +-> ExpressionStatement
             |
-            +-> AdditiveExpression: '+' {type: 'int'}
-            |   |
-            |   +-> IntegerConstant: '15' {type: 'int'}
-            |   |
-            |   +-> IntegerConstant: '3' {type: 'int'}
-            |
-            +-> IntegerConstant: '101' {type: 'int'}
+            +-> AdditiveExpression: '-' {type: 'int'}
+                |
+                +-> AdditiveExpression: '+' {type: 'int'}
+                |   |
+                |   +-> IntegerConstant: '15' {type: 'int'}
+                |   |
+                |   +-> IntegerConstant: '3' {type: 'int'}
+                |
+                +-> IntegerConstant: '101' {type: 'int'}
 
 @endtest
 
@@ -247,25 +267,27 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
+TranslationUnit
 |
-+-> CompoundStatement
++-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
     |
-    +-> ExpressionStatement
+    +-> CompoundStatement
         |
-        +-> AdditiveExpression: '-' {type: 'int'}
+        +-> ExpressionStatement
             |
-            +-> AdditiveExpression: '+' {type: 'int'}
-            |   |
-            |   +-> IntegerConstant: '1' {type: 'int'}
-            |   |
-            |   +-> MultiplicativeExpression: '*' {type: 'int'}
-            |       |
-            |       +-> IntegerConstant: '7' {type: 'int'}
-            |       |
-            |       +-> IntegerConstant: '6' {type: 'int'}
-            |
-            +-> IntegerConstant: '4' {type: 'int'}
+            +-> AdditiveExpression: '-' {type: 'int'}
+                |
+                +-> AdditiveExpression: '+' {type: 'int'}
+                |   |
+                |   +-> IntegerConstant: '1' {type: 'int'}
+                |   |
+                |   +-> MultiplicativeExpression: '*' {type: 'int'}
+                |       |
+                |       +-> IntegerConstant: '7' {type: 'int'}
+                |       |
+                |       +-> IntegerConstant: '6' {type: 'int'}
+                |
+                +-> IntegerConstant: '4' {type: 'int'}
 
 @endtest
 
@@ -276,17 +298,19 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
+TranslationUnit
 |
-+-> CompoundStatement
++-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
     |
-    +-> ExpressionStatement
+    +-> CompoundStatement
         |
-        +-> RelationalExpression: '<' {type: 'int'}
+        +-> ExpressionStatement
             |
-            +-> IntegerConstant: '7' {type: 'int'}
-            |
-            +-> IntegerConstant: '8' {type: 'int'}
+            +-> RelationalExpression: '<' {type: 'int'}
+                |
+                +-> IntegerConstant: '7' {type: 'int'}
+                |
+                +-> IntegerConstant: '8' {type: 'int'}
 
 @endtest
 
@@ -297,21 +321,23 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
+TranslationUnit
 |
-+-> CompoundStatement
++-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
     |
-    +-> ExpressionStatement
+    +-> CompoundStatement
         |
-        +-> RelationalExpression: '<' {type: 'int'}
+        +-> ExpressionStatement
             |
             +-> RelationalExpression: '<' {type: 'int'}
-            |   |
-            |   +-> IntegerConstant: '7' {type: 'int'}
-            |   |
-            |   +-> IntegerConstant: '6' {type: 'int'}
-            |
-            +-> IntegerConstant: '8' {type: 'int'}
+                |
+                +-> RelationalExpression: '<' {type: 'int'}
+                |   |
+                |   +-> IntegerConstant: '7' {type: 'int'}
+                |   |
+                |   +-> IntegerConstant: '6' {type: 'int'}
+                |
+                +-> IntegerConstant: '8' {type: 'int'}
 
 @endtest
 
@@ -322,29 +348,31 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
+TranslationUnit
 |
-+-> CompoundStatement
++-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
     |
-    +-> ExpressionStatement
+    +-> CompoundStatement
         |
-        +-> RelationalExpression: '<' {type: 'int'}
+        +-> ExpressionStatement
             |
             +-> RelationalExpression: '<' {type: 'int'}
-            |   |
-            |   +-> RelationalExpression: '<' {type: 'int'}
-            |   |   |
-            |   |   +-> RelationalExpression: '<' {type: 'int'}
-            |   |   |   |
-            |   |   |   +-> IntegerConstant: '7' {type: 'int'}
-            |   |   |   |
-            |   |   |   +-> IntegerConstant: '6' {type: 'int'}
-            |   |   |
-            |   |   +-> IntegerConstant: '8' {type: 'int'}
-            |   |
-            |   +-> IntegerConstant: '10' {type: 'int'}
-            |
-            +-> IntegerConstant: '15' {type: 'int'}
+                |
+                +-> RelationalExpression: '<' {type: 'int'}
+                |   |
+                |   +-> RelationalExpression: '<' {type: 'int'}
+                |   |   |
+                |   |   +-> RelationalExpression: '<' {type: 'int'}
+                |   |   |   |
+                |   |   |   +-> IntegerConstant: '7' {type: 'int'}
+                |   |   |   |
+                |   |   |   +-> IntegerConstant: '6' {type: 'int'}
+                |   |   |
+                |   |   +-> IntegerConstant: '8' {type: 'int'}
+                |   |
+                |   +-> IntegerConstant: '10' {type: 'int'}
+                |
+                +-> IntegerConstant: '15' {type: 'int'}
 
 @endtest
 
@@ -355,21 +383,23 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
+TranslationUnit
 |
-+-> CompoundStatement
++-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
     |
-    +-> ExpressionStatement
+    +-> CompoundStatement
         |
-        +-> RelationalExpression: '>' {type: 'int'}
+        +-> ExpressionStatement
             |
-            +-> RelationalExpression: '<' {type: 'int'}
-            |   |
-            |   +-> IntegerConstant: '15' {type: 'int'}
-            |   |
-            |   +-> IntegerConstant: '3' {type: 'int'}
-            |
-            +-> IntegerConstant: '101' {type: 'int'}
+            +-> RelationalExpression: '>' {type: 'int'}
+                |
+                +-> RelationalExpression: '<' {type: 'int'}
+                |   |
+                |   +-> IntegerConstant: '15' {type: 'int'}
+                |   |
+                |   +-> IntegerConstant: '3' {type: 'int'}
+                |
+                +-> IntegerConstant: '101' {type: 'int'}
 
 @endtest
 
@@ -380,17 +410,19 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
+TranslationUnit
 |
-+-> CompoundStatement
++-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
     |
-    +-> ExpressionStatement
+    +-> CompoundStatement
         |
-        +-> EqualityExpression: '==' {type: 'int'}
+        +-> ExpressionStatement
             |
-            +-> IntegerConstant: '7' {type: 'int'}
-            |
-            +-> IntegerConstant: '8' {type: 'int'}
+            +-> EqualityExpression: '==' {type: 'int'}
+                |
+                +-> IntegerConstant: '7' {type: 'int'}
+                |
+                +-> IntegerConstant: '8' {type: 'int'}
 
 @endtest
 
@@ -401,21 +433,23 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
+TranslationUnit
 |
-+-> CompoundStatement
++-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
     |
-    +-> ExpressionStatement
+    +-> CompoundStatement
         |
-        +-> EqualityExpression: '==' {type: 'int'}
+        +-> ExpressionStatement
             |
             +-> EqualityExpression: '==' {type: 'int'}
-            |   |
-            |   +-> IntegerConstant: '7' {type: 'int'}
-            |   |
-            |   +-> IntegerConstant: '6' {type: 'int'}
-            |
-            +-> IntegerConstant: '8' {type: 'int'}
+                |
+                +-> EqualityExpression: '==' {type: 'int'}
+                |   |
+                |   +-> IntegerConstant: '7' {type: 'int'}
+                |   |
+                |   +-> IntegerConstant: '6' {type: 'int'}
+                |
+                +-> IntegerConstant: '8' {type: 'int'}
 
 @endtest
 
@@ -426,29 +460,31 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
+TranslationUnit
 |
-+-> CompoundStatement
++-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
     |
-    +-> ExpressionStatement
+    +-> CompoundStatement
         |
-        +-> EqualityExpression: '==' {type: 'int'}
+        +-> ExpressionStatement
             |
             +-> EqualityExpression: '==' {type: 'int'}
-            |   |
-            |   +-> EqualityExpression: '==' {type: 'int'}
-            |   |   |
-            |   |   +-> EqualityExpression: '==' {type: 'int'}
-            |   |   |   |
-            |   |   |   +-> IntegerConstant: '7' {type: 'int'}
-            |   |   |   |
-            |   |   |   +-> IntegerConstant: '6' {type: 'int'}
-            |   |   |
-            |   |   +-> IntegerConstant: '8' {type: 'int'}
-            |   |
-            |   +-> IntegerConstant: '10' {type: 'int'}
-            |
-            +-> IntegerConstant: '15' {type: 'int'}
+                |
+                +-> EqualityExpression: '==' {type: 'int'}
+                |   |
+                |   +-> EqualityExpression: '==' {type: 'int'}
+                |   |   |
+                |   |   +-> EqualityExpression: '==' {type: 'int'}
+                |   |   |   |
+                |   |   |   +-> IntegerConstant: '7' {type: 'int'}
+                |   |   |   |
+                |   |   |   +-> IntegerConstant: '6' {type: 'int'}
+                |   |   |
+                |   |   +-> IntegerConstant: '8' {type: 'int'}
+                |   |
+                |   +-> IntegerConstant: '10' {type: 'int'}
+                |
+                +-> IntegerConstant: '15' {type: 'int'}
 
 @endtest
 
@@ -459,21 +495,23 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
+TranslationUnit
 |
-+-> CompoundStatement
++-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
     |
-    +-> ExpressionStatement
+    +-> CompoundStatement
         |
-        +-> EqualityExpression: '!=' {type: 'int'}
+        +-> ExpressionStatement
             |
-            +-> EqualityExpression: '==' {type: 'int'}
-            |   |
-            |   +-> IntegerConstant: '15' {type: 'int'}
-            |   |
-            |   +-> IntegerConstant: '3' {type: 'int'}
-            |
-            +-> IntegerConstant: '101' {type: 'int'}
+            +-> EqualityExpression: '!=' {type: 'int'}
+                |
+                +-> EqualityExpression: '==' {type: 'int'}
+                |   |
+                |   +-> IntegerConstant: '15' {type: 'int'}
+                |   |
+                |   +-> IntegerConstant: '3' {type: 'int'}
+                |
+                +-> IntegerConstant: '101' {type: 'int'}
 
 @endtest
 
@@ -484,21 +522,23 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
+TranslationUnit
 |
-+-> CompoundStatement
++-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
     |
-    +-> ExpressionStatement
+    +-> CompoundStatement
         |
-        +-> EqualityExpression: '==' {type: 'int'}
+        +-> ExpressionStatement
             |
-            +-> IntegerConstant: '1' {type: 'int'}
-            |
-            +-> AdditiveExpression: '+' {type: 'int'}
+            +-> EqualityExpression: '==' {type: 'int'}
                 |
-                +-> IntegerConstant: '2' {type: 'int'}
+                +-> IntegerConstant: '1' {type: 'int'}
                 |
-                +-> IntegerConstant: '3' {type: 'int'}
+                +-> AdditiveExpression: '+' {type: 'int'}
+                    |
+                    +-> IntegerConstant: '2' {type: 'int'}
+                    |
+                    +-> IntegerConstant: '3' {type: 'int'}
 
 @endtest
 
@@ -509,21 +549,23 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
+TranslationUnit
 |
-+-> CompoundStatement
++-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
     |
-    +-> ExpressionStatement
+    +-> CompoundStatement
         |
-        +-> RelationalExpression: '<' {type: 'int'}
+        +-> ExpressionStatement
             |
-            +-> IntegerConstant: '1' {type: 'int'}
-            |
-            +-> AdditiveExpression: '+' {type: 'int'}
+            +-> RelationalExpression: '<' {type: 'int'}
                 |
-                +-> IntegerConstant: '2' {type: 'int'}
+                +-> IntegerConstant: '1' {type: 'int'}
                 |
-                +-> IntegerConstant: '3' {type: 'int'}
+                +-> AdditiveExpression: '+' {type: 'int'}
+                    |
+                    +-> IntegerConstant: '2' {type: 'int'}
+                    |
+                    +-> IntegerConstant: '3' {type: 'int'}
 
 @endtest
 
@@ -535,19 +577,21 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
+TranslationUnit
 |
-+-> CompoundStatement
++-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
     |
-    +-> VariableDeclaration: 'x' {type: 'int'}
-    |
-    +-> ExpressionStatement
+    +-> CompoundStatement
         |
-        +-> AssignmentExpression: '='
+        +-> VariableDeclaration: 'x' {type: 'int'}
+        |
+        +-> ExpressionStatement
             |
-            +-> Variable: 'x' {type: 'int'}
-            |
-            +-> IntegerConstant: '3' {type: 'int'}
+            +-> AssignmentExpression: '='
+                |
+                +-> Variable: 'x' {type: 'int'}
+                |
+                +-> IntegerConstant: '3' {type: 'int'}
 
 @endtest
 
@@ -558,21 +602,23 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
+TranslationUnit
 |
-+-> CompoundStatement
++-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
     |
-    +-> ExpressionStatement
+    +-> CompoundStatement
         |
-        +-> MultiplicativeExpression: '*' {type: 'int'}
+        +-> ExpressionStatement
             |
-            +-> IntegerConstant: '77' {type: 'int'}
-            |
-            +-> AdditiveExpression: '+' {type: 'int'}
+            +-> MultiplicativeExpression: '*' {type: 'int'}
                 |
-                +-> IntegerConstant: '1' {type: 'int'}
+                +-> IntegerConstant: '77' {type: 'int'}
                 |
-                +-> IntegerConstant: '23' {type: 'int'}
+                +-> AdditiveExpression: '+' {type: 'int'}
+                    |
+                    +-> IntegerConstant: '1' {type: 'int'}
+                    |
+                    +-> IntegerConstant: '23' {type: 'int'}
 
 @endtest
 
@@ -588,51 +634,53 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
+TranslationUnit
 |
-+-> CompoundStatement
++-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
     |
-    +-> VariableDeclaration: 'x' {type: 'float'}
-    |
-    +-> ExpressionStatement
-    |   |
-    |   +-> AssignmentExpression: '='
-    |       |
-    |       +-> Variable: 'x' {type: 'float'}
-    |       |
-    |       +-> FloatConstant: '4.500000' {type: 'float'}
-    |
-    +-> ExpressionStatement
-    |   |
-    |   +-> AdditiveExpression: '+' {type: 'float'}
-    |       |
-    |       +-> FloatConstant: '12.300000' {type: 'float'}
-    |       |
-    |       +-> FloatConstant: '0.200000' {type: 'float'}
-    |
-    +-> ExpressionStatement
-    |   |
-    |   +-> AdditiveExpression: '-' {type: 'float'}
-    |       |
-    |       +-> FloatConstant: '12.700000' {type: 'float'}
-    |       |
-    |       +-> FloatConstant: '12.200000' {type: 'float'}
-    |
-    +-> ExpressionStatement
-    |   |
-    |   +-> AdditiveExpression: '+' {type: 'float'}
-    |       |
-    |       +-> FloatConstant: '0.500000' {type: 'float'}
-    |       |
-    |       +-> Variable: 'x' {type: 'float'}
-    |
-    +-> ExpressionStatement
+    +-> CompoundStatement
         |
-        +-> AdditiveExpression: '-' {type: 'float'}
+        +-> VariableDeclaration: 'x' {type: 'float'}
+        |
+        +-> ExpressionStatement
+        |   |
+        |   +-> AssignmentExpression: '='
+        |       |
+        |       +-> Variable: 'x' {type: 'float'}
+        |       |
+        |       +-> FloatConstant: '4.500000' {type: 'float'}
+        |
+        +-> ExpressionStatement
+        |   |
+        |   +-> AdditiveExpression: '+' {type: 'float'}
+        |       |
+        |       +-> FloatConstant: '12.300000' {type: 'float'}
+        |       |
+        |       +-> FloatConstant: '0.200000' {type: 'float'}
+        |
+        +-> ExpressionStatement
+        |   |
+        |   +-> AdditiveExpression: '-' {type: 'float'}
+        |       |
+        |       +-> FloatConstant: '12.700000' {type: 'float'}
+        |       |
+        |       +-> FloatConstant: '12.200000' {type: 'float'}
+        |
+        +-> ExpressionStatement
+        |   |
+        |   +-> AdditiveExpression: '+' {type: 'float'}
+        |       |
+        |       +-> FloatConstant: '0.500000' {type: 'float'}
+        |       |
+        |       +-> Variable: 'x' {type: 'float'}
+        |
+        +-> ExpressionStatement
             |
-            +-> Variable: 'x' {type: 'float'}
-            |
-            +-> FloatConstant: '0.500000' {type: 'float'}
+            +-> AdditiveExpression: '-' {type: 'float'}
+                |
+                +-> Variable: 'x' {type: 'float'}
+                |
+                +-> FloatConstant: '0.500000' {type: 'float'}
 
 @endtest
 
@@ -648,51 +696,53 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
+TranslationUnit
 |
-+-> CompoundStatement
++-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
     |
-    +-> VariableDeclaration: 'x' {type: 'float'}
-    |
-    +-> ExpressionStatement
-    |   |
-    |   +-> AssignmentExpression: '='
-    |       |
-    |       +-> Variable: 'x' {type: 'float'}
-    |       |
-    |       +-> FloatConstant: '4.500000' {type: 'float'}
-    |
-    +-> ExpressionStatement
-    |   |
-    |   +-> MultiplicativeExpression: '*' {type: 'float'}
-    |       |
-    |       +-> FloatConstant: '12.300000' {type: 'float'}
-    |       |
-    |       +-> FloatConstant: '0.200000' {type: 'float'}
-    |
-    +-> ExpressionStatement
-    |   |
-    |   +-> MultiplicativeExpression: '/' {type: 'float'}
-    |       |
-    |       +-> FloatConstant: '12.700000' {type: 'float'}
-    |       |
-    |       +-> FloatConstant: '12.200000' {type: 'float'}
-    |
-    +-> ExpressionStatement
-    |   |
-    |   +-> MultiplicativeExpression: '*' {type: 'float'}
-    |       |
-    |       +-> FloatConstant: '0.500000' {type: 'float'}
-    |       |
-    |       +-> Variable: 'x' {type: 'float'}
-    |
-    +-> ExpressionStatement
+    +-> CompoundStatement
         |
-        +-> MultiplicativeExpression: '/' {type: 'float'}
+        +-> VariableDeclaration: 'x' {type: 'float'}
+        |
+        +-> ExpressionStatement
+        |   |
+        |   +-> AssignmentExpression: '='
+        |       |
+        |       +-> Variable: 'x' {type: 'float'}
+        |       |
+        |       +-> FloatConstant: '4.500000' {type: 'float'}
+        |
+        +-> ExpressionStatement
+        |   |
+        |   +-> MultiplicativeExpression: '*' {type: 'float'}
+        |       |
+        |       +-> FloatConstant: '12.300000' {type: 'float'}
+        |       |
+        |       +-> FloatConstant: '0.200000' {type: 'float'}
+        |
+        +-> ExpressionStatement
+        |   |
+        |   +-> MultiplicativeExpression: '/' {type: 'float'}
+        |       |
+        |       +-> FloatConstant: '12.700000' {type: 'float'}
+        |       |
+        |       +-> FloatConstant: '12.200000' {type: 'float'}
+        |
+        +-> ExpressionStatement
+        |   |
+        |   +-> MultiplicativeExpression: '*' {type: 'float'}
+        |       |
+        |       +-> FloatConstant: '0.500000' {type: 'float'}
+        |       |
+        |       +-> Variable: 'x' {type: 'float'}
+        |
+        +-> ExpressionStatement
             |
-            +-> Variable: 'x' {type: 'float'}
-            |
-            +-> FloatConstant: '0.500000' {type: 'float'}
+            +-> MultiplicativeExpression: '/' {type: 'float'}
+                |
+                +-> Variable: 'x' {type: 'float'}
+                |
+                +-> FloatConstant: '0.500000' {type: 'float'}
 
 @endtest
 
@@ -708,51 +758,53 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
+TranslationUnit
 |
-+-> CompoundStatement
++-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
     |
-    +-> VariableDeclaration: 'x' {type: 'float'}
-    |
-    +-> ExpressionStatement
-    |   |
-    |   +-> AssignmentExpression: '='
-    |       |
-    |       +-> Variable: 'x' {type: 'float'}
-    |       |
-    |       +-> FloatConstant: '4.500000' {type: 'float'}
-    |
-    +-> ExpressionStatement
-    |   |
-    |   +-> RelationalExpression: '<' {type: 'float'}
-    |       |
-    |       +-> FloatConstant: '12.300000' {type: 'float'}
-    |       |
-    |       +-> FloatConstant: '0.200000' {type: 'float'}
-    |
-    +-> ExpressionStatement
-    |   |
-    |   +-> RelationalExpression: '>' {type: 'float'}
-    |       |
-    |       +-> FloatConstant: '12.700000' {type: 'float'}
-    |       |
-    |       +-> FloatConstant: '12.200000' {type: 'float'}
-    |
-    +-> ExpressionStatement
-    |   |
-    |   +-> RelationalExpression: '<' {type: 'float'}
-    |       |
-    |       +-> FloatConstant: '0.500000' {type: 'float'}
-    |       |
-    |       +-> Variable: 'x' {type: 'float'}
-    |
-    +-> ExpressionStatement
+    +-> CompoundStatement
         |
-        +-> RelationalExpression: '>' {type: 'float'}
+        +-> VariableDeclaration: 'x' {type: 'float'}
+        |
+        +-> ExpressionStatement
+        |   |
+        |   +-> AssignmentExpression: '='
+        |       |
+        |       +-> Variable: 'x' {type: 'float'}
+        |       |
+        |       +-> FloatConstant: '4.500000' {type: 'float'}
+        |
+        +-> ExpressionStatement
+        |   |
+        |   +-> RelationalExpression: '<' {type: 'float'}
+        |       |
+        |       +-> FloatConstant: '12.300000' {type: 'float'}
+        |       |
+        |       +-> FloatConstant: '0.200000' {type: 'float'}
+        |
+        +-> ExpressionStatement
+        |   |
+        |   +-> RelationalExpression: '>' {type: 'float'}
+        |       |
+        |       +-> FloatConstant: '12.700000' {type: 'float'}
+        |       |
+        |       +-> FloatConstant: '12.200000' {type: 'float'}
+        |
+        +-> ExpressionStatement
+        |   |
+        |   +-> RelationalExpression: '<' {type: 'float'}
+        |       |
+        |       +-> FloatConstant: '0.500000' {type: 'float'}
+        |       |
+        |       +-> Variable: 'x' {type: 'float'}
+        |
+        +-> ExpressionStatement
             |
-            +-> Variable: 'x' {type: 'float'}
-            |
-            +-> FloatConstant: '0.500000' {type: 'float'}
+            +-> RelationalExpression: '>' {type: 'float'}
+                |
+                +-> Variable: 'x' {type: 'float'}
+                |
+                +-> FloatConstant: '0.500000' {type: 'float'}
 
 @endtest
 
@@ -768,50 +820,52 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
+TranslationUnit
 |
-+-> CompoundStatement
++-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
     |
-    +-> VariableDeclaration: 'x' {type: 'float'}
-    |
-    +-> ExpressionStatement
-    |   |
-    |   +-> AssignmentExpression: '='
-    |       |
-    |       +-> Variable: 'x' {type: 'float'}
-    |       |
-    |       +-> FloatConstant: '4.500000' {type: 'float'}
-    |
-    +-> ExpressionStatement
-    |   |
-    |   +-> EqualityExpression: '==' {type: 'float'}
-    |       |
-    |       +-> FloatConstant: '12.300000' {type: 'float'}
-    |       |
-    |       +-> FloatConstant: '0.200000' {type: 'float'}
-    |
-    +-> ExpressionStatement
-    |   |
-    |   +-> EqualityExpression: '!=' {type: 'float'}
-    |       |
-    |       +-> FloatConstant: '12.700000' {type: 'float'}
-    |       |
-    |       +-> FloatConstant: '12.200000' {type: 'float'}
-    |
-    +-> ExpressionStatement
-    |   |
-    |   +-> EqualityExpression: '==' {type: 'float'}
-    |       |
-    |       +-> FloatConstant: '0.500000' {type: 'float'}
-    |       |
-    |       +-> Variable: 'x' {type: 'float'}
-    |
-    +-> ExpressionStatement
+    +-> CompoundStatement
         |
-        +-> EqualityExpression: '!=' {type: 'float'}
+        +-> VariableDeclaration: 'x' {type: 'float'}
+        |
+        +-> ExpressionStatement
+        |   |
+        |   +-> AssignmentExpression: '='
+        |       |
+        |       +-> Variable: 'x' {type: 'float'}
+        |       |
+        |       +-> FloatConstant: '4.500000' {type: 'float'}
+        |
+        +-> ExpressionStatement
+        |   |
+        |   +-> EqualityExpression: '==' {type: 'float'}
+        |       |
+        |       +-> FloatConstant: '12.300000' {type: 'float'}
+        |       |
+        |       +-> FloatConstant: '0.200000' {type: 'float'}
+        |
+        +-> ExpressionStatement
+        |   |
+        |   +-> EqualityExpression: '!=' {type: 'float'}
+        |       |
+        |       +-> FloatConstant: '12.700000' {type: 'float'}
+        |       |
+        |       +-> FloatConstant: '12.200000' {type: 'float'}
+        |
+        +-> ExpressionStatement
+        |   |
+        |   +-> EqualityExpression: '==' {type: 'float'}
+        |       |
+        |       +-> FloatConstant: '0.500000' {type: 'float'}
+        |       |
+        |       +-> Variable: 'x' {type: 'float'}
+        |
+        +-> ExpressionStatement
             |
-            +-> Variable: 'x' {type: 'float'}
-            |
-            +-> FloatConstant: '0.500000' {type: 'float'}
+            +-> EqualityExpression: '!=' {type: 'float'}
+                |
+                +-> Variable: 'x' {type: 'float'}
+                |
+                +-> FloatConstant: '0.500000' {type: 'float'}
 
 @endtest

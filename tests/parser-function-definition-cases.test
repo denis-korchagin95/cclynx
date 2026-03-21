@@ -5,13 +5,15 @@ int main(void) {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-FunctionDefinition: 'main' {type: 'int'} <no-parameters>
+TranslationUnit
 |
-+-> CompoundStatement
++-> FunctionDefinition: 'main' {type: 'int'} <no-parameters>
     |
-    +-> ReturnStatement
+    +-> CompoundStatement
         |
-        +-> IntegerConstant: '42' {type: 'int'}
+        +-> ReturnStatement
+            |
+            +-> IntegerConstant: '42' {type: 'int'}
 
 @endtest
 
@@ -22,17 +24,19 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
+TranslationUnit
 |
-+-> CompoundStatement
++-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
     |
-    +-> ExpressionStatement
+    +-> CompoundStatement
         |
-        +-> MultiplicativeExpression: '*' {type: 'int'}
+        +-> ExpressionStatement
             |
-            +-> IntegerConstant: '7' {type: 'int'}
-            |
-            +-> IntegerConstant: '8' {type: 'int'}
+            +-> MultiplicativeExpression: '*' {type: 'int'}
+                |
+                +-> IntegerConstant: '7' {type: 'int'}
+                |
+                +-> IntegerConstant: '8' {type: 'int'}
 
 @endtest
 
@@ -44,13 +48,15 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
+TranslationUnit
 |
-+-> CompoundStatement
++-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
     |
-    +-> VariableDeclaration: 'x' {type: 'int'}
-    |
-    +-> VariableDeclaration: 'y' {type: 'int'}
+    +-> CompoundStatement
+        |
+        +-> VariableDeclaration: 'x' {type: 'int'}
+        |
+        +-> VariableDeclaration: 'y' {type: 'int'}
 
 @endtest
 
@@ -61,13 +67,15 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
+TranslationUnit
 |
-+-> CompoundStatement
++-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
     |
-    +-> ReturnStatement
+    +-> CompoundStatement
         |
-        +-> IntegerConstant: '7' {type: 'int'}
+        +-> ReturnStatement
+            |
+            +-> IntegerConstant: '7' {type: 'int'}
 
 @endtest
 
@@ -78,11 +86,13 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
+TranslationUnit
 |
-+-> CompoundStatement
++-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
     |
-    +-> ReturnStatement
+    +-> CompoundStatement
+        |
+        +-> ReturnStatement
 
 @endtest
 
@@ -95,23 +105,25 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
+TranslationUnit
 |
-+-> CompoundStatement
++-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
     |
-    +-> VariableDeclaration: 'result' {type: 'int'}
-    |
-    +-> ExpressionStatement
-    |   |
-    |   +-> AssignmentExpression: '='
-    |       |
-    |       +-> Variable: 'result' {type: 'int'}
-    |       |
-    |       +-> IntegerConstant: '1' {type: 'int'}
-    |
-    +-> ReturnStatement
+    +-> CompoundStatement
         |
-        +-> Variable: 'result' {type: 'int'}
+        +-> VariableDeclaration: 'result' {type: 'int'}
+        |
+        +-> ExpressionStatement
+        |   |
+        |   +-> AssignmentExpression: '='
+        |       |
+        |       +-> Variable: 'result' {type: 'int'}
+        |       |
+        |       +-> IntegerConstant: '1' {type: 'int'}
+        |
+        +-> ReturnStatement
+            |
+            +-> Variable: 'result' {type: 'int'}
 
 @endtest
 
@@ -126,21 +138,23 @@ int bar() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-FunctionDefinition: 'foo' {type: 'int'} <unspecified-parameters>
+TranslationUnit
 |
-+-> CompoundStatement
-    |
-    +-> ReturnStatement
-        |
-        +-> IntegerConstant: '1' {type: 'int'}
-
-FunctionDefinition: 'bar' {type: 'int'} <unspecified-parameters>
++-> FunctionDefinition: 'foo' {type: 'int'} <unspecified-parameters>
+|   |
+|   +-> CompoundStatement
+|       |
+|       +-> ReturnStatement
+|           |
+|           +-> IntegerConstant: '1' {type: 'int'}
 |
-+-> CompoundStatement
++-> FunctionDefinition: 'bar' {type: 'int'} <unspecified-parameters>
     |
-    +-> ReturnStatement
+    +-> CompoundStatement
         |
-        +-> IntegerConstant: '2' {type: 'int'}
+        +-> ReturnStatement
+            |
+            +-> IntegerConstant: '2' {type: 'int'}
 
 @endtest
 
@@ -157,24 +171,26 @@ int bar() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-FunctionDefinition: 'foo' {type: 'int'} <unspecified-parameters>
+TranslationUnit
 |
-+-> CompoundStatement
-    |
-    +-> VariableDeclaration: 'x' {type: 'int'}
-    |
-    +-> ReturnStatement
-        |
-        +-> Variable: 'x' {type: 'int'}
-
-FunctionDefinition: 'bar' {type: 'int'} <unspecified-parameters>
++-> FunctionDefinition: 'foo' {type: 'int'} <unspecified-parameters>
+|   |
+|   +-> CompoundStatement
+|       |
+|       +-> VariableDeclaration: 'x' {type: 'int'}
+|       |
+|       +-> ReturnStatement
+|           |
+|           +-> Variable: 'x' {type: 'int'}
 |
-+-> CompoundStatement
++-> FunctionDefinition: 'bar' {type: 'int'} <unspecified-parameters>
     |
-    +-> VariableDeclaration: 'x' {type: 'int'}
-    |
-    +-> ReturnStatement
+    +-> CompoundStatement
         |
-        +-> Variable: 'x' {type: 'int'}
+        +-> VariableDeclaration: 'x' {type: 'int'}
+        |
+        +-> ReturnStatement
+            |
+            +-> Variable: 'x' {type: 'int'}
 
 @endtest

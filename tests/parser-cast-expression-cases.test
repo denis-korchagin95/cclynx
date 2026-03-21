@@ -9,35 +9,37 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
+TranslationUnit
 |
-+-> CompoundStatement
++-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
     |
-    +-> VariableDeclaration: 'y' {type: 'float'}
-    |
-    +-> ExpressionStatement
-    |   |
-    |   +-> AssignmentExpression: '='
-    |       |
-    |       +-> Variable: 'y' {type: 'float'}
-    |       |
-    |       +-> FloatConstant: '1.450000' {type: 'float'}
-    |
-    +-> VariableDeclaration: 'x' {type: 'int'}
-    |
-    +-> ExpressionStatement
-    |   |
-    |   +-> AssignmentExpression: '='
-    |       |
-    |       +-> Variable: 'x' {type: 'int'}
-    |       |
-    |       +-> CastExpression {type: 'int'}
-    |           |
-    |           +-> Variable: 'y' {type: 'float'}
-    |
-    +-> ReturnStatement
+    +-> CompoundStatement
         |
-        +-> Variable: 'x' {type: 'int'}
+        +-> VariableDeclaration: 'y' {type: 'float'}
+        |
+        +-> ExpressionStatement
+        |   |
+        |   +-> AssignmentExpression: '='
+        |       |
+        |       +-> Variable: 'y' {type: 'float'}
+        |       |
+        |       +-> FloatConstant: '1.450000' {type: 'float'}
+        |
+        +-> VariableDeclaration: 'x' {type: 'int'}
+        |
+        +-> ExpressionStatement
+        |   |
+        |   +-> AssignmentExpression: '='
+        |       |
+        |       +-> Variable: 'x' {type: 'int'}
+        |       |
+        |       +-> CastExpression {type: 'int'}
+        |           |
+        |           +-> Variable: 'y' {type: 'float'}
+        |
+        +-> ReturnStatement
+            |
+            +-> Variable: 'x' {type: 'int'}
 
 @endtest
 
@@ -52,34 +54,36 @@ float test() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-FunctionDefinition: 'test' {type: 'float'} <unspecified-parameters>
+TranslationUnit
 |
-+-> CompoundStatement
++-> FunctionDefinition: 'test' {type: 'float'} <unspecified-parameters>
     |
-    +-> VariableDeclaration: 'y' {type: 'int'}
-    |
-    +-> ExpressionStatement
-    |   |
-    |   +-> AssignmentExpression: '='
-    |       |
-    |       +-> Variable: 'y' {type: 'int'}
-    |       |
-    |       +-> IntegerConstant: '777' {type: 'int'}
-    |
-    +-> VariableDeclaration: 'x' {type: 'float'}
-    |
-    +-> ExpressionStatement
-    |   |
-    |   +-> AssignmentExpression: '='
-    |       |
-    |       +-> Variable: 'x' {type: 'float'}
-    |       |
-    |       +-> CastExpression {type: 'float'}
-    |           |
-    |           +-> Variable: 'y' {type: 'int'}
-    |
-    +-> ReturnStatement
+    +-> CompoundStatement
         |
-        +-> Variable: 'x' {type: 'float'}
+        +-> VariableDeclaration: 'y' {type: 'int'}
+        |
+        +-> ExpressionStatement
+        |   |
+        |   +-> AssignmentExpression: '='
+        |       |
+        |       +-> Variable: 'y' {type: 'int'}
+        |       |
+        |       +-> IntegerConstant: '777' {type: 'int'}
+        |
+        +-> VariableDeclaration: 'x' {type: 'float'}
+        |
+        +-> ExpressionStatement
+        |   |
+        |   +-> AssignmentExpression: '='
+        |       |
+        |       +-> Variable: 'x' {type: 'float'}
+        |       |
+        |       +-> CastExpression {type: 'float'}
+        |           |
+        |           +-> Variable: 'y' {type: 'int'}
+        |
+        +-> ReturnStatement
+            |
+            +-> Variable: 'x' {type: 'float'}
 
 @endtest

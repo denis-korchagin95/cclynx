@@ -60,18 +60,7 @@ void print_ast(const struct ast_node * ast, FILE * file)
 
     ancestors_info[0] = 1;
 
-    if (ast->kind == AST_NODE_KIND_TRANSLATION_UNIT) {
-        struct ast_node_list * iterator = ast->content.list;
-        while (iterator != NULL) {
-            if (iterator != ast->content.list) {
-                fprintf(file, "\n");
-            }
-            do_print_ast(iterator->node, file, 0, ancestors_info, NULL);
-            iterator = iterator->next;
-        }
-    } else {
-        do_print_ast(ast, file, 0, ancestors_info, NULL);
-    }
+    do_print_ast(ast, file, 0, ancestors_info, NULL);
 }
 
 void do_print_ast(const struct ast_node * ast, FILE * file, int depth, unsigned int * ancestors_info, const char * node_label)
@@ -100,6 +89,17 @@ void do_print_ast(const struct ast_node * ast, FILE * file, int depth, unsigned 
     }
 
     switch (ast->kind) {
+        case AST_NODE_KIND_TRANSLATION_UNIT:
+            {
+                fprintf(file, "TranslationUnit\n");
+                struct ast_node_list * iterator = ast->content.list;
+                while (iterator != NULL) {
+                    ancestors_info[depth] = iterator->next == NULL ? 0 : 2;
+                    do_print_ast(iterator->node, file, depth + 1, ancestors_info, NULL);
+                    iterator = iterator->next;
+                }
+            }
+            break;
         case AST_NODE_KIND_IF_STATEMENT:
             fprintf(file, "IfStatement\n");
             ancestors_info[depth] = 2;
@@ -234,16 +234,7 @@ void print_ast_dot(const struct ast_node * ast, FILE * file)
 
     fprintf(file, "digraph AST {\n");
     fprintf(file, "    node [shape=box, fontname=\"monospace\"];\n");
-    if (ast->kind == AST_NODE_KIND_TRANSLATION_UNIT) {
-        int next_id = 0;
-        struct ast_node_list * iterator = ast->content.list;
-        while (iterator != NULL) {
-            next_id = do_print_ast_dot(iterator->node, file, next_id);
-            iterator = iterator->next;
-        }
-    } else {
-        do_print_ast_dot(ast, file, 0);
-    }
+    do_print_ast_dot(ast, file, 0);
     fprintf(file, "}\n");
 
     fflush(file);
@@ -254,6 +245,14 @@ int do_print_ast_dot(const struct ast_node * ast, FILE * file, int next_id)
     int id = next_id++;
 
     switch (ast->kind) {
+        case AST_NODE_KIND_TRANSLATION_UNIT:
+            fprintf(file, "    n%d [label=\"TranslationUnit\"];\n", id);
+            for (struct ast_node_list * it = ast->content.list; it != NULL; it = it->next) {
+                int child_id = next_id;
+                next_id = do_print_ast_dot(it->node, file, next_id);
+                fprintf(file, "    n%d -> n%d;\n", id, child_id);
+            }
+            break;
         case AST_NODE_KIND_FUNCTION_DEFINITION:
             {
                 const char * args = ast->content.function_definition.parameter_presence == PARAMETER_PRESENCE_VOID ? "no-parameters" : "unspecified-parameters";

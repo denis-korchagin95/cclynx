@@ -86,41 +86,43 @@ int bar() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-FunctionDefinition: 'foo' {type: 'int'} <unspecified-parameters>
+TranslationUnit
 |
-+-> CompoundStatement
-    |
-    +-> VariableDeclaration: 'x' {type: 'int'}
-    |
-    +-> ExpressionStatement
-    |   |
-    |   +-> AssignmentExpression: '='
-    |       |
-    |       +-> Variable: 'x' {type: 'int'}
-    |       |
-    |       +-> IntegerConstant: '1' {type: 'int'}
-    |
-    +-> ReturnStatement
-        |
-        +-> Variable: 'x' {type: 'int'}
-
-FunctionDefinition: 'bar' {type: 'int'} <unspecified-parameters>
++-> FunctionDefinition: 'foo' {type: 'int'} <unspecified-parameters>
+|   |
+|   +-> CompoundStatement
+|       |
+|       +-> VariableDeclaration: 'x' {type: 'int'}
+|       |
+|       +-> ExpressionStatement
+|       |   |
+|       |   +-> AssignmentExpression: '='
+|       |       |
+|       |       +-> Variable: 'x' {type: 'int'}
+|       |       |
+|       |       +-> IntegerConstant: '1' {type: 'int'}
+|       |
+|       +-> ReturnStatement
+|           |
+|           +-> Variable: 'x' {type: 'int'}
 |
-+-> CompoundStatement
++-> FunctionDefinition: 'bar' {type: 'int'} <unspecified-parameters>
     |
-    +-> VariableDeclaration: 'x' {type: 'int'}
-    |
-    +-> ExpressionStatement
-    |   |
-    |   +-> AssignmentExpression: '='
-    |       |
-    |       +-> Variable: 'x' {type: 'int'}
-    |       |
-    |       +-> IntegerConstant: '2' {type: 'int'}
-    |
-    +-> ReturnStatement
+    +-> CompoundStatement
         |
-        +-> Variable: 'x' {type: 'int'}
+        +-> VariableDeclaration: 'x' {type: 'int'}
+        |
+        +-> ExpressionStatement
+        |   |
+        |   +-> AssignmentExpression: '='
+        |       |
+        |       +-> Variable: 'x' {type: 'int'}
+        |       |
+        |       +-> IntegerConstant: '2' {type: 'int'}
+        |
+        +-> ReturnStatement
+            |
+            +-> Variable: 'x' {type: 'int'}
 
 @endtest
 
@@ -154,33 +156,35 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
+TranslationUnit
 |
-+-> CompoundStatement
-    |
-    +-> VariableDeclaration: 'x' {type: 'int'}
-    |
-    +-> ExpressionStatement
-    |   |
-    |   +-> AssignmentExpression: '='
-    |       |
-    |       +-> Variable: 'x' {type: 'int'}
-    |       |
-    |       +-> IntegerConstant: '1' {type: 'int'}
++-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
     |
     +-> CompoundStatement
-    |   |
-    |   +-> ExpressionStatement
-    |       |
-    |       +-> AssignmentExpression: '='
-    |           |
-    |           +-> Variable: 'x' {type: 'int'}
-    |           |
-    |           +-> IntegerConstant: '2' {type: 'int'}
-    |
-    +-> ReturnStatement
         |
-        +-> Variable: 'x' {type: 'int'}
+        +-> VariableDeclaration: 'x' {type: 'int'}
+        |
+        +-> ExpressionStatement
+        |   |
+        |   +-> AssignmentExpression: '='
+        |       |
+        |       +-> Variable: 'x' {type: 'int'}
+        |       |
+        |       +-> IntegerConstant: '1' {type: 'int'}
+        |
+        +-> CompoundStatement
+        |   |
+        |   +-> ExpressionStatement
+        |       |
+        |       +-> AssignmentExpression: '='
+        |           |
+        |           +-> Variable: 'x' {type: 'int'}
+        |           |
+        |           +-> IntegerConstant: '2' {type: 'int'}
+        |
+        +-> ReturnStatement
+            |
+            +-> Variable: 'x' {type: 'int'}
 
 @endtest
 
@@ -230,35 +234,37 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
+TranslationUnit
 |
-+-> CompoundStatement
-    |
-    +-> VariableDeclaration: 'x' {type: 'int'}
-    |
-    +-> ExpressionStatement
-    |   |
-    |   +-> AssignmentExpression: '='
-    |       |
-    |       +-> Variable: 'x' {type: 'int'}
-    |       |
-    |       +-> IntegerConstant: '1' {type: 'int'}
++-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
     |
     +-> CompoundStatement
-    |   |
-    |   +-> VariableDeclaration: 'x' {type: 'int'}
-    |   |
-    |   +-> ExpressionStatement
-    |       |
-    |       +-> AssignmentExpression: '='
-    |           |
-    |           +-> Variable: 'x' {type: 'int'}
-    |           |
-    |           +-> IntegerConstant: '2' {type: 'int'}
-    |
-    +-> ReturnStatement
         |
-        +-> Variable: 'x' {type: 'int'}
+        +-> VariableDeclaration: 'x' {type: 'int'}
+        |
+        +-> ExpressionStatement
+        |   |
+        |   +-> AssignmentExpression: '='
+        |       |
+        |       +-> Variable: 'x' {type: 'int'}
+        |       |
+        |       +-> IntegerConstant: '1' {type: 'int'}
+        |
+        +-> CompoundStatement
+        |   |
+        |   +-> VariableDeclaration: 'x' {type: 'int'}
+        |   |
+        |   +-> ExpressionStatement
+        |       |
+        |       +-> AssignmentExpression: '='
+        |           |
+        |           +-> Variable: 'x' {type: 'int'}
+        |           |
+        |           +-> IntegerConstant: '2' {type: 'int'}
+        |
+        +-> ReturnStatement
+            |
+            +-> Variable: 'x' {type: 'int'}
 
 @endtest
 
