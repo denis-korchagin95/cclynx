@@ -17,6 +17,7 @@
 #define NUMBER_TABLE_SIZE (101)
 
 static struct hashmap number_table;
+static struct hashmap * identifier_table;
 
 
 struct token eos_token = {{0}, &eos_token, 0, TOKEN_KIND_EOS};
@@ -36,9 +37,10 @@ static void read_identifier(FILE * file, struct token * token, int ch);
 static void read_number(FILE * file, struct token * token, int ch);
 
 
-void tokenizer_init(void)
+void tokenizer_init(struct hashmap * id_table, struct memory_blob_pool * pool)
 {
-    hashmap_init(&number_table, NUMBER_TABLE_SIZE, main_pool);
+    identifier_table = id_table;
+    hashmap_init(&number_table, NUMBER_TABLE_SIZE, pool);
 }
 
 struct token * tokenizer_tokenize_file(FILE * file)
@@ -221,10 +223,10 @@ void read_identifier(FILE * file, struct token * token, int ch)
         putback_one_char(ch);
     }
 
-    struct identifier * identifier = identifier_lookup(identifier_buffer);
+    struct identifier * identifier = identifier_lookup(identifier_table, identifier_buffer);
 
     if (identifier == NULL) {
-        identifier = identifier_insert(identifier_buffer, identifier_buffer_pos);
+        identifier = identifier_insert(identifier_table, identifier_table->pool, identifier_buffer, identifier_buffer_pos);
     }
 
     token->kind = TOKEN_KIND_IDENTIFIER;

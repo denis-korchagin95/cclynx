@@ -1,14 +1,18 @@
 #ifndef CCLYNX_IDENTIFIER_H
 #define CCLYNX_IDENTIFIER_H 1
 
+struct hashmap;
+struct memory_blob_pool;
 struct symbol_list;
 
-#define identifier_attach_symbol(identifier, symbol_name)    \
-    {                                                        \
-        main_pool_alloc(struct symbol_list, element)         \
-        element->symbol = (symbol_name);                     \
-        element->next = (identifier)->symbols;               \
-        (identifier)->symbols = element;                     \
+#define identifier_attach_symbol(pool, identifier, symbol_name)             \
+    {                                                                       \
+        struct symbol_list * element = (struct symbol_list *)                \
+            memory_blob_pool_alloc((pool), sizeof(struct symbol_list));      \
+        memset(element, 0, sizeof(struct symbol_list));                      \
+        element->symbol = (symbol_name);                                    \
+        element->next = (identifier)->symbols;                              \
+        (identifier)->symbols = element;                                    \
     }
 
 struct identifier
@@ -19,10 +23,10 @@ struct identifier
     unsigned int reserved:31;
 };
 
-void init_keywords(void);
+void init_keywords(struct hashmap * identifier_table, struct memory_blob_pool * pool);
 
-struct identifier * identifier_create(const char * name);
-struct identifier * identifier_lookup(const char * name);
-struct identifier * identifier_insert(const char * name, unsigned int len);
+struct identifier * identifier_create(struct hashmap * identifier_table, struct memory_blob_pool * pool, const char * name);
+struct identifier * identifier_lookup(struct hashmap * identifier_table, const char * name);
+struct identifier * identifier_insert(struct hashmap * identifier_table, struct memory_blob_pool * pool, const char * name, unsigned int len);
 
 #endif /* CCLYNX_IDENTIFIER_H */

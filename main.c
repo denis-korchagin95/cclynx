@@ -52,9 +52,9 @@ int main(int argc, const char * argv[])
 
     struct cclynx_context ctx;
     cclynx_init(&ctx);
-    init_keywords();
-    tokenizer_init();
-    init_symbols();
+    init_keywords(&ctx.identifier_table, &ctx.pool);
+    tokenizer_init(&ctx.identifier_table, &ctx.pool);
+    init_symbols(&ctx.identifier_table, &ctx.pool);
 
     struct token * tokens = tokenizer_tokenize_file(source);
 

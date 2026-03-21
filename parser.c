@@ -337,7 +337,7 @@ struct ast_node * parse_declaration(struct parser_context * context)
     variable->identifier = identifier;
     variable->type = type;
 
-    identifier_attach_symbol(identifier, variable)
+    identifier_attach_symbol(main_pool, identifier, variable)
 
     struct ast_node * declaration = create_ast_node(AST_NODE_KIND_VARIABLE_DECLARATION);
     declaration->content.variable = variable;

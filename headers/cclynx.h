@@ -2,9 +2,11 @@
 #define CCLYNX_H 1
 
 #include "allocator.h"
+#include "hashmap.h"
 
 struct cclynx_context {
     struct memory_blob_pool pool;
+    struct hashmap identifier_table;
 };
 
 void cclynx_init(struct cclynx_context * ctx);
