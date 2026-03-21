@@ -5,7 +5,7 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-FunctionDefinition: 'main' {type: 'int'} <unspecified-args>
+FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
 |
 +-> CompoundStatement
     |
@@ -22,7 +22,7 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-FunctionDefinition: 'main' {type: 'int'} <unspecified-args>
+FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
 |
 +-> CompoundStatement
     |
@@ -39,7 +39,7 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-FunctionDefinition: 'main' {type: 'int'} <unspecified-args>
+FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
 |
 +-> CompoundStatement
     |
@@ -60,7 +60,7 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-FunctionDefinition: 'main' {type: 'int'} <unspecified-args>
+FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
 |
 +-> CompoundStatement
     |
@@ -85,7 +85,7 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-FunctionDefinition: 'main' {type: 'int'} <unspecified-args>
+FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
 |
 +-> CompoundStatement
     |
@@ -118,7 +118,7 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-FunctionDefinition: 'main' {type: 'int'} <unspecified-args>
+FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
 |
 +-> CompoundStatement
     |
@@ -143,7 +143,7 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-FunctionDefinition: 'main' {type: 'int'} <unspecified-args>
+FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
 |
 +-> CompoundStatement
     |
@@ -164,7 +164,7 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-FunctionDefinition: 'main' {type: 'int'} <unspecified-args>
+FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
 |
 +-> CompoundStatement
     |
@@ -189,7 +189,7 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-FunctionDefinition: 'main' {type: 'int'} <unspecified-args>
+FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
 |
 +-> CompoundStatement
     |
@@ -222,7 +222,7 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-FunctionDefinition: 'main' {type: 'int'} <unspecified-args>
+FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
 |
 +-> CompoundStatement
     |
@@ -247,7 +247,7 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-FunctionDefinition: 'main' {type: 'int'} <unspecified-args>
+FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
 |
 +-> CompoundStatement
     |
@@ -276,7 +276,7 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-FunctionDefinition: 'main' {type: 'int'} <unspecified-args>
+FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
 |
 +-> CompoundStatement
     |
@@ -297,7 +297,7 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-FunctionDefinition: 'main' {type: 'int'} <unspecified-args>
+FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
 |
 +-> CompoundStatement
     |
@@ -322,7 +322,7 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-FunctionDefinition: 'main' {type: 'int'} <unspecified-args>
+FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
 |
 +-> CompoundStatement
     |
@@ -355,7 +355,7 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-FunctionDefinition: 'main' {type: 'int'} <unspecified-args>
+FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
 |
 +-> CompoundStatement
     |
@@ -380,7 +380,7 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-FunctionDefinition: 'main' {type: 'int'} <unspecified-args>
+FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
 |
 +-> CompoundStatement
     |
@@ -401,7 +401,7 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-FunctionDefinition: 'main' {type: 'int'} <unspecified-args>
+FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
 |
 +-> CompoundStatement
     |
@@ -426,7 +426,7 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-FunctionDefinition: 'main' {type: 'int'} <unspecified-args>
+FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
 |
 +-> CompoundStatement
     |
@@ -459,7 +459,7 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-FunctionDefinition: 'main' {type: 'int'} <unspecified-args>
+FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
 |
 +-> CompoundStatement
     |
@@ -484,7 +484,7 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-FunctionDefinition: 'main' {type: 'int'} <unspecified-args>
+FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
 |
 +-> CompoundStatement
     |
@@ -509,7 +509,7 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-FunctionDefinition: 'main' {type: 'int'} <unspecified-args>
+FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
 |
 +-> CompoundStatement
     |
@@ -535,7 +535,7 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-FunctionDefinition: 'main' {type: 'int'} <unspecified-args>
+FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
 |
 +-> CompoundStatement
     |
@@ -558,7 +558,7 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-FunctionDefinition: 'main' {type: 'int'} <unspecified-args>
+FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
 |
 +-> CompoundStatement
     |
@@ -588,7 +588,7 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-FunctionDefinition: 'main' {type: 'int'} <unspecified-args>
+FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
 |
 +-> CompoundStatement
     |
@@ -648,7 +648,7 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-FunctionDefinition: 'main' {type: 'int'} <unspecified-args>
+FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
 |
 +-> CompoundStatement
     |
@@ -708,7 +708,7 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-FunctionDefinition: 'main' {type: 'int'} <unspecified-args>
+FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
 |
 +-> CompoundStatement
     |
@@ -768,7 +768,7 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-FunctionDefinition: 'main' {type: 'int'} <unspecified-args>
+FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
 |
 +-> CompoundStatement
     |

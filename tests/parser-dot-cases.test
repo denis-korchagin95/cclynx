@@ -7,7 +7,7 @@ int main() {
 @expectOutput("stdout")
 digraph AST {
     node [shape=box, fontname="monospace"];
-    n0 [label="FunctionDefinition\n'main' : int\nunspecified-args"];
+    n0 [label="FunctionDefinition\n'main' : int\nunspecified-parameters"];
     n1 [label="CompoundStatement"];
     n2 [label="ExpressionStatement"];
     n3 [label="IntegerConstant\n42 : int"];
@@ -27,7 +27,7 @@ int main() {
 @expectOutput("stdout")
 digraph AST {
     node [shape=box, fontname="monospace"];
-    n0 [label="FunctionDefinition\n'main' : int\nunspecified-args"];
+    n0 [label="FunctionDefinition\n'main' : int\nunspecified-parameters"];
     n1 [label="CompoundStatement"];
     n2 [label="ExpressionStatement"];
     n3 [label="FloatConstant\n3.140000 : float"];
@@ -49,7 +49,7 @@ int main() {
 @expectOutput("stdout")
 digraph AST {
     node [shape=box, fontname="monospace"];
-    n0 [label="FunctionDefinition\n'main' : int\nunspecified-args"];
+    n0 [label="FunctionDefinition\n'main' : int\nunspecified-parameters"];
     n1 [label="CompoundStatement"];
     n2 [label="VariableDeclaration\n'x' : int"];
     n1 -> n2;
@@ -79,7 +79,7 @@ int main() {
 @expectOutput("stdout")
 digraph AST {
     node [shape=box, fontname="monospace"];
-    n0 [label="FunctionDefinition\n'main' : int\nunspecified-args"];
+    n0 [label="FunctionDefinition\n'main' : int\nunspecified-parameters"];
     n1 [label="CompoundStatement"];
     n2 [label="ReturnStatement"];
     n3 [label="AdditiveExpression '+'\n: int"];
@@ -103,7 +103,7 @@ int main() {
 @expectOutput("stdout")
 digraph AST {
     node [shape=box, fontname="monospace"];
-    n0 [label="FunctionDefinition\n'main' : int\nunspecified-args"];
+    n0 [label="FunctionDefinition\n'main' : int\nunspecified-parameters"];
     n1 [label="CompoundStatement"];
     n2 [label="ReturnStatement"];
     n3 [label="MultiplicativeExpression '*'\n: int"];
@@ -127,7 +127,7 @@ int main() {
 @expectOutput("stdout")
 digraph AST {
     node [shape=box, fontname="monospace"];
-    n0 [label="FunctionDefinition\n'main' : int\nunspecified-args"];
+    n0 [label="FunctionDefinition\n'main' : int\nunspecified-parameters"];
     n1 [label="CompoundStatement"];
     n2 [label="ReturnStatement"];
     n3 [label="RelationalExpression '<'\n: int"];
@@ -151,7 +151,7 @@ int main() {
 @expectOutput("stdout")
 digraph AST {
     node [shape=box, fontname="monospace"];
-    n0 [label="FunctionDefinition\n'main' : int\nunspecified-args"];
+    n0 [label="FunctionDefinition\n'main' : int\nunspecified-parameters"];
     n1 [label="CompoundStatement"];
     n2 [label="ReturnStatement"];
     n3 [label="EqualityExpression '=='\n: int"];
@@ -182,7 +182,7 @@ int main() {
 @expectOutput("stdout")
 digraph AST {
     node [shape=box, fontname="monospace"];
-    n0 [label="FunctionDefinition\n'main' : int\nunspecified-args"];
+    n0 [label="FunctionDefinition\n'main' : int\nunspecified-parameters"];
     n1 [label="CompoundStatement"];
     n2 [label="VariableDeclaration\n'x' : int"];
     n1 -> n2;
@@ -245,7 +245,7 @@ int main() {
 @expectOutput("stdout")
 digraph AST {
     node [shape=box, fontname="monospace"];
-    n0 [label="FunctionDefinition\n'main' : int\nunspecified-args"];
+    n0 [label="FunctionDefinition\n'main' : int\nunspecified-parameters"];
     n1 [label="CompoundStatement"];
     n2 [label="VariableDeclaration\n'i' : int"];
     n1 -> n2;
@@ -297,7 +297,7 @@ int main() {
 @expectOutput("stdout")
 digraph AST {
     node [shape=box, fontname="monospace"];
-    n0 [label="FunctionDefinition\n'main' : int\nunspecified-args"];
+    n0 [label="FunctionDefinition\n'main' : int\nunspecified-parameters"];
     n1 [label="CompoundStatement"];
     n2 [label="ReturnStatement"];
     n3 [label="CastExpression\n: int"];
@@ -319,7 +319,7 @@ int main() {
 @expectOutput("stdout")
 digraph AST {
     node [shape=box, fontname="monospace"];
-    n0 [label="FunctionDefinition\n'main' : int\nunspecified-args"];
+    n0 [label="FunctionDefinition\n'main' : int\nunspecified-parameters"];
     n1 [label="CompoundStatement"];
     n2 [label="ReturnStatement"];
     n1 -> n2;
