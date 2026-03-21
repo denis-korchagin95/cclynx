@@ -26,7 +26,7 @@ static void process_command(const char * line)
             exit(1);
         }
 
-        hashmap_init(&maps[map_count], (size_t)capacity);
+        hashmap_init(&maps[map_count], (size_t)capacity, main_pool);
         printf("map%d = init(%d)\n", map_count, capacity);
         ++map_count;
         return;

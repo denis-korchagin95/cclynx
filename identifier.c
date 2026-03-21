@@ -51,7 +51,7 @@ struct identifier * identifier_insert(const char * name, unsigned int len)
 
 void init_keywords(void)
 {
-    hashmap_init(&identifier_table, IDENTIFIER_TABLE_SIZE);
+    hashmap_init(&identifier_table, IDENTIFIER_TABLE_SIZE, main_pool);
 
     for (size_t i = 0; i < sizeof(keywords) / sizeof(keywords[0]); ++i) {
         const struct keyword * keyword = &keywords[i];

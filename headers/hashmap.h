@@ -3,6 +3,8 @@
 
 #include <stddef.h>
 
+struct memory_blob_pool;
+
 struct hashmap_entry
 {
     const char * key;
@@ -14,11 +16,12 @@ struct hashmap
 {
     struct hashmap_entry ** buckets;
     size_t capacity;
+    struct memory_blob_pool * pool;
 };
 
 unsigned int hashmap_hash(const char * key);
 
-void hashmap_init(struct hashmap * map, size_t capacity);
+void hashmap_init(struct hashmap * map, size_t capacity, struct memory_blob_pool * pool);
 void * hashmap_find(struct hashmap * map, const char * key);
 void hashmap_insert(struct hashmap * map, const char * key, void * value);
 

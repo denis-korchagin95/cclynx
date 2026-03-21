@@ -38,7 +38,7 @@ static void read_number(FILE * file, struct token * token, int ch);
 
 void tokenizer_init(void)
 {
-    hashmap_init(&number_table, NUMBER_TABLE_SIZE);
+    hashmap_init(&number_table, NUMBER_TABLE_SIZE, main_pool);
 }
 
 struct token * tokenizer_tokenize_file(FILE * file)

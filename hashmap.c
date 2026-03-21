@@ -1,7 +1,7 @@
 #include <string.h>
 
 #include "hashmap.h"
-#include "allocator.h"
+#include "allocator.h" /* memory_blob_pool_alloc */
 
 
 unsigned int hashmap_hash(const char * key)
@@ -14,10 +14,11 @@ unsigned int hashmap_hash(const char * key)
     return hash;
 }
 
-void hashmap_init(struct hashmap * map, size_t capacity)
+void hashmap_init(struct hashmap * map, size_t capacity, struct memory_blob_pool * pool)
 {
     map->capacity = capacity;
-    map->buckets = memory_blob_pool_alloc(main_pool, sizeof(struct hashmap_entry *) * capacity);
+    map->pool = pool;
+    map->buckets = memory_blob_pool_alloc(pool, sizeof(struct hashmap_entry *) * capacity);
     memset(map->buckets, 0, sizeof(struct hashmap_entry *) * capacity);
 }
 
@@ -38,7 +39,8 @@ void hashmap_insert(struct hashmap * map, const char * key, void * value)
 {
     unsigned int index = hashmap_hash(key) % map->capacity;
 
-    main_pool_alloc(struct hashmap_entry, entry)
+    struct hashmap_entry * entry = (struct hashmap_entry *) memory_blob_pool_alloc(map->pool, sizeof(struct hashmap_entry));
+    memset(entry, 0, sizeof(struct hashmap_entry));
     entry->key = key;
     entry->value = value;
     entry->next = map->buckets[index];
