@@ -8,10 +8,6 @@
 #define DEFAULT_MEMORY_BLOB_ALIGNMENT (16)
 #define DEFAULT_MEMORY_BLOB_CAPACITY (8)
 
-#define main_pool_alloc(type, name)                                             \
-    type * name = (type *) memory_blob_pool_alloc(main_pool, sizeof(type));     \
-    memset(name, 0, sizeof(type));                                              \
-
 struct memory_blob {
     void * memory;
     size_t used;
@@ -25,8 +21,6 @@ struct memory_blob_pool {
     size_t blob_size;
     size_t alignment;
 };
-
-extern struct memory_blob_pool * main_pool;
 
 struct memory_blob_pool * memory_blob_pool_create(size_t blob_size, size_t alignment);
 

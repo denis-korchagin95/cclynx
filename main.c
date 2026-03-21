@@ -61,8 +61,8 @@ int main(int argc, const char * argv[])
 
     fclose(source);
 
-    struct parser_context context;
-    parser_init_context(&context, tokens);
+    struct parser_context parser_ctx;
+    parser_init_context(&parser_ctx, tokens, &ctx.pool);
 
     if (output_stage == STAGE_TOKENS) {
         struct token * it = tokens;
@@ -73,7 +73,7 @@ int main(int argc, const char * argv[])
         goto cleanup;
     }
 
-    struct ast_node * ast = parser_parse(&context);
+    struct ast_node * ast = parser_parse(&parser_ctx);
 
     if (output_stage == STAGE_AST) {
         print_ast(ast, stdout);

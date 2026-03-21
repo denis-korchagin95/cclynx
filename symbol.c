@@ -31,7 +31,8 @@ void init_symbols(struct hashmap * identifier_table, struct memory_blob_pool * p
             cclynx_fatal_error("ERROR: not found identifier for symbol \"%s\"\n", builtin_symbol->name);
         }
 
-        main_pool_alloc(struct symbol, symbol)
+        struct symbol * symbol = (struct symbol *) memory_blob_pool_alloc(pool, sizeof(struct symbol));
+        memset(symbol, 0, sizeof(struct symbol));
         symbol->kind = builtin_symbol->symbol_kind;
         symbol->type = builtin_symbol->type;
         symbol->identifier = identifier;

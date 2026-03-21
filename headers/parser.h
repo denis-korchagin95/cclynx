@@ -93,18 +93,21 @@ struct ast_node
     enum ast_node_kind kind;
 };
 
+struct memory_blob_pool;
+
 struct parser_context
 {
+    struct memory_blob_pool * pool;
     struct token * tokens;
     struct token * iterator;
     struct token * token_buffer[MAX_TOKEN_BUFFER_SIZE];
     unsigned int token_buffer_pos;
 };
 
-void parser_init_context(struct parser_context * context, struct token * tokens);
-struct ast_node * parser_parse(struct parser_context * context);
+void parser_init_context(struct parser_context * ctx, struct token * tokens, struct memory_blob_pool * pool);
+struct ast_node * parser_parse(struct parser_context * ctx);
 
-struct token * parser_get_token(struct parser_context * context);
-void parser_putback_token(struct token * token, struct parser_context * context);
+struct token * parser_get_token(struct parser_context * ctx);
+void parser_putback_token(struct token * token, struct parser_context * ctx);
 
 #endif /* CCLYNX_PARSER_H */
