@@ -1,9 +1,12 @@
+#include <memory.h>
+
 #include "cclynx.h"
 #include "allocator.h"
 
 
 void cclynx_init(struct cclynx_context * ctx)
 {
+    memset(ctx, 0, sizeof(struct cclynx_context));
     memory_blob_pool_init(&ctx->pool, DEFAULT_MEMORY_BLOB_SIZE, DEFAULT_MEMORY_BLOB_ALIGNMENT);
     main_pool = &ctx->pool;
 }
