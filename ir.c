@@ -9,36 +9,35 @@
 #include "symbol.h"
 #include "errors.h"
 
-#define MAX_OPERAND_COUNT (1024)
-
-static unsigned long long int temp_id = 0;
-static unsigned long long int label_id = 0;
-static struct ir_operand * last_variable = NULL;
-static unsigned int is_assign = 0;
-static struct ir_instruction * current_func = NULL;
-
-static struct ir_operand operands[MAX_OPERAND_COUNT] = {0};
-static size_t operand_pos = 0;
-
-static struct ir_operand * alloc_operand(void);
-static struct ir_operand * find_variable_operand_by_symbol(struct symbol * symbol);
-static void do_generate_ir(struct ir_program * program, const struct ast_node * node);
+static struct ir_operand * alloc_operand(struct ir_context * ctx);
+static struct ir_operand * find_variable_operand_by_symbol(struct ir_context * ctx, struct symbol * symbol);
+static void do_generate_ir(struct ir_context * ctx, struct ir_program * program, const struct ast_node * node);
 static void ir_emit(struct ir_program * program, struct ir_instruction * instruction);
-static struct ir_operand * new_temporary_operand(void);
-static void ir_generate_condition(struct ir_program * program, struct ast_node * condition, struct ir_operand * jump_label);
+static struct ir_operand * new_temporary_operand(struct ir_context * ctx);
+static void ir_generate_condition(struct ir_context * ctx, struct ir_program * program, struct ast_node * condition, struct ir_operand * jump_label);
 
-void ir_program_init(struct ir_program * program)
+void ir_context_init(struct ir_context * ctx, struct memory_blob_pool * pool)
+{
+    assert(ctx != NULL);
+    assert(pool != NULL);
+    memset(ctx, 0, sizeof(struct ir_context));
+    ctx->pool = pool;
+}
+
+void ir_program_init(struct ir_program * program, struct memory_blob_pool * pool)
 {
     assert(program != NULL);
+    assert(pool != NULL);
 
     program->capacity = INITIAL_INSTRUCTION_COUNT;
     program->position = 0;
-    program->instructions = (struct ir_instruction **) memory_blob_pool_alloc(main_pool, program->capacity * sizeof(struct ir_instruction *));
+    program->instructions = (struct ir_instruction **) memory_blob_pool_alloc(pool, program->capacity * sizeof(struct ir_instruction *));
     memset(program->instructions, 0, program->capacity * sizeof(struct ir_instruction *));
 }
 
-void ir_program_generate(struct ir_program * program, const struct ast_node * ast)
+void ir_program_generate(struct ir_context * ctx, struct ir_program * program, const struct ast_node * ast)
 {
+    assert(ctx != NULL);
     assert(program != NULL);
     assert(ast != NULL);
 
@@ -47,34 +46,38 @@ void ir_program_generate(struct ir_program * program, const struct ast_node * as
     }
 
     {
-        main_pool_alloc(struct ir_instruction, instruction)
+        struct ir_instruction * instruction = (struct ir_instruction *) memory_blob_pool_alloc(ctx->pool, sizeof(struct ir_instruction));
+        memset(instruction, 0, sizeof(struct ir_instruction));
         instruction->code = OP_FUNC;
 
-        main_pool_alloc(struct ir_operand, result)
+        struct ir_operand * result = (struct ir_operand *) memory_blob_pool_alloc(ctx->pool, sizeof(struct ir_operand));
+        memset(result, 0, sizeof(struct ir_operand));
         result->kind = OPERAND_KIND_FUNCTION_NAME;
         result->content.function.identifier = ast->content.function_definition.name;
 
         instruction->result = result;
 
-        current_func = instruction;
+        ctx->current_func = instruction;
 
         ir_emit(program, instruction);
     }
 
-    do_generate_ir(program, ast->content.function_definition.body);
+    do_generate_ir(ctx, program, ast->content.function_definition.body);
 
     {
-        main_pool_alloc(struct ir_instruction, instruction)
+        struct ir_instruction * instruction = (struct ir_instruction *) memory_blob_pool_alloc(ctx->pool, sizeof(struct ir_instruction));
+        memset(instruction, 0, sizeof(struct ir_instruction));
         instruction->code = OP_FUNC_END;
-        instruction->result = current_func->result;
+        instruction->result = ctx->current_func->result;
 
         ir_emit(program, instruction);
     }
 }
 
 
-void do_generate_ir(struct ir_program * program, const struct ast_node * node)
+void do_generate_ir(struct ir_context * ctx, struct ir_program * program, const struct ast_node * node)
 {
+    assert(ctx != NULL);
     assert(program != NULL);
     assert(node != NULL);
 
@@ -83,42 +86,47 @@ void do_generate_ir(struct ir_program * program, const struct ast_node * node)
             {
                 struct ir_operand * end_of_condition_label = NULL;
 
-                main_pool_alloc(struct ir_operand, end_of_if_label)
-                end_of_if_label->content.label_id = ++label_id;
+                struct ir_operand * end_of_if_label = (struct ir_operand *) memory_blob_pool_alloc(ctx->pool, sizeof(struct ir_operand));
+                memset(end_of_if_label, 0, sizeof(struct ir_operand));
+                end_of_if_label->content.label_id = ++ctx->label_id;
                 end_of_if_label->type = &type_void;
                 end_of_if_label->kind = OPERAND_KIND_LABEL;
 
-                ir_generate_condition(program, node->content.if_statement.condition, end_of_if_label);
+                ir_generate_condition(ctx, program, node->content.if_statement.condition, end_of_if_label);
 
                 if (
                     node->content.if_statement.true_branch->kind == AST_NODE_KIND_EXPRESSION_STATEMENT
                     && node->content.if_statement.true_branch->content.node == NULL
                 ) {
-                    main_pool_alloc(struct ir_instruction, instruction)
+                    struct ir_instruction * instruction = (struct ir_instruction *) memory_blob_pool_alloc(ctx->pool, sizeof(struct ir_instruction));
+                    memset(instruction, 0, sizeof(struct ir_instruction));
                     instruction->code = OP_NOP;
 
                     ir_emit(program, instruction);
                 } else {
-                    do_generate_ir(program, node->content.if_statement.true_branch);
+                    do_generate_ir(ctx, program, node->content.if_statement.true_branch);
                 }
 
                 if (node->content.if_statement.false_branch != NULL) {
                     {
-                        main_pool_alloc(struct ir_operand, end_label)
+                        struct ir_operand * end_label = (struct ir_operand *) memory_blob_pool_alloc(ctx->pool, sizeof(struct ir_operand));
+                        memset(end_label, 0, sizeof(struct ir_operand));
                         end_label->kind = OPERAND_KIND_LABEL;
                         end_label->type = &type_void;
-                        end_label->content.label_id = ++label_id;
+                        end_label->content.label_id = ++ctx->label_id;
                         end_of_condition_label = end_label;
                     }
                     {
-                        main_pool_alloc(struct ir_instruction, instruction)
+                        struct ir_instruction * instruction = (struct ir_instruction *) memory_blob_pool_alloc(ctx->pool, sizeof(struct ir_instruction));
+                        memset(instruction, 0, sizeof(struct ir_instruction));
                         instruction->code = OP_JUMP;
                         instruction->op1 = end_of_condition_label;
 
                         ir_emit(program, instruction);
                     }
                     {
-                        main_pool_alloc(struct ir_instruction, instruction)
+                        struct ir_instruction * instruction = (struct ir_instruction *) memory_blob_pool_alloc(ctx->pool, sizeof(struct ir_instruction));
+                        memset(instruction, 0, sizeof(struct ir_instruction));
                         instruction->code = OP_LABEL;
                         instruction->op1 = end_of_if_label;
 
@@ -129,23 +137,26 @@ void do_generate_ir(struct ir_program * program, const struct ast_node * node)
                         node->content.if_statement.false_branch->kind == AST_NODE_KIND_EXPRESSION_STATEMENT
                         && node->content.if_statement.false_branch->content.node == NULL
                     ) {
-                        main_pool_alloc(struct ir_instruction, instruction)
+                        struct ir_instruction * instruction = (struct ir_instruction *) memory_blob_pool_alloc(ctx->pool, sizeof(struct ir_instruction));
+                        memset(instruction, 0, sizeof(struct ir_instruction));
                         instruction->code = OP_NOP;
 
                         ir_emit(program, instruction);
                     } else {
-                        do_generate_ir(program, node->content.if_statement.false_branch);
+                        do_generate_ir(ctx, program, node->content.if_statement.false_branch);
                     }
                 }
 
                 if (end_of_condition_label != NULL) {
-                    main_pool_alloc(struct ir_instruction, instruction)
+                    struct ir_instruction * instruction = (struct ir_instruction *) memory_blob_pool_alloc(ctx->pool, sizeof(struct ir_instruction));
+                    memset(instruction, 0, sizeof(struct ir_instruction));
                     instruction->code = OP_LABEL;
                     instruction->op1 = end_of_condition_label;
 
                     ir_emit(program, instruction);
                 } else {
-                    main_pool_alloc(struct ir_instruction, instruction)
+                    struct ir_instruction * instruction = (struct ir_instruction *) memory_blob_pool_alloc(ctx->pool, sizeof(struct ir_instruction));
+                    memset(instruction, 0, sizeof(struct ir_instruction));
                     instruction->code = OP_LABEL;
                     instruction->op1 = end_of_if_label;
 
@@ -156,40 +167,45 @@ void do_generate_ir(struct ir_program * program, const struct ast_node * node)
             break;
         case AST_NODE_KIND_WHILE_STATEMENT:
             {
-                main_pool_alloc(struct ir_operand, start_of_loop_label)
-                start_of_loop_label->content.label_id = ++label_id;
+                struct ir_operand * start_of_loop_label = (struct ir_operand *) memory_blob_pool_alloc(ctx->pool, sizeof(struct ir_operand));
+                memset(start_of_loop_label, 0, sizeof(struct ir_operand));
+                start_of_loop_label->content.label_id = ++ctx->label_id;
                 start_of_loop_label->type = &type_void;
                 start_of_loop_label->kind = OPERAND_KIND_LABEL;
 
                 {
-                    main_pool_alloc(struct ir_instruction, instruction)
+                    struct ir_instruction * instruction = (struct ir_instruction *) memory_blob_pool_alloc(ctx->pool, sizeof(struct ir_instruction));
+                    memset(instruction, 0, sizeof(struct ir_instruction));
                     instruction->code = OP_LABEL;
                     instruction->op1 = start_of_loop_label;
 
                     ir_emit(program, instruction);
                 }
 
-                main_pool_alloc(struct ir_operand, end_of_loop_label)
-                end_of_loop_label->content.label_id = ++label_id;
+                struct ir_operand * end_of_loop_label = (struct ir_operand *) memory_blob_pool_alloc(ctx->pool, sizeof(struct ir_operand));
+                memset(end_of_loop_label, 0, sizeof(struct ir_operand));
+                end_of_loop_label->content.label_id = ++ctx->label_id;
                 end_of_loop_label->type = &type_void;
                 end_of_loop_label->kind = OPERAND_KIND_LABEL;
 
-                ir_generate_condition(program, node->content.while_statement.condition, end_of_loop_label);
+                ir_generate_condition(ctx, program, node->content.while_statement.condition, end_of_loop_label);
 
                 if (
                     node->content.while_statement.body->kind == AST_NODE_KIND_EXPRESSION_STATEMENT
                     && node->content.while_statement.body->content.node == NULL
                 ) {
-                    main_pool_alloc(struct ir_instruction, instruction)
+                    struct ir_instruction * instruction = (struct ir_instruction *) memory_blob_pool_alloc(ctx->pool, sizeof(struct ir_instruction));
+                    memset(instruction, 0, sizeof(struct ir_instruction));
                     instruction->code = OP_NOP;
 
                     ir_emit(program, instruction);
                 } else {
-                    do_generate_ir(program, node->content.while_statement.body);
+                    do_generate_ir(ctx, program, node->content.while_statement.body);
                 }
 
                 {
-                    main_pool_alloc(struct ir_instruction, instruction)
+                    struct ir_instruction * instruction = (struct ir_instruction *) memory_blob_pool_alloc(ctx->pool, sizeof(struct ir_instruction));
+                    memset(instruction, 0, sizeof(struct ir_instruction));
                     instruction->code = OP_JUMP;
                     instruction->op1 = start_of_loop_label;
 
@@ -197,7 +213,8 @@ void do_generate_ir(struct ir_program * program, const struct ast_node * node)
                 }
 
                 {
-                    main_pool_alloc(struct ir_instruction, instruction)
+                    struct ir_instruction * instruction = (struct ir_instruction *) memory_blob_pool_alloc(ctx->pool, sizeof(struct ir_instruction));
+                    memset(instruction, 0, sizeof(struct ir_instruction));
                     instruction->code = OP_LABEL;
                     instruction->op1 = end_of_loop_label;
 
@@ -207,35 +224,36 @@ void do_generate_ir(struct ir_program * program, const struct ast_node * node)
             break;
         case AST_NODE_KIND_VARIABLE:
             {
-                struct ir_operand * variable = find_variable_operand_by_symbol(node->content.variable);
+                struct ir_operand * variable = find_variable_operand_by_symbol(ctx, node->content.variable);
 
                 if (variable == NULL) {
-                    variable = alloc_operand();
+                    variable = alloc_operand(ctx);
                     variable->kind = OPERAND_KIND_VARIABLE;
                     variable->content.variable.symbol = node->content.variable;
-                    variable->content.variable.offset = current_func->result->content.function.local_vars_size;
+                    variable->content.variable.offset = ctx->current_func->result->content.function.local_vars_size;
                     variable->type = node->content.variable->type;
-                    current_func->result->content.function.local_vars_size += node->content.variable->type->size;
+                    ctx->current_func->result->content.function.local_vars_size += node->content.variable->type->size;
                 }
 
-                last_variable = variable;
+                ctx->last_variable = variable;
 
-                if (is_assign) {
+                if (ctx->is_assign) {
                     return;
                 }
 
-                main_pool_alloc(struct ir_instruction, instruction)
+                struct ir_instruction * instruction = (struct ir_instruction *) memory_blob_pool_alloc(ctx->pool, sizeof(struct ir_instruction));
+                memset(instruction, 0, sizeof(struct ir_instruction));
                 instruction->code = OP_LOAD;
 
                 instruction->op1 = variable;
 
-                instruction->result = new_temporary_operand();
+                instruction->result = new_temporary_operand(ctx);
 
                 ir_emit(program, instruction);
             }
             break;
         case AST_NODE_KIND_EXPRESSION_STATEMENT:
-            do_generate_ir(program, node->content.node);
+            do_generate_ir(ctx, program, node->content.node);
             break;
         case AST_NODE_KIND_CAST_EXPRESSION:
             {
@@ -249,19 +267,21 @@ void do_generate_ir(struct ir_program * program, const struct ast_node * node)
                     cclynx_fatal_error("ERROR: unsupported cast to '%s' yet!\n", type_stringify(node->type));
                 }
 
-                do_generate_ir(program, node->content.node);
+                do_generate_ir(ctx, program, node->content.node);
 
-                main_pool_alloc(struct ir_instruction, instruction)
+                struct ir_instruction * instruction = (struct ir_instruction *) memory_blob_pool_alloc(ctx->pool, sizeof(struct ir_instruction));
+                memset(instruction, 0, sizeof(struct ir_instruction));
                 instruction->code = cast_opcode;
                 instruction->op1 = program->instructions[program->position - 1]->result;
-                instruction->result = new_temporary_operand();
+                instruction->result = new_temporary_operand(ctx);
 
                 ir_emit(program, instruction);
             }
             break;
         case AST_NODE_KIND_ASSIGNMENT_EXPRESSION:
             {
-                main_pool_alloc(struct ir_instruction, instruction)
+                struct ir_instruction * instruction = (struct ir_instruction *) memory_blob_pool_alloc(ctx->pool, sizeof(struct ir_instruction));
+                memset(instruction, 0, sizeof(struct ir_instruction));
 
                 switch (node->content.assignment.type) {
                     case ASSIGNMENT_REGULAR:
@@ -271,15 +291,15 @@ void do_generate_ir(struct ir_program * program, const struct ast_node * node)
                         cclynx_fatal_error("ERROR: unknown assignment\n");
                 }
 
-                is_assign = 1;
+                ctx->is_assign = 1;
 
-                do_generate_ir(program, node->content.assignment.lhs);
+                do_generate_ir(ctx, program, node->content.assignment.lhs);
 
-                is_assign = 0;
+                ctx->is_assign = 0;
 
-                instruction->op1 = last_variable;
+                instruction->op1 = ctx->last_variable;
 
-                do_generate_ir(program, node->content.assignment.initializer);
+                do_generate_ir(ctx, program, node->content.assignment.initializer);
                 instruction->op2 = program->instructions[program->position - 1]->result;
 
                 ir_emit(program, instruction);
@@ -292,7 +312,8 @@ void do_generate_ir(struct ir_program * program, const struct ast_node * node)
         case AST_NODE_KIND_ADDITIVE_EXPRESSION:
         case AST_NODE_KIND_RELATIONAL_EXPRESSION:
             {
-                main_pool_alloc(struct ir_instruction, instruction)
+                struct ir_instruction * instruction = (struct ir_instruction *) memory_blob_pool_alloc(ctx->pool, sizeof(struct ir_instruction));
+                memset(instruction, 0, sizeof(struct ir_instruction));
 
                 switch (node->content.binary_expression.operation) {
                     case BINARY_OPERATION_MULTIPLY:
@@ -323,13 +344,13 @@ void do_generate_ir(struct ir_program * program, const struct ast_node * node)
                         cclynx_fatal_error("ERROR: unknown operation\n");
                 }
 
-                do_generate_ir(program, node->content.binary_expression.lhs);
+                do_generate_ir(ctx, program, node->content.binary_expression.lhs);
                 instruction->op1 = program->instructions[program->position - 1]->result;
 
-                do_generate_ir(program, node->content.binary_expression.rhs);
+                do_generate_ir(ctx, program, node->content.binary_expression.rhs);
                 instruction->op2 = program->instructions[program->position - 1]->result;
 
-                instruction->result = new_temporary_operand();
+                instruction->result = new_temporary_operand(ctx);
 
                 ir_emit(program, instruction);
             }
@@ -339,13 +360,14 @@ void do_generate_ir(struct ir_program * program, const struct ast_node * node)
                 struct ast_node_list * it = node->content.list;
 
                 if (it == NULL) {
-                    main_pool_alloc(struct ir_instruction, instruction)
+                    struct ir_instruction * instruction = (struct ir_instruction *) memory_blob_pool_alloc(ctx->pool, sizeof(struct ir_instruction));
+                    memset(instruction, 0, sizeof(struct ir_instruction));
                     instruction->code = OP_NOP;
 
                     ir_emit(program, instruction);
                 } else {
                     while (it != NULL) {
-                        do_generate_ir(program, it->node);
+                        do_generate_ir(ctx, program, it->node);
 
                         it = it->next;
                     }
@@ -354,12 +376,13 @@ void do_generate_ir(struct ir_program * program, const struct ast_node * node)
             break;
         case AST_NODE_KIND_RETURN_STATEMENT:
             {
-                main_pool_alloc(struct ir_instruction, instruction)
+                struct ir_instruction * instruction = (struct ir_instruction *) memory_blob_pool_alloc(ctx->pool, sizeof(struct ir_instruction));
+                memset(instruction, 0, sizeof(struct ir_instruction));
                 instruction->code = OP_RETURN;
-                instruction->result = current_func->result;
+                instruction->result = ctx->current_func->result;
 
                 if (node->content.node != NULL) {
-                    do_generate_ir(program, node->content.node);
+                    do_generate_ir(ctx, program, node->content.node);
                     instruction->op1 = program->instructions[program->position - 1]->result;
                 }
 
@@ -369,10 +392,12 @@ void do_generate_ir(struct ir_program * program, const struct ast_node * node)
         case AST_NODE_KIND_INTEGER_CONSTANT:
         case AST_NODE_KIND_FLOAT_CONSTANT:
             {
-                main_pool_alloc(struct ir_instruction, instruction)
+                struct ir_instruction * instruction = (struct ir_instruction *) memory_blob_pool_alloc(ctx->pool, sizeof(struct ir_instruction));
+                memset(instruction, 0, sizeof(struct ir_instruction));
                 instruction->code = OP_CONST;
 
-                main_pool_alloc(struct ir_operand, constant)
+                struct ir_operand * constant = (struct ir_operand *) memory_blob_pool_alloc(ctx->pool, sizeof(struct ir_operand));
+                memset(constant, 0, sizeof(struct ir_operand));
                 constant->type = node->type;
 
                 if (constant->type->kind == TYPE_KIND_INTEGER) {
@@ -384,7 +409,7 @@ void do_generate_ir(struct ir_program * program, const struct ast_node * node)
                 constant->kind = OPERAND_KIND_CONSTANT;
 
                 instruction->op1 = constant;
-                instruction->result = new_temporary_operand();
+                instruction->result = new_temporary_operand(ctx);
 
                 ir_emit(program, instruction);
             }
@@ -406,30 +431,34 @@ void ir_emit(struct ir_program * program, struct ir_instruction * instruction)
     program->instructions[program->position++] = instruction;
 }
 
-struct ir_operand * new_temporary_operand(void)
+struct ir_operand * new_temporary_operand(struct ir_context * ctx)
 {
-    main_pool_alloc(struct ir_operand, result)
-    result->content.temp_id = ++temp_id;
+    assert(ctx != NULL);
+    struct ir_operand * result = (struct ir_operand *) memory_blob_pool_alloc(ctx->pool, sizeof(struct ir_operand));
+    memset(result, 0, sizeof(struct ir_operand));
+    result->content.temp_id = ++ctx->temp_id;
     result->kind = OPERAND_KIND_TEMPORARY;
     return result;
 }
 
-struct ir_operand * alloc_operand(void)
+struct ir_operand * alloc_operand(struct ir_context * ctx)
 {
-    if (operand_pos >= MAX_OPERAND_COUNT) {
+    assert(ctx != NULL);
+    if (ctx->operand_pos >= IR_MAX_OPERAND_COUNT) {
         cclynx_fatal_error("ERROR: too many operands!\n");
     }
-    struct ir_operand * operand = &operands[operand_pos++];
+    struct ir_operand * operand = &ctx->operands[ctx->operand_pos++];
     memset(operand, 0, sizeof(struct ir_operand));
     return operand;
 }
 
-struct ir_operand * find_variable_operand_by_symbol(struct symbol * symbol)
+struct ir_operand * find_variable_operand_by_symbol(struct ir_context * ctx, struct symbol * symbol)
 {
+    assert(ctx != NULL);
     assert(symbol != NULL);
 
-    for (size_t i = 0; i < operand_pos; ++i) {
-        struct ir_operand * operand = &operands[i];
+    for (size_t i = 0; i < ctx->operand_pos; ++i) {
+        struct ir_operand * operand = &ctx->operands[i];
 
         if (operand->kind != OPERAND_KIND_VARIABLE)
             continue;
@@ -443,8 +472,9 @@ struct ir_operand * find_variable_operand_by_symbol(struct symbol * symbol)
     return NULL;
 }
 
-void ir_generate_condition(struct ir_program * program, struct ast_node * condition, struct ir_operand * jump_label)
+void ir_generate_condition(struct ir_context * ctx, struct ir_program * program, struct ast_node * condition, struct ir_operand * jump_label)
 {
+    assert(ctx != NULL);
     assert(program != NULL);
     assert(condition != NULL);
 
@@ -454,12 +484,13 @@ void ir_generate_condition(struct ir_program * program, struct ast_node * condit
         condition->kind == AST_NODE_KIND_RELATIONAL_EXPRESSION
         && condition->content.binary_expression.operation == BINARY_OPERATION_LESS_THAN
     ) {
-        do_generate_ir(program, condition->content.binary_expression.lhs);
+        do_generate_ir(ctx, program, condition->content.binary_expression.lhs);
         op1 = program->instructions[program->position - 1]->result;
-        do_generate_ir(program, condition->content.binary_expression.rhs);
+        do_generate_ir(ctx, program, condition->content.binary_expression.rhs);
         op2 = program->instructions[program->position - 1]->result;
 
-        main_pool_alloc(struct ir_instruction, instruction)
+        struct ir_instruction * instruction = (struct ir_instruction *) memory_blob_pool_alloc(ctx->pool, sizeof(struct ir_instruction));
+        memset(instruction, 0, sizeof(struct ir_instruction));
         instruction->code = OP_JUMP_IF_GREATER_OR_EQUAL;
         instruction->op1 = op1;
         instruction->op2 = op2;
@@ -470,12 +501,13 @@ void ir_generate_condition(struct ir_program * program, struct ast_node * condit
         condition->kind == AST_NODE_KIND_RELATIONAL_EXPRESSION
         && condition->content.binary_expression.operation == BINARY_OPERATION_GREATER_THAN
     ) {
-        do_generate_ir(program, condition->content.binary_expression.lhs);
+        do_generate_ir(ctx, program, condition->content.binary_expression.lhs);
         op1 = program->instructions[program->position - 1]->result;
-        do_generate_ir(program, condition->content.binary_expression.rhs);
+        do_generate_ir(ctx, program, condition->content.binary_expression.rhs);
         op2 = program->instructions[program->position - 1]->result;
 
-        main_pool_alloc(struct ir_instruction, instruction)
+        struct ir_instruction * instruction = (struct ir_instruction *) memory_blob_pool_alloc(ctx->pool, sizeof(struct ir_instruction));
+        memset(instruction, 0, sizeof(struct ir_instruction));
         instruction->code = OP_JUMP_IF_LESS_OR_EQUAL;
         instruction->op1 = op1;
         instruction->op2 = op2;
@@ -486,12 +518,13 @@ void ir_generate_condition(struct ir_program * program, struct ast_node * condit
         condition->kind == AST_NODE_KIND_EQUALITY_EXPRESSION
         && condition->content.binary_expression.operation == BINARY_OPERATION_EQUALITY
     ) {
-        do_generate_ir(program, condition->content.binary_expression.lhs);
+        do_generate_ir(ctx, program, condition->content.binary_expression.lhs);
         op1 = program->instructions[program->position - 1]->result;
-        do_generate_ir(program, condition->content.binary_expression.rhs);
+        do_generate_ir(ctx, program, condition->content.binary_expression.rhs);
         op2 = program->instructions[program->position - 1]->result;
 
-        main_pool_alloc(struct ir_instruction, instruction)
+        struct ir_instruction * instruction = (struct ir_instruction *) memory_blob_pool_alloc(ctx->pool, sizeof(struct ir_instruction));
+        memset(instruction, 0, sizeof(struct ir_instruction));
         instruction->code = OP_JUMP_IF_NOT_EQUAL;
         instruction->op1 = op1;
         instruction->op2 = op2;
@@ -502,12 +535,13 @@ void ir_generate_condition(struct ir_program * program, struct ast_node * condit
         condition->kind == AST_NODE_KIND_EQUALITY_EXPRESSION
         && condition->content.binary_expression.operation == BINARY_OPERATION_INEQUALITY
     ) {
-        do_generate_ir(program, condition->content.binary_expression.lhs);
+        do_generate_ir(ctx, program, condition->content.binary_expression.lhs);
         op1 = program->instructions[program->position - 1]->result;
-        do_generate_ir(program, condition->content.binary_expression.rhs);
+        do_generate_ir(ctx, program, condition->content.binary_expression.rhs);
         op2 = program->instructions[program->position - 1]->result;
 
-        main_pool_alloc(struct ir_instruction, instruction)
+        struct ir_instruction * instruction = (struct ir_instruction *) memory_blob_pool_alloc(ctx->pool, sizeof(struct ir_instruction));
+        memset(instruction, 0, sizeof(struct ir_instruction));
         instruction->code = OP_JUMP_IF_EQUAL;
         instruction->op1 = op1;
         instruction->op2 = op2;
@@ -515,9 +549,10 @@ void ir_generate_condition(struct ir_program * program, struct ast_node * condit
 
         ir_emit(program, instruction);
     } else {
-        do_generate_ir(program, condition);
+        do_generate_ir(ctx, program, condition);
 
-        main_pool_alloc(struct ir_instruction, instruction)
+        struct ir_instruction * instruction = (struct ir_instruction *) memory_blob_pool_alloc(ctx->pool, sizeof(struct ir_instruction));
+        memset(instruction, 0, sizeof(struct ir_instruction));
         instruction->code = OP_JUMP_IF_FALSE;
         instruction->op1 = program->instructions[program->position - 1]->result;
         instruction->op2 = jump_label;

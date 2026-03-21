@@ -85,10 +85,13 @@ int main(int argc, const char * argv[])
         goto cleanup;
     }
 
-    struct ir_program ir_program;
-    ir_program_init(&ir_program);
+    struct ir_context ir_ctx;
+    ir_context_init(&ir_ctx, &ctx.pool);
 
-    ir_program_generate(&ir_program, ast);
+    struct ir_program ir_program;
+    ir_program_init(&ir_program, &ctx.pool);
+
+    ir_program_generate(&ir_ctx, &ir_program, ast);
 
     if (output_stage == STAGE_IR) {
         print_ir_program(&ir_program, stdout);

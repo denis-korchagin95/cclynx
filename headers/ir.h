@@ -82,7 +82,24 @@ struct ir_program
     size_t capacity;
 };
 
-void ir_program_init(struct ir_program * program);
-void ir_program_generate(struct ir_program * program, const struct ast_node * ast);
+#define IR_MAX_OPERAND_COUNT (1024)
+
+struct memory_blob_pool;
+
+struct ir_context
+{
+    struct memory_blob_pool * pool;
+    unsigned long long int temp_id;
+    unsigned long long int label_id;
+    struct ir_operand * last_variable;
+    unsigned int is_assign;
+    struct ir_instruction * current_func;
+    struct ir_operand operands[IR_MAX_OPERAND_COUNT];
+    size_t operand_pos;
+};
+
+void ir_context_init(struct ir_context * ctx, struct memory_blob_pool * pool);
+void ir_program_init(struct ir_program * program, struct memory_blob_pool * pool);
+void ir_program_generate(struct ir_context * ctx, struct ir_program * program, const struct ast_node * ast);
 
 #endif /* CCLYNX_IR_H */
