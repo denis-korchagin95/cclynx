@@ -54,7 +54,7 @@ struct token * tokenizer_tokenize_file(struct tokenizer_context * ctx, FILE * fi
             break;
         }
 
-        struct token * token = (struct token *) memory_blob_pool_alloc(ctx->pool, sizeof(struct token));
+        struct token * token = memory_blob_pool_alloc(ctx->pool, sizeof(struct token));
         *token = temp;
         token->next = &eos_token;
         *next_token = token;

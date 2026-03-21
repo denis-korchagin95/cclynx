@@ -297,7 +297,7 @@ struct ast_node * parse_function_definition(struct parser_context * ctx)
         cclynx_fatal_error("ERROR: function '%s' already defined!\n", identifier->name);
     }
 
-    func_symbol = (struct symbol *) memory_blob_pool_alloc(ctx->pool, sizeof(struct symbol));
+    func_symbol = memory_blob_pool_alloc(ctx->pool, sizeof(struct symbol));
     memset(func_symbol, 0, sizeof(struct symbol));
     func_symbol->identifier = identifier;
     func_symbol->type = symbol->type;
@@ -717,7 +717,7 @@ void parser_init_context(struct parser_context * ctx, struct token * tokens, str
 
 struct ast_node * create_ast_node(struct parser_context * ctx, enum ast_node_kind kind)
 {
-    struct ast_node * node = (struct ast_node *) memory_blob_pool_alloc(ctx->pool, sizeof(struct ast_node));
+    struct ast_node * node = memory_blob_pool_alloc(ctx->pool, sizeof(struct ast_node));
     memset(node, 0, sizeof(struct ast_node));
     node->kind = kind;
     node->type = &type_void;

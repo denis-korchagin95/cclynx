@@ -47,7 +47,7 @@ void hashmap_insert(struct hashmap * map, const char * key, void * value)
     assert(key != NULL);
     unsigned int index = hashmap_hash(key) % map->capacity;
 
-    struct hashmap_entry * entry = (struct hashmap_entry *) memory_blob_pool_alloc(map->pool, sizeof(struct hashmap_entry));
+    struct hashmap_entry * entry = memory_blob_pool_alloc(map->pool, sizeof(struct hashmap_entry));
     memset(entry, 0, sizeof(struct hashmap_entry));
     entry->key = key;
     entry->value = value;

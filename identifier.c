@@ -49,10 +49,10 @@ struct identifier * identifier_insert(struct hashmap * identifier_table, struct 
     assert(identifier_table != NULL);
     assert(pool != NULL);
     assert(name != NULL);
-    struct identifier * identifier = (struct identifier *) memory_blob_pool_alloc(pool, sizeof(struct identifier));
+    struct identifier * identifier = memory_blob_pool_alloc(pool, sizeof(struct identifier));
     memset(identifier, 0, sizeof(struct identifier));
 
-    identifier->name = (char *) memory_blob_pool_alloc(pool, len + 1);
+    identifier->name = memory_blob_pool_alloc(pool, len + 1);
     strncpy(identifier->name, name, len);
     identifier->name[len] = '\0';
 
