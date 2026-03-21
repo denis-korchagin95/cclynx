@@ -53,10 +53,11 @@ int main(int argc, const char * argv[])
     struct cclynx_context ctx;
     cclynx_init(&ctx);
     init_keywords(&ctx.identifier_table, &ctx.pool);
-    tokenizer_init(&ctx.identifier_table, &ctx.pool);
+    struct tokenizer_context tokenizer_ctx;
+    tokenizer_init(&tokenizer_ctx, &ctx.identifier_table, &ctx.pool);
     init_symbols(&ctx.identifier_table, &ctx.pool);
 
-    struct token * tokens = tokenizer_tokenize_file(source);
+    struct token * tokens = tokenizer_tokenize_file(&tokenizer_ctx, source);
 
     fclose(source);
 

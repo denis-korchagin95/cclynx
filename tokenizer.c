@@ -11,39 +11,26 @@
 #include "identifier.h"
 #include "errors.h"
 
-#define MAX_CHAR_BUFFER_SIZE (4)
-#define MAX_IDENTIFIER_BUFFER_SIZE (512)
-#define MAX_NUMBER_BUFFER_SIZE (512)
 #define NUMBER_TABLE_SIZE (101)
-
-static struct hashmap number_table;
-static struct hashmap * identifier_table;
 
 
 struct token eos_token = {{0}, &eos_token, 0, TOKEN_KIND_EOS};
 
-static char char_buffer[MAX_CHAR_BUFFER_SIZE] = {0};
-static size_t char_buffer_pos = 0;
-
-static char identifier_buffer[MAX_IDENTIFIER_BUFFER_SIZE] = {0};
-static size_t identifier_buffer_pos = 0;
-
-static char number_buffer[MAX_NUMBER_BUFFER_SIZE] = {0};
-static size_t number_buffer_pos = 0;
-
-static int get_one_char(FILE * file);
-static void putback_one_char(int ch);
-static void read_identifier(FILE * file, struct token * token, int ch);
-static void read_number(FILE * file, struct token * token, int ch);
+static int get_one_char(struct tokenizer_context * ctx, FILE * file);
+static void putback_one_char(struct tokenizer_context * ctx, int ch);
+static void read_identifier(struct tokenizer_context * ctx, FILE * file, struct token * token, int ch);
+static void read_number(struct tokenizer_context * ctx, FILE * file, struct token * token, int ch);
 
 
-void tokenizer_init(struct hashmap * id_table, struct memory_blob_pool * pool)
+void tokenizer_init(struct tokenizer_context * ctx, struct hashmap * identifier_table, struct memory_blob_pool * pool)
 {
-    identifier_table = id_table;
-    hashmap_init(&number_table, NUMBER_TABLE_SIZE, pool);
+    memset(ctx, 0, sizeof(struct tokenizer_context));
+    ctx->pool = pool;
+    ctx->identifier_table = identifier_table;
+    hashmap_init(&ctx->number_table, NUMBER_TABLE_SIZE, pool);
 }
 
-struct token * tokenizer_tokenize_file(FILE * file)
+struct token * tokenizer_tokenize_file(struct tokenizer_context * ctx, FILE * file)
 {
     assert(file != NULL);
 
@@ -51,13 +38,14 @@ struct token * tokenizer_tokenize_file(FILE * file)
     struct token ** next_token = &tokens;
 
     for (;;) {
-        main_pool_alloc(struct token, token)
+        struct token * token = (struct token *) memory_blob_pool_alloc(ctx->pool, sizeof(struct token));
+        memset(token, 0, sizeof(struct token));
 
         token->next = (*next_token)->next;
         *next_token = token;
         next_token = &token->next;
 
-        tokenizer_get_one_token(file, token);
+        tokenizer_get_one_token(ctx, file, token);
 
         if (token->kind == (unsigned int)TOKEN_KIND_EOS) {
             break;
@@ -68,15 +56,15 @@ struct token * tokenizer_tokenize_file(FILE * file)
 }
 
 
-void tokenizer_get_one_token(FILE * file, struct token * token)
+void tokenizer_get_one_token(struct tokenizer_context * ctx, FILE * file, struct token * token)
 {
     assert(file != NULL);
     assert(token != NULL);
 
-    int ch = get_one_char(file);
+    int ch = get_one_char(ctx, file);
 
     while (isspace(ch)) {
-        ch = get_one_char(file);
+        ch = get_one_char(ctx, file);
     }
 
     if (ch == EOF) {
@@ -86,34 +74,34 @@ void tokenizer_get_one_token(FILE * file, struct token * token)
     }
 
     if (is_start_identifier_char(ch)) {
-        read_identifier(file, token, ch);
+        read_identifier(ctx, file, token, ch);
         return;
     }
 
     if (ch == '.') {
-        int next_char = get_one_char(file);
+        int next_char = get_one_char(ctx, file);
         if (isdigit(next_char)) {
-            putback_one_char(next_char);
-            read_number(file, token, ch);
+            putback_one_char(ctx, next_char);
+            read_number(ctx, file, token, ch);
             return;
         }
-        putback_one_char(next_char);
+        putback_one_char(ctx, next_char);
     }
 
     if (isdigit(ch)) {
-        read_number(file, token, ch);
+        read_number(ctx, file, token, ch);
         return;
     }
 
     switch (ch) {
         case '=':
             {
-                int next_char = get_one_char(file);
+                int next_char = get_one_char(ctx, file);
 
                 if (next_char == '=') {
                     token->kind = TOKEN_KIND_EQUAL_PUNCTUATOR;
                 } else {
-                    putback_one_char(next_char);
+                    putback_one_char(ctx, next_char);
 
                     token->kind = TOKEN_KIND_PUNCTUATOR;
                     token->content.ch = ch;
@@ -122,12 +110,12 @@ void tokenizer_get_one_token(FILE * file, struct token * token)
             break;
         case '!':
             {
-                int next_char = get_one_char(file);
+                int next_char = get_one_char(ctx, file);
 
                 if (next_char == '=') {
                     token->kind = TOKEN_KIND_NOT_EQUAL_PUNCTUATOR;
                 } else {
-                    putback_one_char(next_char);
+                    putback_one_char(ctx, next_char);
 
                     token->kind = TOKEN_KIND_PUNCTUATOR;
                     token->content.ch = ch;
@@ -154,42 +142,42 @@ void tokenizer_get_one_token(FILE * file, struct token * token)
     }
 }
 
-void read_number(FILE * file, struct token * token, int ch)
+void read_number(struct tokenizer_context * ctx, FILE * file, struct token * token, int ch)
 {
     assert(file != NULL);
     assert(token != NULL);
 
     size_t dot_count = 0;
-    number_buffer_pos = 0;
+    ctx->number_buffer_pos = 0;
     for (;;) {
-        if (number_buffer_pos >= MAX_NUMBER_BUFFER_SIZE - 1) {
+        if (ctx->number_buffer_pos >= TOKENIZER_MAX_NUMBER_BUFFER_SIZE - 1) {
             cclynx_fatal_error("ERROR: too long number!\n");
         }
 
         if (ch == '.')
             ++dot_count;
 
-        number_buffer[number_buffer_pos++] = ch;
+        ctx->number_buffer[ctx->number_buffer_pos++] = ch;
 
-        ch = get_one_char(file);
+        ch = get_one_char(ctx, file);
 
         if (!isdigit(ch) && ch != '.') {
-            putback_one_char(ch);
+            putback_one_char(ctx, ch);
             break;
         }
     }
-    number_buffer[number_buffer_pos] = '\0';
+    ctx->number_buffer[ctx->number_buffer_pos] = '\0';
 
     if (dot_count > 1) {
-        cclynx_fatal_error("ERROR: incorrect number '%s'\n", number_buffer);
+        cclynx_fatal_error("ERROR: incorrect number '%s'\n", ctx->number_buffer);
     }
 
-    char * number = hashmap_find(&number_table, number_buffer);
+    char * number = hashmap_find(&ctx->number_table, ctx->number_buffer);
 
     if (number == NULL) {
-        number = memory_blob_pool_alloc(main_pool, number_buffer_pos + 1);
-        memcpy(number, number_buffer, number_buffer_pos + 1);
-        hashmap_insert(&number_table, number, number);
+        number = memory_blob_pool_alloc(ctx->pool, ctx->number_buffer_pos + 1);
+        memcpy(number, ctx->number_buffer, ctx->number_buffer_pos + 1);
+        hashmap_insert(&ctx->number_table, number, number);
     }
 
     token->kind = TOKEN_KIND_NUMBER;
@@ -201,50 +189,50 @@ void read_number(FILE * file, struct token * token, int ch)
 
 }
 
-void read_identifier(FILE * file, struct token * token, int ch)
+void read_identifier(struct tokenizer_context * ctx, FILE * file, struct token * token, int ch)
 {
     assert(file != NULL);
     assert(token != NULL);
 
-    identifier_buffer_pos = 0;
+    ctx->identifier_buffer_pos = 0;
 
     do {
-        identifier_buffer[identifier_buffer_pos++] = ch;
-        ch = get_one_char(file);
+        ctx->identifier_buffer[ctx->identifier_buffer_pos++] = ch;
+        ch = get_one_char(ctx, file);
     }
-    while(ch != EOF && (is_identifier_char(ch) || isdigit(ch)) && identifier_buffer_pos < MAX_IDENTIFIER_BUFFER_SIZE - 1);
-    identifier_buffer[identifier_buffer_pos] = '\0';
-    putback_one_char(ch);
+    while(ch != EOF && (is_identifier_char(ch) || isdigit(ch)) && ctx->identifier_buffer_pos < TOKENIZER_MAX_IDENTIFIER_BUFFER_SIZE - 1);
+    ctx->identifier_buffer[ctx->identifier_buffer_pos] = '\0';
+    putback_one_char(ctx, ch);
 
-    if(identifier_buffer_pos >= MAX_IDENTIFIER_BUFFER_SIZE - 1) {
+    if(ctx->identifier_buffer_pos >= TOKENIZER_MAX_IDENTIFIER_BUFFER_SIZE - 1) {
         fprintf(stderr, "warning: identifier too long!\n");
         while(is_identifier_char(ch))
-            ch = get_one_char(file);
-        putback_one_char(ch);
+            ch = get_one_char(ctx, file);
+        putback_one_char(ctx, ch);
     }
 
-    struct identifier * identifier = identifier_lookup(identifier_table, identifier_buffer);
+    struct identifier * identifier = identifier_lookup(ctx->identifier_table, ctx->identifier_buffer);
 
     if (identifier == NULL) {
-        identifier = identifier_insert(identifier_table, identifier_table->pool, identifier_buffer, identifier_buffer_pos);
+        identifier = identifier_insert(ctx->identifier_table, ctx->pool, ctx->identifier_buffer, ctx->identifier_buffer_pos);
     }
 
     token->kind = TOKEN_KIND_IDENTIFIER;
     token->content.identifier = identifier;
 }
 
-int get_one_char(FILE * file)
+int get_one_char(struct tokenizer_context * ctx, FILE * file)
 {
-    if (char_buffer_pos > 0) {
-        return char_buffer[--char_buffer_pos];
+    if (ctx->char_buffer_pos > 0) {
+        return ctx->char_buffer[--ctx->char_buffer_pos];
     }
 
     return fgetc(file);
 }
 
-void putback_one_char(int ch)
+void putback_one_char(struct tokenizer_context * ctx, int ch)
 {
-    assert(char_buffer_pos < MAX_CHAR_BUFFER_SIZE);
+    assert(ctx->char_buffer_pos < TOKENIZER_MAX_CHAR_BUFFER_SIZE);
     if (ch != EOF)
-        char_buffer[char_buffer_pos++] = ch;
+        ctx->char_buffer[ctx->char_buffer_pos++] = ch;
 }

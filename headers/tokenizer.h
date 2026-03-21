@@ -3,6 +3,8 @@
 
 #include <stdio.h>
 
+#include "hashmap.h"
+
 #define is_upper_char(ch) ((ch) >= 'A' && (ch) <= 'Z')
 #define is_lower_char(ch) ((ch) >= 'a' && (ch) <= 'z')
 #define is_char(ch) (is_lower_char(ch) || is_upper_char(ch))
@@ -40,11 +42,26 @@ struct token
 
 extern struct token eos_token;
 
-struct hashmap;
+#define TOKENIZER_MAX_CHAR_BUFFER_SIZE (4)
+#define TOKENIZER_MAX_IDENTIFIER_BUFFER_SIZE (512)
+#define TOKENIZER_MAX_NUMBER_BUFFER_SIZE (512)
+
 struct memory_blob_pool;
 
-void tokenizer_init(struct hashmap * identifier_table, struct memory_blob_pool * pool);
-void tokenizer_get_one_token(FILE * file, struct token * token);
-struct token * tokenizer_tokenize_file(FILE * file);
+struct tokenizer_context {
+    struct memory_blob_pool * pool;
+    struct hashmap * identifier_table;
+    struct hashmap number_table;
+    char char_buffer[TOKENIZER_MAX_CHAR_BUFFER_SIZE];
+    size_t char_buffer_pos;
+    char identifier_buffer[TOKENIZER_MAX_IDENTIFIER_BUFFER_SIZE];
+    size_t identifier_buffer_pos;
+    char number_buffer[TOKENIZER_MAX_NUMBER_BUFFER_SIZE];
+    size_t number_buffer_pos;
+};
+
+void tokenizer_init(struct tokenizer_context * ctx, struct hashmap * identifier_table, struct memory_blob_pool * pool);
+void tokenizer_get_one_token(struct tokenizer_context * ctx, FILE * file, struct token * token);
+struct token * tokenizer_tokenize_file(struct tokenizer_context * ctx, FILE * file);
 
 #endif /* CCLYNX_TOKENIZER_H */
