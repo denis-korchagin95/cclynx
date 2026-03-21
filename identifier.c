@@ -1,3 +1,5 @@
+#include <assert.h>
+#include <memory.h>
 #include <string.h>
 
 #include "identifier.h"
@@ -5,8 +7,6 @@
 #include "allocator.h"
 
 #define IDENTIFIER_TABLE_SIZE  (101)
-
-static struct hashmap identifier_table;
 
 static struct keyword
 {
@@ -21,42 +21,53 @@ static struct keyword
 };
 
 
-struct identifier * identifier_create(const char * name)
+struct identifier * identifier_create(struct hashmap * identifier_table, struct memory_blob_pool * pool, const char * name)
 {
-    struct identifier * existing = hashmap_find(&identifier_table, name);
+    assert(identifier_table != NULL);
+    assert(pool != NULL);
+    assert(name != NULL);
+    struct identifier * existing = hashmap_find(identifier_table, name);
 
     if (existing != NULL) {
         return existing;
     }
 
-    return identifier_insert(name, strlen(name));
+    return identifier_insert(identifier_table, pool, name, strlen(name));
 }
 
-struct identifier * identifier_lookup(const char * name)
+struct identifier * identifier_lookup(struct hashmap * identifier_table, const char * name)
 {
-    return hashmap_find(&identifier_table, name);
+    assert(identifier_table != NULL);
+    assert(name != NULL);
+    return hashmap_find(identifier_table, name);
 }
 
-struct identifier * identifier_insert(const char * name, unsigned int len)
+struct identifier * identifier_insert(struct hashmap * identifier_table, struct memory_blob_pool * pool, const char * name, unsigned int len)
 {
-    main_pool_alloc(struct identifier, identifier)
+    assert(identifier_table != NULL);
+    assert(pool != NULL);
+    assert(name != NULL);
+    struct identifier * identifier = (struct identifier *) memory_blob_pool_alloc(pool, sizeof(struct identifier));
+    memset(identifier, 0, sizeof(struct identifier));
 
-    identifier->name = (char *) memory_blob_pool_alloc(&main_pool, len + 1);
+    identifier->name = (char *) memory_blob_pool_alloc(pool, len + 1);
     strncpy(identifier->name, name, len);
     identifier->name[len] = '\0';
 
-    hashmap_insert(&identifier_table, identifier->name, identifier);
+    hashmap_insert(identifier_table, identifier->name, identifier);
     return identifier;
 }
 
-void init_keywords(void)
+void init_keywords(struct hashmap * identifier_table, struct memory_blob_pool * pool)
 {
-    hashmap_init(&identifier_table, IDENTIFIER_TABLE_SIZE);
+    assert(identifier_table != NULL);
+    assert(pool != NULL);
+    hashmap_init(identifier_table, IDENTIFIER_TABLE_SIZE, pool);
 
     for (size_t i = 0; i < sizeof(keywords) / sizeof(keywords[0]); ++i) {
         const struct keyword * keyword = &keywords[i];
 
-        struct identifier * identifier = identifier_create(keyword->name);
+        struct identifier * identifier = identifier_create(identifier_table, pool, keyword->name);
         identifier->is_keyword = 1;
     }
 }

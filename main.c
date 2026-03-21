@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "allocator.h"
+#include "cclynx.h"
 #include "errors.h"
 #include "identifier.h"
 #include "symbol.h"
@@ -50,17 +50,19 @@ int main(int argc, const char * argv[])
         cclynx_fatal_error("Could not open file %s\n", source_filename);
     }
 
-    memory_blob_pool_init(&main_pool, DEFAULT_MEMORY_BLOB_SIZE, DEFAULT_MEMORY_BLOB_ALIGNMENT);
-    init_keywords();
-    tokenizer_init();
-    init_symbols();
+    struct cclynx_context ctx;
+    cclynx_init(&ctx);
+    init_keywords(&ctx.identifier_table, &ctx.pool);
+    struct tokenizer_context tokenizer_ctx;
+    tokenizer_init(&tokenizer_ctx, &ctx.identifier_table, &ctx.pool);
+    init_symbols(&ctx.identifier_table, &ctx.pool);
 
-    struct token * tokens = tokenizer_tokenize_file(source);
+    struct token * tokens = tokenizer_tokenize_file(&tokenizer_ctx, source);
 
     fclose(source);
 
-    struct parser_context context;
-    parser_init_context(&context, tokens);
+    struct parser_context parser_ctx;
+    parser_init_context(&parser_ctx, tokens, &ctx.pool);
 
     if (output_stage == STAGE_TOKENS) {
         struct token * it = tokens;
@@ -68,34 +70,40 @@ int main(int argc, const char * argv[])
             print_token(it, stdout);
             it = it->next;
         }
-        exit(0);
+        goto cleanup;
     }
 
-    struct ast_node * ast = parser_parse(&context);
+    struct ast_node * ast = parser_parse(&parser_ctx);
 
     if (output_stage == STAGE_AST) {
         print_ast(ast, stdout);
-        exit(0);
+        goto cleanup;
     }
 
     if (output_stage == STAGE_AST_DOT) {
         print_ast_dot(ast, stdout);
-        exit(0);
+        goto cleanup;
     }
 
-    struct ir_program ir_program;
-    ir_program_init(&ir_program);
+    struct ir_context ir_ctx;
+    ir_context_init(&ir_ctx, &ctx.pool);
 
-    ir_program_generate(&ir_program, ast);
+    struct ir_program ir_program;
+    ir_program_init(&ir_program, &ctx.pool);
+
+    ir_program_generate(&ir_ctx, &ir_program, ast);
 
     if (output_stage == STAGE_IR) {
         print_ir_program(&ir_program, stdout);
-        exit(0);
+        goto cleanup;
     }
 
-    target_arm64_generate(&ir_program, stdout);
+    struct codegen_context codegen_ctx;
+    codegen_context_init(&codegen_ctx);
+    target_arm64_generate(&codegen_ctx, &ir_program, stdout);
 
-    memory_blob_pool_free(&main_pool, false);
+cleanup:
+    cclynx_free(&ctx);
 
     return 0;
 }

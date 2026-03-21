@@ -7,9 +7,6 @@
 #include "util.h"
 
 
-struct memory_blob_pool main_pool = {0};
-
-
 struct memory_blob * alloc_new_blob(size_t size)
 {
     struct memory_blob * blob = malloc(sizeof(struct memory_blob));

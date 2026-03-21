@@ -7,6 +7,4 @@ struct scope
     struct symbol_list * symbols;
 };
 
-extern struct scope global_scope;
-
 #endif /* CCLYNX_SCOPE_H */

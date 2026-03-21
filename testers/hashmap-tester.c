@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "allocator.h"
+#include "cclynx.h"
 #include "hashmap.h"
 
 #define MAX_LINE_SIZE (1024)
@@ -12,7 +12,7 @@ static struct hashmap maps[MAX_MAPS];
 static int map_count = 0;
 
 
-static void process_command(const char * line)
+static void process_command(const char * line, struct memory_blob_pool * pool)
 {
     char cmd[64] = {0};
     sscanf(line, "%63s", cmd);
@@ -26,7 +26,7 @@ static void process_command(const char * line)
             exit(1);
         }
 
-        hashmap_init(&maps[map_count], (size_t)capacity);
+        hashmap_init(&maps[map_count], (size_t)capacity, pool);
         printf("map%d = init(%d)\n", map_count, capacity);
         ++map_count;
         return;
@@ -38,10 +38,10 @@ static void process_command(const char * line)
         char value[256] = {0};
         sscanf(line, "insert %d %255s %255s", &map_id, key, value);
 
-        char * stored_key = memory_blob_pool_alloc(&main_pool, strlen(key) + 1);
+        char * stored_key = memory_blob_pool_alloc(pool, strlen(key) + 1);
         strcpy(stored_key, key);
 
-        char * stored_value = memory_blob_pool_alloc(&main_pool, strlen(value) + 1);
+        char * stored_value = memory_blob_pool_alloc(pool, strlen(value) + 1);
         strcpy(stored_value, value);
 
         hashmap_insert(&maps[map_id], stored_key, stored_value);
@@ -89,7 +89,8 @@ int main(const int argc, const char * argv[])
         exit(1);
     }
 
-    memory_blob_pool_init(&main_pool, DEFAULT_MEMORY_BLOB_SIZE, DEFAULT_MEMORY_BLOB_ALIGNMENT);
+    struct cclynx_context ctx;
+    cclynx_init(&ctx);
 
     char line[MAX_LINE_SIZE];
     while (fgets(line, MAX_LINE_SIZE, file) != NULL) {
@@ -102,10 +103,10 @@ int main(const int argc, const char * argv[])
             continue;
         }
 
-        process_command(line);
+        process_command(line, &ctx.pool);
     }
 
-    memory_blob_pool_free(&main_pool, false);
+    cclynx_free(&ctx);
 
     fclose(file);
 
