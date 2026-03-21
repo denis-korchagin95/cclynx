@@ -1,3 +1,20 @@
+@test("It should parse main function with void argument list")
+@given("file")
+int main(void) {
+    return 42;
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stdout")
+FunctionDefinition: 'main' {type: 'int'} <no-args>
+|
++-> CompoundStatement
+    |
+    +-> ReturnStatement
+        |
+        +-> IntegerConstant: '42' {type: 'int'}
+
+@endtest
+
 @test("It should parse main function (with basic expression)")
 @given("file")
 int main() {
@@ -5,7 +22,7 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-FunctionDefinition: 'main' {type: 'int'}
+FunctionDefinition: 'main' {type: 'int'} <unspecified-args>
 |
 +-> CompoundStatement
     |
@@ -27,7 +44,7 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-FunctionDefinition: 'main' {type: 'int'}
+FunctionDefinition: 'main' {type: 'int'} <unspecified-args>
 |
 +-> CompoundStatement
     |
@@ -44,7 +61,7 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-FunctionDefinition: 'main' {type: 'int'}
+FunctionDefinition: 'main' {type: 'int'} <unspecified-args>
 |
 +-> CompoundStatement
     |
@@ -61,7 +78,7 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-FunctionDefinition: 'main' {type: 'int'}
+FunctionDefinition: 'main' {type: 'int'} <unspecified-args>
 |
 +-> CompoundStatement
     |
@@ -78,7 +95,7 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-FunctionDefinition: 'main' {type: 'int'}
+FunctionDefinition: 'main' {type: 'int'} <unspecified-args>
 |
 +-> CompoundStatement
     |

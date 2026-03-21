@@ -275,7 +275,18 @@ struct ast_node * parse_function_definition(struct parser_context * ctx)
         cclynx_fatal_error("ERROR: expected '('!\n");
     }
 
+    int argument_presence = ARGUMENT_PRESENCE_UNSPECIFIED;
+
     current_token = parser_get_token(ctx);
+
+    if (
+        current_token->kind == TOKEN_KIND_IDENTIFIER
+        && current_token->content.identifier->is_keyword
+        && strcmp("void", current_token->content.identifier->name) == 0
+    ) {
+        argument_presence = ARGUMENT_PRESENCE_VOID;
+        current_token = parser_get_token(ctx);
+    }
 
     if (!(current_token->kind == TOKEN_KIND_PUNCTUATOR && current_token->content.ch == ')')) {
         cclynx_fatal_error("ERROR: expected ')'!\n");
@@ -286,6 +297,7 @@ struct ast_node * parse_function_definition(struct parser_context * ctx)
     struct ast_node * function_definition = create_ast_node(ctx, AST_NODE_KIND_FUNCTION_DEFINITION);
     function_definition->content.function_definition.name = identifier;
     function_definition->content.function_definition.body = compound_statement;
+    function_definition->content.function_definition.argument_presence = argument_presence;
     function_definition->type = symbol->type;
 
     return function_definition;

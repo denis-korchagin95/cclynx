@@ -9,7 +9,7 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-FunctionDefinition: 'main' {type: 'int'}
+FunctionDefinition: 'main' {type: 'int'} <unspecified-args>
 |
 +-> CompoundStatement
     |
@@ -52,7 +52,7 @@ float test() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-FunctionDefinition: 'test' {type: 'float'}
+FunctionDefinition: 'test' {type: 'float'} <unspecified-args>
 |
 +-> CompoundStatement
     |

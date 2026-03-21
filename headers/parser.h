@@ -73,6 +73,10 @@ struct ast_node
         {
             struct identifier * name;
             struct ast_node * body;
+            enum {
+                ARGUMENT_PRESENCE_UNSPECIFIED = 0,
+                ARGUMENT_PRESENCE_VOID,
+            } argument_presence;
         } function_definition;
         struct assignment {
             enum assignment_type type;

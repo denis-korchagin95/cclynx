@@ -194,7 +194,8 @@ void do_print_ast(const struct ast_node * ast, FILE * file, int depth, unsigned 
             break;
         case AST_NODE_KIND_FUNCTION_DEFINITION:
             {
-                fprintf(file, "FunctionDefinition: '%s' {type: '%s'}\n", ast->content.function_definition.name->name, type_stringify(ast->type));
+                const char * args = ast->content.function_definition.argument_presence == ARGUMENT_PRESENCE_VOID ? "<no-args>" : "<unspecified-args>";
+                fprintf(file, "FunctionDefinition: '%s' {type: '%s'} %s\n", ast->content.function_definition.name->name, type_stringify(ast->type), args);
                 if (ast->content.function_definition.body != NULL)
                     do_print_ast(ast->content.function_definition.body, file, depth + 1, ancestors_info, NULL);
             }
@@ -234,7 +235,10 @@ int do_print_ast_dot(const struct ast_node * ast, FILE * file, int next_id)
 
     switch (ast->kind) {
         case AST_NODE_KIND_FUNCTION_DEFINITION:
-            fprintf(file, "    n%d [label=\"FunctionDefinition\\n'%s' : %s\"];\n", id, ast->content.function_definition.name->name, type_stringify(ast->type));
+            {
+                const char * args = ast->content.function_definition.argument_presence == ARGUMENT_PRESENCE_VOID ? "no-args" : "unspecified-args";
+                fprintf(file, "    n%d [label=\"FunctionDefinition\\n'%s' : %s\\n%s\"];\n", id, ast->content.function_definition.name->name, type_stringify(ast->type), args);
+            }
             if (ast->content.function_definition.body != NULL) {
                 int child_id = next_id;
                 next_id = do_print_ast_dot(ast->content.function_definition.body, file, next_id);

@@ -14,6 +14,7 @@ static struct keyword
 } keywords[] = {
     {"int"},
     {"float"},
+    {"void"},
     {"return"},
     {"while"},
     {"if"},

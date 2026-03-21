@@ -16,6 +16,7 @@ static struct builtin_symbol
 } builtin_symbols[] = {
     {"int", SYMBOL_KIND_TYPE_SPECIFIER, &type_integer},
     {"float", SYMBOL_KIND_TYPE_SPECIFIER, &type_float},
+    {"void", SYMBOL_KIND_TYPE_SPECIFIER, &type_void},
 };
 
 void init_symbols(struct hashmap * identifier_table, struct memory_blob_pool * pool)
