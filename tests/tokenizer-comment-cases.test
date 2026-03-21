@@ -1,0 +1,88 @@
+@test("It should skip a single-line comment")
+@given("file")
+int main() { // this is a comment
+return 42;
+}
+@whenRun("./bin/cclynx", args="--emit-tokens")
+@expectOutput("stdout")
+<TOKEN_KEYWORD 'int'>
+<TOKEN_IDENTIFIER 'main'>
+<TOKEN_PUNCTUATOR '('>
+<TOKEN_PUNCTUATOR ')'>
+<TOKEN_PUNCTUATOR '{'>
+<TOKEN_KEYWORD 'return'>
+<TOKEN_NUMBER '42'>
+<TOKEN_PUNCTUATOR ';'>
+<TOKEN_PUNCTUATOR '}'>
+<TOKEN_EOS>
+
+@endtest
+
+@test("It should skip a multi-line comment")
+@given("file")
+int main() { /* this is
+a multi-line
+comment */ return 42; }
+@whenRun("./bin/cclynx", args="--emit-tokens")
+@expectOutput("stdout")
+<TOKEN_KEYWORD 'int'>
+<TOKEN_IDENTIFIER 'main'>
+<TOKEN_PUNCTUATOR '('>
+<TOKEN_PUNCTUATOR ')'>
+<TOKEN_PUNCTUATOR '{'>
+<TOKEN_KEYWORD 'return'>
+<TOKEN_NUMBER '42'>
+<TOKEN_PUNCTUATOR ';'>
+<TOKEN_PUNCTUATOR '}'>
+<TOKEN_EOS>
+
+@endtest
+
+@test("It should not support nested multi-line comments")
+@given("file")
+int main() { /* /* */ * / return 42; }
+@whenRun("./bin/cclynx", args="--emit-tokens")
+@expectOutput("stdout")
+<TOKEN_KEYWORD 'int'>
+<TOKEN_IDENTIFIER 'main'>
+<TOKEN_PUNCTUATOR '('>
+<TOKEN_PUNCTUATOR ')'>
+<TOKEN_PUNCTUATOR '{'>
+<TOKEN_PUNCTUATOR '*'>
+<TOKEN_PUNCTUATOR '/'>
+<TOKEN_KEYWORD 'return'>
+<TOKEN_NUMBER '42'>
+<TOKEN_PUNCTUATOR ';'>
+<TOKEN_PUNCTUATOR '}'>
+<TOKEN_EOS>
+
+@endtest
+
+@test("It should raise an error on unterminated multi-line comment")
+@given("file")
+int main() { /* unterminated
+@whenRun("./bin/cclynx", args="--emit-tokens")
+@expectOutput("stderr")
+ERROR: unterminated comment
+
+@endtest
+
+@test("It should tokenize division operator when slash is not followed by slash or star")
+@given("file")
+int main() { return 10 / 2; }
+@whenRun("./bin/cclynx", args="--emit-tokens")
+@expectOutput("stdout")
+<TOKEN_KEYWORD 'int'>
+<TOKEN_IDENTIFIER 'main'>
+<TOKEN_PUNCTUATOR '('>
+<TOKEN_PUNCTUATOR ')'>
+<TOKEN_PUNCTUATOR '{'>
+<TOKEN_KEYWORD 'return'>
+<TOKEN_NUMBER '10'>
+<TOKEN_PUNCTUATOR '/'>
+<TOKEN_NUMBER '2'>
+<TOKEN_PUNCTUATOR ';'>
+<TOKEN_PUNCTUATOR '}'>
+<TOKEN_EOS>
+
+@endtest

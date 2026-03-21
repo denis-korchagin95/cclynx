@@ -20,6 +20,8 @@ static int get_one_char(struct tokenizer_context * ctx, FILE * file);
 static void putback_one_char(struct tokenizer_context * ctx, int ch);
 static void read_identifier(struct tokenizer_context * ctx, FILE * file, struct token * token, int ch);
 static void read_number(struct tokenizer_context * ctx, FILE * file, struct token * token, int ch);
+static void skip_single_line_comment(struct tokenizer_context * ctx, FILE * file);
+static void skip_multi_line_comment(struct tokenizer_context * ctx, FILE * file);
 
 
 void tokenizer_init(struct tokenizer_context * ctx, struct hashmap * identifier_table, struct memory_blob_pool * pool)
@@ -66,84 +68,106 @@ void tokenizer_get_one_token(struct tokenizer_context * ctx, FILE * file, struct
     assert(file != NULL);
     assert(token != NULL);
 
-    int ch = get_one_char(ctx, file);
+    for (;;) {
+        int ch = get_one_char(ctx, file);
 
-    while (isspace(ch)) {
-        ch = get_one_char(ctx, file);
-    }
+        while (isspace(ch)) {
+            ch = get_one_char(ctx, file);
+        }
 
-    if (ch == EOF) {
-        token->kind = TOKEN_KIND_EOS;
-        token->content.ch = EOF;
-        return;
-    }
+        if (ch == EOF) {
+            token->kind = TOKEN_KIND_EOS;
+            token->content.ch = EOF;
+            return;
+        }
 
-    if (is_start_identifier_char(ch)) {
-        read_identifier(ctx, file, token, ch);
-        return;
-    }
+        if (ch == '/') {
+            int next_char = get_one_char(ctx, file);
 
-    if (ch == '.') {
-        int next_char = get_one_char(ctx, file);
-        if (isdigit(next_char)) {
+            if (next_char == '/') {
+                skip_single_line_comment(ctx, file);
+                continue;
+            }
+
+            if (next_char == '*') {
+                skip_multi_line_comment(ctx, file);
+                continue;
+            }
+
             putback_one_char(ctx, next_char);
+            token->kind = TOKEN_KIND_PUNCTUATOR;
+            token->content.ch = ch;
+            return;
+        }
+
+        if (is_start_identifier_char(ch)) {
+            read_identifier(ctx, file, token, ch);
+            return;
+        }
+
+        if (ch == '.') {
+            int next_char = get_one_char(ctx, file);
+            if (isdigit(next_char)) {
+                putback_one_char(ctx, next_char);
+                read_number(ctx, file, token, ch);
+                return;
+            }
+            putback_one_char(ctx, next_char);
+        }
+
+        if (isdigit(ch)) {
             read_number(ctx, file, token, ch);
             return;
         }
-        putback_one_char(ctx, next_char);
-    }
 
-    if (isdigit(ch)) {
-        read_number(ctx, file, token, ch);
+        switch (ch) {
+            case '=':
+                {
+                    int next_char = get_one_char(ctx, file);
+
+                    if (next_char == '=') {
+                        token->kind = TOKEN_KIND_EQUAL_PUNCTUATOR;
+                    } else {
+                        putback_one_char(ctx, next_char);
+
+                        token->kind = TOKEN_KIND_PUNCTUATOR;
+                        token->content.ch = ch;
+                    }
+                }
+                break;
+            case '!':
+                {
+                    int next_char = get_one_char(ctx, file);
+
+                    if (next_char == '=') {
+                        token->kind = TOKEN_KIND_NOT_EQUAL_PUNCTUATOR;
+                    } else {
+                        putback_one_char(ctx, next_char);
+
+                        token->kind = TOKEN_KIND_PUNCTUATOR;
+                        token->content.ch = ch;
+                    }
+                }
+                break;
+            case '+':
+            case '-':
+            case '*':
+            case '(':
+            case ')':
+            case '{':
+            case '}':
+            case ';':
+            case '>':
+            case '<':
+                token->kind = TOKEN_KIND_PUNCTUATOR;
+                token->content.ch = ch;
+                break;
+            default:
+                token->kind = TOKEN_KIND_UNKNOWN_CHARACTER;
+                token->content.ch = ch;
+        }
+
         return;
-    }
-
-    switch (ch) {
-        case '=':
-            {
-                int next_char = get_one_char(ctx, file);
-
-                if (next_char == '=') {
-                    token->kind = TOKEN_KIND_EQUAL_PUNCTUATOR;
-                } else {
-                    putback_one_char(ctx, next_char);
-
-                    token->kind = TOKEN_KIND_PUNCTUATOR;
-                    token->content.ch = ch;
-                }
-            }
-            break;
-        case '!':
-            {
-                int next_char = get_one_char(ctx, file);
-
-                if (next_char == '=') {
-                    token->kind = TOKEN_KIND_NOT_EQUAL_PUNCTUATOR;
-                } else {
-                    putback_one_char(ctx, next_char);
-
-                    token->kind = TOKEN_KIND_PUNCTUATOR;
-                    token->content.ch = ch;
-                }
-            }
-            break;
-        case '+':
-        case '-':
-        case '*':
-        case '/':
-        case '(':
-        case ')':
-        case '{':
-        case '}':
-        case ';':
-        case '>':
-        case '<':
-            token->kind = TOKEN_KIND_PUNCTUATOR;
-            token->content.ch = ch;
-            break;
-        default:
-            token->kind = TOKEN_KIND_UNKNOWN_CHARACTER;
-            token->content.ch = ch;
     }
 }
 
@@ -226,6 +250,35 @@ void read_identifier(struct tokenizer_context * ctx, FILE * file, struct token *
 
     token->kind = TOKEN_KIND_IDENTIFIER;
     token->content.identifier = identifier;
+}
+
+void skip_single_line_comment(struct tokenizer_context * ctx, FILE * file)
+{
+    assert(ctx != NULL);
+    int ch;
+    do {
+        ch = get_one_char(ctx, file);
+    } while (ch != '\n' && ch != EOF);
+}
+
+void skip_multi_line_comment(struct tokenizer_context * ctx, FILE * file)
+{
+    assert(ctx != NULL);
+    for (;;) {
+        int ch = get_one_char(ctx, file);
+
+        if (ch == EOF) {
+            cclynx_fatal_error("ERROR: unterminated comment\n");
+        }
+
+        if (ch == '*') {
+            int next = get_one_char(ctx, file);
+            if (next == '/') {
+                return;
+            }
+            putback_one_char(ctx, next);
+        }
+    }
 }
 
 int get_one_char(struct tokenizer_context * ctx, FILE * file)
