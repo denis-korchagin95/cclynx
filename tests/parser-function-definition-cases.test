@@ -1,11 +1,11 @@
 @test("It should parse main function with void argument list")
-@given("file")
+@given("file", filename="func_1.c")
 int main(void) {
     return 42;
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-TranslationUnit
+TranslationUnit: 'func_1.c'
 |
 +-> FunctionDefinition: 'main' {type: 'int'} <no-parameters>
     |
@@ -18,13 +18,13 @@ TranslationUnit
 @endtest
 
 @test("It should parse main function (with basic expression)")
-@given("file")
+@given("file", filename="func_2.c")
 int main() {
     7 * 8;
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-TranslationUnit
+TranslationUnit: 'func_2.c'
 |
 +-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
     |
@@ -41,14 +41,14 @@ TranslationUnit
 @endtest
 
 @test("It should parse main function (with two variable declarations x and y)")
-@given("file")
+@given("file", filename="func_3.c")
 int main() {
     int x;
     int y;
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-TranslationUnit
+TranslationUnit: 'func_3.c'
 |
 +-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
     |
@@ -61,13 +61,13 @@ TranslationUnit
 @endtest
 
 @test("It should parse main function with return expression")
-@given("file")
+@given("file", filename="func_4.c")
 int main() {
     return 7;
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-TranslationUnit
+TranslationUnit: 'func_4.c'
 |
 +-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
     |
@@ -80,13 +80,13 @@ TranslationUnit
 @endtest
 
 @test("It should parse main function with return (empty expression)")
-@given("file")
+@given("file", filename="func_5.c")
 int main() {
     return;
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-TranslationUnit
+TranslationUnit: 'func_5.c'
 |
 +-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
     |
@@ -97,7 +97,7 @@ TranslationUnit
 @endtest
 
 @test("It should parse main function with return variable")
-@given("file")
+@given("file", filename="func_6.c")
 int main() {
     int result;
     result = 1;
@@ -105,7 +105,7 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-TranslationUnit
+TranslationUnit: 'func_6.c'
 |
 +-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
     |
@@ -128,7 +128,7 @@ TranslationUnit
 @endtest
 
 @test("It should parse multiple function definitions")
-@given("file")
+@given("file", filename="func_7.c")
 int foo() {
     return 1;
 }
@@ -138,7 +138,7 @@ int bar() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-TranslationUnit
+TranslationUnit: 'func_7.c'
 |
 +-> FunctionDefinition: 'foo' {type: 'int'} <unspecified-parameters>
 |   |
@@ -159,7 +159,7 @@ TranslationUnit
 @endtest
 
 @test("It should parse multiple functions with same variable names in different scopes")
-@given("file")
+@given("file", filename="func_8.c")
 int foo() {
     int x;
     return x;
@@ -171,7 +171,7 @@ int bar() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-TranslationUnit
+TranslationUnit: 'func_8.c'
 |
 +-> FunctionDefinition: 'foo' {type: 'int'} <unspecified-parameters>
 |   |

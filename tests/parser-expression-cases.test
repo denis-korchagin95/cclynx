@@ -1,11 +1,11 @@
 @test("It should parse an integer constant")
-@given("file")
+@given("file", filename="expr_1.c")
 int main() {
     777;
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-TranslationUnit
+TranslationUnit: 'expr_1.c'
 |
 +-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
     |
@@ -18,13 +18,13 @@ TranslationUnit
 @endtest
 
 @test("It should parse a float constant")
-@given("file")
+@given("file", filename="expr_2.c")
 int main() {
     12.512;
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-TranslationUnit
+TranslationUnit: 'expr_2.c'
 |
 +-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
     |
@@ -37,13 +37,13 @@ TranslationUnit
 @endtest
 
 @test("It should parse a multiplicative expression (*) (primitive case)")
-@given("file")
+@given("file", filename="expr_3.c")
 int main() {
     7 * 8;
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-TranslationUnit
+TranslationUnit: 'expr_3.c'
 |
 +-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
     |
@@ -60,13 +60,13 @@ TranslationUnit
 @endtest
 
 @test("It should parse a multiplicative expression (*) (nested level 2 primitive case)")
-@given("file")
+@given("file", filename="expr_4.c")
 int main() {
     7 * 6 * 8;
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-TranslationUnit
+TranslationUnit: 'expr_4.c'
 |
 +-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
     |
@@ -87,13 +87,13 @@ TranslationUnit
 @endtest
 
 @test("It should parse a multiplicative expression (*) (nested level 4 primitive case)")
-@given("file")
+@given("file", filename="expr_5.c")
 int main() {
     7 * 6 * 8 * 10 * 15;
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-TranslationUnit
+TranslationUnit: 'expr_5.c'
 |
 +-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
     |
@@ -122,13 +122,13 @@ TranslationUnit
 @endtest
 
 @test("It should parse a multiplicative expression (combination *, /) (with nested level primitive case)")
-@given("file")
+@given("file", filename="expr_6.c")
 int main() {
     15 / 3 * 101;
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-TranslationUnit
+TranslationUnit: 'expr_6.c'
 |
 +-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
     |
@@ -149,13 +149,13 @@ TranslationUnit
 @endtest
 
 @test("It should parse an additive expression (+) (primitive case)")
-@given("file")
+@given("file", filename="expr_7.c")
 int main() {
     7 + 8;
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-TranslationUnit
+TranslationUnit: 'expr_7.c'
 |
 +-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
     |
@@ -172,13 +172,13 @@ TranslationUnit
 @endtest
 
 @test("It should parse an additive expression (+) (nested level 2 primitive case)")
-@given("file")
+@given("file", filename="expr_8.c")
 int main() {
     7 + 6 + 8;
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-TranslationUnit
+TranslationUnit: 'expr_8.c'
 |
 +-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
     |
@@ -199,13 +199,13 @@ TranslationUnit
 @endtest
 
 @test("It should parse an additive expression (+) (nested level 4 primitive case)")
-@given("file")
+@given("file", filename="expr_9.c")
 int main() {
     7 + 6 + 8 + 10 + 15;
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-TranslationUnit
+TranslationUnit: 'expr_9.c'
 |
 +-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
     |
@@ -234,13 +234,13 @@ TranslationUnit
 @endtest
 
 @test("It should parse an additive expression (combination +, -) (with nested level primitive case)")
-@given("file")
+@given("file", filename="expr_10.c")
 int main() {
     15 + 3 - 101;
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-TranslationUnit
+TranslationUnit: 'expr_10.c'
 |
 +-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
     |
@@ -261,13 +261,13 @@ TranslationUnit
 @endtest
 
 @test("It should parse an expression with combination (additive, multiplicative)")
-@given("file")
+@given("file", filename="expr_11.c")
 int main() {
     1 + 7 * 6 - 4;
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-TranslationUnit
+TranslationUnit: 'expr_11.c'
 |
 +-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
     |
@@ -292,13 +292,13 @@ TranslationUnit
 @endtest
 
 @test("It should parse a relational expression (<) (primitive case)")
-@given("file")
+@given("file", filename="expr_12.c")
 int main() {
     7 < 8;
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-TranslationUnit
+TranslationUnit: 'expr_12.c'
 |
 +-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
     |
@@ -315,13 +315,13 @@ TranslationUnit
 @endtest
 
 @test("It should parse a relational expression (<) (nested level 2 primitive case)")
-@given("file")
+@given("file", filename="expr_13.c")
 int main() {
     7 < 6 < 8;
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-TranslationUnit
+TranslationUnit: 'expr_13.c'
 |
 +-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
     |
@@ -342,13 +342,13 @@ TranslationUnit
 @endtest
 
 @test("It should parse a relational expression (<) (nested level 4 primitive case)")
-@given("file")
+@given("file", filename="expr_14.c")
 int main() {
     7 < 6 < 8 < 10 < 15;
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-TranslationUnit
+TranslationUnit: 'expr_14.c'
 |
 +-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
     |
@@ -377,13 +377,13 @@ TranslationUnit
 @endtest
 
 @test("It should parse a relational expression (combination <, >) (with nested level primitive case)")
-@given("file")
+@given("file", filename="expr_15.c")
 int main() {
     15 < 3 > 101;
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-TranslationUnit
+TranslationUnit: 'expr_15.c'
 |
 +-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
     |
@@ -404,13 +404,13 @@ TranslationUnit
 @endtest
 
 @test("It should parse a equality expression (==) (primitive case)")
-@given("file")
+@given("file", filename="expr_16.c")
 int main() {
     7 == 8;
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-TranslationUnit
+TranslationUnit: 'expr_16.c'
 |
 +-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
     |
@@ -427,13 +427,13 @@ TranslationUnit
 @endtest
 
 @test("It should parse a equality expression (==) (nested level 2 primitive case)")
-@given("file")
+@given("file", filename="expr_17.c")
 int main() {
     7 == 6 == 8;
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-TranslationUnit
+TranslationUnit: 'expr_17.c'
 |
 +-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
     |
@@ -454,13 +454,13 @@ TranslationUnit
 @endtest
 
 @test("It should parse a equality expression (==) (nested level 4 primitive case)")
-@given("file")
+@given("file", filename="expr_18.c")
 int main() {
     7 == 6 == 8 == 10 == 15;
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-TranslationUnit
+TranslationUnit: 'expr_18.c'
 |
 +-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
     |
@@ -489,13 +489,13 @@ TranslationUnit
 @endtest
 
 @test("It should parse a equality expression (combination ==, !=) (with nested level primitive case)")
-@given("file")
+@given("file", filename="expr_19.c")
 int main() {
     15 == 3 != 101;
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-TranslationUnit
+TranslationUnit: 'expr_19.c'
 |
 +-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
     |
@@ -516,13 +516,13 @@ TranslationUnit
 @endtest
 
 @test("It should parse an equality expression with additive RHS (operator precedence)")
-@given("file")
+@given("file", filename="expr_20.c")
 int main() {
     1 == 2 + 3;
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-TranslationUnit
+TranslationUnit: 'expr_20.c'
 |
 +-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
     |
@@ -543,13 +543,13 @@ TranslationUnit
 @endtest
 
 @test("It should parse a relational expression with additive RHS (operator precedence)")
-@given("file")
+@given("file", filename="expr_21.c")
 int main() {
     1 < 2 + 3;
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-TranslationUnit
+TranslationUnit: 'expr_21.c'
 |
 +-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
     |
@@ -570,14 +570,14 @@ TranslationUnit
 @endtest
 
 @test("It should parse an assignment expression (simple version)")
-@given("file")
+@given("file", filename="expr_22.c")
 int main() {
     int x;
     x = 3;
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-TranslationUnit
+TranslationUnit: 'expr_22.c'
 |
 +-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
     |
@@ -596,13 +596,13 @@ TranslationUnit
 @endtest
 
 @test("It should parse nested expressions")
-@given("file")
+@given("file", filename="expr_23.c")
 int main() {
     77 * (1 + 23);
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-TranslationUnit
+TranslationUnit: 'expr_23.c'
 |
 +-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
     |
@@ -623,7 +623,7 @@ TranslationUnit
 @endtest
 
 @test("An additive expression (+, -) should have the same type as operands")
-@given("file")
+@given("file", filename="expr_24.c")
 int main() {
     float x;
     x = 4.5;
@@ -634,7 +634,7 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-TranslationUnit
+TranslationUnit: 'expr_24.c'
 |
 +-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
     |
@@ -685,7 +685,7 @@ TranslationUnit
 @endtest
 
 @test("An multiplicative expression (*, /) should have the same type as operands")
-@given("file")
+@given("file", filename="expr_25.c")
 int main() {
     float x;
     x = 4.5;
@@ -696,7 +696,7 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-TranslationUnit
+TranslationUnit: 'expr_25.c'
 |
 +-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
     |
@@ -747,7 +747,7 @@ TranslationUnit
 @endtest
 
 @test("An relational expression (<, >) should have the same type as operands")
-@given("file")
+@given("file", filename="expr_26.c")
 int main() {
     float x;
     x = 4.5;
@@ -758,7 +758,7 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-TranslationUnit
+TranslationUnit: 'expr_26.c'
 |
 +-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
     |
@@ -809,7 +809,7 @@ TranslationUnit
 @endtest
 
 @test("An equality expression (==, !=) should have the same type as operands")
-@given("file")
+@given("file", filename="expr_27.c")
 int main() {
     float x;
     x = 4.5;
@@ -820,7 +820,7 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-TranslationUnit
+TranslationUnit: 'expr_27.c'
 |
 +-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
     |

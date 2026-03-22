@@ -57,7 +57,8 @@ struct ast_node * parser_parse(struct parser_context * ctx)
     }
 
     struct ast_node * translation_unit = create_ast_node(ctx, AST_NODE_KIND_TRANSLATION_UNIT);
-    translation_unit->content.list = function_list;
+    translation_unit->content.translation_unit.list = function_list;
+    translation_unit->content.translation_unit.filename = ctx->source_filename;
 
     return translation_unit;
 }
@@ -702,7 +703,7 @@ void parser_putback_token(struct token * token, struct parser_context * ctx)
     ctx->token_buffer[ctx->token_buffer_pos++] = token;
 }
 
-void parser_init_context(struct parser_context * ctx, struct token * tokens, struct memory_blob_pool * pool, struct scope * file_scope)
+void parser_init_context(struct parser_context * ctx, struct token * tokens, struct memory_blob_pool * pool, struct scope * file_scope, const char * source_filename)
 {
     assert(ctx!= NULL);
     assert(tokens != NULL);
@@ -713,6 +714,7 @@ void parser_init_context(struct parser_context * ctx, struct token * tokens, str
     ctx->tokens = tokens;
     ctx->iterator = ctx->tokens;
     ctx->current_scope = file_scope;
+    ctx->source_filename = source_filename;
 }
 
 struct ast_node * create_ast_node(struct parser_context * ctx, enum ast_node_kind kind)

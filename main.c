@@ -62,7 +62,7 @@ int main(const int argc, const char * argv[])
     fclose(source);
 
     struct parser_context parser_ctx;
-    parser_init_context(&parser_ctx, tokens, &ctx.pool, &ctx.global_scope);
+    parser_init_context(&parser_ctx, tokens, &ctx.pool, &ctx.global_scope, source_filename);
 
     if (output_stage == STAGE_TOKENS) {
         struct token * it = tokens;
@@ -93,7 +93,7 @@ int main(const int argc, const char * argv[])
     ir_program_init(&ir_program, &ctx.pool);
 
     {
-        struct ast_node_list * iterator = ast->content.list;
+        struct ast_node_list * iterator = ast->content.translation_unit.list;
         while (iterator != NULL) {
             ir_program_generate(&ir_ctx, &ir_program, iterator->node);
             iterator = iterator->next;

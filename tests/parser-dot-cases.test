@@ -1,5 +1,5 @@
 @test("DOT: integer constant")
-@given("file")
+@given("file", filename="dot_1.c")
 int main() {
     42;
 }
@@ -7,7 +7,7 @@ int main() {
 @expectOutput("stdout")
 digraph AST {
     node [shape=box, fontname="monospace"];
-    n0 [label="TranslationUnit"];
+    n0 [label="TranslationUnit\n'dot_1.c'"];
     n1 [label="FunctionDefinition\n'main' : int\nunspecified-parameters"];
     n2 [label="CompoundStatement"];
     n3 [label="ExpressionStatement"];
@@ -21,7 +21,7 @@ digraph AST {
 @endtest
 
 @test("DOT: float constant")
-@given("file")
+@given("file", filename="dot_2.c")
 int main() {
     3.14;
 }
@@ -29,7 +29,7 @@ int main() {
 @expectOutput("stdout")
 digraph AST {
     node [shape=box, fontname="monospace"];
-    n0 [label="TranslationUnit"];
+    n0 [label="TranslationUnit\n'dot_2.c'"];
     n1 [label="FunctionDefinition\n'main' : int\nunspecified-parameters"];
     n2 [label="CompoundStatement"];
     n3 [label="ExpressionStatement"];
@@ -43,7 +43,7 @@ digraph AST {
 @endtest
 
 @test("DOT: variable declaration, assignment, and reference")
-@given("file")
+@given("file", filename="dot_3.c")
 int main() {
     int x;
     x = 5;
@@ -53,7 +53,7 @@ int main() {
 @expectOutput("stdout")
 digraph AST {
     node [shape=box, fontname="monospace"];
-    n0 [label="TranslationUnit"];
+    n0 [label="TranslationUnit\n'dot_3.c'"];
     n1 [label="FunctionDefinition\n'main' : int\nunspecified-parameters"];
     n2 [label="CompoundStatement"];
     n3 [label="VariableDeclaration\n'x' : int"];
@@ -77,7 +77,7 @@ digraph AST {
 @endtest
 
 @test("DOT: additive expression")
-@given("file")
+@given("file", filename="dot_4.c")
 int main() {
     return 2 + 3;
 }
@@ -85,7 +85,7 @@ int main() {
 @expectOutput("stdout")
 digraph AST {
     node [shape=box, fontname="monospace"];
-    n0 [label="TranslationUnit"];
+    n0 [label="TranslationUnit\n'dot_4.c'"];
     n1 [label="FunctionDefinition\n'main' : int\nunspecified-parameters"];
     n2 [label="CompoundStatement"];
     n3 [label="ReturnStatement"];
@@ -103,7 +103,7 @@ digraph AST {
 @endtest
 
 @test("DOT: multiplicative expression")
-@given("file")
+@given("file", filename="dot_5.c")
 int main() {
     return 2 * 3;
 }
@@ -111,7 +111,7 @@ int main() {
 @expectOutput("stdout")
 digraph AST {
     node [shape=box, fontname="monospace"];
-    n0 [label="TranslationUnit"];
+    n0 [label="TranslationUnit\n'dot_5.c'"];
     n1 [label="FunctionDefinition\n'main' : int\nunspecified-parameters"];
     n2 [label="CompoundStatement"];
     n3 [label="ReturnStatement"];
@@ -129,7 +129,7 @@ digraph AST {
 @endtest
 
 @test("DOT: relational expression")
-@given("file")
+@given("file", filename="dot_6.c")
 int main() {
     return 2 < 3;
 }
@@ -137,7 +137,7 @@ int main() {
 @expectOutput("stdout")
 digraph AST {
     node [shape=box, fontname="monospace"];
-    n0 [label="TranslationUnit"];
+    n0 [label="TranslationUnit\n'dot_6.c'"];
     n1 [label="FunctionDefinition\n'main' : int\nunspecified-parameters"];
     n2 [label="CompoundStatement"];
     n3 [label="ReturnStatement"];
@@ -155,7 +155,7 @@ digraph AST {
 @endtest
 
 @test("DOT: equality expression")
-@given("file")
+@given("file", filename="dot_7.c")
 int main() {
     return 2 == 3;
 }
@@ -163,7 +163,7 @@ int main() {
 @expectOutput("stdout")
 digraph AST {
     node [shape=box, fontname="monospace"];
-    n0 [label="TranslationUnit"];
+    n0 [label="TranslationUnit\n'dot_7.c'"];
     n1 [label="FunctionDefinition\n'main' : int\nunspecified-parameters"];
     n2 [label="CompoundStatement"];
     n3 [label="ReturnStatement"];
@@ -181,7 +181,7 @@ digraph AST {
 @endtest
 
 @test("DOT: if-else statement")
-@given("file")
+@given("file", filename="dot_8.c")
 int main() {
     int x;
     x = 1;
@@ -196,7 +196,7 @@ int main() {
 @expectOutput("stdout")
 digraph AST {
     node [shape=box, fontname="monospace"];
-    n0 [label="TranslationUnit"];
+    n0 [label="TranslationUnit\n'dot_8.c'"];
     n1 [label="FunctionDefinition\n'main' : int\nunspecified-parameters"];
     n2 [label="CompoundStatement"];
     n3 [label="VariableDeclaration\n'x' : int"];
@@ -248,7 +248,7 @@ digraph AST {
 @endtest
 
 @test("DOT: while statement")
-@given("file")
+@given("file", filename="dot_9.c")
 int main() {
     int i;
     i = 0;
@@ -261,7 +261,7 @@ int main() {
 @expectOutput("stdout")
 digraph AST {
     node [shape=box, fontname="monospace"];
-    n0 [label="TranslationUnit"];
+    n0 [label="TranslationUnit\n'dot_9.c'"];
     n1 [label="FunctionDefinition\n'main' : int\nunspecified-parameters"];
     n2 [label="CompoundStatement"];
     n3 [label="VariableDeclaration\n'i' : int"];
@@ -307,7 +307,7 @@ digraph AST {
 @endtest
 
 @test("DOT: cast expression")
-@given("file")
+@given("file", filename="dot_10.c")
 int main() {
     return (int)3.14;
 }
@@ -315,7 +315,7 @@ int main() {
 @expectOutput("stdout")
 digraph AST {
     node [shape=box, fontname="monospace"];
-    n0 [label="TranslationUnit"];
+    n0 [label="TranslationUnit\n'dot_10.c'"];
     n1 [label="FunctionDefinition\n'main' : int\nunspecified-parameters"];
     n2 [label="CompoundStatement"];
     n3 [label="ReturnStatement"];
@@ -331,7 +331,7 @@ digraph AST {
 @endtest
 
 @test("DOT: bare return statement")
-@given("file")
+@given("file", filename="dot_11.c")
 int main() {
     return;
 }
@@ -339,7 +339,7 @@ int main() {
 @expectOutput("stdout")
 digraph AST {
     node [shape=box, fontname="monospace"];
-    n0 [label="TranslationUnit"];
+    n0 [label="TranslationUnit\n'dot_11.c'"];
     n1 [label="FunctionDefinition\n'main' : int\nunspecified-parameters"];
     n2 [label="CompoundStatement"];
     n3 [label="ReturnStatement"];

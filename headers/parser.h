@@ -56,6 +56,10 @@ struct ast_node
     {
         struct symbol * variable;
         struct ast_node_list * list;
+        struct translation_unit {
+            struct ast_node_list * list;
+            const char * filename;
+        } translation_unit;
         struct ast_node * node;
         struct constant
         {
@@ -108,9 +112,10 @@ struct parser_context
     struct token * token_buffer[MAX_TOKEN_BUFFER_SIZE];
     unsigned int token_buffer_pos;
     struct scope * current_scope;
+    const char * source_filename;
 };
 
-void parser_init_context(struct parser_context * ctx, struct token * tokens, struct memory_blob_pool * pool, struct scope * file_scope);
+void parser_init_context(struct parser_context * ctx, struct token * tokens, struct memory_blob_pool * pool, struct scope * file_scope, const char * source_filename);
 struct ast_node * parser_parse(struct parser_context * ctx);
 
 struct token * parser_get_token(struct parser_context * ctx);

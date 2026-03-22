@@ -1,5 +1,5 @@
 @test("A float can be cast to an integer")
-@given("file")
+@given("file", filename="cast_1.c")
 int main() {
     float y;
     y = 1.45;
@@ -9,7 +9,7 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-TranslationUnit
+TranslationUnit: 'cast_1.c'
 |
 +-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
     |
@@ -44,7 +44,7 @@ TranslationUnit
 @endtest
 
 @test("An integer can be cast to a float")
-@given("file")
+@given("file", filename="cast_2.c")
 float test() {
     int y;
     y = 777;
@@ -54,7 +54,7 @@ float test() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-TranslationUnit
+TranslationUnit: 'cast_2.c'
 |
 +-> FunctionDefinition: 'test' {type: 'float'} <unspecified-parameters>
     |

@@ -1,6 +1,7 @@
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "print.h"
 
@@ -91,8 +92,15 @@ void do_print_ast(const struct ast_node * ast, FILE * file, int depth, unsigned 
     switch (ast->kind) {
         case AST_NODE_KIND_TRANSLATION_UNIT:
             {
-                fprintf(file, "TranslationUnit\n");
-                struct ast_node_list * iterator = ast->content.list;
+                const char * filename = ast->content.translation_unit.filename;
+                if (filename != NULL) {
+                    const char * base = strrchr(filename, '/');
+                    base = base != NULL ? base + 1 : filename;
+                    fprintf(file, "TranslationUnit: '%s'\n", base);
+                } else {
+                    fprintf(file, "TranslationUnit\n");
+                }
+                struct ast_node_list * iterator = ast->content.translation_unit.list;
                 while (iterator != NULL) {
                     ancestors_info[depth] = iterator->next == NULL ? 0 : 2;
                     do_print_ast(iterator->node, file, depth + 1, ancestors_info, NULL);
@@ -246,8 +254,15 @@ int do_print_ast_dot(const struct ast_node * ast, FILE * file, int next_id)
 
     switch (ast->kind) {
         case AST_NODE_KIND_TRANSLATION_UNIT:
-            fprintf(file, "    n%d [label=\"TranslationUnit\"];\n", id);
-            for (struct ast_node_list * it = ast->content.list; it != NULL; it = it->next) {
+            if (ast->content.translation_unit.filename != NULL) {
+                const char * filename = ast->content.translation_unit.filename;
+                const char * base = strrchr(filename, '/');
+                base = base != NULL ? base + 1 : filename;
+                fprintf(file, "    n%d [label=\"TranslationUnit\\n'%s'\"];\n", id, base);
+            } else {
+                fprintf(file, "    n%d [label=\"TranslationUnit\"];\n", id);
+            }
+            for (struct ast_node_list * it = ast->content.translation_unit.list; it != NULL; it = it->next) {
                 int child_id = next_id;
                 next_id = do_print_ast_dot(it->node, file, next_id);
                 fprintf(file, "    n%d -> n%d;\n", id, child_id);

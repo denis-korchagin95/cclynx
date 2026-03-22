@@ -1,5 +1,5 @@
 @test("It should parse if statement (single statement)")
-@given("file")
+@given("file", filename="sel_1.c")
 int main() {
     int x;
     x = 10;
@@ -8,7 +8,7 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-TranslationUnit
+TranslationUnit: 'sel_1.c'
 |
 +-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
     |
@@ -43,7 +43,7 @@ TranslationUnit
 @endtest
 
 @test("It should parse if statement (empty expression)")
-@given("file")
+@given("file", filename="sel_2.c")
 int main() {
     int x;
     x = 10;
@@ -51,7 +51,7 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-TranslationUnit
+TranslationUnit: 'sel_2.c'
 |
 +-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
     |
@@ -80,7 +80,7 @@ TranslationUnit
 @endtest
 
 @test("It should parse if statement (compound statement)")
-@given("file")
+@given("file", filename="sel_3.c")
 int main() {
     int x;
     x = 10;
@@ -91,7 +91,7 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-TranslationUnit
+TranslationUnit: 'sel_3.c'
 |
 +-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
     |
@@ -140,7 +140,7 @@ TranslationUnit
 @endtest
 
 @test("It should parse if statement with else (single statement)")
-@given("file")
+@given("file", filename="sel_4.c")
 int main() {
     int x;
     x = 10;
@@ -151,7 +151,7 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-TranslationUnit
+TranslationUnit: 'sel_4.c'
 |
 +-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
     |
@@ -194,7 +194,7 @@ TranslationUnit
 @endtest
 
 @test("It should parse if statement with else (empty expression)")
-@given("file")
+@given("file", filename="sel_5.c")
 int main() {
     int x;
     x = 10;
@@ -204,7 +204,7 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-TranslationUnit
+TranslationUnit: 'sel_5.c'
 |
 +-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
     |
@@ -241,7 +241,7 @@ TranslationUnit
 @endtest
 
 @test("It should parse if statement with else (compound statement)")
-@given("file")
+@given("file", filename="sel_6.c")
 int main() {
     int x;
     x = 10;
@@ -254,7 +254,7 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-TranslationUnit
+TranslationUnit: 'sel_6.c'
 |
 +-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
     |
