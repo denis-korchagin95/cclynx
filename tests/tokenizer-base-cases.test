@@ -8,6 +8,7 @@
 
 @test("It should tokenize one char punctuators")
 @given("file")
+,
 +
 -
 *
@@ -25,6 +26,7 @@
 ==
 @whenRun("./bin/cclynx", args="--emit-tokens")
 @expectOutput("stdout")
+<TOKEN_PUNCTUATOR ','>
 <TOKEN_PUNCTUATOR '+'>
 <TOKEN_PUNCTUATOR '-'>
 <TOKEN_PUNCTUATOR '*'>

@@ -169,6 +169,7 @@ void tokenizer_get_one_token(struct tokenizer_context * ctx, struct source * sou
             case ';':
             case '>':
             case '<':
+            case ',':
                 token->kind = TOKEN_KIND_PUNCTUATOR;
                 token->span.offset = span_start;
                 token->span.length = 1;
