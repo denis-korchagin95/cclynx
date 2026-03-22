@@ -10,17 +10,17 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ir")
 @expectOutput("stdout")
-0000 OP_FUNC "main"
-0001 OP_CONST 4, t1
-0002 OP_STORE i, t1
-0003 OP_CONST 0, t2
-0004 OP_JUMP_IF_FALSE t2, ".L1"
-0005 OP_CONST 50, t3
-0006 OP_STORE i, t3
-0007 OP_LABEL ".L1"
-0008 OP_LOAD i, t4
-0009 OP_RETURN t4
-0010 OP_FUNC_END
+OP_FUNC "main"
+OP_CONST 4, t1
+OP_STORE i, t1
+OP_CONST 0, t2
+OP_JUMP_IF_FALSE t2, ".L1"
+OP_CONST 50, t3
+OP_STORE i, t3
+OP_LABEL ".L1"
+OP_LOAD i, t4
+OP_RETURN t4
+OP_FUNC_END
 
 @endtest
 
@@ -36,17 +36,17 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ir")
 @expectOutput("stdout")
-0000 OP_FUNC "main"
-0001 OP_CONST 4, t1
-0002 OP_STORE i, t1
-0003 OP_CONST 1, t2
-0004 OP_JUMP_IF_FALSE t2, ".L1"
-0005 OP_CONST 50, t3
-0006 OP_STORE i, t3
-0007 OP_LABEL ".L1"
-0008 OP_LOAD i, t4
-0009 OP_RETURN t4
-0010 OP_FUNC_END
+OP_FUNC "main"
+OP_CONST 4, t1
+OP_STORE i, t1
+OP_CONST 1, t2
+OP_JUMP_IF_FALSE t2, ".L1"
+OP_CONST 50, t3
+OP_STORE i, t3
+OP_LABEL ".L1"
+OP_LOAD i, t4
+OP_RETURN t4
+OP_FUNC_END
 
 @endtest
 
@@ -58,14 +58,14 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ir")
 @expectOutput("stdout")
-0000 OP_FUNC "main"
-0001 OP_CONST 0, t1
-0002 OP_JUMP_IF_FALSE t1, ".L1"
-0003 OP_NOP
-0004 OP_LABEL ".L1"
-0005 OP_CONST 0, t2
-0006 OP_RETURN t2
-0007 OP_FUNC_END
+OP_FUNC "main"
+OP_CONST 0, t1
+OP_JUMP_IF_FALSE t1, ".L1"
+OP_NOP
+OP_LABEL ".L1"
+OP_CONST 0, t2
+OP_RETURN t2
+OP_FUNC_END
 
 @endtest
 
@@ -78,14 +78,14 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ir")
 @expectOutput("stdout")
-0000 OP_FUNC "main"
-0001 OP_CONST 0, t1
-0002 OP_JUMP_IF_FALSE t1, ".L1"
-0003 OP_NOP
-0004 OP_LABEL ".L1"
-0005 OP_CONST 0, t2
-0006 OP_RETURN t2
-0007 OP_FUNC_END
+OP_FUNC "main"
+OP_CONST 0, t1
+OP_JUMP_IF_FALSE t1, ".L1"
+OP_NOP
+OP_LABEL ".L1"
+OP_CONST 0, t2
+OP_RETURN t2
+OP_FUNC_END
 
 @endtest
 
@@ -101,20 +101,20 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ir")
 @expectOutput("stdout")
-0000 OP_FUNC "main"
-0001 OP_CONST 0, t1
-0002 OP_STORE i, t1
-0003 OP_LOAD i, t2
-0004 OP_CONST 10, t3
-0005 OP_JUMP_IF_GREATER_OR_EQUAL t2, t3, ".L1"
-0006 OP_LOAD i, t4
-0007 OP_CONST 1, t5
-0008 OP_ADD t4, t5, t6
-0009 OP_STORE i, t6
-0010 OP_LABEL ".L1"
-0011 OP_LOAD i, t7
-0012 OP_RETURN t7
-0013 OP_FUNC_END
+OP_FUNC "main"
+OP_CONST 0, t1
+OP_STORE i, t1
+OP_LOAD i, t2
+OP_CONST 10, t3
+OP_JUMP_IF_GREATER_OR_EQUAL t2, t3, ".L1"
+OP_LOAD i, t4
+OP_CONST 1, t5
+OP_ADD t4, t5, t6
+OP_STORE i, t6
+OP_LABEL ".L1"
+OP_LOAD i, t7
+OP_RETURN t7
+OP_FUNC_END
 
 @endtest
 
@@ -130,20 +130,20 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ir")
 @expectOutput("stdout")
-0000 OP_FUNC "main"
-0001 OP_CONST 3, t1
-0002 OP_STORE i, t1
-0003 OP_LOAD i, t2
-0004 OP_CONST 1, t3
-0005 OP_JUMP_IF_LESS_OR_EQUAL t2, t3, ".L1"
-0006 OP_LOAD i, t4
-0007 OP_CONST 1, t5
-0008 OP_SUB t4, t5, t6
-0009 OP_STORE i, t6
-0010 OP_LABEL ".L1"
-0011 OP_LOAD i, t7
-0012 OP_RETURN t7
-0013 OP_FUNC_END
+OP_FUNC "main"
+OP_CONST 3, t1
+OP_STORE i, t1
+OP_LOAD i, t2
+OP_CONST 1, t3
+OP_JUMP_IF_LESS_OR_EQUAL t2, t3, ".L1"
+OP_LOAD i, t4
+OP_CONST 1, t5
+OP_SUB t4, t5, t6
+OP_STORE i, t6
+OP_LABEL ".L1"
+OP_LOAD i, t7
+OP_RETURN t7
+OP_FUNC_END
 
 @endtest
 
@@ -159,20 +159,20 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ir")
 @expectOutput("stdout")
-0000 OP_FUNC "main"
-0001 OP_CONST 0, t1
-0002 OP_STORE i, t1
-0003 OP_LOAD i, t2
-0004 OP_CONST 0, t3
-0005 OP_JUMP_IF_NOT_EQUAL t2, t3, ".L1"
-0006 OP_LOAD i, t4
-0007 OP_CONST 7, t5
-0008 OP_ADD t4, t5, t6
-0009 OP_STORE i, t6
-0010 OP_LABEL ".L1"
-0011 OP_LOAD i, t7
-0012 OP_RETURN t7
-0013 OP_FUNC_END
+OP_FUNC "main"
+OP_CONST 0, t1
+OP_STORE i, t1
+OP_LOAD i, t2
+OP_CONST 0, t3
+OP_JUMP_IF_NOT_EQUAL t2, t3, ".L1"
+OP_LOAD i, t4
+OP_CONST 7, t5
+OP_ADD t4, t5, t6
+OP_STORE i, t6
+OP_LABEL ".L1"
+OP_LOAD i, t7
+OP_RETURN t7
+OP_FUNC_END
 
 @endtest
 
@@ -188,20 +188,20 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ir")
 @expectOutput("stdout")
-0000 OP_FUNC "main"
-0001 OP_CONST 10, t1
-0002 OP_STORE i, t1
-0003 OP_LOAD i, t2
-0004 OP_CONST 3, t3
-0005 OP_JUMP_IF_EQUAL t2, t3, ".L1"
-0006 OP_LOAD i, t4
-0007 OP_CONST 1, t5
-0008 OP_SUB t4, t5, t6
-0009 OP_STORE i, t6
-0010 OP_LABEL ".L1"
-0011 OP_LOAD i, t7
-0012 OP_RETURN t7
-0013 OP_FUNC_END
+OP_FUNC "main"
+OP_CONST 10, t1
+OP_STORE i, t1
+OP_LOAD i, t2
+OP_CONST 3, t3
+OP_JUMP_IF_EQUAL t2, t3, ".L1"
+OP_LOAD i, t4
+OP_CONST 1, t5
+OP_SUB t4, t5, t6
+OP_STORE i, t6
+OP_LABEL ".L1"
+OP_LOAD i, t7
+OP_RETURN t7
+OP_FUNC_END
 
 @endtest
 
@@ -219,25 +219,25 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ir")
 @expectOutput("stdout")
-0000 OP_FUNC "main"
-0001 OP_CONST 10, t1
-0002 OP_STORE i, t1
-0003 OP_CONST 0, t2
-0004 OP_JUMP_IF_FALSE t2, ".L1"
-0005 OP_LOAD i, t3
-0006 OP_CONST 1, t4
-0007 OP_SUB t3, t4, t5
-0008 OP_STORE i, t5
-0009 OP_JUMP ".L2"
-0010 OP_LABEL ".L1"
-0011 OP_LOAD i, t6
-0012 OP_CONST 15, t7
-0013 OP_MUL t6, t7, t8
-0014 OP_STORE i, t8
-0015 OP_LABEL ".L2"
-0016 OP_LOAD i, t9
-0017 OP_RETURN t9
-0018 OP_FUNC_END
+OP_FUNC "main"
+OP_CONST 10, t1
+OP_STORE i, t1
+OP_CONST 0, t2
+OP_JUMP_IF_FALSE t2, ".L1"
+OP_LOAD i, t3
+OP_CONST 1, t4
+OP_SUB t3, t4, t5
+OP_STORE i, t5
+OP_JUMP ".L2"
+OP_LABEL ".L1"
+OP_LOAD i, t6
+OP_CONST 15, t7
+OP_MUL t6, t7, t8
+OP_STORE i, t8
+OP_LABEL ".L2"
+OP_LOAD i, t9
+OP_RETURN t9
+OP_FUNC_END
 
 @endtest
 
@@ -254,22 +254,22 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ir")
 @expectOutput("stdout")
-0000 OP_FUNC "main"
-0001 OP_CONST 10, t1
-0002 OP_STORE i, t1
-0003 OP_CONST 0, t2
-0004 OP_JUMP_IF_FALSE t2, ".L1"
-0005 OP_LOAD i, t3
-0006 OP_CONST 1, t4
-0007 OP_SUB t3, t4, t5
-0008 OP_STORE i, t5
-0009 OP_JUMP ".L2"
-0010 OP_LABEL ".L1"
-0011 OP_NOP
-0012 OP_LABEL ".L2"
-0013 OP_LOAD i, t6
-0014 OP_RETURN t6
-0015 OP_FUNC_END
+OP_FUNC "main"
+OP_CONST 10, t1
+OP_STORE i, t1
+OP_CONST 0, t2
+OP_JUMP_IF_FALSE t2, ".L1"
+OP_LOAD i, t3
+OP_CONST 1, t4
+OP_SUB t3, t4, t5
+OP_STORE i, t5
+OP_JUMP ".L2"
+OP_LABEL ".L1"
+OP_NOP
+OP_LABEL ".L2"
+OP_LOAD i, t6
+OP_RETURN t6
+OP_FUNC_END
 
 @endtest
 
@@ -286,22 +286,22 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ir")
 @expectOutput("stdout")
-0000 OP_FUNC "main"
-0001 OP_CONST 10, t1
-0002 OP_STORE i, t1
-0003 OP_CONST 0, t2
-0004 OP_JUMP_IF_FALSE t2, ".L1"
-0005 OP_LOAD i, t3
-0006 OP_CONST 1, t4
-0007 OP_SUB t3, t4, t5
-0008 OP_STORE i, t5
-0009 OP_JUMP ".L2"
-0010 OP_LABEL ".L1"
-0011 OP_NOP
-0012 OP_LABEL ".L2"
-0013 OP_LOAD i, t6
-0014 OP_RETURN t6
-0015 OP_FUNC_END
+OP_FUNC "main"
+OP_CONST 10, t1
+OP_STORE i, t1
+OP_CONST 0, t2
+OP_JUMP_IF_FALSE t2, ".L1"
+OP_LOAD i, t3
+OP_CONST 1, t4
+OP_SUB t3, t4, t5
+OP_STORE i, t5
+OP_JUMP ".L2"
+OP_LABEL ".L1"
+OP_NOP
+OP_LABEL ".L2"
+OP_LOAD i, t6
+OP_RETURN t6
+OP_FUNC_END
 
 @endtest
 
@@ -317,18 +317,18 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ir")
 @expectOutput("stdout")
-0000 OP_FUNC "main"
-0001 OP_CONST 10, t1
-0002 OP_STORE x, t1
-0003 OP_LOAD x, t2
-0004 OP_CONST 3.000000, t3
-0005 OP_JUMP_IF_LESS_OR_EQUAL t2, t3, ".L1"
-0006 OP_CONST 777.000000, t4
-0007 OP_STORE x, t4
-0008 OP_LABEL ".L1"
-0009 OP_LOAD x, t5
-0010 OP_INT_CAST t5, t6
-0011 OP_RETURN t6
-0012 OP_FUNC_END
+OP_FUNC "main"
+OP_CONST 10, t1
+OP_STORE x, t1
+OP_LOAD x, t2
+OP_CONST 3.000000, t3
+OP_JUMP_IF_LESS_OR_EQUAL t2, t3, ".L1"
+OP_CONST 777.000000, t4
+OP_STORE x, t4
+OP_LABEL ".L1"
+OP_LOAD x, t5
+OP_INT_CAST t5, t6
+OP_RETURN t6
+OP_FUNC_END
 
 @endtest

@@ -12,23 +12,23 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ir")
 @expectOutput("stdout")
-0000 OP_FUNC "main"
-0001 OP_CONST 1.500000, t1
-0002 OP_STORE x, t1
-0003 OP_CONST 2.250000, t2
-0004 OP_STORE y, t2
-0005 OP_LOAD x, t3
-0006 OP_LOAD y, t4
-0007 OP_ADD t3, t4, t5
-0008 OP_STORE z, t5
-0009 OP_LOAD z, t6
-0010 OP_CONST 1.000000, t7
-0011 OP_SUB t6, t7, t8
-0012 OP_STORE z, t8
-0013 OP_LOAD z, t9
-0014 OP_INT_CAST t9, t10
-0015 OP_RETURN t10
-0016 OP_FUNC_END
+OP_FUNC "main"
+OP_CONST 1.500000, t1
+OP_STORE x, t1
+OP_CONST 2.250000, t2
+OP_STORE y, t2
+OP_LOAD x, t3
+OP_LOAD y, t4
+OP_ADD t3, t4, t5
+OP_STORE z, t5
+OP_LOAD z, t6
+OP_CONST 1.000000, t7
+OP_SUB t6, t7, t8
+OP_STORE z, t8
+OP_LOAD z, t9
+OP_INT_CAST t9, t10
+OP_RETURN t10
+OP_FUNC_END
 
 @endtest
 
@@ -46,23 +46,23 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ir")
 @expectOutput("stdout")
-0000 OP_FUNC "main"
-0001 OP_CONST 1.500000, t1
-0002 OP_STORE x, t1
-0003 OP_CONST 2.250000, t2
-0004 OP_STORE y, t2
-0005 OP_LOAD x, t3
-0006 OP_LOAD y, t4
-0007 OP_MUL t3, t4, t5
-0008 OP_STORE z, t5
-0009 OP_LOAD z, t6
-0010 OP_CONST 2.000000, t7
-0011 OP_DIV t6, t7, t8
-0012 OP_STORE z, t8
-0013 OP_LOAD z, t9
-0014 OP_INT_CAST t9, t10
-0015 OP_RETURN t10
-0016 OP_FUNC_END
+OP_FUNC "main"
+OP_CONST 1.500000, t1
+OP_STORE x, t1
+OP_CONST 2.250000, t2
+OP_STORE y, t2
+OP_LOAD x, t3
+OP_LOAD y, t4
+OP_MUL t3, t4, t5
+OP_STORE z, t5
+OP_LOAD z, t6
+OP_CONST 2.000000, t7
+OP_DIV t6, t7, t8
+OP_STORE z, t8
+OP_LOAD z, t9
+OP_INT_CAST t9, t10
+OP_RETURN t10
+OP_FUNC_END
 
 @endtest
 
@@ -81,23 +81,23 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ir")
 @expectOutput("stdout")
-0000 OP_FUNC "main"
-0001 OP_CONST 1.500000, t1
-0002 OP_STORE x, t1
-0003 OP_CONST 2.250000, t2
-0004 OP_STORE y, t2
-0005 OP_LOAD x, t3
-0006 OP_LOAD y, t4
-0007 OP_IS_LESS_THAN t3, t4, t5
-0008 OP_STORE z, t5
-0009 OP_LOAD y, t6
-0010 OP_CONST 2.000000, t7
-0011 OP_IS_GREATER_THAN t6, t7, t8
-0012 OP_STORE w, t8
-0013 OP_LOAD w, t9
-0014 OP_INT_CAST t9, t10
-0015 OP_RETURN t10
-0016 OP_FUNC_END
+OP_FUNC "main"
+OP_CONST 1.500000, t1
+OP_STORE x, t1
+OP_CONST 2.250000, t2
+OP_STORE y, t2
+OP_LOAD x, t3
+OP_LOAD y, t4
+OP_IS_LESS_THAN t3, t4, t5
+OP_STORE z, t5
+OP_LOAD y, t6
+OP_CONST 2.000000, t7
+OP_IS_GREATER_THAN t6, t7, t8
+OP_STORE w, t8
+OP_LOAD w, t9
+OP_INT_CAST t9, t10
+OP_RETURN t10
+OP_FUNC_END
 
 @endtest
 
@@ -112,14 +112,14 @@ float test() {
 }
 @whenRun("./bin/cclynx", args="--emit-ir")
 @expectOutput("stdout")
-0000 OP_FUNC "test"
-0001 OP_CONST 777, t1
-0002 OP_STORE y, t1
-0003 OP_LOAD y, t2
-0004 OP_FLOAT_CAST t2, t3
-0005 OP_STORE x, t3
-0006 OP_LOAD x, t4
-0007 OP_RETURN t4
-0008 OP_FUNC_END
+OP_FUNC "test"
+OP_CONST 777, t1
+OP_STORE y, t1
+OP_LOAD y, t2
+OP_FLOAT_CAST t2, t3
+OP_STORE x, t3
+OP_LOAD x, t4
+OP_RETURN t4
+OP_FUNC_END
 
 @endtest

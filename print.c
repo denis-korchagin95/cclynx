@@ -415,83 +415,83 @@ void print_ir_program(const struct ir_program * program, FILE * file)
 
     static char buf[1024] = {'\0'};
 
-    for (size_t i = 0; i < program->position; ++i) {
-        struct ir_instruction * instruction = program->instructions[i];
+    for (size_t idx = 0; idx < program->position; ++idx) {
+        struct ir_instruction * instruction = program->instructions[idx];
 
         switch (instruction->code) {
             case OP_FLOAT_CAST:
                 snprintf(buf, sizeof(buf), "t%llu, t%llu", instruction->op1->content.temp_id, instruction->result->content.temp_id);
-                fprintf(file, "%04zu OP_FLOAT_CAST %s\n", i, buf);
+                fprintf(file, "OP_FLOAT_CAST %s\n", buf);
                 break;
             case OP_INT_CAST:
                 snprintf(buf, sizeof(buf), "t%llu, t%llu", instruction->op1->content.temp_id, instruction->result->content.temp_id);
-                fprintf(file, "%04zu OP_INT_CAST %s\n", i, buf);
+                fprintf(file, "OP_INT_CAST %s\n", buf);
                 break;
             case OP_JUMP_IF_EQUAL:
                 snprintf(buf, sizeof(buf), "t%llu, t%llu, \".L%llu\"", instruction->op1->content.temp_id, instruction->op2->content.temp_id, instruction->result->content.label_id);
-                fprintf(file, "%04zu OP_JUMP_IF_EQUAL %s\n", i, buf);
+                fprintf(file, "OP_JUMP_IF_EQUAL %s\n", buf);
                 break;
             case OP_JUMP_IF_NOT_EQUAL:
                 snprintf(buf, sizeof(buf), "t%llu, t%llu, \".L%llu\"", instruction->op1->content.temp_id, instruction->op2->content.temp_id, instruction->result->content.label_id);
-                fprintf(file, "%04zu OP_JUMP_IF_NOT_EQUAL %s\n", i, buf);
+                fprintf(file, "OP_JUMP_IF_NOT_EQUAL %s\n", buf);
                 break;
             case OP_JUMP_IF_LESS_OR_EQUAL:
                 snprintf(buf, sizeof(buf), "t%llu, t%llu, \".L%llu\"", instruction->op1->content.temp_id, instruction->op2->content.temp_id, instruction->result->content.label_id);
-                fprintf(file, "%04zu OP_JUMP_IF_LESS_OR_EQUAL %s\n", i, buf);
+                fprintf(file, "OP_JUMP_IF_LESS_OR_EQUAL %s\n", buf);
                 break;
             case OP_JUMP_IF_GREATER_OR_EQUAL:
                 snprintf(buf, sizeof(buf), "t%llu, t%llu, \".L%llu\"", instruction->op1->content.temp_id, instruction->op2->content.temp_id, instruction->result->content.label_id);
-                fprintf(file, "%04zu OP_JUMP_IF_GREATER_OR_EQUAL %s\n", i, buf);
+                fprintf(file, "OP_JUMP_IF_GREATER_OR_EQUAL %s\n", buf);
                 break;
             case OP_LABEL:
                 snprintf(buf, sizeof(buf), "\".L%llu\"", instruction->op1->content.label_id);
-                fprintf(file, "%04zu OP_LABEL %s\n", i, buf);
+                fprintf(file, "OP_LABEL %s\n", buf);
                 break;
             case OP_JUMP:
                 snprintf(buf, sizeof(buf), "\".L%llu\"", instruction->op1->content.label_id);
-                fprintf(file, "%04zu OP_JUMP %s\n", i, buf);
+                fprintf(file, "OP_JUMP %s\n", buf);
                 break;
             case OP_JUMP_IF_FALSE:
                 snprintf(buf, sizeof(buf), "t%llu, \".L%llu\"", instruction->op1->content.temp_id, instruction->op2->content.label_id);
-                fprintf(file, "%04zu OP_JUMP_IF_FALSE %s\n", i, buf);
+                fprintf(file, "OP_JUMP_IF_FALSE %s\n", buf);
                 break;
             case OP_IS_LESS_THAN:
                 snprintf(buf, sizeof(buf), "t%llu, t%llu, t%llu", instruction->op1->content.temp_id, instruction->op2->content.temp_id, instruction->result->content.temp_id);
-                fprintf(file, "%04zu OP_IS_LESS_THAN %s\n", i, buf);
+                fprintf(file, "OP_IS_LESS_THAN %s\n", buf);
                 break;
             case OP_IS_GREATER_THAN:
                 snprintf(buf, sizeof(buf), "t%llu, t%llu, t%llu", instruction->op1->content.temp_id, instruction->op2->content.temp_id, instruction->result->content.temp_id);
-                fprintf(file, "%04zu OP_IS_GREATER_THAN %s\n", i, buf);
+                fprintf(file, "OP_IS_GREATER_THAN %s\n", buf);
                 break;
             case OP_IS_EQUAL:
                 snprintf(buf, sizeof(buf), "t%llu, t%llu, t%llu", instruction->op1->content.temp_id, instruction->op2->content.temp_id, instruction->result->content.temp_id);
-                fprintf(file, "%04zu OP_IS_EQUAL %s\n", i, buf);
+                fprintf(file, "OP_IS_EQUAL %s\n", buf);
                 break;
             case OP_IS_NOT_EQUAL:
                 snprintf(buf, sizeof(buf), "t%llu, t%llu, t%llu", instruction->op1->content.temp_id, instruction->op2->content.temp_id, instruction->result->content.temp_id);
-                fprintf(file, "%04zu OP_IS_NOT_EQUAL %s\n", i, buf);
+                fprintf(file, "OP_IS_NOT_EQUAL %s\n", buf);
                 break;
             case OP_STORE:
                 snprintf(buf, sizeof(buf), "t%llu", instruction->op2->content.temp_id);
-                fprintf(file, "%04zu OP_STORE %s, %s\n", i, instruction->op1->content.variable.symbol->identifier->name, buf);
+                fprintf(file, "OP_STORE %s, %s\n", instruction->op1->content.variable.symbol->identifier->name, buf);
                 break;
             case OP_LOAD:
                 snprintf(buf, sizeof(buf), "t%llu", instruction->result->content.temp_id);
-                fprintf(file, "%04zu OP_LOAD %s, %s\n", i, instruction->op1->content.variable.symbol->identifier->name, buf);
+                fprintf(file, "OP_LOAD %s, %s\n", instruction->op1->content.variable.symbol->identifier->name, buf);
                 break;
             case OP_FUNC:
-                fprintf(file, "%04zu OP_FUNC \"%s\"\n", i, instruction->result->content.function.identifier->name);
+                fprintf(file, "OP_FUNC \"%s\"\n", instruction->result->content.function.identifier->name);
                 break;
             case OP_FUNC_END:
-                fprintf(file, "%04zu OP_FUNC_END\n", i);
+                fprintf(file, "OP_FUNC_END\n");
                 break;
             case OP_SUB:
                 snprintf(buf, sizeof(buf), "t%llu, t%llu, t%llu", instruction->op1->content.temp_id, instruction->op2->content.temp_id, instruction->result->content.temp_id);
-                fprintf(file, "%04zu OP_SUB %s\n", i, buf);
+                fprintf(file, "OP_SUB %s\n", buf);
                 break;
             case OP_DIV:
                 snprintf(buf, sizeof(buf), "t%llu, t%llu, t%llu", instruction->op1->content.temp_id, instruction->op2->content.temp_id, instruction->result->content.temp_id);
-                fprintf(file, "%04zu OP_DIV %s\n", i, buf);
+                fprintf(file, "OP_DIV %s\n", buf);
                 break;
             case OP_CONST:
                 {
@@ -502,27 +502,27 @@ void print_ir_program(const struct ir_program * program, FILE * file)
                     } else {
                         snprintf(buf, sizeof(buf), "<unknown constant>");
                     }
-                    fprintf(file, "%04zu OP_CONST %s\n", i, buf);
+                    fprintf(file, "OP_CONST %s\n", buf);
                 }
                 break;
             case OP_RETURN:
                 if (instruction->op1 != NULL) {
                     snprintf(buf, sizeof(buf), "t%llu", instruction->op1->content.temp_id);
-                    fprintf(file, "%04zu OP_RETURN %s\n", i, buf);
+                    fprintf(file, "OP_RETURN %s\n", buf);
                 } else {
-                    fprintf(file, "%04zu OP_RETURN\n", i);
+                    fprintf(file, "OP_RETURN\n");
                 }
                 break;
             case OP_ADD:
                 snprintf(buf, sizeof(buf), "t%llu, t%llu, t%llu", instruction->op1->content.temp_id, instruction->op2->content.temp_id, instruction->result->content.temp_id);
-                fprintf(file, "%04zu OP_ADD %s\n", i, buf);
+                fprintf(file, "OP_ADD %s\n", buf);
                 break;
             case OP_MUL:
                 snprintf(buf, sizeof(buf), "t%llu, t%llu, t%llu", instruction->op1->content.temp_id, instruction->op2->content.temp_id, instruction->result->content.temp_id);
-                fprintf(file, "%04zu OP_MUL %s\n", i, buf);
+                fprintf(file, "OP_MUL %s\n", buf);
                 break;
             case OP_NOP:
-                fprintf(file, "%04zu OP_NOP\n", i);
+                fprintf(file, "OP_NOP\n");
                 break;
             default:
                 cclynx_fatal_error("ERROR(print): Unknown instruction for IR program\n");
