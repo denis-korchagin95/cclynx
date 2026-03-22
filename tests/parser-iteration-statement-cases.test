@@ -1,5 +1,5 @@
 @test("It should parse while loop")
-@given("file", filename="iter_1.c")
+@given("file")
 int main() {
     int i;
     i = 0;
@@ -9,7 +9,7 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-TranslationUnit: 'iter_1.c'
+TranslationUnit: '{{any}}'
 |
 +-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
     |
@@ -50,7 +50,7 @@ TranslationUnit: 'iter_1.c'
 @endtest
 
 @test("It should parse while with empty statement")
-@given("file", filename="iter_2.c")
+@given("file")
 int main() {
     int i;
     i = 0;
@@ -58,7 +58,7 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-TranslationUnit: 'iter_2.c'
+TranslationUnit: '{{any}}'
 |
 +-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
     |
@@ -87,7 +87,7 @@ TranslationUnit: 'iter_2.c'
 @endtest
 
 @test("It should parse while with simple expression")
-@given("file", filename="iter_3.c")
+@given("file")
 int main() {
     int i;
     i = 0;
@@ -96,7 +96,7 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-TranslationUnit: 'iter_3.c'
+TranslationUnit: '{{any}}'
 |
 +-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
     |
