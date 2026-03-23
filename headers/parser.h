@@ -54,7 +54,7 @@ struct ast_node
 {
     union
     {
-        struct symbol * variable;
+        struct symbol * symbol;
         struct ast_node_list * list;
         struct translation_unit {
             struct ast_node_list * list;

@@ -1,12 +1,12 @@
 CC=gcc
 SRC=./
-BIN=./bin/
-BIN_TESTERS=./bin/testers/
-OBJ=./obj/
+BIN=bin/
+BIN_TESTERS=bin/testers/
+OBJ=obj/
 PROGRAM=cclynx
 CFLAGS=-std=c11 -g2 -Wall -Wextra -pedantic -O0
-HEADERS=./headers/
-TESTERS=./testers/
+HEADERS=headers/
+TESTERS=testers/
 
 vpath %.c $(SRC) $(TESTERS)
 
@@ -65,4 +65,4 @@ clean:
 
 $(OBJ)%.o: %.c
 	@mkdir -p $(dir $@)
-	$(CC) $(CFLAGS) -I$(HEADERS) -c $(SRC)$*.c -o $@
+	$(CC) $(CFLAGS) -I$(HEADERS) -c $< -o $@

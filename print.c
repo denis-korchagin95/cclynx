@@ -142,7 +142,7 @@ void do_print_ast(const struct ast_node * ast, FILE * file, int depth, unsigned 
             }
             break;
         case AST_NODE_KIND_VARIABLE:
-            fprintf(file, "Variable: '%s' {type: '%s'}\n", ast->content.variable->identifier->name, type_stringify(ast->type));
+            fprintf(file, "Variable: '%s' {type: '%s'}\n", ast->content.symbol->identifier->name, type_stringify(ast->type));
             break;
         case AST_NODE_KIND_EXPRESSION_STATEMENT:
             fprintf(file, "ExpressionStatement%s\n", ast->content.node == NULL ? ": {empty expression}" : "");
@@ -208,7 +208,7 @@ void do_print_ast(const struct ast_node * ast, FILE * file, int depth, unsigned 
             break;
         case AST_NODE_KIND_VARIABLE_DECLARATION:
             {
-                fprintf(file, "VariableDeclaration: '%s' {type: '%s'}\n", ast->content.variable->identifier->name, type_stringify(ast->type));
+                fprintf(file, "VariableDeclaration: '%s' {type: '%s'}\n", ast->content.symbol->identifier->name, type_stringify(ast->type));
             }
             break;
         case AST_NODE_KIND_FUNCTION_DEFINITION:
@@ -386,10 +386,10 @@ int do_print_ast_dot(const struct ast_node * ast, FILE * file, int next_id)
             fprintf(file, "    n%d [label=\"FloatConstant\\n%f : %s\"];\n", id, ast->content.constant.value.float_constant, type_stringify(ast->type));
             break;
         case AST_NODE_KIND_VARIABLE:
-            fprintf(file, "    n%d [label=\"Variable\\n'%s' : %s\"];\n", id, ast->content.variable->identifier->name, type_stringify(ast->type));
+            fprintf(file, "    n%d [label=\"Variable\\n'%s' : %s\"];\n", id, ast->content.symbol->identifier->name, type_stringify(ast->type));
             break;
         case AST_NODE_KIND_VARIABLE_DECLARATION:
-            fprintf(file, "    n%d [label=\"VariableDeclaration\\n'%s' : %s\"];\n", id, ast->content.variable->identifier->name, type_stringify(ast->type));
+            fprintf(file, "    n%d [label=\"VariableDeclaration\\n'%s' : %s\"];\n", id, ast->content.symbol->identifier->name, type_stringify(ast->type));
             break;
         case AST_NODE_KIND_CAST_EXPRESSION:
             fprintf(file, "    n%d [label=\"CastExpression\\n: %s\"];\n", id, type_stringify(ast->type));

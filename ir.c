@@ -224,15 +224,15 @@ void do_generate_ir(struct ir_context * ctx, struct ir_program * program, const 
             break;
         case AST_NODE_KIND_VARIABLE:
             {
-                struct ir_operand * variable = find_variable_operand_by_symbol(ctx, node->content.variable);
+                struct ir_operand * variable = find_variable_operand_by_symbol(ctx, node->content.symbol);
 
                 if (variable == NULL) {
                     variable = alloc_operand(ctx);
                     variable->kind = OPERAND_KIND_VARIABLE;
-                    variable->content.variable.symbol = node->content.variable;
+                    variable->content.variable.symbol = node->content.symbol;
                     variable->content.variable.offset = ctx->current_func->result->content.function.local_vars_size;
-                    variable->type = node->content.variable->type;
-                    ctx->current_func->result->content.function.local_vars_size += node->content.variable->type->size;
+                    variable->type = node->content.symbol->type;
+                    ctx->current_func->result->content.function.local_vars_size += node->content.symbol->type->size;
                 }
 
                 ctx->last_variable = variable;

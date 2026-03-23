@@ -397,7 +397,7 @@ struct ast_node * parse_declaration(struct parser_context * ctx)
     scope_add_symbol(ctx->current_scope, variable, ctx->pool);
 
     struct ast_node * declaration = create_ast_node(ctx, AST_NODE_KIND_VARIABLE_DECLARATION);
-    declaration->content.variable = variable;
+    declaration->content.symbol = variable;
     declaration->type = variable->type;
 
     return declaration;
@@ -654,7 +654,7 @@ struct ast_node * parse_primary_expression(struct parser_context * ctx)
         }
 
         struct ast_node * variable = create_ast_node(ctx, AST_NODE_KIND_VARIABLE);
-        variable->content.variable = symbol;
+        variable->content.symbol = symbol;
         variable->type = symbol->type;
         return variable;
     }
