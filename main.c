@@ -17,12 +17,17 @@ enum output_stage {
     STAGE_ASM,
     STAGE_TOKENS,
     STAGE_AST,
-    STAGE_AST_DOT,
     STAGE_IR,
+};
+
+enum output_format {
+    FORMAT_TREE,
+    FORMAT_DOT,
 };
 
 const char * source_filename = NULL;
 enum output_stage output_stage = STAGE_ASM;
+enum output_format output_format = FORMAT_TREE;
 
 static void parse_options(int argc, const char * argv[]);
 static void show_usage(const char * program_name, FILE * output);
@@ -74,12 +79,11 @@ int main(const int argc, const char * argv[])
     struct ast_node * ast = parser_parse(&parser_ctx);
 
     if (output_stage == STAGE_AST) {
-        print_ast(ast, stdout);
-        goto cleanup;
-    }
-
-    if (output_stage == STAGE_AST_DOT) {
-        print_ast_dot(ast, stdout);
+        if (output_format == FORMAT_DOT) {
+            print_ast_dot(ast, stdout);
+        } else {
+            print_ast(ast, stdout);
+        }
         goto cleanup;
     }
 
@@ -124,13 +128,18 @@ void parse_options(const int argc, const char * argv[])
             continue;
         }
 
-        if (strncmp(arg, "--emit-ast-dot", sizeof("--emit-ast-dot") - 1) == 0) {
-            output_stage = STAGE_AST_DOT;
+        if (strncmp(arg, "--emit-ast", sizeof("--emit-ast") - 1) == 0) {
+            output_stage = STAGE_AST;
             continue;
         }
 
-        if (strncmp(arg, "--emit-ast", sizeof("--emit-ast") - 1) == 0) {
-            output_stage = STAGE_AST;
+        if (strncmp(arg, "--format=dot", sizeof("--format=dot") - 1) == 0) {
+            output_format = FORMAT_DOT;
+            continue;
+        }
+
+        if (strncmp(arg, "--format=tree", sizeof("--format=tree") - 1) == 0) {
+            output_format = FORMAT_TREE;
             continue;
         }
 
@@ -162,7 +171,7 @@ void show_usage(const char * program_name, FILE * output)
     fprintf(output, "\t--help\n\t    Show this message.\n\n");
     fprintf(output, "\t--emit-tokens\n\t    Produces tokens.\n\n");
     fprintf(output, "\t--emit-ast\n\t    Produces abstract syntax tree.\n\n");
-    fprintf(output, "\t--emit-ast-dot\n\t    Produces abstract syntax tree in DOT format.\n\n");
+    fprintf(output, "\t--format=tree|dot\n\t    Output format (default: tree).\n\n");
     fprintf(output, "\t--emit-ir\n\t    Produces intermediate representation.\n\n");
     fprintf(output, "\t--emit-asm\n\t    Produces assembly (default).\n\n");
 }
