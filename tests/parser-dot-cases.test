@@ -330,6 +330,30 @@ digraph AST {
 
 @endtest
 
+@test("DOT: function with 1 parameter")
+@given("file")
+int sum(int a) {
+    return a;
+}
+@whenRun("./bin/cclynx", args="--emit-ast-dot")
+@expectOutput("stdout")
+digraph AST {
+    node [shape=box, fontname="monospace"];
+    n0 [label="TranslationUnit\n'{{any}}'"];
+    n1 [label="FunctionDefinition\n'sum' : int"];
+    n2 [label="Parameter\n'a' : int"];
+    n1 -> n2 [label="param"];
+    n3 [label="CompoundStatement"];
+    n4 [label="ReturnStatement"];
+    n5 [label="Variable\n'a' : int"];
+    n4 -> n5;
+    n3 -> n4;
+    n1 -> n3;
+    n0 -> n1;
+}
+
+@endtest
+
 @test("DOT: bare return statement")
 @given("file")
 int main() {

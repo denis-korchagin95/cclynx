@@ -12,7 +12,7 @@
 #include "type.h"
 #include "errors.h"
 
-static struct ast_node * create_ast_node(struct parser_context * ctx, enum ast_node_kind kind);
+static struct ast_node * create_ast_node(const struct parser_context * ctx, enum ast_node_kind kind);
 
 static struct ast_node * parse_expression(struct parser_context * ctx);
 static struct ast_node * parse_if_statement(struct parser_context * ctx);
@@ -31,7 +31,9 @@ static struct ast_node * parse_multiplicative_expression(struct parser_context *
 static struct ast_node * parse_cast_expression(struct parser_context * ctx);
 static struct ast_node * parse_primary_expression(struct parser_context * ctx);
 
-static struct type * check_type(struct type * lhs, struct type * rhs);
+static void parse_function_parameter_list(struct parser_context * ctx, struct ast_node ** parameters, unsigned int * parameter_count);
+
+static struct type * check_type(struct type * lhs, const struct type * rhs);
 
 struct ast_node * parser_parse(struct parser_context * ctx)
 {
@@ -292,20 +294,11 @@ struct ast_node * parse_function_definition(struct parser_context * ctx)
 
     struct identifier * identifier = current_token->identifier;
 
-    struct symbol * func_symbol = scope_find_symbol(ctx->current_scope, identifier, SYMBOL_KIND_FUNCTION);
+    struct symbol * function_symbol = scope_find_symbol(ctx->current_scope, identifier, SYMBOL_KIND_FUNCTION);
 
-    if (func_symbol != NULL) {
+    if (function_symbol != NULL) {
         cclynx_fatal_error("ERROR: function '%s' already defined!\n", identifier->name);
     }
-
-    func_symbol = memory_blob_pool_alloc(ctx->pool, sizeof(struct symbol));
-    memset(func_symbol, 0, sizeof(struct symbol));
-    func_symbol->identifier = identifier;
-    func_symbol->type = symbol->type;
-    func_symbol->kind = SYMBOL_KIND_FUNCTION;
-
-    identifier_attach_symbol(ctx->pool, identifier, func_symbol)
-    scope_add_symbol(ctx->current_scope, func_symbol, ctx->pool);
 
     current_token = parser_get_token(ctx);
 
@@ -313,11 +306,21 @@ struct ast_node * parse_function_definition(struct parser_context * ctx)
         cclynx_fatal_error("ERROR: expected '('!\n");
     }
 
-    ctx->current_scope = scope_push(ctx->current_scope, ctx->pool);
+    function_symbol = memory_blob_pool_alloc(ctx->pool, sizeof(struct symbol));
+    memset(function_symbol, 0, sizeof(struct symbol));
+    function_symbol->identifier = identifier;
+    function_symbol->type = symbol->type;
+    function_symbol->kind = SYMBOL_KIND_FUNCTION;
+
+    identifier_attach_symbol(ctx->pool, identifier, function_symbol)
+    scope_add_symbol(ctx->current_scope, function_symbol, ctx->pool);
 
     int parameter_presence = PARAMETER_PRESENCE_UNSPECIFIED;
 
     current_token = parser_get_token(ctx);
+
+    struct ast_node * parameters[MAX_AST_FUNCTION_PARAMETER_COUNT] = {0};
+    unsigned int parameter_count = 0;
 
     if (
         current_token->kind == TOKEN_KIND_IDENTIFIER
@@ -326,6 +329,12 @@ struct ast_node * parse_function_definition(struct parser_context * ctx)
     ) {
         parameter_presence = PARAMETER_PRESENCE_VOID;
         current_token = parser_get_token(ctx);
+    } else if (!(current_token->kind == TOKEN_KIND_PUNCTUATOR && current_token->content.ch == ')')) {
+        parser_putback_token(current_token, ctx);
+        ctx->current_scope = scope_push(ctx->current_scope, ctx->pool);
+        parse_function_parameter_list(ctx, parameters, &parameter_count);
+        current_token = parser_get_token(ctx);
+        parameter_presence = PARAMETER_PRESENCE_SPECIFIED;
     }
 
     if (!token_is_punctuator(current_token, ')')) {
@@ -334,12 +343,16 @@ struct ast_node * parse_function_definition(struct parser_context * ctx)
 
     struct ast_node * compound_statement = parse_compound_statement(ctx);
 
-    ctx->current_scope = scope_pop(ctx->current_scope);
+    if (parameter_count > 0) {
+        ctx->current_scope = scope_pop(ctx->current_scope);
+    }
 
     struct ast_node * function_definition = create_ast_node(ctx, AST_NODE_KIND_FUNCTION_DEFINITION);
     function_definition->content.function_definition.name = identifier;
     function_definition->content.function_definition.body = compound_statement;
     function_definition->content.function_definition.parameter_presence = parameter_presence;
+    memcpy(&function_definition->content.function_definition.parameters, &parameters, sizeof(struct ast_node *) * MAX_AST_FUNCTION_PARAMETER_COUNT);
+    function_definition->content.function_definition.parameter_count = parameter_count;
     function_definition->type = symbol->type;
 
     return function_definition;
@@ -652,7 +665,11 @@ struct ast_node * parse_primary_expression(struct parser_context * ctx)
         struct symbol * symbol = symbol_lookup(current_token->identifier, SYMBOL_KIND_VARIABLE);
 
         if (symbol == NULL) {
-            cclynx_fatal_error("ERROR: undeclared variable \"%s\"!\n", current_token->identifier->name);
+            symbol = symbol_lookup(current_token->content.identifier, SYMBOL_KIND_FUNCTION_PARAMETER);
+        }
+
+        if (symbol == NULL) {
+            cclynx_fatal_error("ERROR: undeclared variable \"%s\"!\n", current_token->content.identifier->name);
         }
 
         struct ast_node * variable = create_ast_node(ctx, AST_NODE_KIND_VARIABLE);
@@ -719,7 +736,7 @@ void parser_init_context(struct parser_context * ctx, struct token * tokens, str
     ctx->source_filename = source_filename;
 }
 
-struct ast_node * create_ast_node(struct parser_context * ctx, enum ast_node_kind kind)
+struct ast_node * create_ast_node(const struct parser_context * ctx, enum ast_node_kind kind)
 {
     struct ast_node * node = memory_blob_pool_alloc(ctx->pool, sizeof(struct ast_node));
     memset(node, 0, sizeof(struct ast_node));
@@ -728,7 +745,7 @@ struct ast_node * create_ast_node(struct parser_context * ctx, enum ast_node_kin
     return node;
 }
 
-struct type * check_type(struct type * lhs, struct type * rhs)
+struct type * check_type(struct type * lhs, const struct type * rhs)
 {
     assert(lhs != NULL);
     assert(rhs != NULL);
@@ -738,4 +755,71 @@ struct type * check_type(struct type * lhs, struct type * rhs)
     }
 
     return lhs;
+}
+
+struct ast_node * parse_function_parameter(struct parser_context * ctx)
+{
+    assert(ctx != NULL);
+
+    struct token * current_token = parser_get_token(ctx);
+
+    if (current_token->kind != TOKEN_KIND_IDENTIFIER) {
+        return NULL;
+    }
+
+    const struct symbol * symbol = symbol_lookup(current_token->content.identifier, SYMBOL_KIND_TYPE_SPECIFIER);
+
+    if (symbol == NULL) {
+        cclynx_fatal_error("ERROR: expected type specifier!\n");
+    }
+
+    struct type * parameter_type = symbol->type;
+
+    current_token = parser_get_token(ctx);
+
+    if (current_token->kind != TOKEN_KIND_IDENTIFIER) {
+        cclynx_fatal_error("ERROR: expected identifier!\n");
+    }
+
+    if (current_token->content.identifier->is_keyword) {
+        cclynx_fatal_error("ERROR: expected identifier but not a keyword!\n");
+    }
+
+    struct identifier * parameter_identifier = current_token->content.identifier;
+
+    symbol = scope_find_symbol(ctx->current_scope, parameter_identifier, SYMBOL_KIND_FUNCTION_PARAMETER);
+
+    if (symbol != NULL) {
+        cclynx_fatal_error("ERROR: parameter '%s' already declared!\n", parameter_identifier->name);
+    }
+
+    struct symbol * parameter_symbol = memory_blob_pool_alloc(ctx->pool, sizeof(struct symbol));
+    memset(parameter_symbol, 0, sizeof(struct symbol));
+    parameter_symbol->kind = SYMBOL_KIND_FUNCTION_PARAMETER;
+    parameter_symbol->type = parameter_type;
+    parameter_symbol->identifier = parameter_identifier;
+
+    identifier_attach_symbol(ctx->pool, parameter_identifier, parameter_symbol)
+    scope_add_symbol(ctx->current_scope, parameter_symbol, ctx->pool);
+
+    struct ast_node * parameter = create_ast_node(ctx, AST_NODE_KIND_FUNCTION_PARAMETER);
+    parameter->type = parameter_symbol->type;
+    parameter->content.symbol = parameter_symbol;
+
+    return parameter;
+}
+
+void parse_function_parameter_list(struct parser_context * ctx, struct ast_node ** parameters, unsigned int * parameter_count)
+{
+    assert(ctx != NULL);
+    assert(parameters != NULL);
+    assert(parameter_count != NULL);
+
+    struct ast_node * parameter = parse_function_parameter(ctx);
+
+    if (parameter == NULL) {
+        return;
+    }
+
+    parameters[(*parameter_count)++] = parameter;
 }

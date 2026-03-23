@@ -2,6 +2,8 @@
 #define CCLYNX_PARSER_H 1
 
 #define MAX_TOKEN_BUFFER_SIZE (4)
+#define MAX_AST_FUNCTION_PARAMETER_COUNT (3)
+#define MAX_AST_FUNCTION_ARGUMENT_COUNT (3)
 
 struct symbol;
 
@@ -11,8 +13,10 @@ enum ast_node_kind
     AST_NODE_KIND_INTEGER_CONSTANT,
     AST_NODE_KIND_FLOAT_CONSTANT,
     AST_NODE_KIND_VARIABLE,
+    AST_NODE_KIND_FUNCTION_CALL,
 
     AST_NODE_KIND_VARIABLE_DECLARATION,
+    AST_NODE_KIND_FUNCTION_PARAMETER,
     AST_NODE_KIND_FUNCTION_DEFINITION,
 
     AST_NODE_KIND_COMPOUND_STATEMENT,
@@ -81,8 +85,18 @@ struct ast_node
             enum {
                 PARAMETER_PRESENCE_UNSPECIFIED = 0,
                 PARAMETER_PRESENCE_VOID,
+                PARAMETER_PRESENCE_SPECIFIED,
             } parameter_presence;
+            struct ast_node * parameters[MAX_AST_FUNCTION_PARAMETER_COUNT];
+            unsigned int parameter_count;
         } function_definition;
+        struct function_call
+        {
+            struct identifier * name;
+            struct ast_node * arguments[MAX_AST_FUNCTION_ARGUMENT_COUNT];
+            unsigned int argument_count;
+            struct type * return_type;
+        } function_call;
         struct assignment {
             enum assignment_type type;
             struct ast_node * lhs;

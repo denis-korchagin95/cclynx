@@ -211,10 +211,36 @@ void do_print_ast(const struct ast_node * ast, FILE * file, int depth, unsigned 
                 fprintf(file, "VariableDeclaration: '%s' {type: '%s'}\n", ast->content.symbol->identifier->name, type_stringify(ast->type));
             }
             break;
+        case AST_NODE_KIND_FUNCTION_PARAMETER:
+            fprintf(file, "Parameter: '%s' {type: '%s'}\n", ast->content.symbol->identifier->name, type_stringify(ast->type));
+            break;
         case AST_NODE_KIND_FUNCTION_DEFINITION:
             {
-                const char * args = ast->content.function_definition.parameter_presence == PARAMETER_PRESENCE_VOID ? "<no-parameters>" : "<unspecified-parameters>";
-                fprintf(file, "FunctionDefinition: '%s' {type: '%s'} %s\n", ast->content.function_definition.name->name, type_stringify(ast->type), args);
+                const char * args = "";
+                if (ast->content.function_definition.parameter_presence == PARAMETER_PRESENCE_VOID) {
+                    args = " <no-parameters>";
+                } else if (ast->content.function_definition.parameter_presence == PARAMETER_PRESENCE_UNSPECIFIED) {
+                    args = " <unspecified-parameters>";
+                }
+                fprintf(file, "FunctionDefinition: '%s' {type: '%s'}%s\n", ast->content.function_definition.name->name, type_stringify(ast->type), args);
+                if (ast->content.function_definition.parameter_count > 0) {
+                    ancestors_info[depth] = ast->content.function_definition.body != NULL ? 2 : 0;
+
+                    for (int i = 0; i < depth; ++i) {
+                        fprintf(file, "%s   ", (ancestors_info[i] & 2) > 0 ? "|" : " ");
+                    }
+                    fprintf(file, "|\n");
+                    for (int i = 0; i < depth; ++i) {
+                        fprintf(file, "%s   ", (ancestors_info[i] & 2) > 0 ? "|" : " ");
+                    }
+                    fprintf(file, "+-> ParameterList\n");
+
+                    for (unsigned int i = 0; i < ast->content.function_definition.parameter_count; i++) {
+                        ancestors_info[depth + 1] = i < ast->content.function_definition.parameter_count - 1 ? 2 : 0;
+                        do_print_ast(ast->content.function_definition.parameters[i], file, depth + 2, ancestors_info, NULL);
+                    }
+                }
+                ancestors_info[depth] = 0;
                 if (ast->content.function_definition.body != NULL)
                     do_print_ast(ast->content.function_definition.body, file, depth + 1, ancestors_info, NULL);
             }
@@ -268,10 +294,23 @@ int do_print_ast_dot(const struct ast_node * ast, FILE * file, int next_id)
                 fprintf(file, "    n%d -> n%d;\n", id, child_id);
             }
             break;
+        case AST_NODE_KIND_FUNCTION_PARAMETER:
+            fprintf(file, "    n%d [label=\"Parameter\\n'%s' : %s\"];\n", id, ast->content.symbol->identifier->name, type_stringify(ast->type));
+            break;
         case AST_NODE_KIND_FUNCTION_DEFINITION:
             {
-                const char * args = ast->content.function_definition.parameter_presence == PARAMETER_PRESENCE_VOID ? "no-parameters" : "unspecified-parameters";
-                fprintf(file, "    n%d [label=\"FunctionDefinition\\n'%s' : %s\\n%s\"];\n", id, ast->content.function_definition.name->name, type_stringify(ast->type), args);
+                const char * args = "";
+                if (ast->content.function_definition.parameter_presence == PARAMETER_PRESENCE_VOID) {
+                    args = "\\nno-parameters";
+                } else if (ast->content.function_definition.parameter_presence == PARAMETER_PRESENCE_UNSPECIFIED) {
+                    args = "\\nunspecified-parameters";
+                }
+                fprintf(file, "    n%d [label=\"FunctionDefinition\\n'%s' : %s%s\"];\n", id, ast->content.function_definition.name->name, type_stringify(ast->type), args);
+            }
+            for (unsigned int i = 0; i < ast->content.function_definition.parameter_count; i++) {
+                int child_id = next_id;
+                next_id = do_print_ast_dot(ast->content.function_definition.parameters[i], file, next_id);
+                fprintf(file, "    n%d -> n%d [label=\"param\"];\n", id, child_id);
             }
             if (ast->content.function_definition.body != NULL) {
                 int child_id = next_id;

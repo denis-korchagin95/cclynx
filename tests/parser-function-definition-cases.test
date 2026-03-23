@@ -194,3 +194,26 @@ TranslationUnit: '{{any}}'
             +-> Variable: 'x' {type: 'int'}
 
 @endtest
+
+@test("It should parse function with 1 parameter")
+@given("file")
+int sum(int a) {
+    return a;
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+|
++-> FunctionDefinition: 'sum' {type: 'int'}
+    |
+    +-> ParameterList
+    |   |
+    |   +-> Parameter: 'a' {type: 'int'}
+    |
+    +-> CompoundStatement
+        |
+        +-> ReturnStatement
+            |
+            +-> Variable: 'a' {type: 'int'}
+
+@endtest
