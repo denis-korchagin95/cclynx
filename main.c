@@ -1,3 +1,4 @@
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -28,6 +29,7 @@ enum output_format {
 const char * source_filename = NULL;
 enum output_stage output_stage = STAGE_ASM;
 enum output_format output_format = FORMAT_TREE;
+bool output_format_explicit = false;
 
 static void parse_options(int argc, const char * argv[]);
 static void show_usage(const char * program_name, FILE * output);
@@ -36,6 +38,10 @@ static void show_usage(const char * program_name, FILE * output);
 int main(const int argc, const char * argv[])
 {
     parse_options(argc, argv);
+
+    if (output_format_explicit && output_stage != STAGE_AST) {
+        cclynx_fatal_error("ERROR: --format is only supported with --emit-ast\n");
+    }
 
     for (int i = 1; i < argc; ++i) {
         if (strncmp(argv[i], "--", sizeof("--") - 1) == 0) {
@@ -135,11 +141,13 @@ void parse_options(const int argc, const char * argv[])
 
         if (strncmp(arg, "--format=dot", sizeof("--format=dot") - 1) == 0) {
             output_format = FORMAT_DOT;
+            output_format_explicit = true;
             continue;
         }
 
         if (strncmp(arg, "--format=tree", sizeof("--format=tree") - 1) == 0) {
             output_format = FORMAT_TREE;
+            output_format_explicit = true;
             continue;
         }
 
