@@ -79,6 +79,10 @@ void * memory_blob_pool_alloc(struct memory_blob_pool * pool, size_t size)
         pool->blobs = new_blobs;
     }
 
+    if (aligned_size > pool->blob_size) {
+        cclynx_fatal_error("ERROR: allocation of %zu bytes exceeds blob size of %zu bytes\n", size, pool->blob_size);
+    }
+
     struct memory_blob * new_blob = alloc_new_blob(pool->blob_size);
     pool->blobs[pool->blob_count++] = new_blob;
 
