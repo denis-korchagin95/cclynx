@@ -1,8 +1,9 @@
 #ifndef CCLYNX_TOKENIZER_H
 #define CCLYNX_TOKENIZER_H 1
 
-#include "hashmap.h"
 #include "source.h"
+
+struct hashmap;
 
 #define is_upper_char(ch) ((ch) >= 'A' && (ch) <= 'Z')
 #define is_lower_char(ch) ((ch) >= 'a' && (ch) <= 'z')

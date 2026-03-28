@@ -54,7 +54,7 @@ struct identifier * identifier_insert(struct hashmap * identifier_table, struct 
     memset(identifier, 0, sizeof(struct identifier));
 
     identifier->name = memory_blob_pool_alloc(pool, len + 1);
-    strncpy(identifier->name, name, len);
+    memcpy(identifier->name, name, len);
     identifier->name[len] = '\0';
 
     hashmap_insert(identifier_table, identifier->name, identifier);
