@@ -44,18 +44,11 @@ struct token
 
 extern struct token eos_token;
 
-#define TOKENIZER_MAX_IDENTIFIER_BUFFER_SIZE (512)
-#define TOKENIZER_MAX_NUMBER_BUFFER_SIZE (512)
-
 struct memory_blob_pool;
 
 struct tokenizer_context {
     struct memory_blob_pool * pool;
     struct hashmap * identifier_table;
-    char identifier_buffer[TOKENIZER_MAX_IDENTIFIER_BUFFER_SIZE];
-    size_t identifier_buffer_pos;
-    char number_buffer[TOKENIZER_MAX_NUMBER_BUFFER_SIZE];
-    size_t number_buffer_pos;
 };
 
 void tokenizer_init(struct tokenizer_context * ctx, struct hashmap * identifier_table, struct memory_blob_pool * pool);

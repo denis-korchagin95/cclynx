@@ -54,7 +54,7 @@ static void process_command(const char * line, struct memory_blob_pool * pool)
         char key[256] = {0};
         sscanf(line, "find %d %255s", &map_id, key);
 
-        char * result = hashmap_find(&maps[map_id], key);
+        char * result = hashmap_find(&maps[map_id], key, strlen(key));
 
         if (result != NULL) {
             printf("map%d.find(\"%s\") = \"%s\"\n", map_id, key, result);
@@ -68,7 +68,7 @@ static void process_command(const char * line, struct memory_blob_pool * pool)
         char key[256] = {0};
         sscanf(line, "hash %255s", key);
 
-        unsigned int h = hashmap_hash(key);
+        unsigned int h = hashmap_hash(key, strlen(key));
         printf("hash(\"%s\") = %u\n", key, h);
         return;
     }

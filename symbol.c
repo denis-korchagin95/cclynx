@@ -1,5 +1,6 @@
 #include <assert.h>
 #include <memory.h>
+#include <string.h>
 
 #include "symbol.h"
 #include "identifier.h"
@@ -26,7 +27,7 @@ void init_symbols(struct hashmap * identifier_table, struct memory_blob_pool * p
     for (size_t i = 0; i < sizeof(builtin_symbols) / sizeof(builtin_symbols[0]); ++i) {
         struct builtin_symbol * builtin_symbol = &builtin_symbols[i];
 
-        struct identifier * identifier = identifier_lookup(identifier_table, builtin_symbol->name);
+        struct identifier * identifier = identifier_lookup(identifier_table, builtin_symbol->name, strlen(builtin_symbol->name));
 
         if (identifier == NULL) {
             cclynx_fatal_error("ERROR: not found identifier for symbol \"%s\"\n", builtin_symbol->name);

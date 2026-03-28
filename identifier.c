@@ -28,20 +28,21 @@ struct identifier * identifier_create(struct hashmap * identifier_table, struct 
     assert(identifier_table != NULL);
     assert(pool != NULL);
     assert(name != NULL);
-    struct identifier * existing = hashmap_find(identifier_table, name);
+    size_t len = strlen(name);
+    struct identifier * existing = hashmap_find(identifier_table, name, len);
 
     if (existing != NULL) {
         return existing;
     }
 
-    return identifier_insert(identifier_table, pool, name, strlen(name));
+    return identifier_insert(identifier_table, pool, name, len);
 }
 
-struct identifier * identifier_lookup(struct hashmap * identifier_table, const char * name)
+struct identifier * identifier_lookup(struct hashmap * identifier_table, const char * name, unsigned int len)
 {
     assert(identifier_table != NULL);
     assert(name != NULL);
-    return hashmap_find(identifier_table, name);
+    return hashmap_find(identifier_table, name, len);
 }
 
 struct identifier * identifier_insert(struct hashmap * identifier_table, struct memory_blob_pool * pool, const char * name, unsigned int len)

@@ -19,10 +19,10 @@ struct hashmap
     struct memory_blob_pool * pool;
 };
 
-unsigned int hashmap_hash(const char * key);
+unsigned int hashmap_hash(const char * key, size_t len);
 
 void hashmap_init(struct hashmap * map, size_t capacity, struct memory_blob_pool * pool);
-void * hashmap_find(struct hashmap * map, const char * key);
+void * hashmap_find(struct hashmap * map, const char * key, size_t len);
 void hashmap_insert(struct hashmap * map, const char * key, void * value);
 
 #endif /* CCLYNX_HASHMAP_H */

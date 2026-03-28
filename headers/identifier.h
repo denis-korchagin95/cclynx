@@ -27,7 +27,7 @@ struct identifier
 void init_keywords(struct hashmap * identifier_table, struct memory_blob_pool * pool);
 
 struct identifier * identifier_create(struct hashmap * identifier_table, struct memory_blob_pool * pool, const char * name);
-struct identifier * identifier_lookup(struct hashmap * identifier_table, const char * name);
+struct identifier * identifier_lookup(struct hashmap * identifier_table, const char * name, unsigned int len);
 struct identifier * identifier_insert(struct hashmap * identifier_table, struct memory_blob_pool * pool, const char * name, unsigned int len);
 void identifier_detach_symbol(struct identifier * identifier, const struct symbol * symbol);
 

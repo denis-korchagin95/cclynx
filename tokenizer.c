@@ -189,18 +189,7 @@ void read_number(struct tokenizer_context * ctx, struct source * source, struct 
     assert(source != NULL);
     assert(token != NULL);
 
-    size_t dot_count = 0;
-    ctx->number_buffer_pos = 0;
     for (;;) {
-        if (ctx->number_buffer_pos >= TOKENIZER_MAX_NUMBER_BUFFER_SIZE - 1) {
-            cclynx_fatal_error("ERROR: too long number!\n");
-        }
-
-        if (ch == '.')
-            ++dot_count;
-
-        ctx->number_buffer[ctx->number_buffer_pos++] = ch;
-
         ch = source_get_char(source);
 
         if (!isdigit(ch) && ch != '.') {
@@ -208,15 +197,21 @@ void read_number(struct tokenizer_context * ctx, struct source * source, struct 
             break;
         }
     }
-    ctx->number_buffer[ctx->number_buffer_pos] = '\0';
-
-    if (dot_count > 1) {
-        cclynx_fatal_error("ERROR: incorrect number '%s'\n", ctx->number_buffer);
-    }
 
     token->kind = TOKEN_KIND_NUMBER;
     token->span.offset = span_start;
     token->span.length = (uint32_t)(source->cursor - span_start);
+
+    size_t dot_count = 0;
+    const char * ptr = source->content + span_start;
+    for (uint32_t i = 0; i < token->span.length; ++i) {
+        if (ptr[i] == '.')
+            ++dot_count;
+    }
+
+    if (dot_count > 1) {
+        cclynx_fatal_error("ERROR: incorrect number '%.*s'\n", token->span.length, ptr);
+    }
 
     if (dot_count > 0) {
         token->flags |= TOKEN_FLAG_IS_FLOAT;
@@ -229,33 +224,26 @@ void read_identifier(struct tokenizer_context * ctx, struct source * source, str
     assert(source != NULL);
     assert(token != NULL);
 
-    ctx->identifier_buffer_pos = 0;
-
     do {
-        ctx->identifier_buffer[ctx->identifier_buffer_pos++] = ch;
         ch = source_get_char(source);
     }
-    while(ch != EOF && (is_identifier_char(ch) || isdigit(ch)) && ctx->identifier_buffer_pos < TOKENIZER_MAX_IDENTIFIER_BUFFER_SIZE - 1);
-    ctx->identifier_buffer[ctx->identifier_buffer_pos] = '\0';
+    while(ch != EOF && (is_identifier_char(ch) || isdigit(ch)));
     if (ch != EOF) source_unget_char(source, ch);
 
-    if(ctx->identifier_buffer_pos >= TOKENIZER_MAX_IDENTIFIER_BUFFER_SIZE - 1) {
-        fprintf(stderr, "warning: identifier too long!\n");
-        while(is_identifier_char(ch))
-            ch = source_get_char(source);
-        if (ch != EOF) source_unget_char(source, ch);
-    }
+    token->span.offset = span_start;
+    token->span.length = (uint32_t)(source->cursor - span_start);
 
-    struct identifier * identifier = identifier_lookup(ctx->identifier_table, ctx->identifier_buffer);
+    const char * ptr = source->content + span_start;
+    uint32_t len = token->span.length;
+
+    struct identifier * identifier = identifier_lookup(ctx->identifier_table, ptr, len);
 
     if (identifier == NULL) {
-        identifier = identifier_insert(ctx->identifier_table, ctx->pool, ctx->identifier_buffer, ctx->identifier_buffer_pos);
+        identifier = identifier_insert(ctx->identifier_table, ctx->pool, ptr, len);
     }
 
     token->kind = TOKEN_KIND_IDENTIFIER;
     token->identifier = identifier;
-    token->span.offset = span_start;
-    token->span.length = (uint32_t)(source->cursor - span_start);
 }
 
 void skip_single_line_comment(struct tokenizer_context * ctx, struct source * source)
