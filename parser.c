@@ -665,10 +665,6 @@ struct ast_node * parse_primary_expression(struct parser_context * ctx)
         struct symbol * symbol = symbol_lookup(current_token->identifier, SYMBOL_KIND_VARIABLE);
 
         if (symbol == NULL) {
-            symbol = symbol_lookup(current_token->identifier, SYMBOL_KIND_FUNCTION_PARAMETER);
-        }
-
-        if (symbol == NULL) {
             cclynx_fatal_error("ERROR: undeclared variable \"%s\"!\n", current_token->identifier->name);
         }
 
@@ -787,7 +783,7 @@ struct ast_node * parse_function_parameter(struct parser_context * ctx)
 
     struct identifier * parameter_identifier = current_token->identifier;
 
-    symbol = scope_find_symbol(ctx->current_scope, parameter_identifier, SYMBOL_KIND_FUNCTION_PARAMETER);
+    symbol = scope_find_symbol(ctx->current_scope, parameter_identifier, SYMBOL_KIND_VARIABLE);
 
     if (symbol != NULL) {
         cclynx_fatal_error("ERROR: parameter '%s' already declared!\n", parameter_identifier->name);
@@ -795,7 +791,8 @@ struct ast_node * parse_function_parameter(struct parser_context * ctx)
 
     struct symbol * parameter_symbol = memory_blob_pool_alloc(ctx->pool, sizeof(struct symbol));
     memset(parameter_symbol, 0, sizeof(struct symbol));
-    parameter_symbol->kind = SYMBOL_KIND_FUNCTION_PARAMETER;
+    parameter_symbol->kind = SYMBOL_KIND_VARIABLE;
+    parameter_symbol->flags = SYMBOL_FLAG_FUNCTION_PARAMETER;
     parameter_symbol->type = parameter_type;
     parameter_symbol->identifier = parameter_identifier;
 
