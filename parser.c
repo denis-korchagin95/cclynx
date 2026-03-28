@@ -329,7 +329,7 @@ struct ast_node * parse_function_definition(struct parser_context * ctx)
     ) {
         parameter_presence = PARAMETER_PRESENCE_VOID;
         current_token = parser_get_token(ctx);
-    } else if (!(current_token->kind == TOKEN_KIND_PUNCTUATOR && current_token->content.ch == ')')) {
+    } else if (!token_is_punctuator(current_token, ')')) {
         parser_putback_token(current_token, ctx);
         ctx->current_scope = scope_push(ctx->current_scope, ctx->pool);
         parse_function_parameter_list(ctx, parameters, &parameter_count);
@@ -665,11 +665,11 @@ struct ast_node * parse_primary_expression(struct parser_context * ctx)
         struct symbol * symbol = symbol_lookup(current_token->identifier, SYMBOL_KIND_VARIABLE);
 
         if (symbol == NULL) {
-            symbol = symbol_lookup(current_token->content.identifier, SYMBOL_KIND_FUNCTION_PARAMETER);
+            symbol = symbol_lookup(current_token->identifier, SYMBOL_KIND_FUNCTION_PARAMETER);
         }
 
         if (symbol == NULL) {
-            cclynx_fatal_error("ERROR: undeclared variable \"%s\"!\n", current_token->content.identifier->name);
+            cclynx_fatal_error("ERROR: undeclared variable \"%s\"!\n", current_token->identifier->name);
         }
 
         struct ast_node * variable = create_ast_node(ctx, AST_NODE_KIND_VARIABLE);
@@ -767,7 +767,7 @@ struct ast_node * parse_function_parameter(struct parser_context * ctx)
         return NULL;
     }
 
-    const struct symbol * symbol = symbol_lookup(current_token->content.identifier, SYMBOL_KIND_TYPE_SPECIFIER);
+    const struct symbol * symbol = symbol_lookup(current_token->identifier, SYMBOL_KIND_TYPE_SPECIFIER);
 
     if (symbol == NULL) {
         cclynx_fatal_error("ERROR: expected type specifier!\n");
@@ -781,11 +781,11 @@ struct ast_node * parse_function_parameter(struct parser_context * ctx)
         cclynx_fatal_error("ERROR: expected identifier!\n");
     }
 
-    if (current_token->content.identifier->is_keyword) {
+    if (current_token->identifier->is_keyword) {
         cclynx_fatal_error("ERROR: expected identifier but not a keyword!\n");
     }
 
-    struct identifier * parameter_identifier = current_token->content.identifier;
+    struct identifier * parameter_identifier = current_token->identifier;
 
     symbol = scope_find_symbol(ctx->current_scope, parameter_identifier, SYMBOL_KIND_FUNCTION_PARAMETER);
 
