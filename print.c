@@ -23,19 +23,19 @@ void print_token(const struct token * token, FILE * file)
 
     switch (token->kind) {
         case TOKEN_KIND_PUNCTUATOR:
-            fprintf(file, "<TOKEN_PUNCTUATOR '%c'>\n", token->content.ch);
+            fprintf(file, "<TOKEN_PUNCTUATOR '%c'>\n", token->source->content[token->span.offset]);
             break;
         case TOKEN_KIND_EOS:
             fprintf(file, "<TOKEN_EOS>\n");
             break;
         case TOKEN_KIND_UNKNOWN_CHARACTER:
-            fprintf(file, "<TOKEN_UNKNOWN_CHARACTER '%c'>\n", token->content.ch);
+            fprintf(file, "<TOKEN_UNKNOWN_CHARACTER '%c'>\n", token->source->content[token->span.offset]);
             break;
         case TOKEN_KIND_IDENTIFIER:
-            fprintf(file, "<TOKEN_%s '%s'>\n", token->content.identifier->is_keyword ? "KEYWORD" : "IDENTIFIER", token->content.identifier->name);
+            fprintf(file, "<TOKEN_%s '%s'>\n", token->identifier->is_keyword ? "KEYWORD" : "IDENTIFIER", token->identifier->name);
             break;
         case TOKEN_KIND_NUMBER:
-            fprintf(file, "<TOKEN_NUMBER '%s'>\n", token->content.number);
+            fprintf(file, "<TOKEN_NUMBER '%.*s'>\n", token->span.length, token->source->content + token->span.offset);
             break;
         case TOKEN_KIND_EQUAL_PUNCTUATOR:
             fprintf(file, "<TOKEN_SPECIAL_PUNCTUATOR '=='>\n");

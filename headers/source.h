@@ -4,6 +4,12 @@
 #include <stddef.h>
 #include <stdint.h>
 
+struct source_span
+{
+    uint32_t offset;
+    uint32_t length;
+};
+
 struct source
 {
     char * content;

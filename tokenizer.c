@@ -10,13 +10,11 @@
 #include "errors.h"
 #include "source.h"
 
-#define NUMBER_TABLE_SIZE (101)
 
+struct token eos_token = {NULL, NULL, &eos_token, {0, 0}, 0, TOKEN_KIND_EOS};
 
-struct token eos_token = {{0}, &eos_token, 0, TOKEN_KIND_EOS};
-
-static void read_identifier(struct tokenizer_context * ctx, struct source * source, struct token * token, int ch);
-static void read_number(struct tokenizer_context * ctx, struct source * source, struct token * token, int ch);
+static void read_identifier(struct tokenizer_context * ctx, struct source * source, struct token * token, int ch, uint32_t span_start);
+static void read_number(struct tokenizer_context * ctx, struct source * source, struct token * token, int ch, uint32_t span_start);
 static void skip_single_line_comment(struct tokenizer_context * ctx, struct source * source);
 static void skip_multi_line_comment(struct tokenizer_context * ctx, struct source * source);
 
@@ -29,7 +27,6 @@ void tokenizer_init(struct tokenizer_context * ctx, struct hashmap * identifier_
     memset(ctx, 0, sizeof(struct tokenizer_context));
     ctx->pool = pool;
     ctx->identifier_table = identifier_table;
-    hashmap_init(&ctx->number_table, NUMBER_TABLE_SIZE, pool);
 }
 
 struct token * tokenizer_tokenize_file(struct tokenizer_context * ctx, struct source * source)
@@ -68,6 +65,9 @@ void tokenizer_get_one_token(struct tokenizer_context * ctx, struct source * sou
     assert(source != NULL);
     assert(token != NULL);
 
+    token->source = source;
+    token->identifier = NULL;
+
     for (;;) {
         int ch = source_get_char(source);
 
@@ -77,9 +77,12 @@ void tokenizer_get_one_token(struct tokenizer_context * ctx, struct source * sou
 
         if (ch == EOF) {
             token->kind = TOKEN_KIND_EOS;
-            token->content.ch = EOF;
+            token->span.offset = 0;
+            token->span.length = 0;
             return;
         }
+
+        uint32_t span_start = (uint32_t)(source->cursor - 1);
 
         if (ch == '/') {
             int next_char = source_get_char(source);
@@ -96,12 +99,13 @@ void tokenizer_get_one_token(struct tokenizer_context * ctx, struct source * sou
 
             source_unget_char(source, next_char);
             token->kind = TOKEN_KIND_PUNCTUATOR;
-            token->content.ch = ch;
+            token->span.offset = span_start;
+            token->span.length = 1;
             return;
         }
 
         if (is_start_identifier_char(ch)) {
-            read_identifier(ctx, source, token, ch);
+            read_identifier(ctx, source, token, ch, span_start);
             return;
         }
 
@@ -109,14 +113,14 @@ void tokenizer_get_one_token(struct tokenizer_context * ctx, struct source * sou
             int next_char = source_get_char(source);
             if (isdigit(next_char)) {
                 source_unget_char(source, next_char);
-                read_number(ctx, source, token, ch);
+                read_number(ctx, source, token, ch, span_start);
                 return;
             }
             source_unget_char(source, next_char);
         }
 
         if (isdigit(ch)) {
-            read_number(ctx, source, token, ch);
+            read_number(ctx, source, token, ch, span_start);
             return;
         }
 
@@ -127,11 +131,14 @@ void tokenizer_get_one_token(struct tokenizer_context * ctx, struct source * sou
 
                     if (next_char == '=') {
                         token->kind = TOKEN_KIND_EQUAL_PUNCTUATOR;
+                        token->span.offset = span_start;
+                        token->span.length = 2;
                     } else {
                         source_unget_char(source, next_char);
 
                         token->kind = TOKEN_KIND_PUNCTUATOR;
-                        token->content.ch = ch;
+                        token->span.offset = span_start;
+                        token->span.length = 1;
                     }
                 }
                 break;
@@ -141,11 +148,14 @@ void tokenizer_get_one_token(struct tokenizer_context * ctx, struct source * sou
 
                     if (next_char == '=') {
                         token->kind = TOKEN_KIND_NOT_EQUAL_PUNCTUATOR;
+                        token->span.offset = span_start;
+                        token->span.length = 2;
                     } else {
                         source_unget_char(source, next_char);
 
                         token->kind = TOKEN_KIND_PUNCTUATOR;
-                        token->content.ch = ch;
+                        token->span.offset = span_start;
+                        token->span.length = 1;
                     }
                 }
                 break;
@@ -160,18 +170,20 @@ void tokenizer_get_one_token(struct tokenizer_context * ctx, struct source * sou
             case '>':
             case '<':
                 token->kind = TOKEN_KIND_PUNCTUATOR;
-                token->content.ch = ch;
+                token->span.offset = span_start;
+                token->span.length = 1;
                 break;
             default:
                 token->kind = TOKEN_KIND_UNKNOWN_CHARACTER;
-                token->content.ch = ch;
+                token->span.offset = span_start;
+                token->span.length = 1;
         }
 
         return;
     }
 }
 
-void read_number(struct tokenizer_context * ctx, struct source * source, struct token * token, int ch)
+void read_number(struct tokenizer_context * ctx, struct source * source, struct token * token, int ch, uint32_t span_start)
 {
     assert(ctx != NULL);
     assert(source != NULL);
@@ -202,24 +214,16 @@ void read_number(struct tokenizer_context * ctx, struct source * source, struct 
         cclynx_fatal_error("ERROR: incorrect number '%s'\n", ctx->number_buffer);
     }
 
-    char * number = hashmap_find(&ctx->number_table, ctx->number_buffer);
-
-    if (number == NULL) {
-        number = memory_blob_pool_alloc(ctx->pool, ctx->number_buffer_pos + 1);
-        memcpy(number, ctx->number_buffer, ctx->number_buffer_pos + 1);
-        hashmap_insert(&ctx->number_table, number, number);
-    }
-
     token->kind = TOKEN_KIND_NUMBER;
-    token->content.number = number;
+    token->span.offset = span_start;
+    token->span.length = (uint32_t)(source->cursor - span_start);
 
     if (dot_count > 0) {
         token->flags |= TOKEN_FLAG_IS_FLOAT;
     }
-
 }
 
-void read_identifier(struct tokenizer_context * ctx, struct source * source, struct token * token, int ch)
+void read_identifier(struct tokenizer_context * ctx, struct source * source, struct token * token, int ch, uint32_t span_start)
 {
     assert(ctx != NULL);
     assert(source != NULL);
@@ -249,7 +253,9 @@ void read_identifier(struct tokenizer_context * ctx, struct source * source, str
     }
 
     token->kind = TOKEN_KIND_IDENTIFIER;
-    token->content.identifier = identifier;
+    token->identifier = identifier;
+    token->span.offset = span_start;
+    token->span.length = (uint32_t)(source->cursor - span_start);
 }
 
 void skip_single_line_comment(struct tokenizer_context * ctx, struct source * source)

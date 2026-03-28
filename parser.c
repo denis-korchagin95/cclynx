@@ -71,18 +71,18 @@ struct ast_node * parse_statement(struct parser_context * ctx)
 
     struct ast_node * statement = NULL;
 
-    if (current_token->kind == TOKEN_KIND_IDENTIFIER && current_token->content.identifier->is_keyword) {
-        if (strcmp("while", current_token->content.identifier->name) == 0) {
+    if (current_token->kind == TOKEN_KIND_IDENTIFIER && current_token->identifier->is_keyword) {
+        if (strcmp("while", current_token->identifier->name) == 0) {
             statement = parse_while_statement(ctx);
-        } else if (strcmp("return", current_token->content.identifier->name) == 0) {
+        } else if (strcmp("return", current_token->identifier->name) == 0) {
             statement = parse_return_statement(ctx);
-        } else if (strcmp("if", current_token->content.identifier->name) == 0) {
+        } else if (strcmp("if", current_token->identifier->name) == 0) {
             statement = parse_if_statement(ctx);
         } else {
             parser_putback_token(current_token, ctx);
             statement = parse_declaration(ctx);
         }
-    } else if (current_token->kind == TOKEN_KIND_PUNCTUATOR && current_token->content.ch == '{') {
+    } else if (current_token->kind == TOKEN_KIND_PUNCTUATOR && current_token->source->content[current_token->span.offset] == '{') {
         parser_putback_token(current_token, ctx);
         statement = parse_compound_statement(ctx);
     } else {
@@ -99,13 +99,13 @@ struct ast_node * parse_compound_statement(struct parser_context * ctx)
 
     struct token * current_token = parser_get_token(ctx);
 
-    if (!(current_token->kind == TOKEN_KIND_PUNCTUATOR && current_token->content.ch == '{')) {
+    if (!(current_token->kind == TOKEN_KIND_PUNCTUATOR && current_token->source->content[current_token->span.offset] == '{')) {
         cclynx_fatal_error("ERROR: expected '{'!\n");
     }
 
     current_token = parser_get_token(ctx);
 
-    if (current_token->kind == TOKEN_KIND_PUNCTUATOR && current_token->content.ch == '}') {
+    if (current_token->kind == TOKEN_KIND_PUNCTUATOR && current_token->source->content[current_token->span.offset] == '}') {
         struct ast_node * compound_statement = create_ast_node(ctx, AST_NODE_KIND_COMPOUND_STATEMENT);
         compound_statement->content.list = NULL;
         return compound_statement;
@@ -132,9 +132,9 @@ struct ast_node * parse_compound_statement(struct parser_context * ctx)
         current_token = parser_get_token(ctx);
         parser_putback_token(current_token, ctx);
     }
-    while (!(current_token->kind == TOKEN_KIND_PUNCTUATOR && current_token->content.ch == '}'));
+    while (!(current_token->kind == TOKEN_KIND_PUNCTUATOR && current_token->source->content[current_token->span.offset] == '}'));
 
-    if (!(current_token->kind == TOKEN_KIND_PUNCTUATOR && current_token->content.ch == '}')) {
+    if (!(current_token->kind == TOKEN_KIND_PUNCTUATOR && current_token->source->content[current_token->span.offset] == '}')) {
         cclynx_fatal_error("ERROR: expected '}'!\n");
     }
 
@@ -154,7 +154,7 @@ struct ast_node * parse_if_statement(struct parser_context * ctx)
 
     struct token * current_token = parser_get_token(ctx);
 
-    if (!(current_token->kind == TOKEN_KIND_PUNCTUATOR && current_token->content.ch == '(')) {
+    if (!(current_token->kind == TOKEN_KIND_PUNCTUATOR && current_token->source->content[current_token->span.offset] == '(')) {
         cclynx_fatal_error("ERROR: expected '('!\n");
     }
 
@@ -162,7 +162,7 @@ struct ast_node * parse_if_statement(struct parser_context * ctx)
 
     current_token = parser_get_token(ctx);
 
-    if (!(current_token->kind == TOKEN_KIND_PUNCTUATOR && current_token->content.ch == ')')) {
+    if (!(current_token->kind == TOKEN_KIND_PUNCTUATOR && current_token->source->content[current_token->span.offset] == ')')) {
         cclynx_fatal_error("ERROR: expected ')'!\n");
     }
 
@@ -173,8 +173,8 @@ struct ast_node * parse_if_statement(struct parser_context * ctx)
 
     if (
         current_token->kind == TOKEN_KIND_IDENTIFIER
-        && current_token->content.identifier->is_keyword
-        && strcmp("else", current_token->content.identifier->name) == 0
+        && current_token->identifier->is_keyword
+        && strcmp("else", current_token->identifier->name) == 0
     ) {
         false_branch = parse_statement(ctx);
     } else {
@@ -197,13 +197,13 @@ struct ast_node * parse_return_statement(struct parser_context * ctx)
 
     struct ast_node * expression = NULL;
 
-    if (!(current_token->kind == TOKEN_KIND_PUNCTUATOR && current_token->content.ch == ';')) {
+    if (!(current_token->kind == TOKEN_KIND_PUNCTUATOR && current_token->source->content[current_token->span.offset] == ';')) {
         parser_putback_token(current_token, ctx);
         expression = parse_expression(ctx);
         current_token = parser_get_token(ctx);
     }
 
-    if (!(current_token->kind == TOKEN_KIND_PUNCTUATOR && current_token->content.ch == ';')) {
+    if (!(current_token->kind == TOKEN_KIND_PUNCTUATOR && current_token->source->content[current_token->span.offset] == ';')) {
         cclynx_fatal_error("ERROR: expected ';'!\n");
     }
 
@@ -219,7 +219,7 @@ struct ast_node * parse_while_statement(struct parser_context * ctx)
 
     const struct token * current_token = parser_get_token(ctx);
 
-    if (!(current_token->kind == TOKEN_KIND_PUNCTUATOR && current_token->content.ch == '(')) {
+    if (!(current_token->kind == TOKEN_KIND_PUNCTUATOR && current_token->source->content[current_token->span.offset] == '(')) {
         cclynx_fatal_error("ERROR: expected '('!\n");
     }
 
@@ -227,7 +227,7 @@ struct ast_node * parse_while_statement(struct parser_context * ctx)
 
     current_token = parser_get_token(ctx);
 
-    if (!(current_token->kind == TOKEN_KIND_PUNCTUATOR && current_token->content.ch == ')')) {
+    if (!(current_token->kind == TOKEN_KIND_PUNCTUATOR && current_token->source->content[current_token->span.offset] == ')')) {
         cclynx_fatal_error("ERROR: expected ')'!\n");
     }
 
@@ -248,13 +248,13 @@ struct ast_node * parse_expression_statement(struct parser_context * ctx)
 
     struct ast_node * expression = NULL;
 
-    if (!(current_token->kind == TOKEN_KIND_PUNCTUATOR && current_token->content.ch == ';')) {
+    if (!(current_token->kind == TOKEN_KIND_PUNCTUATOR && current_token->source->content[current_token->span.offset] == ';')) {
         parser_putback_token(current_token, ctx);
         expression = parse_expression(ctx);
         current_token = parser_get_token(ctx);
     }
 
-    if (!(current_token->kind == TOKEN_KIND_PUNCTUATOR && current_token->content.ch == ';')) {
+    if (!(current_token->kind == TOKEN_KIND_PUNCTUATOR && current_token->source->content[current_token->span.offset] == ';')) {
         cclynx_fatal_error("ERROR: expected ';'!\n");
     }
 
@@ -274,7 +274,7 @@ struct ast_node * parse_function_definition(struct parser_context * ctx)
         cclynx_fatal_error("ERROR: expected identifier!\n");
     }
 
-    const struct symbol * symbol = symbol_lookup(current_token->content.identifier, SYMBOL_KIND_TYPE_SPECIFIER);
+    const struct symbol * symbol = symbol_lookup(current_token->identifier, SYMBOL_KIND_TYPE_SPECIFIER);
 
     if (symbol == NULL) {
         cclynx_fatal_error("ERROR: expected type specifier!\n");
@@ -286,11 +286,11 @@ struct ast_node * parse_function_definition(struct parser_context * ctx)
         cclynx_fatal_error("ERROR: expected identifier!\n");
     }
 
-    if (current_token->content.identifier->is_keyword) {
+    if (current_token->identifier->is_keyword) {
         cclynx_fatal_error("ERROR: expected identifier but not a keyword!\n");
     }
 
-    struct identifier * identifier = current_token->content.identifier;
+    struct identifier * identifier = current_token->identifier;
 
     struct symbol * func_symbol = scope_find_symbol(ctx->current_scope, identifier, SYMBOL_KIND_FUNCTION);
 
@@ -309,7 +309,7 @@ struct ast_node * parse_function_definition(struct parser_context * ctx)
 
     current_token = parser_get_token(ctx);
 
-    if (!(current_token->kind == TOKEN_KIND_PUNCTUATOR && current_token->content.ch == '(')) {
+    if (!(current_token->kind == TOKEN_KIND_PUNCTUATOR && current_token->source->content[current_token->span.offset] == '(')) {
         cclynx_fatal_error("ERROR: expected '('!\n");
     }
 
@@ -321,14 +321,14 @@ struct ast_node * parse_function_definition(struct parser_context * ctx)
 
     if (
         current_token->kind == TOKEN_KIND_IDENTIFIER
-        && current_token->content.identifier->is_keyword
-        && strcmp("void", current_token->content.identifier->name) == 0
+        && current_token->identifier->is_keyword
+        && strcmp("void", current_token->identifier->name) == 0
     ) {
         parameter_presence = PARAMETER_PRESENCE_VOID;
         current_token = parser_get_token(ctx);
     }
 
-    if (!(current_token->kind == TOKEN_KIND_PUNCTUATOR && current_token->content.ch == ')')) {
+    if (!(current_token->kind == TOKEN_KIND_PUNCTUATOR && current_token->source->content[current_token->span.offset] == ')')) {
         cclynx_fatal_error("ERROR: expected ')'!\n");
     }
 
@@ -355,7 +355,7 @@ struct ast_node * parse_declaration(struct parser_context * ctx)
         cclynx_fatal_error("ERROR: expected identifier!\n");
     }
 
-    const struct symbol * symbol = symbol_lookup(current_token->content.identifier, SYMBOL_KIND_TYPE_SPECIFIER);
+    const struct symbol * symbol = symbol_lookup(current_token->identifier, SYMBOL_KIND_TYPE_SPECIFIER);
 
     if (symbol == NULL) {
         cclynx_fatal_error("ERROR: expected type specifier!\n");
@@ -369,11 +369,11 @@ struct ast_node * parse_declaration(struct parser_context * ctx)
         cclynx_fatal_error("ERROR: expected identifier!\n");
     }
 
-    if (current_token->content.identifier->is_keyword) {
+    if (current_token->identifier->is_keyword) {
         cclynx_fatal_error("ERROR: expected identifier but not a keyword!\n");
     }
 
-    struct identifier * identifier = current_token->content.identifier;
+    struct identifier * identifier = current_token->identifier;
 
     symbol = scope_find_symbol(ctx->current_scope, identifier, SYMBOL_KIND_VARIABLE);
 
@@ -383,7 +383,7 @@ struct ast_node * parse_declaration(struct parser_context * ctx)
 
     current_token = parser_get_token(ctx);
 
-    if (!(current_token->kind == TOKEN_KIND_PUNCTUATOR && current_token->content.ch == ';')) {
+    if (!(current_token->kind == TOKEN_KIND_PUNCTUATOR && current_token->source->content[current_token->span.offset] == ';')) {
         cclynx_fatal_error("ERROR: expected ';'!\n");
     }
 
@@ -424,7 +424,7 @@ struct ast_node * parse_assignment_expression(struct parser_context * ctx)
 
     struct ast_node * initializer = NULL;
 
-    if (current_token->kind == TOKEN_KIND_PUNCTUATOR && current_token->content.ch == '=') {
+    if (current_token->kind == TOKEN_KIND_PUNCTUATOR && current_token->source->content[current_token->span.offset] == '=') {
         initializer = parse_equality_expression(ctx);
     } else {
         parser_putback_token(current_token, ctx);
@@ -481,11 +481,11 @@ struct ast_node * parse_relational_expression(struct parser_context * ctx) {
     while (
         current_token->kind == TOKEN_KIND_PUNCTUATOR
         && (
-            current_token->content.ch == '<'
-            || current_token->content.ch == '>'
+            current_token->source->content[current_token->span.offset] == '<'
+            || current_token->source->content[current_token->span.offset] == '>'
         )
     ) {
-        const enum binary_operation operation = current_token->content.ch == '<'
+        const enum binary_operation operation = current_token->source->content[current_token->span.offset] == '<'
             ? BINARY_OPERATION_LESS_THAN
             : BINARY_OPERATION_GREATER_THAN;
         struct ast_node * rhs = parse_additive_expression(ctx);
@@ -517,11 +517,11 @@ struct ast_node * parse_additive_expression(struct parser_context * ctx)
     while (
         current_token->kind == TOKEN_KIND_PUNCTUATOR
         && (
-            current_token->content.ch == '+'
-            || current_token->content.ch == '-'
+            current_token->source->content[current_token->span.offset] == '+'
+            || current_token->source->content[current_token->span.offset] == '-'
         )
     ) {
-        const enum binary_operation operation = current_token->content.ch == '+'
+        const enum binary_operation operation = current_token->source->content[current_token->span.offset] == '+'
             ? BINARY_OPERATION_ADDITION
             : BINARY_OPERATION_SUBTRACTION;
         struct ast_node * rhs = parse_multiplicative_expression(ctx);
@@ -552,11 +552,11 @@ struct ast_node * parse_multiplicative_expression(struct parser_context * ctx)
     while (
         current_token->kind == TOKEN_KIND_PUNCTUATOR
         && (
-            current_token->content.ch == '*'
-            || current_token->content.ch == '/'
+            current_token->source->content[current_token->span.offset] == '*'
+            || current_token->source->content[current_token->span.offset] == '/'
         )
     ) {
-        const enum binary_operation operation = current_token->content.ch == '*'
+        const enum binary_operation operation = current_token->source->content[current_token->span.offset] == '*'
             ? BINARY_OPERATION_MULTIPLY
             : BINARY_OPERATION_DIVIDE;
         struct ast_node * rhs = parse_cast_expression(ctx);
@@ -582,7 +582,7 @@ struct ast_node * parse_cast_expression(struct parser_context * ctx)
 
     struct token * current_token = parser_get_token(ctx);
 
-    if (!(current_token->kind == TOKEN_KIND_PUNCTUATOR && current_token->content.ch == '(')) {
+    if (!(current_token->kind == TOKEN_KIND_PUNCTUATOR && current_token->source->content[current_token->span.offset] == '(')) {
         parser_putback_token(current_token, ctx);
         return parse_primary_expression(ctx);
     }
@@ -597,7 +597,7 @@ struct ast_node * parse_cast_expression(struct parser_context * ctx)
         return parse_primary_expression(ctx);
     }
 
-    const struct symbol * symbol = symbol_lookup(current_token->content.identifier, SYMBOL_KIND_TYPE_SPECIFIER);
+    const struct symbol * symbol = symbol_lookup(current_token->identifier, SYMBOL_KIND_TYPE_SPECIFIER);
 
     if (symbol == NULL) {
         parser_putback_token(current_token, ctx);
@@ -609,7 +609,7 @@ struct ast_node * parse_cast_expression(struct parser_context * ctx)
 
     current_token = parser_get_token(ctx);
 
-    if (!(current_token->kind == TOKEN_KIND_PUNCTUATOR && current_token->content.ch == ')')) {
+    if (!(current_token->kind == TOKEN_KIND_PUNCTUATOR && current_token->source->content[current_token->span.offset] == ')')) {
         cclynx_fatal_error("ERROR: expected ')'!\n");
     }
 
@@ -629,28 +629,32 @@ struct ast_node * parse_primary_expression(struct parser_context * ctx)
     const struct token * current_token = parser_get_token(ctx);
 
     if (current_token->kind == TOKEN_KIND_NUMBER) {
+        char number_buf[TOKENIZER_MAX_NUMBER_BUFFER_SIZE];
+        memcpy(number_buf, current_token->source->content + current_token->span.offset, current_token->span.length);
+        number_buf[current_token->span.length] = '\0';
+
         if ((current_token->flags & TOKEN_FLAG_IS_FLOAT) > 0) {
             struct ast_node * number = create_ast_node(ctx, AST_NODE_KIND_FLOAT_CONSTANT);
-            number->content.constant.value.float_constant = (float)atof(current_token->content.number);
+            number->content.constant.value.float_constant = (float)atof(number_buf);
             number->type = &type_float;
             return number;
         }
 
         struct ast_node * number = create_ast_node(ctx, AST_NODE_KIND_INTEGER_CONSTANT);
-        number->content.constant.value.integer_constant = (int)strtol(current_token->content.number, NULL, 10);
+        number->content.constant.value.integer_constant = (int)strtol(number_buf, NULL, 10);
         number->type = &type_integer;
         return number;
     }
 
     if (current_token->kind == TOKEN_KIND_IDENTIFIER) {
-        if (current_token->content.identifier->is_keyword) {
+        if (current_token->identifier->is_keyword) {
             cclynx_fatal_error("ERROR: expected identifier but not a keyword!\n");
         }
 
-        struct symbol * symbol = symbol_lookup(current_token->content.identifier, SYMBOL_KIND_VARIABLE);
+        struct symbol * symbol = symbol_lookup(current_token->identifier, SYMBOL_KIND_VARIABLE);
 
         if (symbol == NULL) {
-            cclynx_fatal_error("ERROR: undeclared variable \"%s\"!\n", current_token->content.identifier->name);
+            cclynx_fatal_error("ERROR: undeclared variable \"%s\"!\n", current_token->identifier->name);
         }
 
         struct ast_node * variable = create_ast_node(ctx, AST_NODE_KIND_VARIABLE);
@@ -659,12 +663,12 @@ struct ast_node * parse_primary_expression(struct parser_context * ctx)
         return variable;
     }
 
-    if (current_token->kind == TOKEN_KIND_PUNCTUATOR && current_token->content.ch == '(') {
+    if (current_token->kind == TOKEN_KIND_PUNCTUATOR && current_token->source->content[current_token->span.offset] == '(') {
         struct ast_node * expression = parse_expression(ctx);
 
         current_token = parser_get_token(ctx);
 
-        if (!(current_token->kind == TOKEN_KIND_PUNCTUATOR && current_token->content.ch == ')')) {
+        if (!(current_token->kind == TOKEN_KIND_PUNCTUATOR && current_token->source->content[current_token->span.offset] == ')')) {
             cclynx_fatal_error("ERROR: expected ')'!\n");
         }
 
