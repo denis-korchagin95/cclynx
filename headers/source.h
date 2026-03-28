@@ -18,6 +18,7 @@ struct source
     size_t size;
     uint32_t line;
     uint32_t column;
+    uint32_t previous_column;
 };
 
 void source_load(struct source * source, const char * path);

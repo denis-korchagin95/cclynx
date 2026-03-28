@@ -52,6 +52,7 @@ int source_get_char(struct source * source)
 
     if (ch == '\n') {
         source->line++;
+        source->previous_column = source->column;
         source->column = 1;
     } else {
         source->column++;
@@ -73,12 +74,7 @@ void source_unget_char(struct source * source, int ch)
 
     if (ch == '\n') {
         source->line--;
-        source->column = 1;
-        for (size_t i = source->cursor; i > 0; i--) {
-            if (source->content[i - 1] == '\n')
-                break;
-            source->column++;
-        }
+        source->column = source->previous_column;
     } else {
         source->column--;
     }
