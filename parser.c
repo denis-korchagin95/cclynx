@@ -629,19 +629,17 @@ struct ast_node * parse_primary_expression(struct parser_context * ctx)
     const struct token * current_token = parser_get_token(ctx);
 
     if (current_token->kind == TOKEN_KIND_NUMBER) {
-        char number_buf[TOKENIZER_MAX_NUMBER_BUFFER_SIZE];
-        memcpy(number_buf, current_token->source->content + current_token->span.offset, current_token->span.length);
-        number_buf[current_token->span.length] = '\0';
+        const char * number_ptr = current_token->source->content + current_token->span.offset;
 
         if ((current_token->flags & TOKEN_FLAG_IS_FLOAT) > 0) {
             struct ast_node * number = create_ast_node(ctx, AST_NODE_KIND_FLOAT_CONSTANT);
-            number->content.constant.value.float_constant = (float)atof(number_buf);
+            number->content.constant.value.float_constant = (float)strtod(number_ptr, NULL);
             number->type = &type_float;
             return number;
         }
 
         struct ast_node * number = create_ast_node(ctx, AST_NODE_KIND_INTEGER_CONSTANT);
-        number->content.constant.value.integer_constant = (int)strtol(number_buf, NULL, 10);
+        number->content.constant.value.integer_constant = (int)strtol(number_ptr, NULL, 10);
         number->type = &type_integer;
         return number;
     }
