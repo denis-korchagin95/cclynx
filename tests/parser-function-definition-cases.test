@@ -197,14 +197,14 @@ TranslationUnit: '{{any}}'
 
 @test("It should parse function with 1 parameter")
 @given("file")
-int sum(int a) {
+int identity(int a) {
     return a;
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
 |
-+-> FunctionDefinition: 'sum' {type: 'int'}
++-> FunctionDefinition: 'identity' {type: 'int'}
     |
     +-> ParameterList
     |   |
@@ -215,5 +215,38 @@ TranslationUnit: '{{any}}'
         +-> ReturnStatement
             |
             +-> Variable: 'a' {type: 'int'}
+
+@endtest
+
+@test("It should raise an error when parameter type is not a type specifier")
+@given("file")
+int foo(bar a) {
+    return a;
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stderr")
+ERROR: expected type specifier!
+
+@endtest
+
+@test("It should raise an error when parameter name is missing after type")
+@given("file")
+int foo(int) {
+    return 0;
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stderr")
+ERROR: expected identifier!
+
+@endtest
+
+@test("It should raise an error when parameter name is a keyword")
+@given("file")
+int foo(int return) {
+    return 0;
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stderr")
+ERROR: expected identifier but not a keyword!
 
 @endtest
