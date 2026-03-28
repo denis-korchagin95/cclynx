@@ -37,7 +37,7 @@ struct token
     } content;
     struct token * next;
     unsigned int flags;
-    unsigned int kind;
+    int kind;
 };
 
 extern struct token eos_token;

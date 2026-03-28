@@ -49,7 +49,7 @@ struct token * tokenizer_tokenize_file(struct tokenizer_context * ctx, FILE * fi
 
         tokenizer_get_one_token(ctx, file, &temp);
 
-        if (temp.kind == (unsigned int)TOKEN_KIND_EOS) {
+        if (temp.kind == TOKEN_KIND_EOS) {
             *next_token = &eos_token;
             break;
         }
