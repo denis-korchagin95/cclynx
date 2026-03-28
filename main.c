@@ -5,6 +5,7 @@
 #include "errors.h"
 #include "identifier.h"
 #include "symbol.h"
+#include "source.h"
 #include "tokenizer.h"
 #include "print.h"
 #include "parser.h"
@@ -44,22 +45,18 @@ int main(const int argc, const char * argv[])
         cclynx_fatal_error("No source given!\n");
     }
 
-    FILE * source = fopen(source_filename, "r");
-
-    if (source == NULL) {
-        cclynx_fatal_error("Could not open file %s\n", source_filename);
-    }
-
     struct cclynx_context ctx;
     cclynx_init(&ctx);
+
+    struct source source;
+    source_load(&source, source_filename);
+
     init_keywords(&ctx.identifier_table, &ctx.pool);
     struct tokenizer_context tokenizer_ctx;
     tokenizer_init(&tokenizer_ctx, &ctx.identifier_table, &ctx.pool);
     init_symbols(&ctx.identifier_table, &ctx.pool);
 
-    struct token * tokens = tokenizer_tokenize_file(&tokenizer_ctx, source);
-
-    fclose(source);
+    struct token * tokens = tokenizer_tokenize_file(&tokenizer_ctx, &source);
 
     struct parser_context parser_ctx;
     parser_init_context(&parser_ctx, tokens, &ctx.pool, &ctx.global_scope, source_filename);
@@ -110,6 +107,7 @@ int main(const int argc, const char * argv[])
     target_arm64_generate(&codegen_ctx, &ir_program, stdout);
 
 cleanup:
+    source_free(&source);
     cclynx_free(&ctx);
 
     return 0;

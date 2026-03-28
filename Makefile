@@ -18,6 +18,7 @@ OBJECTS_HASHMAP_TESTER+=cclynx.o
 OBJECTS_HASHMAP_TESTER+=allocator.o
 OBJECTS_HASHMAP_TESTER+=errors.o
 OBJECTS_HASHMAP_TESTER+=util.o
+OBJECTS_HASHMAP_TESTER+=source.o
 
 
 OBJECTS+=cclynx.o
@@ -35,6 +36,7 @@ OBJECTS+=ir.o
 OBJECTS+=target-arm64.o
 OBJECTS+=util.o
 OBJECTS+=main.o
+OBJECTS+=source.o
 
 hashmap-tester: $(addprefix $(OBJ), $(OBJECTS_HASHMAP_TESTER))
 	@mkdir -p $(BIN_TESTERS)

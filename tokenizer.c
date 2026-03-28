@@ -1,8 +1,6 @@
 #include <assert.h>
 #include <stdio.h>
 #include <ctype.h>
-#include <memory.h>
-#include <stdlib.h>
 #include <string.h>
 
 #include "tokenizer.h"
@@ -10,18 +8,17 @@
 #include "hashmap.h"
 #include "identifier.h"
 #include "errors.h"
+#include "source.h"
 
 #define NUMBER_TABLE_SIZE (101)
 
 
 struct token eos_token = {{0}, &eos_token, 0, TOKEN_KIND_EOS};
 
-static int get_one_char(struct tokenizer_context * ctx, FILE * file);
-static void putback_one_char(struct tokenizer_context * ctx, int ch);
-static void read_identifier(struct tokenizer_context * ctx, FILE * file, struct token * token, int ch);
-static void read_number(struct tokenizer_context * ctx, FILE * file, struct token * token, int ch);
-static void skip_single_line_comment(struct tokenizer_context * ctx, FILE * file);
-static void skip_multi_line_comment(struct tokenizer_context * ctx, FILE * file);
+static void read_identifier(struct tokenizer_context * ctx, struct source * source, struct token * token, int ch);
+static void read_number(struct tokenizer_context * ctx, struct source * source, struct token * token, int ch);
+static void skip_single_line_comment(struct tokenizer_context * ctx, struct source * source);
+static void skip_multi_line_comment(struct tokenizer_context * ctx, struct source * source);
 
 
 void tokenizer_init(struct tokenizer_context * ctx, struct hashmap * identifier_table, struct memory_blob_pool * pool)
@@ -35,10 +32,10 @@ void tokenizer_init(struct tokenizer_context * ctx, struct hashmap * identifier_
     hashmap_init(&ctx->number_table, NUMBER_TABLE_SIZE, pool);
 }
 
-struct token * tokenizer_tokenize_file(struct tokenizer_context * ctx, FILE * file)
+struct token * tokenizer_tokenize_file(struct tokenizer_context * ctx, struct source * source)
 {
     assert(ctx != NULL);
-    assert(file != NULL);
+    assert(source != NULL);
 
     struct token * tokens = &eos_token;
     struct token ** next_token = &tokens;
@@ -47,7 +44,7 @@ struct token * tokenizer_tokenize_file(struct tokenizer_context * ctx, FILE * fi
         struct token temp;
         memset(&temp, 0, sizeof(struct token));
 
-        tokenizer_get_one_token(ctx, file, &temp);
+        tokenizer_get_one_token(ctx, source, &temp);
 
         if (temp.kind == TOKEN_KIND_EOS) {
             *next_token = &eos_token;
@@ -65,17 +62,17 @@ struct token * tokenizer_tokenize_file(struct tokenizer_context * ctx, FILE * fi
 }
 
 
-void tokenizer_get_one_token(struct tokenizer_context * ctx, FILE * file, struct token * token)
+void tokenizer_get_one_token(struct tokenizer_context * ctx, struct source * source, struct token * token)
 {
     assert(ctx != NULL);
-    assert(file != NULL);
+    assert(source != NULL);
     assert(token != NULL);
 
     for (;;) {
-        int ch = get_one_char(ctx, file);
+        int ch = source_get_char(source);
 
         while (isspace(ch)) {
-            ch = get_one_char(ctx, file);
+            ch = source_get_char(source);
         }
 
         if (ch == EOF) {
@@ -85,53 +82,53 @@ void tokenizer_get_one_token(struct tokenizer_context * ctx, FILE * file, struct
         }
 
         if (ch == '/') {
-            int next_char = get_one_char(ctx, file);
+            int next_char = source_get_char(source);
 
             if (next_char == '/') {
-                skip_single_line_comment(ctx, file);
+                skip_single_line_comment(ctx, source);
                 continue;
             }
 
             if (next_char == '*') {
-                skip_multi_line_comment(ctx, file);
+                skip_multi_line_comment(ctx, source);
                 continue;
             }
 
-            putback_one_char(ctx, next_char);
+            source_unget_char(source, next_char);
             token->kind = TOKEN_KIND_PUNCTUATOR;
             token->content.ch = ch;
             return;
         }
 
         if (is_start_identifier_char(ch)) {
-            read_identifier(ctx, file, token, ch);
+            read_identifier(ctx, source, token, ch);
             return;
         }
 
         if (ch == '.') {
-            int next_char = get_one_char(ctx, file);
+            int next_char = source_get_char(source);
             if (isdigit(next_char)) {
-                putback_one_char(ctx, next_char);
-                read_number(ctx, file, token, ch);
+                source_unget_char(source, next_char);
+                read_number(ctx, source, token, ch);
                 return;
             }
-            putback_one_char(ctx, next_char);
+            source_unget_char(source, next_char);
         }
 
         if (isdigit(ch)) {
-            read_number(ctx, file, token, ch);
+            read_number(ctx, source, token, ch);
             return;
         }
 
         switch (ch) {
             case '=':
                 {
-                    int next_char = get_one_char(ctx, file);
+                    int next_char = source_get_char(source);
 
                     if (next_char == '=') {
                         token->kind = TOKEN_KIND_EQUAL_PUNCTUATOR;
                     } else {
-                        putback_one_char(ctx, next_char);
+                        source_unget_char(source, next_char);
 
                         token->kind = TOKEN_KIND_PUNCTUATOR;
                         token->content.ch = ch;
@@ -140,12 +137,12 @@ void tokenizer_get_one_token(struct tokenizer_context * ctx, FILE * file, struct
                 break;
             case '!':
                 {
-                    int next_char = get_one_char(ctx, file);
+                    int next_char = source_get_char(source);
 
                     if (next_char == '=') {
                         token->kind = TOKEN_KIND_NOT_EQUAL_PUNCTUATOR;
                     } else {
-                        putback_one_char(ctx, next_char);
+                        source_unget_char(source, next_char);
 
                         token->kind = TOKEN_KIND_PUNCTUATOR;
                         token->content.ch = ch;
@@ -174,10 +171,10 @@ void tokenizer_get_one_token(struct tokenizer_context * ctx, FILE * file, struct
     }
 }
 
-void read_number(struct tokenizer_context * ctx, FILE * file, struct token * token, int ch)
+void read_number(struct tokenizer_context * ctx, struct source * source, struct token * token, int ch)
 {
     assert(ctx != NULL);
-    assert(file != NULL);
+    assert(source != NULL);
     assert(token != NULL);
 
     size_t dot_count = 0;
@@ -192,10 +189,10 @@ void read_number(struct tokenizer_context * ctx, FILE * file, struct token * tok
 
         ctx->number_buffer[ctx->number_buffer_pos++] = ch;
 
-        ch = get_one_char(ctx, file);
+        ch = source_get_char(source);
 
         if (!isdigit(ch) && ch != '.') {
-            putback_one_char(ctx, ch);
+            if (ch != EOF) source_unget_char(source, ch);
             break;
         }
     }
@@ -222,27 +219,27 @@ void read_number(struct tokenizer_context * ctx, FILE * file, struct token * tok
 
 }
 
-void read_identifier(struct tokenizer_context * ctx, FILE * file, struct token * token, int ch)
+void read_identifier(struct tokenizer_context * ctx, struct source * source, struct token * token, int ch)
 {
     assert(ctx != NULL);
-    assert(file != NULL);
+    assert(source != NULL);
     assert(token != NULL);
 
     ctx->identifier_buffer_pos = 0;
 
     do {
         ctx->identifier_buffer[ctx->identifier_buffer_pos++] = ch;
-        ch = get_one_char(ctx, file);
+        ch = source_get_char(source);
     }
     while(ch != EOF && (is_identifier_char(ch) || isdigit(ch)) && ctx->identifier_buffer_pos < TOKENIZER_MAX_IDENTIFIER_BUFFER_SIZE - 1);
     ctx->identifier_buffer[ctx->identifier_buffer_pos] = '\0';
-    putback_one_char(ctx, ch);
+    if (ch != EOF) source_unget_char(source, ch);
 
     if(ctx->identifier_buffer_pos >= TOKENIZER_MAX_IDENTIFIER_BUFFER_SIZE - 1) {
         fprintf(stderr, "warning: identifier too long!\n");
         while(is_identifier_char(ch))
-            ch = get_one_char(ctx, file);
-        putback_one_char(ctx, ch);
+            ch = source_get_char(source);
+        if (ch != EOF) source_unget_char(source, ch);
     }
 
     struct identifier * identifier = identifier_lookup(ctx->identifier_table, ctx->identifier_buffer);
@@ -255,49 +252,33 @@ void read_identifier(struct tokenizer_context * ctx, FILE * file, struct token *
     token->content.identifier = identifier;
 }
 
-void skip_single_line_comment(struct tokenizer_context * ctx, FILE * file)
+void skip_single_line_comment(struct tokenizer_context * ctx, struct source * source)
 {
     assert(ctx != NULL);
+    (void)ctx;
     int ch;
     do {
-        ch = get_one_char(ctx, file);
+        ch = source_get_char(source);
     } while (ch != '\n' && ch != EOF);
 }
 
-void skip_multi_line_comment(struct tokenizer_context * ctx, FILE * file)
+void skip_multi_line_comment(struct tokenizer_context * ctx, struct source * source)
 {
     assert(ctx != NULL);
+    (void)ctx;
     for (;;) {
-        int ch = get_one_char(ctx, file);
+        int ch = source_get_char(source);
 
         if (ch == EOF) {
             cclynx_fatal_error("ERROR: unterminated comment\n");
         }
 
         if (ch == '*') {
-            int next = get_one_char(ctx, file);
+            int next = source_get_char(source);
             if (next == '/') {
                 return;
             }
-            putback_one_char(ctx, next);
+            source_unget_char(source, next);
         }
     }
-}
-
-int get_one_char(struct tokenizer_context * ctx, FILE * file)
-{
-    assert(ctx != NULL);
-    if (ctx->char_buffer_pos > 0) {
-        return ctx->char_buffer[--ctx->char_buffer_pos];
-    }
-
-    return fgetc(file);
-}
-
-void putback_one_char(struct tokenizer_context * ctx, int ch)
-{
-    assert(ctx != NULL);
-    assert(ctx->char_buffer_pos < TOKENIZER_MAX_CHAR_BUFFER_SIZE);
-    if (ch != EOF)
-        ctx->char_buffer[ctx->char_buffer_pos++] = ch;
 }

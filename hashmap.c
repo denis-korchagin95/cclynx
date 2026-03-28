@@ -2,7 +2,7 @@
 #include <string.h>
 
 #include "hashmap.h"
-#include "allocator.h" /* memory_blob_pool_alloc */
+#include "allocator.h"
 
 
 unsigned int hashmap_hash(const char * key)
