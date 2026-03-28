@@ -12,6 +12,11 @@
 
 #define TOKEN_FLAG_IS_FLOAT (1 << 0)
 
+#define token_first_ch(tok) ((tok)->source->content[(tok)->span.offset])
+
+#define token_is_punctuator(tok, c) \
+    ((tok)->kind == TOKEN_KIND_PUNCTUATOR && token_first_ch(tok) == (c))
+
 struct identifier;
 
 enum token_kind

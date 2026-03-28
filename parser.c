@@ -82,7 +82,7 @@ struct ast_node * parse_statement(struct parser_context * ctx)
             parser_putback_token(current_token, ctx);
             statement = parse_declaration(ctx);
         }
-    } else if (current_token->kind == TOKEN_KIND_PUNCTUATOR && current_token->source->content[current_token->span.offset] == '{') {
+    } else if (token_is_punctuator(current_token, '{')) {
         parser_putback_token(current_token, ctx);
         statement = parse_compound_statement(ctx);
     } else {
@@ -99,13 +99,13 @@ struct ast_node * parse_compound_statement(struct parser_context * ctx)
 
     struct token * current_token = parser_get_token(ctx);
 
-    if (!(current_token->kind == TOKEN_KIND_PUNCTUATOR && current_token->source->content[current_token->span.offset] == '{')) {
+    if (!token_is_punctuator(current_token, '{')) {
         cclynx_fatal_error("ERROR: expected '{'!\n");
     }
 
     current_token = parser_get_token(ctx);
 
-    if (current_token->kind == TOKEN_KIND_PUNCTUATOR && current_token->source->content[current_token->span.offset] == '}') {
+    if (token_is_punctuator(current_token, '}')) {
         struct ast_node * compound_statement = create_ast_node(ctx, AST_NODE_KIND_COMPOUND_STATEMENT);
         compound_statement->content.list = NULL;
         return compound_statement;
@@ -132,9 +132,9 @@ struct ast_node * parse_compound_statement(struct parser_context * ctx)
         current_token = parser_get_token(ctx);
         parser_putback_token(current_token, ctx);
     }
-    while (!(current_token->kind == TOKEN_KIND_PUNCTUATOR && current_token->source->content[current_token->span.offset] == '}'));
+    while (!token_is_punctuator(current_token, '}'));
 
-    if (!(current_token->kind == TOKEN_KIND_PUNCTUATOR && current_token->source->content[current_token->span.offset] == '}')) {
+    if (!token_is_punctuator(current_token, '}')) {
         cclynx_fatal_error("ERROR: expected '}'!\n");
     }
 
@@ -154,7 +154,7 @@ struct ast_node * parse_if_statement(struct parser_context * ctx)
 
     struct token * current_token = parser_get_token(ctx);
 
-    if (!(current_token->kind == TOKEN_KIND_PUNCTUATOR && current_token->source->content[current_token->span.offset] == '(')) {
+    if (!token_is_punctuator(current_token, '(')) {
         cclynx_fatal_error("ERROR: expected '('!\n");
     }
 
@@ -162,7 +162,7 @@ struct ast_node * parse_if_statement(struct parser_context * ctx)
 
     current_token = parser_get_token(ctx);
 
-    if (!(current_token->kind == TOKEN_KIND_PUNCTUATOR && current_token->source->content[current_token->span.offset] == ')')) {
+    if (!token_is_punctuator(current_token, ')')) {
         cclynx_fatal_error("ERROR: expected ')'!\n");
     }
 
@@ -197,13 +197,13 @@ struct ast_node * parse_return_statement(struct parser_context * ctx)
 
     struct ast_node * expression = NULL;
 
-    if (!(current_token->kind == TOKEN_KIND_PUNCTUATOR && current_token->source->content[current_token->span.offset] == ';')) {
+    if (!token_is_punctuator(current_token, ';')) {
         parser_putback_token(current_token, ctx);
         expression = parse_expression(ctx);
         current_token = parser_get_token(ctx);
     }
 
-    if (!(current_token->kind == TOKEN_KIND_PUNCTUATOR && current_token->source->content[current_token->span.offset] == ';')) {
+    if (!token_is_punctuator(current_token, ';')) {
         cclynx_fatal_error("ERROR: expected ';'!\n");
     }
 
@@ -219,7 +219,7 @@ struct ast_node * parse_while_statement(struct parser_context * ctx)
 
     const struct token * current_token = parser_get_token(ctx);
 
-    if (!(current_token->kind == TOKEN_KIND_PUNCTUATOR && current_token->source->content[current_token->span.offset] == '(')) {
+    if (!token_is_punctuator(current_token, '(')) {
         cclynx_fatal_error("ERROR: expected '('!\n");
     }
 
@@ -227,7 +227,7 @@ struct ast_node * parse_while_statement(struct parser_context * ctx)
 
     current_token = parser_get_token(ctx);
 
-    if (!(current_token->kind == TOKEN_KIND_PUNCTUATOR && current_token->source->content[current_token->span.offset] == ')')) {
+    if (!token_is_punctuator(current_token, ')')) {
         cclynx_fatal_error("ERROR: expected ')'!\n");
     }
 
@@ -248,13 +248,13 @@ struct ast_node * parse_expression_statement(struct parser_context * ctx)
 
     struct ast_node * expression = NULL;
 
-    if (!(current_token->kind == TOKEN_KIND_PUNCTUATOR && current_token->source->content[current_token->span.offset] == ';')) {
+    if (!token_is_punctuator(current_token, ';')) {
         parser_putback_token(current_token, ctx);
         expression = parse_expression(ctx);
         current_token = parser_get_token(ctx);
     }
 
-    if (!(current_token->kind == TOKEN_KIND_PUNCTUATOR && current_token->source->content[current_token->span.offset] == ';')) {
+    if (!token_is_punctuator(current_token, ';')) {
         cclynx_fatal_error("ERROR: expected ';'!\n");
     }
 
@@ -309,7 +309,7 @@ struct ast_node * parse_function_definition(struct parser_context * ctx)
 
     current_token = parser_get_token(ctx);
 
-    if (!(current_token->kind == TOKEN_KIND_PUNCTUATOR && current_token->source->content[current_token->span.offset] == '(')) {
+    if (!token_is_punctuator(current_token, '(')) {
         cclynx_fatal_error("ERROR: expected '('!\n");
     }
 
@@ -328,7 +328,7 @@ struct ast_node * parse_function_definition(struct parser_context * ctx)
         current_token = parser_get_token(ctx);
     }
 
-    if (!(current_token->kind == TOKEN_KIND_PUNCTUATOR && current_token->source->content[current_token->span.offset] == ')')) {
+    if (!token_is_punctuator(current_token, ')')) {
         cclynx_fatal_error("ERROR: expected ')'!\n");
     }
 
@@ -383,7 +383,7 @@ struct ast_node * parse_declaration(struct parser_context * ctx)
 
     current_token = parser_get_token(ctx);
 
-    if (!(current_token->kind == TOKEN_KIND_PUNCTUATOR && current_token->source->content[current_token->span.offset] == ';')) {
+    if (!token_is_punctuator(current_token, ';')) {
         cclynx_fatal_error("ERROR: expected ';'!\n");
     }
 
@@ -424,7 +424,7 @@ struct ast_node * parse_assignment_expression(struct parser_context * ctx)
 
     struct ast_node * initializer = NULL;
 
-    if (current_token->kind == TOKEN_KIND_PUNCTUATOR && current_token->source->content[current_token->span.offset] == '=') {
+    if (token_is_punctuator(current_token, '=')) {
         initializer = parse_equality_expression(ctx);
     } else {
         parser_putback_token(current_token, ctx);
@@ -481,11 +481,11 @@ struct ast_node * parse_relational_expression(struct parser_context * ctx) {
     while (
         current_token->kind == TOKEN_KIND_PUNCTUATOR
         && (
-            current_token->source->content[current_token->span.offset] == '<'
-            || current_token->source->content[current_token->span.offset] == '>'
+            token_first_ch(current_token) == '<'
+            || token_first_ch(current_token) == '>'
         )
     ) {
-        const enum binary_operation operation = current_token->source->content[current_token->span.offset] == '<'
+        const enum binary_operation operation = token_first_ch(current_token) == '<'
             ? BINARY_OPERATION_LESS_THAN
             : BINARY_OPERATION_GREATER_THAN;
         struct ast_node * rhs = parse_additive_expression(ctx);
@@ -517,11 +517,11 @@ struct ast_node * parse_additive_expression(struct parser_context * ctx)
     while (
         current_token->kind == TOKEN_KIND_PUNCTUATOR
         && (
-            current_token->source->content[current_token->span.offset] == '+'
-            || current_token->source->content[current_token->span.offset] == '-'
+            token_first_ch(current_token) == '+'
+            || token_first_ch(current_token) == '-'
         )
     ) {
-        const enum binary_operation operation = current_token->source->content[current_token->span.offset] == '+'
+        const enum binary_operation operation = token_first_ch(current_token) == '+'
             ? BINARY_OPERATION_ADDITION
             : BINARY_OPERATION_SUBTRACTION;
         struct ast_node * rhs = parse_multiplicative_expression(ctx);
@@ -552,11 +552,11 @@ struct ast_node * parse_multiplicative_expression(struct parser_context * ctx)
     while (
         current_token->kind == TOKEN_KIND_PUNCTUATOR
         && (
-            current_token->source->content[current_token->span.offset] == '*'
-            || current_token->source->content[current_token->span.offset] == '/'
+            token_first_ch(current_token) == '*'
+            || token_first_ch(current_token) == '/'
         )
     ) {
-        const enum binary_operation operation = current_token->source->content[current_token->span.offset] == '*'
+        const enum binary_operation operation = token_first_ch(current_token) == '*'
             ? BINARY_OPERATION_MULTIPLY
             : BINARY_OPERATION_DIVIDE;
         struct ast_node * rhs = parse_cast_expression(ctx);
@@ -582,7 +582,7 @@ struct ast_node * parse_cast_expression(struct parser_context * ctx)
 
     struct token * current_token = parser_get_token(ctx);
 
-    if (!(current_token->kind == TOKEN_KIND_PUNCTUATOR && current_token->source->content[current_token->span.offset] == '(')) {
+    if (!token_is_punctuator(current_token, '(')) {
         parser_putback_token(current_token, ctx);
         return parse_primary_expression(ctx);
     }
@@ -609,7 +609,7 @@ struct ast_node * parse_cast_expression(struct parser_context * ctx)
 
     current_token = parser_get_token(ctx);
 
-    if (!(current_token->kind == TOKEN_KIND_PUNCTUATOR && current_token->source->content[current_token->span.offset] == ')')) {
+    if (!token_is_punctuator(current_token, ')')) {
         cclynx_fatal_error("ERROR: expected ')'!\n");
     }
 
@@ -663,12 +663,12 @@ struct ast_node * parse_primary_expression(struct parser_context * ctx)
         return variable;
     }
 
-    if (current_token->kind == TOKEN_KIND_PUNCTUATOR && current_token->source->content[current_token->span.offset] == '(') {
+    if (token_is_punctuator(current_token, '(')) {
         struct ast_node * expression = parse_expression(ctx);
 
         current_token = parser_get_token(ctx);
 
-        if (!(current_token->kind == TOKEN_KIND_PUNCTUATOR && current_token->source->content[current_token->span.offset] == ')')) {
+        if (!token_is_punctuator(current_token, ')')) {
             cclynx_fatal_error("ERROR: expected ')'!\n");
         }
 
