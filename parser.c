@@ -14,6 +14,7 @@
 
 static struct ast_node * create_ast_node(const struct parser_context * ctx, enum ast_node_kind kind);
 
+static struct ast_node * parse_translation_unit(struct parser_context * ctx);
 static struct ast_node * parse_expression(struct parser_context * ctx);
 static struct ast_node * parse_if_statement(struct parser_context * ctx);
 static struct ast_node * parse_return_statement(struct parser_context * ctx);
@@ -37,10 +38,19 @@ static struct type * check_type(struct type * lhs, const struct type * rhs);
 
 struct ast_node * parser_parse(struct parser_context * ctx)
 {
-    assert(ctx!= NULL);
+    assert(ctx != NULL);
+
+    return parse_translation_unit(ctx);
+}
+
+struct ast_node * parse_translation_unit(struct parser_context * ctx)
+{
+    assert(ctx != NULL);
 
     struct ast_node_list * function_list = NULL;
     struct ast_node_list ** tail = &function_list;
+
+    ctx->current_scope = scope_push(ctx->current_scope, ctx->pool);
 
     struct token * current_token = parser_get_token(ctx);
 
@@ -57,6 +67,8 @@ struct ast_node * parser_parse(struct parser_context * ctx)
 
         current_token = parser_get_token(ctx);
     }
+
+    ctx->current_scope = scope_pop(ctx->current_scope);
 
     struct ast_node * translation_unit = create_ast_node(ctx, AST_NODE_KIND_TRANSLATION_UNIT);
     translation_unit->content.translation_unit.list = function_list;
