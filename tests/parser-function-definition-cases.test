@@ -117,13 +117,13 @@ TranslationUnit: '{{any}}'
         |   |
         |   +-> AssignmentExpression: '='
         |       |
-        |       +-> Variable: 'result' {type: 'int'}
+        |       +-> VariableExpression: 'result' {type: 'int'}
         |       |
         |       +-> IntegerConstant: '1' {type: 'int'}
         |
         +-> ReturnStatement
             |
-            +-> Variable: 'result' {type: 'int'}
+            +-> VariableExpression: 'result' {type: 'int'}
 
 @endtest
 
@@ -181,7 +181,7 @@ TranslationUnit: '{{any}}'
 |       |
 |       +-> ReturnStatement
 |           |
-|           +-> Variable: 'x' {type: 'int'}
+|           +-> VariableExpression: 'x' {type: 'int'}
 |
 +-> FunctionDefinition: 'bar' {type: 'int'} <unspecified-parameters>
     |
@@ -191,7 +191,7 @@ TranslationUnit: '{{any}}'
         |
         +-> ReturnStatement
             |
-            +-> Variable: 'x' {type: 'int'}
+            +-> VariableExpression: 'x' {type: 'int'}
 
 @endtest
 
@@ -214,7 +214,7 @@ TranslationUnit: '{{any}}'
         |
         +-> ReturnStatement
             |
-            +-> Variable: 'a' {type: 'int'}
+            +-> VariableExpression: 'a' {type: 'int'}
 
 @endtest
 
@@ -241,9 +241,9 @@ TranslationUnit: '{{any}}'
             |
             +-> AdditiveExpression: '+' {type: 'int'}
                 |
-                +-> Variable: 'a' {type: 'int'}
+                +-> VariableExpression: 'a' {type: 'int'}
                 |
-                +-> Variable: 'b' {type: 'int'}
+                +-> VariableExpression: 'b' {type: 'int'}
 
 @endtest
 
@@ -272,13 +272,13 @@ TranslationUnit: '{{any}}'
             |
             +-> AdditiveExpression: '+' {type: 'int'}
                 |
-                +-> Variable: 'a' {type: 'int'}
+                +-> VariableExpression: 'a' {type: 'int'}
                 |
                 +-> MultiplicativeExpression: '*' {type: 'int'}
                     |
-                    +-> Variable: 'b' {type: 'int'}
+                    +-> VariableExpression: 'b' {type: 'int'}
                     |
-                    +-> Variable: 'c' {type: 'int'}
+                    +-> VariableExpression: 'c' {type: 'int'}
 
 @endtest
 

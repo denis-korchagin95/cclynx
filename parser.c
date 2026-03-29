@@ -436,7 +436,7 @@ struct ast_node * parse_assignment_expression(struct parser_context * ctx)
 
     struct ast_node * lhs = parse_equality_expression(ctx);
 
-    if (lhs->kind != AST_NODE_KIND_VARIABLE) {
+    if (lhs->kind != AST_NODE_KIND_VARIABLE_EXPRESSION) {
         return lhs;
     }
 
@@ -659,7 +659,7 @@ struct ast_node * parse_postfix_expression(struct parser_context * ctx)
                 cclynx_fatal_error("ERROR: expected ')'");
             }
 
-            struct ast_node * function_call = ast_create_node(ctx->pool, AST_NODE_KIND_FUNCTION_CALL, function_symbol->type);
+            struct ast_node * function_call = ast_create_node(ctx->pool, AST_NODE_KIND_FUNCTION_CALL_EXPRESSION, function_symbol->type);
             function_call->content.function_call.function = function_symbol;
             function_call->content.function_call.argument_count = 0;
             return function_call;
@@ -687,12 +687,12 @@ struct ast_node * parse_primary_expression(struct parser_context * ctx)
         const char * number_ptr = current_token->source->content + current_token->span.offset;
 
         if ((current_token->flags & TOKEN_FLAG_IS_FLOAT) > 0) {
-            struct ast_node * number = ast_create_node(ctx->pool, AST_NODE_KIND_FLOAT_CONSTANT, &type_float);
+            struct ast_node * number = ast_create_node(ctx->pool, AST_NODE_KIND_FLOAT_CONSTANT_EXPRESSION, &type_float);
             number->content.constant.value.float_constant = (float)strtod(number_ptr, NULL);
             return number;
         }
 
-        struct ast_node * number = ast_create_node(ctx->pool, AST_NODE_KIND_INTEGER_CONSTANT, &type_integer);
+        struct ast_node * number = ast_create_node(ctx->pool, AST_NODE_KIND_INTEGER_CONSTANT_EXPRESSION, &type_integer);
         number->content.constant.value.integer_constant = (int)strtol(number_ptr, NULL, 10);
         return number;
     }
@@ -708,7 +708,7 @@ struct ast_node * parse_primary_expression(struct parser_context * ctx)
             cclynx_fatal_error("ERROR: undeclared variable \"%s\"!\n", current_token->identifier->name);
         }
 
-        struct ast_node * variable = ast_create_node(ctx->pool, AST_NODE_KIND_VARIABLE, symbol->type);
+        struct ast_node * variable = ast_create_node(ctx->pool, AST_NODE_KIND_VARIABLE_EXPRESSION, symbol->type);
         variable->content.symbol = symbol;
         return variable;
     }

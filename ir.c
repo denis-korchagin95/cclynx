@@ -221,7 +221,7 @@ void do_generate_ir(struct ir_context * ctx, struct ir_program * program, const 
                 }
             }
             break;
-        case AST_NODE_KIND_VARIABLE:
+        case AST_NODE_KIND_VARIABLE_EXPRESSION:
             {
                 struct ir_operand * variable = find_variable_operand_by_symbol(ctx, node->content.symbol);
 
@@ -388,8 +388,8 @@ void do_generate_ir(struct ir_context * ctx, struct ir_program * program, const 
                 ir_emit(program, instruction);
             }
             break;
-        case AST_NODE_KIND_INTEGER_CONSTANT:
-        case AST_NODE_KIND_FLOAT_CONSTANT:
+        case AST_NODE_KIND_INTEGER_CONSTANT_EXPRESSION:
+        case AST_NODE_KIND_FLOAT_CONSTANT_EXPRESSION:
             {
                 struct ir_instruction * instruction = memory_blob_pool_alloc(ctx->pool, sizeof(struct ir_instruction));
                 memset(instruction, 0, sizeof(struct ir_instruction));

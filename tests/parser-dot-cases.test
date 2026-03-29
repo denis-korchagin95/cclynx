@@ -60,14 +60,14 @@ digraph AST {
     n2 -> n3;
     n4 [label="ExpressionStatement"];
     n5 [label="AssignmentExpression '='"];
-    n6 [label="Variable\n'x' : int"];
+    n6 [label="VariableExpression\n'x' : int"];
     n5 -> n6 [label="lhs"];
     n7 [label="IntegerConstant\n5 : int"];
     n5 -> n7 [label="rhs"];
     n4 -> n5;
     n2 -> n4;
     n8 [label="ReturnStatement"];
-    n9 [label="Variable\n'x' : int"];
+    n9 [label="VariableExpression\n'x' : int"];
     n8 -> n9;
     n2 -> n8;
     n1 -> n2;
@@ -203,7 +203,7 @@ digraph AST {
     n2 -> n3;
     n4 [label="ExpressionStatement"];
     n5 [label="AssignmentExpression '='"];
-    n6 [label="Variable\n'x' : int"];
+    n6 [label="VariableExpression\n'x' : int"];
     n5 -> n6 [label="lhs"];
     n7 [label="IntegerConstant\n1 : int"];
     n5 -> n7 [label="rhs"];
@@ -211,7 +211,7 @@ digraph AST {
     n2 -> n4;
     n8 [label="IfStatement"];
     n9 [label="EqualityExpression '=='\n: int"];
-    n10 [label="Variable\n'x' : int"];
+    n10 [label="VariableExpression\n'x' : int"];
     n9 -> n10 [label="lhs"];
     n11 [label="IntegerConstant\n1 : int"];
     n9 -> n11 [label="rhs"];
@@ -219,7 +219,7 @@ digraph AST {
     n12 [label="CompoundStatement"];
     n13 [label="ExpressionStatement"];
     n14 [label="AssignmentExpression '='"];
-    n15 [label="Variable\n'x' : int"];
+    n15 [label="VariableExpression\n'x' : int"];
     n14 -> n15 [label="lhs"];
     n16 [label="IntegerConstant\n2 : int"];
     n14 -> n16 [label="rhs"];
@@ -229,7 +229,7 @@ digraph AST {
     n17 [label="CompoundStatement"];
     n18 [label="ExpressionStatement"];
     n19 [label="AssignmentExpression '='"];
-    n20 [label="Variable\n'x' : int"];
+    n20 [label="VariableExpression\n'x' : int"];
     n19 -> n20 [label="lhs"];
     n21 [label="IntegerConstant\n3 : int"];
     n19 -> n21 [label="rhs"];
@@ -238,7 +238,7 @@ digraph AST {
     n8 -> n17 [label="false"];
     n2 -> n8;
     n22 [label="ReturnStatement"];
-    n23 [label="Variable\n'x' : int"];
+    n23 [label="VariableExpression\n'x' : int"];
     n22 -> n23;
     n2 -> n22;
     n1 -> n2;
@@ -268,7 +268,7 @@ digraph AST {
     n2 -> n3;
     n4 [label="ExpressionStatement"];
     n5 [label="AssignmentExpression '='"];
-    n6 [label="Variable\n'i' : int"];
+    n6 [label="VariableExpression\n'i' : int"];
     n5 -> n6 [label="lhs"];
     n7 [label="IntegerConstant\n0 : int"];
     n5 -> n7 [label="rhs"];
@@ -276,7 +276,7 @@ digraph AST {
     n2 -> n4;
     n8 [label="WhileStatement"];
     n9 [label="RelationalExpression '<'\n: int"];
-    n10 [label="Variable\n'i' : int"];
+    n10 [label="VariableExpression\n'i' : int"];
     n9 -> n10 [label="lhs"];
     n11 [label="IntegerConstant\n3 : int"];
     n9 -> n11 [label="rhs"];
@@ -284,10 +284,10 @@ digraph AST {
     n12 [label="CompoundStatement"];
     n13 [label="ExpressionStatement"];
     n14 [label="AssignmentExpression '='"];
-    n15 [label="Variable\n'i' : int"];
+    n15 [label="VariableExpression\n'i' : int"];
     n14 -> n15 [label="lhs"];
     n16 [label="AdditiveExpression '+'\n: int"];
-    n17 [label="Variable\n'i' : int"];
+    n17 [label="VariableExpression\n'i' : int"];
     n16 -> n17 [label="lhs"];
     n18 [label="IntegerConstant\n1 : int"];
     n16 -> n18 [label="rhs"];
@@ -297,7 +297,7 @@ digraph AST {
     n8 -> n12 [label="body"];
     n2 -> n8;
     n19 [label="ReturnStatement"];
-    n20 [label="Variable\n'i' : int"];
+    n20 [label="VariableExpression\n'i' : int"];
     n19 -> n20;
     n2 -> n19;
     n1 -> n2;
@@ -345,7 +345,7 @@ digraph AST {
     n1 -> n2 [label="param"];
     n3 [label="CompoundStatement"];
     n4 [label="ReturnStatement"];
-    n5 [label="Variable\n'a' : int"];
+    n5 [label="VariableExpression\n'a' : int"];
     n4 -> n5;
     n3 -> n4;
     n1 -> n3;
@@ -372,9 +372,9 @@ digraph AST {
     n4 [label="CompoundStatement"];
     n5 [label="ReturnStatement"];
     n6 [label="AdditiveExpression '+'\n: int"];
-    n7 [label="Variable\n'a' : int"];
+    n7 [label="VariableExpression\n'a' : int"];
     n6 -> n7 [label="lhs"];
-    n8 [label="Variable\n'b' : int"];
+    n8 [label="VariableExpression\n'b' : int"];
     n6 -> n8 [label="rhs"];
     n5 -> n6;
     n4 -> n5;
@@ -404,12 +404,12 @@ digraph AST {
     n5 [label="CompoundStatement"];
     n6 [label="ReturnStatement"];
     n7 [label="AdditiveExpression '+'\n: int"];
-    n8 [label="Variable\n'a' : int"];
+    n8 [label="VariableExpression\n'a' : int"];
     n7 -> n8 [label="lhs"];
     n9 [label="MultiplicativeExpression '*'\n: int"];
-    n10 [label="Variable\n'b' : int"];
+    n10 [label="VariableExpression\n'b' : int"];
     n9 -> n10 [label="lhs"];
-    n11 [label="Variable\n'c' : int"];
+    n11 [label="VariableExpression\n'c' : int"];
     n9 -> n11 [label="rhs"];
     n7 -> n9 [label="rhs"];
     n6 -> n7;
@@ -468,7 +468,7 @@ digraph AST {
     n8 [label="MultiplicativeExpression '*'\n: int"];
     n9 [label="IntegerConstant\n42 : int"];
     n8 -> n9 [label="lhs"];
-    n10 [label="FunctionCall\n'foo' : int"];
+    n10 [label="FunctionCallExpression\n'foo' : int"];
     n8 -> n10 [label="rhs"];
     n7 -> n8;
     n6 -> n7;

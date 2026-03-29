@@ -21,7 +21,7 @@ TranslationUnit: '{{any}}'
         |   |
         |   +-> AssignmentExpression: '='
         |       |
-        |       +-> Variable: 'i' {type: 'int'}
+        |       +-> VariableExpression: 'i' {type: 'int'}
         |       |
         |       +-> IntegerConstant: '0' {type: 'int'}
         |
@@ -29,7 +29,7 @@ TranslationUnit: '{{any}}'
             |
             +-> (condition) RelationalExpression: '<' {type: 'int'}
             |   |
-            |   +-> Variable: 'i' {type: 'int'}
+            |   +-> VariableExpression: 'i' {type: 'int'}
             |   |
             |   +-> IntegerConstant: '10' {type: 'int'}
             |
@@ -39,11 +39,11 @@ TranslationUnit: '{{any}}'
                     |
                     +-> AssignmentExpression: '='
                         |
-                        +-> Variable: 'i' {type: 'int'}
+                        +-> VariableExpression: 'i' {type: 'int'}
                         |
                         +-> AdditiveExpression: '+' {type: 'int'}
                             |
-                            +-> Variable: 'i' {type: 'int'}
+                            +-> VariableExpression: 'i' {type: 'int'}
                             |
                             +-> IntegerConstant: '1' {type: 'int'}
 
@@ -70,7 +70,7 @@ TranslationUnit: '{{any}}'
         |   |
         |   +-> AssignmentExpression: '='
         |       |
-        |       +-> Variable: 'i' {type: 'int'}
+        |       +-> VariableExpression: 'i' {type: 'int'}
         |       |
         |       +-> IntegerConstant: '0' {type: 'int'}
         |
@@ -78,7 +78,7 @@ TranslationUnit: '{{any}}'
             |
             +-> (condition) RelationalExpression: '<' {type: 'int'}
             |   |
-            |   +-> Variable: 'i' {type: 'int'}
+            |   +-> VariableExpression: 'i' {type: 'int'}
             |   |
             |   +-> IntegerConstant: '10' {type: 'int'}
             |
@@ -108,7 +108,7 @@ TranslationUnit: '{{any}}'
         |   |
         |   +-> AssignmentExpression: '='
         |       |
-        |       +-> Variable: 'i' {type: 'int'}
+        |       +-> VariableExpression: 'i' {type: 'int'}
         |       |
         |       +-> IntegerConstant: '0' {type: 'int'}
         |
@@ -116,7 +116,7 @@ TranslationUnit: '{{any}}'
             |
             +-> (condition) RelationalExpression: '<' {type: 'int'}
             |   |
-            |   +-> Variable: 'i' {type: 'int'}
+            |   +-> VariableExpression: 'i' {type: 'int'}
             |   |
             |   +-> IntegerConstant: '10' {type: 'int'}
             |
@@ -124,11 +124,11 @@ TranslationUnit: '{{any}}'
                 |
                 +-> AssignmentExpression: '='
                     |
-                    +-> Variable: 'i' {type: 'int'}
+                    +-> VariableExpression: 'i' {type: 'int'}
                     |
                     +-> AdditiveExpression: '+' {type: 'int'}
                         |
-                        +-> Variable: 'i' {type: 'int'}
+                        +-> VariableExpression: 'i' {type: 'int'}
                         |
                         +-> IntegerConstant: '1' {type: 'int'}
 

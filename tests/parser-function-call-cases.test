@@ -29,7 +29,7 @@ TranslationUnit: '{{any}}'
                 |
                 +-> IntegerConstant: '42' {type: 'int'}
                 |
-                +-> FunctionCall: 'foo' {type: 'int'} <no-arguments>
+                +-> FunctionCallExpression: 'foo' {type: 'int'} <no-arguments>
 
 @endtest
 

@@ -141,8 +141,8 @@ void do_print_ast(const struct ast_node * ast, FILE * file, int depth, unsigned 
                 do_print_ast(ast->content.assignment.initializer, file, depth + 1, ancestors_info, NULL);
             }
             break;
-        case AST_NODE_KIND_VARIABLE:
-            fprintf(file, "Variable: '%s' {type: '%s'}\n", ast->content.symbol->identifier->name, type_stringify(ast->type));
+        case AST_NODE_KIND_VARIABLE_EXPRESSION:
+            fprintf(file, "VariableExpression: '%s' {type: '%s'}\n", ast->content.symbol->identifier->name, type_stringify(ast->type));
             break;
         case AST_NODE_KIND_EXPRESSION_STATEMENT:
             fprintf(file, "ExpressionStatement%s\n", ast->content.node == NULL ? ": {empty expression}" : "");
@@ -196,12 +196,12 @@ void do_print_ast(const struct ast_node * ast, FILE * file, int depth, unsigned 
                 do_print_ast(ast->content.binary_expression.rhs, file, depth + 1, ancestors_info, NULL);
             }
             break;
-        case AST_NODE_KIND_INTEGER_CONSTANT:
+        case AST_NODE_KIND_INTEGER_CONSTANT_EXPRESSION:
             {
                 fprintf(file, "IntegerConstant: '%lld' {type: '%s'}\n", ast->content.constant.value.integer_constant, type_stringify(ast->type));
             }
             break;
-        case AST_NODE_KIND_FLOAT_CONSTANT:
+        case AST_NODE_KIND_FLOAT_CONSTANT_EXPRESSION:
             {
                 fprintf(file, "FloatConstant: '%f' {type: '%s'}\n", ast->content.constant.value.float_constant, type_stringify(ast->type));
             }
@@ -248,14 +248,14 @@ void do_print_ast(const struct ast_node * ast, FILE * file, int depth, unsigned 
                     do_print_ast(ast->content.function_definition.body, file, depth + 1, ancestors_info, NULL);
             }
             break;
-        case AST_NODE_KIND_FUNCTION_CALL:
+        case AST_NODE_KIND_FUNCTION_CALL_EXPRESSION:
             {
                 if (ast->content.function_call.argument_count == 0) {
-                    fprintf(file, "FunctionCall: '%s' {type: '%s'} <no-arguments>\n",
+                    fprintf(file, "FunctionCallExpression: '%s' {type: '%s'} <no-arguments>\n",
                         ast->content.function_call.function->identifier->name,
                         type_stringify(ast->type));
                 } else {
-                    fprintf(file, "FunctionCall: '%s' {type: '%s'} <%d-argument%s>\n",
+                    fprintf(file, "FunctionCallExpression: '%s' {type: '%s'} <%d-argument%s>\n",
                         ast->content.function_call.function->identifier->name,
                         type_stringify(ast->type),
                         ast->content.function_call.argument_count,
@@ -443,20 +443,20 @@ int do_print_ast_dot(const struct ast_node * ast, FILE * file, int next_id)
                 fprintf(file, "    n%d -> n%d [label=\"rhs\"];\n", id, rhs_id);
             }
             break;
-        case AST_NODE_KIND_INTEGER_CONSTANT:
+        case AST_NODE_KIND_INTEGER_CONSTANT_EXPRESSION:
             fprintf(file, "    n%d [label=\"IntegerConstant\\n%lld : %s\"];\n", id, ast->content.constant.value.integer_constant, type_stringify(ast->type));
             break;
-        case AST_NODE_KIND_FLOAT_CONSTANT:
+        case AST_NODE_KIND_FLOAT_CONSTANT_EXPRESSION:
             fprintf(file, "    n%d [label=\"FloatConstant\\n%f : %s\"];\n", id, ast->content.constant.value.float_constant, type_stringify(ast->type));
             break;
-        case AST_NODE_KIND_VARIABLE:
-            fprintf(file, "    n%d [label=\"Variable\\n'%s' : %s\"];\n", id, ast->content.symbol->identifier->name, type_stringify(ast->type));
+        case AST_NODE_KIND_VARIABLE_EXPRESSION:
+            fprintf(file, "    n%d [label=\"VariableExpression\\n'%s' : %s\"];\n", id, ast->content.symbol->identifier->name, type_stringify(ast->type));
             break;
         case AST_NODE_KIND_VARIABLE_DECLARATION:
             fprintf(file, "    n%d [label=\"VariableDeclaration\\n'%s' : %s\"];\n", id, ast->content.symbol->identifier->name, type_stringify(ast->type));
             break;
-        case AST_NODE_KIND_FUNCTION_CALL:
-            fprintf(file, "    n%d [label=\"FunctionCall\\n'%s' : %s\"];\n", id, ast->content.function_call.function->identifier->name, type_stringify(ast->type));
+        case AST_NODE_KIND_FUNCTION_CALL_EXPRESSION:
+            fprintf(file, "    n%d [label=\"FunctionCallExpression\\n'%s' : %s\"];\n", id, ast->content.function_call.function->identifier->name, type_stringify(ast->type));
             for (unsigned int i = 0; i < ast->content.function_call.argument_count; i++) {
                 int child_id = next_id;
                 next_id = do_print_ast_dot(ast->content.function_call.arguments[i], file, next_id);
