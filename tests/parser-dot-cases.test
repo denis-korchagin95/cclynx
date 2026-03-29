@@ -439,3 +439,41 @@ digraph AST {
 }
 
 @endtest
+
+@test("DOT: function call without arguments")
+@given("file")
+int foo(void) {
+   return 7;
+}
+
+int main() {
+    return 42 * foo();
+}
+@whenRun("./bin/cclynx", args="--emit-ast --format=dot")
+@expectOutput("stdout")
+digraph AST {
+    node [shape=box, fontname="monospace"];
+    n0 [label="TranslationUnit\n'{{any}}'"];
+    n1 [label="FunctionDefinition\n'foo' : int\nno-parameters"];
+    n2 [label="CompoundStatement"];
+    n3 [label="ReturnStatement"];
+    n4 [label="IntegerConstant\n7 : int"];
+    n3 -> n4;
+    n2 -> n3;
+    n1 -> n2;
+    n0 -> n1;
+    n5 [label="FunctionDefinition\n'main' : int\nunspecified-parameters"];
+    n6 [label="CompoundStatement"];
+    n7 [label="ReturnStatement"];
+    n8 [label="MultiplicativeExpression '*'\n: int"];
+    n9 [label="IntegerConstant\n42 : int"];
+    n8 -> n9 [label="lhs"];
+    n10 [label="FunctionCall\n'foo' : int"];
+    n8 -> n10 [label="rhs"];
+    n7 -> n8;
+    n6 -> n7;
+    n5 -> n6;
+    n0 -> n5;
+}
+
+@endtest

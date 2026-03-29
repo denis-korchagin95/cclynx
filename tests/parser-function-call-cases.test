@@ -1,0 +1,45 @@
+@test("It should parse function calls without parameters")
+@given("file")
+int foo(void) {
+   return 7;
+}
+
+int main() {
+    return 42 * foo();
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+|
++-> FunctionDefinition: 'foo' {type: 'int'} <no-parameters>
+|   |
+|   +-> CompoundStatement
+|       |
+|       +-> ReturnStatement
+|           |
+|           +-> IntegerConstant: '7' {type: 'int'}
+|
++-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
+    |
+    +-> CompoundStatement
+        |
+        +-> ReturnStatement
+            |
+            +-> MultiplicativeExpression: '*' {type: 'int'}
+                |
+                +-> IntegerConstant: '42' {type: 'int'}
+                |
+                +-> FunctionCall: 'foo' {type: 'int'} <no-arguments>
+
+@endtest
+
+@test("It should raise an error when function call uses a keyword as name")
+@given("file")
+int main() {
+    return 42 * while();
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stderr")
+ERROR: expected identifier but not a keyword!
+
+@endtest

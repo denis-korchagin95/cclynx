@@ -30,6 +30,7 @@ static struct ast_node * parse_relational_expression(struct parser_context * ctx
 static struct ast_node * parse_additive_expression(struct parser_context * ctx);
 static struct ast_node * parse_multiplicative_expression(struct parser_context * ctx);
 static struct ast_node * parse_cast_expression(struct parser_context * ctx);
+static struct ast_node * parse_postfix_expression(struct parser_context * ctx);
 static struct ast_node * parse_primary_expression(struct parser_context * ctx);
 
 static void parse_function_parameter_list(struct parser_context * ctx, struct ast_node ** parameters, unsigned int * parameter_count);
@@ -609,7 +610,7 @@ struct ast_node * parse_cast_expression(struct parser_context * ctx)
 
     if (!token_is_punctuator(current_token, '(')) {
         parser_putback_token(current_token, ctx);
-        return parse_primary_expression(ctx);
+        return parse_postfix_expression(ctx);
     }
 
     struct token * previous_token = current_token;
@@ -619,7 +620,7 @@ struct ast_node * parse_cast_expression(struct parser_context * ctx)
     if (current_token->kind != TOKEN_KIND_IDENTIFIER) {
         parser_putback_token(current_token, ctx);
         parser_putback_token(previous_token, ctx);
-        return parse_primary_expression(ctx);
+        return parse_postfix_expression(ctx);
     }
 
     const struct symbol * symbol = symbol_lookup(current_token->identifier, SYMBOL_KIND_TYPE_SPECIFIER);
@@ -627,7 +628,7 @@ struct ast_node * parse_cast_expression(struct parser_context * ctx)
     if (symbol == NULL) {
         parser_putback_token(current_token, ctx);
         parser_putback_token(previous_token, ctx);
-        return parse_primary_expression(ctx);
+        return parse_postfix_expression(ctx);
     }
 
     struct type * type = symbol->type;
@@ -638,13 +639,54 @@ struct ast_node * parse_cast_expression(struct parser_context * ctx)
         cclynx_fatal_error("ERROR: expected ')'!\n");
     }
 
-    struct ast_node * expression = parse_primary_expression(ctx);
+    struct ast_node * expression = parse_postfix_expression(ctx);
 
     struct ast_node * cast_expression = create_ast_node(ctx, AST_NODE_KIND_CAST_EXPRESSION);
     cast_expression->type = type;
     cast_expression->content.node = expression;
 
     return cast_expression;
+}
+
+struct ast_node * parse_postfix_expression(struct parser_context * ctx)
+{
+    assert(ctx != NULL);
+
+    struct token * current_token = parser_get_token(ctx);
+
+    if (token_is_identifier(current_token)) {
+        struct token * next_token = parser_get_token(ctx);
+
+        if (token_is_punctuator(next_token, '(')) {
+            struct symbol * function_symbol = symbol_lookup(current_token->identifier, SYMBOL_KIND_FUNCTION);
+
+            if (function_symbol == NULL) {
+                cclynx_fatal_error("ERROR: try to call unknown function '%s'\n", current_token->identifier->name);
+            }
+
+            next_token = parser_get_token(ctx);
+
+            if (!token_is_punctuator(next_token, ')')) {
+                cclynx_fatal_error("ERROR: expected ')'");
+            }
+
+            struct ast_node * function_call = create_ast_node(ctx, AST_NODE_KIND_FUNCTION_CALL);
+            function_call->content.function_call.function = function_symbol;
+            function_call->content.function_call.argument_count = 0;
+            function_call->type = function_symbol->type;
+            return function_call;
+        }
+
+        parser_putback_token(next_token, ctx);
+        parser_putback_token(current_token, ctx);
+
+        goto fallback;
+    } else {
+        parser_putback_token(current_token, ctx);
+    }
+
+fallback:
+    return parse_primary_expression(ctx);
 }
 
 struct ast_node * parse_primary_expression(struct parser_context * ctx)

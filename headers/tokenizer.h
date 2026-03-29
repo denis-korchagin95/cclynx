@@ -15,6 +15,9 @@ struct hashmap;
 
 #define token_first_ch(tok) ((tok)->source->content[(tok)->span.offset])
 
+#define token_is_identifier(tok) \
+    ((tok)->kind == TOKEN_KIND_IDENTIFIER && !(tok)->identifier->is_keyword)
+
 #define token_is_punctuator(tok, c) \
     ((tok)->kind == TOKEN_KIND_PUNCTUATOR && token_first_ch(tok) == (c))
 

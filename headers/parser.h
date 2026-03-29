@@ -92,10 +92,9 @@ struct ast_node
         } function_definition;
         struct function_call
         {
-            struct identifier * name;
+	    struct symbol * function;
             struct ast_node * arguments[MAX_AST_FUNCTION_ARGUMENT_COUNT];
             unsigned int argument_count;
-            struct type * return_type;
         } function_call;
         struct assignment {
             enum assignment_type type;

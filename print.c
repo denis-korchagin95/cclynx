@@ -248,6 +248,25 @@ void do_print_ast(const struct ast_node * ast, FILE * file, int depth, unsigned 
                     do_print_ast(ast->content.function_definition.body, file, depth + 1, ancestors_info, NULL);
             }
             break;
+        case AST_NODE_KIND_FUNCTION_CALL:
+            {
+                if (ast->content.function_call.argument_count == 0) {
+                    fprintf(file, "FunctionCall: '%s' {type: '%s'} <no-arguments>\n",
+                        ast->content.function_call.function->identifier->name,
+                        type_stringify(ast->type));
+                } else {
+                    fprintf(file, "FunctionCall: '%s' {type: '%s'} <%d-argument%s>\n",
+                        ast->content.function_call.function->identifier->name,
+                        type_stringify(ast->type),
+                        ast->content.function_call.argument_count,
+                        ast->content.function_call.argument_count == 1 ? "" : "s");
+                }
+                for (unsigned int i = 0; i < ast->content.function_call.argument_count; i++) {
+                    ancestors_info[depth] = i < ast->content.function_call.argument_count - 1 ? 2 : 0;
+                    do_print_ast(ast->content.function_call.arguments[i], file, depth + 1, ancestors_info, NULL);
+                }
+            }
+            break;
         case AST_NODE_KIND_CAST_EXPRESSION:
             {
                 fprintf(file, "CastExpression {type: '%s'}\n", type_stringify(ast->type));
@@ -435,6 +454,14 @@ int do_print_ast_dot(const struct ast_node * ast, FILE * file, int next_id)
             break;
         case AST_NODE_KIND_VARIABLE_DECLARATION:
             fprintf(file, "    n%d [label=\"VariableDeclaration\\n'%s' : %s\"];\n", id, ast->content.symbol->identifier->name, type_stringify(ast->type));
+            break;
+        case AST_NODE_KIND_FUNCTION_CALL:
+            fprintf(file, "    n%d [label=\"FunctionCall\\n'%s' : %s\"];\n", id, ast->content.function_call.function->identifier->name, type_stringify(ast->type));
+            for (unsigned int i = 0; i < ast->content.function_call.argument_count; i++) {
+                int child_id = next_id;
+                next_id = do_print_ast_dot(ast->content.function_call.arguments[i], file, next_id);
+                fprintf(file, "    n%d -> n%d [label=\"arg\"];\n", id, child_id);
+            }
             break;
         case AST_NODE_KIND_CAST_EXPRESSION:
             fprintf(file, "    n%d [label=\"CastExpression\\n: %s\"];\n", id, type_stringify(ast->type));
