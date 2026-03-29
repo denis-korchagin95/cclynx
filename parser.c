@@ -86,7 +86,7 @@ struct ast_node * parse_statement(struct parser_context * ctx)
 
     struct ast_node * statement = NULL;
 
-    if (current_token->kind == TOKEN_KIND_IDENTIFIER && current_token->identifier->is_keyword) {
+    if (token_is_keyword(current_token)) {
         if (strcmp("while", current_token->identifier->name) == 0) {
             statement = parse_while_statement(ctx);
         } else if (strcmp("return", current_token->identifier->name) == 0) {
@@ -187,8 +187,7 @@ struct ast_node * parse_if_statement(struct parser_context * ctx)
     current_token = parser_get_token(ctx);
 
     if (
-        current_token->kind == TOKEN_KIND_IDENTIFIER
-        && current_token->identifier->is_keyword
+        token_is_keyword(current_token)
         && strcmp("else", current_token->identifier->name) == 0
     ) {
         false_branch = parse_statement(ctx);
@@ -336,8 +335,7 @@ struct ast_node * parse_function_definition(struct parser_context * ctx)
     unsigned int parameter_count = 0;
 
     if (
-        current_token->kind == TOKEN_KIND_IDENTIFIER
-        && current_token->identifier->is_keyword
+        token_is_keyword(current_token)
         && strcmp("void", current_token->identifier->name) == 0
     ) {
         parameter_presence = PARAMETER_PRESENCE_VOID;

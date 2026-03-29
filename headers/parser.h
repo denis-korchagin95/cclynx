@@ -92,7 +92,7 @@ struct ast_node
         } function_definition;
         struct function_call
         {
-	    struct symbol * function;
+        struct symbol * function;
             struct ast_node * arguments[MAX_AST_FUNCTION_ARGUMENT_COUNT];
             unsigned int argument_count;
         } function_call;
