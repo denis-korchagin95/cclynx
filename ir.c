@@ -3,7 +3,7 @@
 
 #include "ir.h"
 #include "allocator.h"
-#include "parser.h"
+#include "ast.h"
 #include "type.h"
 #include "symbol.h"
 #include "errors.h"

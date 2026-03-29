@@ -31,6 +31,7 @@ OBJECTS+=type.o
 OBJECTS+=scope.o
 OBJECTS+=print.o
 OBJECTS+=tokenizer.o
+OBJECTS+=ast.o
 OBJECTS+=parser.o
 OBJECTS+=ir.o
 OBJECTS+=target-arm64.o

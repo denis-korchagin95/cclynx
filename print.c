@@ -7,7 +7,7 @@
 
 #include "tokenizer.h"
 #include "identifier.h"
-#include "parser.h"
+#include "ast.h"
 #include "symbol.h"
 #include "ir.h"
 #include "type.h"

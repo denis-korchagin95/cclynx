@@ -12,7 +12,6 @@
 #include "type.h"
 #include "errors.h"
 
-static struct ast_node * create_ast_node(const struct parser_context * ctx, enum ast_node_kind kind, struct type * type);
 
 static struct ast_node * parse_translation_unit(struct parser_context * ctx);
 static struct ast_node * parse_expression(struct parser_context * ctx);
@@ -35,7 +34,6 @@ static struct ast_node * parse_primary_expression(struct parser_context * ctx);
 
 static void parse_function_parameter_list(struct parser_context * ctx, struct ast_node ** parameters, unsigned int * parameter_count);
 
-static struct type * check_type(struct type * lhs, const struct type * rhs);
 
 struct ast_node * parser_parse(struct parser_context * ctx)
 {
@@ -71,7 +69,7 @@ struct ast_node * parse_translation_unit(struct parser_context * ctx)
 
     ctx->current_scope = scope_pop(ctx->current_scope);
 
-    struct ast_node * translation_unit = create_ast_node(ctx, AST_NODE_KIND_TRANSLATION_UNIT, &type_void);
+    struct ast_node * translation_unit = ast_create_node(ctx->pool, AST_NODE_KIND_TRANSLATION_UNIT, &type_void);
     translation_unit->content.translation_unit.list = function_list;
     translation_unit->content.translation_unit.filename = ctx->source_filename;
 
@@ -121,7 +119,7 @@ struct ast_node * parse_compound_statement(struct parser_context * ctx)
     current_token = parser_get_token(ctx);
 
     if (token_is_punctuator(current_token, '}')) {
-        struct ast_node * compound_statement = create_ast_node(ctx, AST_NODE_KIND_COMPOUND_STATEMENT, &type_void);
+        struct ast_node * compound_statement = ast_create_node(ctx->pool, AST_NODE_KIND_COMPOUND_STATEMENT, &type_void);
         compound_statement->content.list = NULL;
         return compound_statement;
     }
@@ -157,7 +155,7 @@ struct ast_node * parse_compound_statement(struct parser_context * ctx)
 
     ctx->current_scope = scope_pop(ctx->current_scope);
 
-    struct ast_node * compound_statement = create_ast_node(ctx, AST_NODE_KIND_COMPOUND_STATEMENT, &type_void);
+    struct ast_node * compound_statement = ast_create_node(ctx->pool, AST_NODE_KIND_COMPOUND_STATEMENT, &type_void);
     compound_statement->content.list = statement_list;
 
     return compound_statement;
@@ -195,7 +193,7 @@ struct ast_node * parse_if_statement(struct parser_context * ctx)
         parser_putback_token(current_token, ctx);
     }
 
-    struct ast_node * if_statement = create_ast_node(ctx, AST_NODE_KIND_IF_STATEMENT, &type_void);
+    struct ast_node * if_statement = ast_create_node(ctx->pool, AST_NODE_KIND_IF_STATEMENT, &type_void);
     if_statement->content.if_statement.condition = condition;
     if_statement->content.if_statement.true_branch = true_branch;
     if_statement->content.if_statement.false_branch = false_branch;
@@ -221,7 +219,7 @@ struct ast_node * parse_return_statement(struct parser_context * ctx)
         cclynx_fatal_error("ERROR: expected ';'!\n");
     }
 
-    struct ast_node * return_statement = create_ast_node(ctx, AST_NODE_KIND_RETURN_STATEMENT, &type_void);
+    struct ast_node * return_statement = ast_create_node(ctx->pool, AST_NODE_KIND_RETURN_STATEMENT, &type_void);
     return_statement->content.node = expression;
 
     return return_statement;
@@ -247,7 +245,7 @@ struct ast_node * parse_while_statement(struct parser_context * ctx)
 
     struct ast_node * statement = parse_statement(ctx);
 
-    struct ast_node * while_statement = create_ast_node(ctx, AST_NODE_KIND_WHILE_STATEMENT, &type_void);
+    struct ast_node * while_statement = ast_create_node(ctx->pool, AST_NODE_KIND_WHILE_STATEMENT, &type_void);
     while_statement->content.while_statement.condition = expression;
     while_statement->content.while_statement.body = statement;
 
@@ -272,7 +270,7 @@ struct ast_node * parse_expression_statement(struct parser_context * ctx)
         cclynx_fatal_error("ERROR: expected ';'!\n");
     }
 
-    struct ast_node * expression_statement = create_ast_node(ctx, AST_NODE_KIND_EXPRESSION_STATEMENT, &type_void);
+    struct ast_node * expression_statement = ast_create_node(ctx->pool, AST_NODE_KIND_EXPRESSION_STATEMENT, &type_void);
     expression_statement->content.node = expression;
 
     return expression_statement;
@@ -358,7 +356,7 @@ struct ast_node * parse_function_definition(struct parser_context * ctx)
         ctx->current_scope = scope_pop(ctx->current_scope);
     }
 
-    struct ast_node * function_definition = create_ast_node(ctx, AST_NODE_KIND_FUNCTION_DEFINITION, symbol->type);
+    struct ast_node * function_definition = ast_create_node(ctx->pool, AST_NODE_KIND_FUNCTION_DEFINITION, symbol->type);
     function_definition->content.function_definition.name = identifier;
     function_definition->content.function_definition.body = compound_statement;
     function_definition->content.function_definition.parameter_presence = parameter_presence;
@@ -419,7 +417,7 @@ struct ast_node * parse_declaration(struct parser_context * ctx)
     identifier_attach_symbol(ctx->pool, identifier, variable)
     scope_add_symbol(ctx->current_scope, variable, ctx->pool);
 
-    struct ast_node * declaration = create_ast_node(ctx, AST_NODE_KIND_VARIABLE_DECLARATION, variable->type);
+    struct ast_node * declaration = ast_create_node(ctx->pool, AST_NODE_KIND_VARIABLE_DECLARATION, variable->type);
     declaration->content.symbol = variable;
 
     return declaration;
@@ -453,7 +451,7 @@ struct ast_node * parse_assignment_expression(struct parser_context * ctx)
         return lhs;
     }
 
-    struct ast_node * assignment_expression = create_ast_node(ctx, AST_NODE_KIND_ASSIGNMENT_EXPRESSION, &type_void);
+    struct ast_node * assignment_expression = ast_create_node(ctx->pool, AST_NODE_KIND_ASSIGNMENT_EXPRESSION, &type_void);
     assignment_expression->content.assignment.type = ASSIGNMENT_REGULAR;
     assignment_expression->content.assignment.lhs = lhs;
     assignment_expression->content.assignment.initializer = initializer;
@@ -478,7 +476,7 @@ struct ast_node * parse_equality_expression(struct parser_context * ctx)
             : BINARY_OPERATION_INEQUALITY;
         struct ast_node * rhs = parse_relational_expression(ctx);
 
-        struct ast_node * binary_expression = create_ast_node(ctx, AST_NODE_KIND_EQUALITY_EXPRESSION, check_type(lhs->type, rhs->type));
+        struct ast_node * binary_expression = ast_create_node(ctx->pool, AST_NODE_KIND_EQUALITY_EXPRESSION, type_resolve(lhs->type, rhs->type));
         binary_expression->content.binary_expression.operation = operation;
         binary_expression->content.binary_expression.lhs = lhs;
         binary_expression->content.binary_expression.rhs = rhs;
@@ -511,7 +509,7 @@ struct ast_node * parse_relational_expression(struct parser_context * ctx) {
             : BINARY_OPERATION_GREATER_THAN;
         struct ast_node * rhs = parse_additive_expression(ctx);
 
-        struct ast_node * binary_expression = create_ast_node(ctx, AST_NODE_KIND_RELATIONAL_EXPRESSION, check_type(lhs->type, rhs->type));
+        struct ast_node * binary_expression = ast_create_node(ctx->pool, AST_NODE_KIND_RELATIONAL_EXPRESSION, type_resolve(lhs->type, rhs->type));
         binary_expression->content.binary_expression.operation = operation;
         binary_expression->content.binary_expression.lhs = lhs;
         binary_expression->content.binary_expression.rhs = rhs;
@@ -546,7 +544,7 @@ struct ast_node * parse_additive_expression(struct parser_context * ctx)
             : BINARY_OPERATION_SUBTRACTION;
         struct ast_node * rhs = parse_multiplicative_expression(ctx);
 
-        struct ast_node * binary_expression = create_ast_node(ctx, AST_NODE_KIND_ADDITIVE_EXPRESSION, check_type(lhs->type, rhs->type));
+        struct ast_node * binary_expression = ast_create_node(ctx->pool, AST_NODE_KIND_ADDITIVE_EXPRESSION, type_resolve(lhs->type, rhs->type));
         binary_expression->content.binary_expression.operation = operation;
         binary_expression->content.binary_expression.lhs = lhs;
         binary_expression->content.binary_expression.rhs = rhs;
@@ -580,7 +578,7 @@ struct ast_node * parse_multiplicative_expression(struct parser_context * ctx)
             : BINARY_OPERATION_DIVIDE;
         struct ast_node * rhs = parse_cast_expression(ctx);
 
-        struct ast_node * binary_expression = create_ast_node(ctx, AST_NODE_KIND_MULTIPLICATIVE_EXPRESSION, check_type(lhs->type, rhs->type));
+        struct ast_node * binary_expression = ast_create_node(ctx->pool, AST_NODE_KIND_MULTIPLICATIVE_EXPRESSION, type_resolve(lhs->type, rhs->type));
         binary_expression->content.binary_expression.operation = operation;
         binary_expression->content.binary_expression.lhs = lhs;
         binary_expression->content.binary_expression.rhs = rhs;
@@ -633,7 +631,7 @@ struct ast_node * parse_cast_expression(struct parser_context * ctx)
 
     struct ast_node * expression = parse_postfix_expression(ctx);
 
-    struct ast_node * cast_expression = create_ast_node(ctx, AST_NODE_KIND_CAST_EXPRESSION, type);
+    struct ast_node * cast_expression = ast_create_node(ctx->pool, AST_NODE_KIND_CAST_EXPRESSION, type);
     cast_expression->content.node = expression;
 
     return cast_expression;
@@ -661,7 +659,7 @@ struct ast_node * parse_postfix_expression(struct parser_context * ctx)
                 cclynx_fatal_error("ERROR: expected ')'");
             }
 
-            struct ast_node * function_call = create_ast_node(ctx, AST_NODE_KIND_FUNCTION_CALL, function_symbol->type);
+            struct ast_node * function_call = ast_create_node(ctx->pool, AST_NODE_KIND_FUNCTION_CALL, function_symbol->type);
             function_call->content.function_call.function = function_symbol;
             function_call->content.function_call.argument_count = 0;
             return function_call;
@@ -689,12 +687,12 @@ struct ast_node * parse_primary_expression(struct parser_context * ctx)
         const char * number_ptr = current_token->source->content + current_token->span.offset;
 
         if ((current_token->flags & TOKEN_FLAG_IS_FLOAT) > 0) {
-            struct ast_node * number = create_ast_node(ctx, AST_NODE_KIND_FLOAT_CONSTANT, &type_float);
+            struct ast_node * number = ast_create_node(ctx->pool, AST_NODE_KIND_FLOAT_CONSTANT, &type_float);
             number->content.constant.value.float_constant = (float)strtod(number_ptr, NULL);
             return number;
         }
 
-        struct ast_node * number = create_ast_node(ctx, AST_NODE_KIND_INTEGER_CONSTANT, &type_integer);
+        struct ast_node * number = ast_create_node(ctx->pool, AST_NODE_KIND_INTEGER_CONSTANT, &type_integer);
         number->content.constant.value.integer_constant = (int)strtol(number_ptr, NULL, 10);
         return number;
     }
@@ -710,7 +708,7 @@ struct ast_node * parse_primary_expression(struct parser_context * ctx)
             cclynx_fatal_error("ERROR: undeclared variable \"%s\"!\n", current_token->identifier->name);
         }
 
-        struct ast_node * variable = create_ast_node(ctx, AST_NODE_KIND_VARIABLE, symbol->type);
+        struct ast_node * variable = ast_create_node(ctx->pool, AST_NODE_KIND_VARIABLE, symbol->type);
         variable->content.symbol = symbol;
         return variable;
     }
@@ -773,28 +771,6 @@ void parser_init_context(struct parser_context * ctx, struct token * tokens, str
     ctx->source_filename = source_filename;
 }
 
-struct ast_node * create_ast_node(const struct parser_context * ctx, enum ast_node_kind kind, struct type * type)
-{
-    assert(ctx != NULL);
-    assert(type != NULL);
-    struct ast_node * node = memory_blob_pool_alloc(ctx->pool, sizeof(struct ast_node));
-    memset(node, 0, sizeof(struct ast_node));
-    node->kind = kind;
-    node->type = type;
-    return node;
-}
-
-struct type * check_type(struct type * lhs, const struct type * rhs)
-{
-    assert(lhs != NULL);
-    assert(rhs != NULL);
-
-    if (lhs->kind != rhs->kind) {
-        cclynx_fatal_error("ERROR: type mismatch between '%s' and '%s'\n", type_stringify(lhs), type_stringify(rhs));
-    }
-
-    return lhs;
-}
 
 struct ast_node * parse_function_parameter(struct parser_context * ctx)
 {
@@ -842,7 +818,7 @@ struct ast_node * parse_function_parameter(struct parser_context * ctx)
     identifier_attach_symbol(ctx->pool, parameter_identifier, parameter_symbol)
     scope_add_symbol(ctx->current_scope, parameter_symbol, ctx->pool);
 
-    struct ast_node * parameter = create_ast_node(ctx, AST_NODE_KIND_FUNCTION_PARAMETER, parameter_symbol->type);
+    struct ast_node * parameter = ast_create_node(ctx->pool, AST_NODE_KIND_FUNCTION_PARAMETER, parameter_symbol->type);
     parameter->content.symbol = parameter_symbol;
 
     return parameter;
