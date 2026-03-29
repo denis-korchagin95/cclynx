@@ -218,6 +218,70 @@ TranslationUnit: '{{any}}'
 
 @endtest
 
+@test("It should parse function with 2 parameters")
+@given("file")
+int add(int a, int b) {
+    return a + b;
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+|
++-> FunctionDefinition: 'add' {type: 'int'}
+    |
+    +-> ParameterList
+    |   |
+    |   +-> Parameter: 'a' {type: 'int'}
+    |   |
+    |   +-> Parameter: 'b' {type: 'int'}
+    |
+    +-> CompoundStatement
+        |
+        +-> ReturnStatement
+            |
+            +-> AdditiveExpression: '+' {type: 'int'}
+                |
+                +-> Variable: 'a' {type: 'int'}
+                |
+                +-> Variable: 'b' {type: 'int'}
+
+@endtest
+
+@test("It should parse function with 3 parameters")
+@given("file")
+int foo(int a, int b, int c) {
+    return a + b * c;
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+|
++-> FunctionDefinition: 'foo' {type: 'int'}
+    |
+    +-> ParameterList
+    |   |
+    |   +-> Parameter: 'a' {type: 'int'}
+    |   |
+    |   +-> Parameter: 'b' {type: 'int'}
+    |   |
+    |   +-> Parameter: 'c' {type: 'int'}
+    |
+    +-> CompoundStatement
+        |
+        +-> ReturnStatement
+            |
+            +-> AdditiveExpression: '+' {type: 'int'}
+                |
+                +-> Variable: 'a' {type: 'int'}
+                |
+                +-> MultiplicativeExpression: '*' {type: 'int'}
+                    |
+                    +-> Variable: 'b' {type: 'int'}
+                    |
+                    +-> Variable: 'c' {type: 'int'}
+
+@endtest
+
 @test("It should raise an error when parameter type is not a type specifier")
 @given("file")
 int foo(bar a) {
@@ -248,5 +312,16 @@ int foo(int return) {
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stderr")
 ERROR: expected identifier but not a keyword!
+
+@endtest
+
+@test("It should raise an error when too many parameters")
+@given("file")
+int foo(int a, int b, int c, int d) {
+    return 0;
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stderr")
+ERROR: only 3 parameters per function are supported for now!
 
 @endtest

@@ -824,11 +824,22 @@ void parse_function_parameter_list(struct parser_context * ctx, struct ast_node 
     assert(parameters != NULL);
     assert(parameter_count != NULL);
 
-    struct ast_node * parameter = parse_function_parameter(ctx);
+    struct token * token;
 
-    if (parameter == NULL) {
-        return;
-    }
+    do {
+        struct ast_node * parameter = parse_function_parameter(ctx);
 
-    parameters[(*parameter_count)++] = parameter;
+        if (parameter == NULL) {
+            return;
+        }
+
+        parameters[(*parameter_count)++] = parameter;
+        token = parser_get_token(ctx);
+
+        if (token_is_punctuator(token, ',') && *parameter_count >= MAX_AST_FUNCTION_PARAMETER_COUNT) {
+            cclynx_fatal_error("ERROR: only 3 parameters per function are supported for now!\n");
+        }
+    } while (token_is_punctuator(token, ','));
+
+    parser_putback_token(token, ctx);
 }
