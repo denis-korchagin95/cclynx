@@ -340,7 +340,7 @@ int sum(int a) {
 digraph AST {
     node [shape=box, fontname="monospace"];
     n0 [label="TranslationUnit\n'{{any}}'"];
-    n1 [label="FunctionDefinition\n'sum' : int"];
+    n1 [label="FunctionDefinition\n'sum' : int\n1-parameter"];
     n2 [label="Parameter\n'a' : int"];
     n1 -> n2 [label="param"];
     n3 [label="CompoundStatement"];
@@ -349,6 +349,72 @@ digraph AST {
     n4 -> n5;
     n3 -> n4;
     n1 -> n3;
+    n0 -> n1;
+}
+
+@endtest
+
+@test("DOT: function with 2 parameters")
+@given("file")
+int add(int a, int b) {
+    return a + b;
+}
+@whenRun("./bin/cclynx", args="--emit-ast --format=dot")
+@expectOutput("stdout")
+digraph AST {
+    node [shape=box, fontname="monospace"];
+    n0 [label="TranslationUnit\n'{{any}}'"];
+    n1 [label="FunctionDefinition\n'add' : int\n2-parameters"];
+    n2 [label="Parameter\n'a' : int"];
+    n1 -> n2 [label="param"];
+    n3 [label="Parameter\n'b' : int"];
+    n1 -> n3 [label="param"];
+    n4 [label="CompoundStatement"];
+    n5 [label="ReturnStatement"];
+    n6 [label="AdditiveExpression '+'\n: int"];
+    n7 [label="Variable\n'a' : int"];
+    n6 -> n7 [label="lhs"];
+    n8 [label="Variable\n'b' : int"];
+    n6 -> n8 [label="rhs"];
+    n5 -> n6;
+    n4 -> n5;
+    n1 -> n4;
+    n0 -> n1;
+}
+
+@endtest
+
+@test("DOT: function with 3 parameters")
+@given("file")
+int foo(int a, int b, int c) {
+    return a + b * c;
+}
+@whenRun("./bin/cclynx", args="--emit-ast --format=dot")
+@expectOutput("stdout")
+digraph AST {
+    node [shape=box, fontname="monospace"];
+    n0 [label="TranslationUnit\n'{{any}}'"];
+    n1 [label="FunctionDefinition\n'foo' : int\n3-parameters"];
+    n2 [label="Parameter\n'a' : int"];
+    n1 -> n2 [label="param"];
+    n3 [label="Parameter\n'b' : int"];
+    n1 -> n3 [label="param"];
+    n4 [label="Parameter\n'c' : int"];
+    n1 -> n4 [label="param"];
+    n5 [label="CompoundStatement"];
+    n6 [label="ReturnStatement"];
+    n7 [label="AdditiveExpression '+'\n: int"];
+    n8 [label="Variable\n'a' : int"];
+    n7 -> n8 [label="lhs"];
+    n9 [label="MultiplicativeExpression '*'\n: int"];
+    n10 [label="Variable\n'b' : int"];
+    n9 -> n10 [label="lhs"];
+    n11 [label="Variable\n'c' : int"];
+    n9 -> n11 [label="rhs"];
+    n7 -> n9 [label="rhs"];
+    n6 -> n7;
+    n5 -> n6;
+    n1 -> n5;
     n0 -> n1;
 }
 

@@ -216,11 +216,14 @@ void do_print_ast(const struct ast_node * ast, FILE * file, int depth, unsigned 
             break;
         case AST_NODE_KIND_FUNCTION_DEFINITION:
             {
-                const char * args = "";
+                char args[32] = "";
                 if (ast->content.function_definition.parameter_presence == PARAMETER_PRESENCE_VOID) {
-                    args = " <no-parameters>";
+                    snprintf(args, sizeof(args), " <no-parameters>");
                 } else if (ast->content.function_definition.parameter_presence == PARAMETER_PRESENCE_UNSPECIFIED) {
-                    args = " <unspecified-parameters>";
+                    snprintf(args, sizeof(args), " <unspecified-parameters>");
+                } else if (ast->content.function_definition.parameter_presence == PARAMETER_PRESENCE_SPECIFIED) {
+                    const char * suffix = ast->content.function_definition.parameter_count == 1 ? "parameter" : "parameters";
+                    snprintf(args, sizeof(args), " <%d-%s>", ast->content.function_definition.parameter_count, suffix);
                 }
                 fprintf(file, "FunctionDefinition: '%s' {type: '%s'}%s\n", ast->content.function_definition.name->name, type_stringify(ast->type), args);
                 if (ast->content.function_definition.parameter_count > 0) {
@@ -299,11 +302,14 @@ int do_print_ast_dot(const struct ast_node * ast, FILE * file, int next_id)
             break;
         case AST_NODE_KIND_FUNCTION_DEFINITION:
             {
-                const char * args = "";
+                char args[32] = "";
                 if (ast->content.function_definition.parameter_presence == PARAMETER_PRESENCE_VOID) {
-                    args = "\\nno-parameters";
+                    snprintf(args, sizeof(args), "\\nno-parameters");
                 } else if (ast->content.function_definition.parameter_presence == PARAMETER_PRESENCE_UNSPECIFIED) {
-                    args = "\\nunspecified-parameters";
+                    snprintf(args, sizeof(args), "\\nunspecified-parameters");
+                } else if (ast->content.function_definition.parameter_presence == PARAMETER_PRESENCE_SPECIFIED) {
+                    const char * suffix = ast->content.function_definition.parameter_count == 1 ? "parameter" : "parameters";
+                    snprintf(args, sizeof(args), "\\n%d-%s", ast->content.function_definition.parameter_count, suffix);
                 }
                 fprintf(file, "    n%d [label=\"FunctionDefinition\\n'%s' : %s%s\"];\n", id, ast->content.function_definition.name->name, type_stringify(ast->type), args);
             }

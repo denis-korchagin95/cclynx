@@ -204,7 +204,7 @@ int identity(int a) {
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
 |
-+-> FunctionDefinition: 'identity' {type: 'int'}
++-> FunctionDefinition: 'identity' {type: 'int'} <1-parameter>
     |
     +-> ParameterList
     |   |
@@ -227,7 +227,7 @@ int add(int a, int b) {
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
 |
-+-> FunctionDefinition: 'add' {type: 'int'}
++-> FunctionDefinition: 'add' {type: 'int'} <2-parameters>
     |
     +-> ParameterList
     |   |
@@ -256,7 +256,7 @@ int foo(int a, int b, int c) {
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
 |
-+-> FunctionDefinition: 'foo' {type: 'int'}
++-> FunctionDefinition: 'foo' {type: 'int'} <3-parameters>
     |
     +-> ParameterList
     |   |
