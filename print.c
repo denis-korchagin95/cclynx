@@ -596,6 +596,9 @@ void print_ir_program(const struct ir_program * program, FILE * file)
             case OP_NOP:
                 fprintf(file, "OP_NOP\n");
                 break;
+            case OP_CALL:
+                fprintf(file, "OP_CALL \"%s\", t%llu\n", instruction->op1->content.function.identifier->name, instruction->result->content.temp_id);
+                break;
             default:
                 cclynx_fatal_error("ERROR(print): Unknown instruction for IR program\n");
         }

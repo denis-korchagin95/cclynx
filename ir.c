@@ -413,6 +413,24 @@ void do_generate_ir(struct ir_context * ctx, struct ir_program * program, const 
                 ir_emit(program, instruction);
             }
             break;
+        case AST_NODE_KIND_FUNCTION_CALL_EXPRESSION:
+            {
+                struct ir_instruction * call_instruction = memory_blob_pool_alloc(ctx->pool, sizeof(struct ir_instruction));
+                memset(call_instruction, 0, sizeof(struct ir_instruction));
+                call_instruction->code = OP_CALL;
+
+                struct ir_operand * callee = memory_blob_pool_alloc(ctx->pool, sizeof(struct ir_operand));
+                memset(callee, 0, sizeof(struct ir_operand));
+                callee->kind = OPERAND_KIND_FUNCTION_NAME;
+                callee->content.function.identifier = node->content.function_call.function->identifier;
+                call_instruction->op1 = callee;
+
+                call_instruction->result = new_temporary_operand(ctx);
+                call_instruction->result->type = node->type;
+
+                ir_emit(program, call_instruction);
+            }
+            break;
         default:
             cclynx_fatal_error("ERROR: unknown ast node for IR generator\n");
     }

@@ -1,0 +1,47 @@
+@test("It should generate IR for function call without parameters")
+@given("file")
+int foo(void) {
+   return 7;
+}
+
+int main() {
+    return 42 * foo();
+}
+@whenRun("./bin/cclynx", args="--emit-ir")
+@expectOutput("stdout")
+OP_FUNC "foo"
+OP_CONST 7, t1
+OP_RETURN t1
+OP_FUNC_END
+OP_FUNC "main"
+OP_CONST 42, t2
+OP_CALL "foo", t3
+OP_MUL t2, t3, t4
+OP_RETURN t4
+OP_FUNC_END
+
+@endtest
+
+@test("It should generate IR for function call with unspecified parameters")
+@given("file")
+int foo() {
+   return 7;
+}
+
+int main() {
+    return 42 * foo();
+}
+@whenRun("./bin/cclynx", args="--emit-ir")
+@expectOutput("stdout")
+OP_FUNC "foo"
+OP_CONST 7, t1
+OP_RETURN t1
+OP_FUNC_END
+OP_FUNC "main"
+OP_CONST 42, t2
+OP_CALL "foo", t3
+OP_MUL t2, t3, t4
+OP_RETURN t4
+OP_FUNC_END
+
+@endtest
