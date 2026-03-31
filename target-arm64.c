@@ -498,6 +498,32 @@ void target_arm64_generate(struct codegen_context * ctx, struct ir_program * pro
                     push_reg(ctx, result_reg);
                 }
                 break;
+            case OP_CALL:
+                {
+                    size_t saved_active_reg_count = ctx->reg_stack_pos;
+                    size_t spill_memory_size = align_up(saved_active_reg_count * 4, 16);
+
+                    if (saved_active_reg_count > 0) {
+                        fprintf(file, "    sub sp, sp, #%zu\n", spill_memory_size);
+                        for (size_t j = 0; j < saved_active_reg_count; ++j) {
+                            fprintf(file, "    str %s, [sp, #%zu]\n", ctx->reg_stack[j]->name, j * 4);
+                        }
+                    }
+
+                    fprintf(file, "    bl _%s\n", instruction->op1->content.function.identifier->name);
+
+                    if (saved_active_reg_count > 0) {
+                        for (size_t j = 0; j < saved_active_reg_count; ++j) {
+                            fprintf(file, "    ldr %s, [sp, #%zu]\n", ctx->reg_stack[j]->name, j * 4);
+                        }
+                        fprintf(file, "    add sp, sp, #%zu\n", spill_memory_size);
+                    }
+
+                    struct codegen_reg * result_reg = alloc_reg(ctx, get_reg_kind(instruction->result->type));
+                    fprintf(file, "    mov %s, w0\n", result_reg->name);
+                    push_reg(ctx, result_reg);
+                }
+                break;
             default:
                 cclynx_fatal_error("ERROR: unknown instruction\n");
         }

@@ -1,0 +1,71 @@
+@test("It should generate target arm64 code for simple function call without parameters")
+@given("file")
+int foo(void) {
+    return 7;
+}
+int main() {
+    return foo();
+}
+@whenRun("./bin/cclynx", args="--emit-asm")
+@expectOutput("stdout")
+.text
+.align 2
+
+.global _foo
+_foo:
+    stp x29, x30, [sp, -16]!
+    mov x29, sp
+    mov w9, #7
+    mov w0, w9
+    ldp x29, x30, [sp], #16
+    ret
+.global _main
+_main:
+    stp x29, x30, [sp, -16]!
+    mov x29, sp
+    bl _foo
+    mov w9, w0
+    mov w0, w9
+    ldp x29, x30, [sp], #16
+    ret
+
+@endtest
+
+@test("It should generate target arm64 code for function call in expression")
+@given("file")
+int foo(void) {
+    return 7;
+}
+int main() {
+    return 42 * foo();
+}
+@whenRun("./bin/cclynx", args="--emit-asm")
+@expectOutput("stdout")
+.text
+.align 2
+
+.global _foo
+_foo:
+    stp x29, x30, [sp, -16]!
+    mov x29, sp
+    mov w9, #7
+    mov w0, w9
+    ldp x29, x30, [sp], #16
+    ret
+.global _main
+_main:
+    stp x29, x30, [sp, -16]!
+    mov x29, sp
+    mov w9, #42
+    sub sp, sp, #16
+    str w9, [sp, #0]
+    bl _foo
+    ldr w9, [sp, #0]
+    add sp, sp, #16
+    mov w10, w0
+    mul w11, w9, w10
+    mov w0, w11
+    ldp x29, x30, [sp], #16
+    ret
+
+@endtest
