@@ -3,9 +3,9 @@
 #include "type.h"
 #include "errors.h"
 
-struct type type_void = {TYPE_KIND_VOID, 0, 0};
-struct type type_integer = {TYPE_KIND_INTEGER, 4, 4};
-struct type type_float = {TYPE_KIND_FLOAT, 4, 4};
+struct type type_void = {TYPE_KIND_VOID, 0, 0, 0};
+struct type type_integer = {TYPE_KIND_INTEGER, 4, 4, TYPE_MODIFIER_SIGNED};
+struct type type_float = {TYPE_KIND_FLOAT, 4, 4, 0};
 
 const char * type_stringify(const struct type * type)
 {

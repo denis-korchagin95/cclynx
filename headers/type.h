@@ -3,6 +3,8 @@
 
 #include <stddef.h>
 
+#define TYPE_MODIFIER_SIGNED (1 << 0)
+
 enum type_kind
 {
     TYPE_KIND_VOID = 0,
@@ -15,6 +17,7 @@ struct type
     enum type_kind kind;
     size_t size;
     size_t alignment;
+    unsigned int modifiers;
 };
 
 extern struct type type_integer;
