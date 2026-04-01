@@ -12,8 +12,8 @@ The main goal is not just to compile but also to **reveal the internals** of com
 
 - Show **tokens**
 - Show **AST (Abstract Syntax Tree)**
-- Generate **SSA-based IR (Intermediate Representation)**
-- Produce **ARM64 assembly** (not optimized yet)
+- Generate **Three Address Code IR (Intermediate Representation)**
+- Produce **ARM64 assembly** (without any optimizations)
 
 Currently, the project is **pre-alpha** and primarily a learning tool.
 
