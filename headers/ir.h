@@ -65,6 +65,9 @@ enum opcode
     OP_SUB,
     OP_INT_CAST,
     OP_FLOAT_CAST,
+    OP_CALL,
+    OP_ARG,
+    OP_STORE_PARAM,
 };
 
 struct ir_instruction

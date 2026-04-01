@@ -98,13 +98,13 @@ TranslationUnit: '{{any}}'
 |       |   |
 |       |   +-> AssignmentExpression: '='
 |       |       |
-|       |       +-> Variable: 'x' {type: 'int'}
+|       |       +-> VariableExpression: 'x' {type: 'int'}
 |       |       |
 |       |       +-> IntegerConstant: '1' {type: 'int'}
 |       |
 |       +-> ReturnStatement
 |           |
-|           +-> Variable: 'x' {type: 'int'}
+|           +-> VariableExpression: 'x' {type: 'int'}
 |
 +-> FunctionDefinition: 'bar' {type: 'int'} <unspecified-parameters>
     |
@@ -116,13 +116,13 @@ TranslationUnit: '{{any}}'
         |   |
         |   +-> AssignmentExpression: '='
         |       |
-        |       +-> Variable: 'x' {type: 'int'}
+        |       +-> VariableExpression: 'x' {type: 'int'}
         |       |
         |       +-> IntegerConstant: '2' {type: 'int'}
         |
         +-> ReturnStatement
             |
-            +-> Variable: 'x' {type: 'int'}
+            +-> VariableExpression: 'x' {type: 'int'}
 
 @endtest
 
@@ -168,7 +168,7 @@ TranslationUnit: '{{any}}'
         |   |
         |   +-> AssignmentExpression: '='
         |       |
-        |       +-> Variable: 'x' {type: 'int'}
+        |       +-> VariableExpression: 'x' {type: 'int'}
         |       |
         |       +-> IntegerConstant: '1' {type: 'int'}
         |
@@ -178,13 +178,13 @@ TranslationUnit: '{{any}}'
         |       |
         |       +-> AssignmentExpression: '='
         |           |
-        |           +-> Variable: 'x' {type: 'int'}
+        |           +-> VariableExpression: 'x' {type: 'int'}
         |           |
         |           +-> IntegerConstant: '2' {type: 'int'}
         |
         +-> ReturnStatement
             |
-            +-> Variable: 'x' {type: 'int'}
+            +-> VariableExpression: 'x' {type: 'int'}
 
 @endtest
 
@@ -246,7 +246,7 @@ TranslationUnit: '{{any}}'
         |   |
         |   +-> AssignmentExpression: '='
         |       |
-        |       +-> Variable: 'x' {type: 'int'}
+        |       +-> VariableExpression: 'x' {type: 'int'}
         |       |
         |       +-> IntegerConstant: '1' {type: 'int'}
         |
@@ -258,13 +258,13 @@ TranslationUnit: '{{any}}'
         |       |
         |       +-> AssignmentExpression: '='
         |           |
-        |           +-> Variable: 'x' {type: 'int'}
+        |           +-> VariableExpression: 'x' {type: 'int'}
         |           |
         |           +-> IntegerConstant: '2' {type: 'int'}
         |
         +-> ReturnStatement
             |
-            +-> Variable: 'x' {type: 'int'}
+            +-> VariableExpression: 'x' {type: 'int'}
 
 @endtest
 

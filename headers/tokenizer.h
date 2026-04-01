@@ -13,10 +13,16 @@ struct hashmap;
 
 #define TOKEN_FLAG_IS_FLOAT (1 << 0)
 
-#define token_first_ch(tok) ((tok)->source->content[(tok)->span.offset])
+#define token_first_ch(token) ((token)->source->content[(token)->span.offset])
 
-#define token_is_punctuator(tok, c) \
-    ((tok)->kind == TOKEN_KIND_PUNCTUATOR && token_first_ch(tok) == (c))
+#define token_is_identifier(token) \
+    ((token)->kind == TOKEN_KIND_IDENTIFIER && !(token)->identifier->is_keyword)
+
+#define token_is_keyword(token) \
+    ((token)->kind == TOKEN_KIND_IDENTIFIER && (token)->identifier->is_keyword)
+
+#define token_is_punctuator(token, ch) \
+    ((token)->kind == TOKEN_KIND_PUNCTUATOR && token_first_ch(token) == (ch))
 
 struct identifier;
 

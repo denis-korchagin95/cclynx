@@ -117,13 +117,13 @@ TranslationUnit: '{{any}}'
         |   |
         |   +-> AssignmentExpression: '='
         |       |
-        |       +-> Variable: 'result' {type: 'int'}
+        |       +-> VariableExpression: 'result' {type: 'int'}
         |       |
         |       +-> IntegerConstant: '1' {type: 'int'}
         |
         +-> ReturnStatement
             |
-            +-> Variable: 'result' {type: 'int'}
+            +-> VariableExpression: 'result' {type: 'int'}
 
 @endtest
 
@@ -181,7 +181,7 @@ TranslationUnit: '{{any}}'
 |       |
 |       +-> ReturnStatement
 |           |
-|           +-> Variable: 'x' {type: 'int'}
+|           +-> VariableExpression: 'x' {type: 'int'}
 |
 +-> FunctionDefinition: 'bar' {type: 'int'} <unspecified-parameters>
     |
@@ -191,6 +191,137 @@ TranslationUnit: '{{any}}'
         |
         +-> ReturnStatement
             |
-            +-> Variable: 'x' {type: 'int'}
+            +-> VariableExpression: 'x' {type: 'int'}
+
+@endtest
+
+@test("It should parse function with 1 parameter")
+@given("file")
+int identity(int a) {
+    return a;
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+|
++-> FunctionDefinition: 'identity' {type: 'int'} <1-parameter>
+    |
+    +-> ParameterList
+    |   |
+    |   +-> Parameter: 'a' {type: 'int'}
+    |
+    +-> CompoundStatement
+        |
+        +-> ReturnStatement
+            |
+            +-> VariableExpression: 'a' {type: 'int'}
+
+@endtest
+
+@test("It should parse function with 2 parameters")
+@given("file")
+int add(int a, int b) {
+    return a + b;
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+|
++-> FunctionDefinition: 'add' {type: 'int'} <2-parameters>
+    |
+    +-> ParameterList
+    |   |
+    |   +-> Parameter: 'a' {type: 'int'}
+    |   |
+    |   +-> Parameter: 'b' {type: 'int'}
+    |
+    +-> CompoundStatement
+        |
+        +-> ReturnStatement
+            |
+            +-> AdditiveExpression: '+' {type: 'int'}
+                |
+                +-> VariableExpression: 'a' {type: 'int'}
+                |
+                +-> VariableExpression: 'b' {type: 'int'}
+
+@endtest
+
+@test("It should parse function with 3 parameters")
+@given("file")
+int foo(int a, int b, int c) {
+    return a + b * c;
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+|
++-> FunctionDefinition: 'foo' {type: 'int'} <3-parameters>
+    |
+    +-> ParameterList
+    |   |
+    |   +-> Parameter: 'a' {type: 'int'}
+    |   |
+    |   +-> Parameter: 'b' {type: 'int'}
+    |   |
+    |   +-> Parameter: 'c' {type: 'int'}
+    |
+    +-> CompoundStatement
+        |
+        +-> ReturnStatement
+            |
+            +-> AdditiveExpression: '+' {type: 'int'}
+                |
+                +-> VariableExpression: 'a' {type: 'int'}
+                |
+                +-> MultiplicativeExpression: '*' {type: 'int'}
+                    |
+                    +-> VariableExpression: 'b' {type: 'int'}
+                    |
+                    +-> VariableExpression: 'c' {type: 'int'}
+
+@endtest
+
+@test("It should raise an error when parameter type is not a type specifier")
+@given("file")
+int foo(bar a) {
+    return a;
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stderr")
+ERROR: expected type specifier!
+
+@endtest
+
+@test("It should raise an error when parameter name is missing after type")
+@given("file")
+int foo(int) {
+    return 0;
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stderr")
+ERROR: expected identifier!
+
+@endtest
+
+@test("It should raise an error when parameter name is a keyword")
+@given("file")
+int foo(int return) {
+    return 0;
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stderr")
+ERROR: expected identifier but not a keyword!
+
+@endtest
+
+@test("It should raise an error when too many parameters")
+@given("file")
+int foo(int a, int b, int c, int d) {
+    return 0;
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stderr")
+ERROR: only 3 parameters per function are supported for now!
 
 @endtest

@@ -1,0 +1,137 @@
+@test("It should generate IR for function call without parameters")
+@given("file")
+int foo(void) {
+   return 7;
+}
+
+int main() {
+    return 42 * foo();
+}
+@whenRun("./bin/cclynx", args="--emit-ir")
+@expectOutput("stdout")
+OP_FUNC "foo"
+OP_CONST 7, t1
+OP_RETURN t1
+OP_FUNC_END
+OP_FUNC "main"
+OP_CONST 42, t2
+OP_CALL "foo", t3
+OP_MUL t2, t3, t4
+OP_RETURN t4
+OP_FUNC_END
+
+@endtest
+
+@test("It should generate IR for function call with 1 argument")
+@given("file")
+int identity(int a) {
+    return a;
+}
+
+int main() {
+    return identity(42);
+}
+@whenRun("./bin/cclynx", args="--emit-ir")
+@expectOutput("stdout")
+OP_FUNC "identity"
+OP_STORE_PARAM "a", 0
+OP_LOAD a, t1
+OP_RETURN t1
+OP_FUNC_END
+OP_FUNC "main"
+OP_CONST 42, t2
+OP_ARG t2, 0
+OP_CALL "identity", t3
+OP_RETURN t3
+OP_FUNC_END
+
+@endtest
+
+@test("It should generate IR for function call with 2 arguments")
+@given("file")
+int add(int a, int b) {
+    return a + b;
+}
+
+int main() {
+    return add(19, 23);
+}
+@whenRun("./bin/cclynx", args="--emit-ir")
+@expectOutput("stdout")
+OP_FUNC "add"
+OP_STORE_PARAM "a", 0
+OP_STORE_PARAM "b", 1
+OP_LOAD a, t1
+OP_LOAD b, t2
+OP_ADD t1, t2, t3
+OP_RETURN t3
+OP_FUNC_END
+OP_FUNC "main"
+OP_CONST 19, t4
+OP_ARG t4, 0
+OP_CONST 23, t5
+OP_ARG t5, 1
+OP_CALL "add", t6
+OP_RETURN t6
+OP_FUNC_END
+
+@endtest
+
+@test("It should generate IR for function call with 3 arguments")
+@given("file")
+int foo(int a, int b, int c) {
+    return a + b + c;
+}
+
+int main() {
+    return foo(1, 2, 3);
+}
+@whenRun("./bin/cclynx", args="--emit-ir")
+@expectOutput("stdout")
+OP_FUNC "foo"
+OP_STORE_PARAM "a", 0
+OP_STORE_PARAM "b", 1
+OP_STORE_PARAM "c", 2
+OP_LOAD a, t1
+OP_LOAD b, t2
+OP_ADD t1, t2, t3
+OP_LOAD c, t4
+OP_ADD t3, t4, t5
+OP_RETURN t5
+OP_FUNC_END
+OP_FUNC "main"
+OP_CONST 1, t6
+OP_ARG t6, 0
+OP_CONST 2, t7
+OP_ARG t7, 1
+OP_CONST 3, t8
+OP_ARG t8, 2
+OP_CALL "foo", t9
+OP_RETURN t9
+OP_FUNC_END
+
+@endtest
+
+@test("It should generate IR for function call with unspecified parameters")
+@given("file")
+int foo() {
+   return 7;
+}
+
+int main() {
+    return 42 * foo();
+}
+@whenRun("./bin/cclynx", args="--emit-ir")
+@expectOutput("stdout")
+OP_FUNC "foo"
+OP_CONST 7, t1
+OP_RETURN t1
+OP_FUNC_END
+OP_FUNC "main"
+OP_CONST 42, t2
+OP_CALL "foo", t3
+OP_MUL t2, t3, t4
+OP_RETURN t4
+OP_FUNC_END
+
+@endtest

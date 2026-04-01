@@ -7,7 +7,7 @@
 
 #include "tokenizer.h"
 #include "identifier.h"
-#include "parser.h"
+#include "ast.h"
 #include "symbol.h"
 #include "ir.h"
 #include "type.h"
@@ -141,8 +141,8 @@ void do_print_ast(const struct ast_node * ast, FILE * file, int depth, unsigned 
                 do_print_ast(ast->content.assignment.initializer, file, depth + 1, ancestors_info, NULL);
             }
             break;
-        case AST_NODE_KIND_VARIABLE:
-            fprintf(file, "Variable: '%s' {type: '%s'}\n", ast->content.symbol->identifier->name, type_stringify(ast->type));
+        case AST_NODE_KIND_VARIABLE_EXPRESSION:
+            fprintf(file, "VariableExpression: '%s' {type: '%s'}\n", ast->content.symbol->identifier->name, type_stringify(ast->type));
             break;
         case AST_NODE_KIND_EXPRESSION_STATEMENT:
             fprintf(file, "ExpressionStatement%s\n", ast->content.node == NULL ? ": {empty expression}" : "");
@@ -196,12 +196,12 @@ void do_print_ast(const struct ast_node * ast, FILE * file, int depth, unsigned 
                 do_print_ast(ast->content.binary_expression.rhs, file, depth + 1, ancestors_info, NULL);
             }
             break;
-        case AST_NODE_KIND_INTEGER_CONSTANT:
+        case AST_NODE_KIND_INTEGER_CONSTANT_EXPRESSION:
             {
                 fprintf(file, "IntegerConstant: '%lld' {type: '%s'}\n", ast->content.constant.value.integer_constant, type_stringify(ast->type));
             }
             break;
-        case AST_NODE_KIND_FLOAT_CONSTANT:
+        case AST_NODE_KIND_FLOAT_CONSTANT_EXPRESSION:
             {
                 fprintf(file, "FloatConstant: '%f' {type: '%s'}\n", ast->content.constant.value.float_constant, type_stringify(ast->type));
             }
@@ -211,12 +211,60 @@ void do_print_ast(const struct ast_node * ast, FILE * file, int depth, unsigned 
                 fprintf(file, "VariableDeclaration: '%s' {type: '%s'}\n", ast->content.symbol->identifier->name, type_stringify(ast->type));
             }
             break;
+        case AST_NODE_KIND_FUNCTION_PARAMETER:
+            fprintf(file, "Parameter: '%s' {type: '%s'}\n", ast->content.symbol->identifier->name, type_stringify(ast->type));
+            break;
         case AST_NODE_KIND_FUNCTION_DEFINITION:
             {
-                const char * args = ast->content.function_definition.parameter_presence == PARAMETER_PRESENCE_VOID ? "<no-parameters>" : "<unspecified-parameters>";
-                fprintf(file, "FunctionDefinition: '%s' {type: '%s'} %s\n", ast->content.function_definition.name->name, type_stringify(ast->type), args);
+                char args[32] = "";
+                if (ast->content.function_definition.parameter_presence == PARAMETER_PRESENCE_VOID) {
+                    snprintf(args, sizeof(args), " <no-parameters>");
+                } else if (ast->content.function_definition.parameter_presence == PARAMETER_PRESENCE_UNSPECIFIED) {
+                    snprintf(args, sizeof(args), " <unspecified-parameters>");
+                } else if (ast->content.function_definition.parameter_presence == PARAMETER_PRESENCE_SPECIFIED) {
+                    const char * suffix = ast->content.function_definition.parameter_count == 1 ? "parameter" : "parameters";
+                    snprintf(args, sizeof(args), " <%d-%s>", ast->content.function_definition.parameter_count, suffix);
+                }
+                fprintf(file, "FunctionDefinition: '%s' {type: '%s'}%s\n", ast->content.function_definition.name->name, type_stringify(ast->type), args);
+                if (ast->content.function_definition.parameter_count > 0) {
+                    ancestors_info[depth] = ast->content.function_definition.body != NULL ? 2 : 0;
+
+                    for (int i = 0; i < depth; ++i) {
+                        fprintf(file, "%s   ", (ancestors_info[i] & 2) > 0 ? "|" : " ");
+                    }
+                    fprintf(file, "|\n");
+                    for (int i = 0; i < depth; ++i) {
+                        fprintf(file, "%s   ", (ancestors_info[i] & 2) > 0 ? "|" : " ");
+                    }
+                    fprintf(file, "+-> ParameterList\n");
+
+                    for (unsigned int i = 0; i < ast->content.function_definition.parameter_count; i++) {
+                        ancestors_info[depth + 1] = i < ast->content.function_definition.parameter_count - 1 ? 2 : 0;
+                        do_print_ast(ast->content.function_definition.parameters[i], file, depth + 2, ancestors_info, NULL);
+                    }
+                }
+                ancestors_info[depth] = 0;
                 if (ast->content.function_definition.body != NULL)
                     do_print_ast(ast->content.function_definition.body, file, depth + 1, ancestors_info, NULL);
+            }
+            break;
+        case AST_NODE_KIND_FUNCTION_CALL_EXPRESSION:
+            {
+                if (ast->content.function_call.argument_count == 0) {
+                    fprintf(file, "FunctionCallExpression: '%s' {type: '%s'} <no-arguments>\n",
+                        ast->content.function_call.function->identifier->name,
+                        type_stringify(ast->type));
+                } else {
+                    fprintf(file, "FunctionCallExpression: '%s' {type: '%s'} <%d-argument%s>\n",
+                        ast->content.function_call.function->identifier->name,
+                        type_stringify(ast->type),
+                        ast->content.function_call.argument_count,
+                        ast->content.function_call.argument_count == 1 ? "" : "s");
+                }
+                for (unsigned int i = 0; i < ast->content.function_call.argument_count; i++) {
+                    ancestors_info[depth] = i < ast->content.function_call.argument_count - 1 ? 2 : 0;
+                    do_print_ast(ast->content.function_call.arguments[i], file, depth + 1, ancestors_info, NULL);
+                }
             }
             break;
         case AST_NODE_KIND_CAST_EXPRESSION:
@@ -268,10 +316,26 @@ int do_print_ast_dot(const struct ast_node * ast, FILE * file, int next_id)
                 fprintf(file, "    n%d -> n%d;\n", id, child_id);
             }
             break;
+        case AST_NODE_KIND_FUNCTION_PARAMETER:
+            fprintf(file, "    n%d [label=\"Parameter\\n'%s' : %s\"];\n", id, ast->content.symbol->identifier->name, type_stringify(ast->type));
+            break;
         case AST_NODE_KIND_FUNCTION_DEFINITION:
             {
-                const char * args = ast->content.function_definition.parameter_presence == PARAMETER_PRESENCE_VOID ? "no-parameters" : "unspecified-parameters";
-                fprintf(file, "    n%d [label=\"FunctionDefinition\\n'%s' : %s\\n%s\"];\n", id, ast->content.function_definition.name->name, type_stringify(ast->type), args);
+                char args[32] = "";
+                if (ast->content.function_definition.parameter_presence == PARAMETER_PRESENCE_VOID) {
+                    snprintf(args, sizeof(args), "\\nno-parameters");
+                } else if (ast->content.function_definition.parameter_presence == PARAMETER_PRESENCE_UNSPECIFIED) {
+                    snprintf(args, sizeof(args), "\\nunspecified-parameters");
+                } else if (ast->content.function_definition.parameter_presence == PARAMETER_PRESENCE_SPECIFIED) {
+                    const char * suffix = ast->content.function_definition.parameter_count == 1 ? "parameter" : "parameters";
+                    snprintf(args, sizeof(args), "\\n%d-%s", ast->content.function_definition.parameter_count, suffix);
+                }
+                fprintf(file, "    n%d [label=\"FunctionDefinition\\n'%s' : %s%s\"];\n", id, ast->content.function_definition.name->name, type_stringify(ast->type), args);
+            }
+            for (unsigned int i = 0; i < ast->content.function_definition.parameter_count; i++) {
+                int child_id = next_id;
+                next_id = do_print_ast_dot(ast->content.function_definition.parameters[i], file, next_id);
+                fprintf(file, "    n%d -> n%d [label=\"param\"];\n", id, child_id);
             }
             if (ast->content.function_definition.body != NULL) {
                 int child_id = next_id;
@@ -379,17 +443,25 @@ int do_print_ast_dot(const struct ast_node * ast, FILE * file, int next_id)
                 fprintf(file, "    n%d -> n%d [label=\"rhs\"];\n", id, rhs_id);
             }
             break;
-        case AST_NODE_KIND_INTEGER_CONSTANT:
+        case AST_NODE_KIND_INTEGER_CONSTANT_EXPRESSION:
             fprintf(file, "    n%d [label=\"IntegerConstant\\n%lld : %s\"];\n", id, ast->content.constant.value.integer_constant, type_stringify(ast->type));
             break;
-        case AST_NODE_KIND_FLOAT_CONSTANT:
+        case AST_NODE_KIND_FLOAT_CONSTANT_EXPRESSION:
             fprintf(file, "    n%d [label=\"FloatConstant\\n%f : %s\"];\n", id, ast->content.constant.value.float_constant, type_stringify(ast->type));
             break;
-        case AST_NODE_KIND_VARIABLE:
-            fprintf(file, "    n%d [label=\"Variable\\n'%s' : %s\"];\n", id, ast->content.symbol->identifier->name, type_stringify(ast->type));
+        case AST_NODE_KIND_VARIABLE_EXPRESSION:
+            fprintf(file, "    n%d [label=\"VariableExpression\\n'%s' : %s\"];\n", id, ast->content.symbol->identifier->name, type_stringify(ast->type));
             break;
         case AST_NODE_KIND_VARIABLE_DECLARATION:
             fprintf(file, "    n%d [label=\"VariableDeclaration\\n'%s' : %s\"];\n", id, ast->content.symbol->identifier->name, type_stringify(ast->type));
+            break;
+        case AST_NODE_KIND_FUNCTION_CALL_EXPRESSION:
+            fprintf(file, "    n%d [label=\"FunctionCallExpression\\n'%s' : %s\"];\n", id, ast->content.function_call.function->identifier->name, type_stringify(ast->type));
+            for (unsigned int i = 0; i < ast->content.function_call.argument_count; i++) {
+                int child_id = next_id;
+                next_id = do_print_ast_dot(ast->content.function_call.arguments[i], file, next_id);
+                fprintf(file, "    n%d -> n%d [label=\"arg\"];\n", id, child_id);
+            }
             break;
         case AST_NODE_KIND_CAST_EXPRESSION:
             fprintf(file, "    n%d [label=\"CastExpression\\n: %s\"];\n", id, type_stringify(ast->type));
@@ -523,6 +595,15 @@ void print_ir_program(const struct ir_program * program, FILE * file)
                 break;
             case OP_NOP:
                 fprintf(file, "OP_NOP\n");
+                break;
+            case OP_CALL:
+                fprintf(file, "OP_CALL \"%s\", t%llu\n", instruction->op1->content.function.identifier->name, instruction->result->content.temp_id);
+                break;
+            case OP_ARG:
+                fprintf(file, "OP_ARG t%llu, %lld\n", instruction->op1->content.temp_id, instruction->op2->content.int_value);
+                break;
+            case OP_STORE_PARAM:
+                fprintf(file, "OP_STORE_PARAM \"%s\", %lld\n", instruction->op1->content.variable.symbol->identifier->name, instruction->op2->content.int_value);
                 break;
             default:
                 cclynx_fatal_error("ERROR(print): Unknown instruction for IR program\n");

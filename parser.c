@@ -12,8 +12,8 @@
 #include "type.h"
 #include "errors.h"
 
-static struct ast_node * create_ast_node(struct parser_context * ctx, enum ast_node_kind kind);
 
+static struct ast_node * parse_translation_unit(struct parser_context * ctx);
 static struct ast_node * parse_expression(struct parser_context * ctx);
 static struct ast_node * parse_if_statement(struct parser_context * ctx);
 static struct ast_node * parse_return_statement(struct parser_context * ctx);
@@ -29,16 +29,27 @@ static struct ast_node * parse_relational_expression(struct parser_context * ctx
 static struct ast_node * parse_additive_expression(struct parser_context * ctx);
 static struct ast_node * parse_multiplicative_expression(struct parser_context * ctx);
 static struct ast_node * parse_cast_expression(struct parser_context * ctx);
+static struct ast_node * parse_postfix_expression(struct parser_context * ctx);
 static struct ast_node * parse_primary_expression(struct parser_context * ctx);
 
-static struct type * check_type(struct type * lhs, struct type * rhs);
+static void parse_function_parameter_list(struct parser_context * ctx, struct ast_node ** parameters, unsigned int * parameter_count);
+
 
 struct ast_node * parser_parse(struct parser_context * ctx)
 {
-    assert(ctx!= NULL);
+    assert(ctx != NULL);
+
+    return parse_translation_unit(ctx);
+}
+
+struct ast_node * parse_translation_unit(struct parser_context * ctx)
+{
+    assert(ctx != NULL);
 
     struct ast_node_list * function_list = NULL;
     struct ast_node_list ** tail = &function_list;
+
+    ctx->current_scope = scope_push(ctx->current_scope, ctx->pool);
 
     struct token * current_token = parser_get_token(ctx);
 
@@ -56,7 +67,9 @@ struct ast_node * parser_parse(struct parser_context * ctx)
         current_token = parser_get_token(ctx);
     }
 
-    struct ast_node * translation_unit = create_ast_node(ctx, AST_NODE_KIND_TRANSLATION_UNIT);
+    ctx->current_scope = scope_pop(ctx->current_scope);
+
+    struct ast_node * translation_unit = ast_create_node(ctx->pool, AST_NODE_KIND_TRANSLATION_UNIT, &type_void);
     translation_unit->content.translation_unit.list = function_list;
     translation_unit->content.translation_unit.filename = ctx->source_filename;
 
@@ -71,7 +84,7 @@ struct ast_node * parse_statement(struct parser_context * ctx)
 
     struct ast_node * statement = NULL;
 
-    if (current_token->kind == TOKEN_KIND_IDENTIFIER && current_token->identifier->is_keyword) {
+    if (token_is_keyword(current_token)) {
         if (strcmp("while", current_token->identifier->name) == 0) {
             statement = parse_while_statement(ctx);
         } else if (strcmp("return", current_token->identifier->name) == 0) {
@@ -106,7 +119,7 @@ struct ast_node * parse_compound_statement(struct parser_context * ctx)
     current_token = parser_get_token(ctx);
 
     if (token_is_punctuator(current_token, '}')) {
-        struct ast_node * compound_statement = create_ast_node(ctx, AST_NODE_KIND_COMPOUND_STATEMENT);
+        struct ast_node * compound_statement = ast_create_node(ctx->pool, AST_NODE_KIND_COMPOUND_STATEMENT, &type_void);
         compound_statement->content.list = NULL;
         return compound_statement;
     }
@@ -142,7 +155,7 @@ struct ast_node * parse_compound_statement(struct parser_context * ctx)
 
     ctx->current_scope = scope_pop(ctx->current_scope);
 
-    struct ast_node * compound_statement = create_ast_node(ctx, AST_NODE_KIND_COMPOUND_STATEMENT);
+    struct ast_node * compound_statement = ast_create_node(ctx->pool, AST_NODE_KIND_COMPOUND_STATEMENT, &type_void);
     compound_statement->content.list = statement_list;
 
     return compound_statement;
@@ -172,8 +185,7 @@ struct ast_node * parse_if_statement(struct parser_context * ctx)
     current_token = parser_get_token(ctx);
 
     if (
-        current_token->kind == TOKEN_KIND_IDENTIFIER
-        && current_token->identifier->is_keyword
+        token_is_keyword(current_token)
         && strcmp("else", current_token->identifier->name) == 0
     ) {
         false_branch = parse_statement(ctx);
@@ -181,7 +193,7 @@ struct ast_node * parse_if_statement(struct parser_context * ctx)
         parser_putback_token(current_token, ctx);
     }
 
-    struct ast_node * if_statement = create_ast_node(ctx, AST_NODE_KIND_IF_STATEMENT);
+    struct ast_node * if_statement = ast_create_node(ctx->pool, AST_NODE_KIND_IF_STATEMENT, &type_void);
     if_statement->content.if_statement.condition = condition;
     if_statement->content.if_statement.true_branch = true_branch;
     if_statement->content.if_statement.false_branch = false_branch;
@@ -207,7 +219,7 @@ struct ast_node * parse_return_statement(struct parser_context * ctx)
         cclynx_fatal_error("ERROR: expected ';'!\n");
     }
 
-    struct ast_node * return_statement = create_ast_node(ctx, AST_NODE_KIND_RETURN_STATEMENT);
+    struct ast_node * return_statement = ast_create_node(ctx->pool, AST_NODE_KIND_RETURN_STATEMENT, &type_void);
     return_statement->content.node = expression;
 
     return return_statement;
@@ -233,7 +245,7 @@ struct ast_node * parse_while_statement(struct parser_context * ctx)
 
     struct ast_node * statement = parse_statement(ctx);
 
-    struct ast_node * while_statement = create_ast_node(ctx, AST_NODE_KIND_WHILE_STATEMENT);
+    struct ast_node * while_statement = ast_create_node(ctx->pool, AST_NODE_KIND_WHILE_STATEMENT, &type_void);
     while_statement->content.while_statement.condition = expression;
     while_statement->content.while_statement.body = statement;
 
@@ -258,7 +270,7 @@ struct ast_node * parse_expression_statement(struct parser_context * ctx)
         cclynx_fatal_error("ERROR: expected ';'!\n");
     }
 
-    struct ast_node * expression_statement = create_ast_node(ctx, AST_NODE_KIND_EXPRESSION_STATEMENT);
+    struct ast_node * expression_statement = ast_create_node(ctx->pool, AST_NODE_KIND_EXPRESSION_STATEMENT, &type_void);
     expression_statement->content.node = expression;
 
     return expression_statement;
@@ -292,20 +304,11 @@ struct ast_node * parse_function_definition(struct parser_context * ctx)
 
     struct identifier * identifier = current_token->identifier;
 
-    struct symbol * func_symbol = scope_find_symbol(ctx->current_scope, identifier, SYMBOL_KIND_FUNCTION);
+    struct symbol * function_symbol = scope_find_symbol(ctx->current_scope, identifier, SYMBOL_KIND_FUNCTION);
 
-    if (func_symbol != NULL) {
+    if (function_symbol != NULL) {
         cclynx_fatal_error("ERROR: function '%s' already defined!\n", identifier->name);
     }
-
-    func_symbol = memory_blob_pool_alloc(ctx->pool, sizeof(struct symbol));
-    memset(func_symbol, 0, sizeof(struct symbol));
-    func_symbol->identifier = identifier;
-    func_symbol->type = symbol->type;
-    func_symbol->kind = SYMBOL_KIND_FUNCTION;
-
-    identifier_attach_symbol(ctx->pool, identifier, func_symbol)
-    scope_add_symbol(ctx->current_scope, func_symbol, ctx->pool);
 
     current_token = parser_get_token(ctx);
 
@@ -313,34 +316,59 @@ struct ast_node * parse_function_definition(struct parser_context * ctx)
         cclynx_fatal_error("ERROR: expected '('!\n");
     }
 
-    ctx->current_scope = scope_push(ctx->current_scope, ctx->pool);
+    function_symbol = memory_blob_pool_alloc(ctx->pool, sizeof(struct symbol));
+    memset(function_symbol, 0, sizeof(struct symbol));
+    function_symbol->identifier = identifier;
+    function_symbol->type = symbol->type;
+    function_symbol->kind = SYMBOL_KIND_FUNCTION;
+
+    identifier_attach_symbol(ctx->pool, identifier, function_symbol)
+    scope_add_symbol(ctx->current_scope, function_symbol, ctx->pool);
 
     int parameter_presence = PARAMETER_PRESENCE_UNSPECIFIED;
 
     current_token = parser_get_token(ctx);
 
+    struct ast_node * parameters[MAX_AST_FUNCTION_PARAMETER_COUNT] = {0};
+    unsigned int parameter_count = 0;
+
     if (
-        current_token->kind == TOKEN_KIND_IDENTIFIER
-        && current_token->identifier->is_keyword
+        token_is_keyword(current_token)
         && strcmp("void", current_token->identifier->name) == 0
     ) {
         parameter_presence = PARAMETER_PRESENCE_VOID;
         current_token = parser_get_token(ctx);
+    } else if (!token_is_punctuator(current_token, ')')) {
+        parser_putback_token(current_token, ctx);
+        ctx->current_scope = scope_push(ctx->current_scope, ctx->pool);
+        parse_function_parameter_list(ctx, parameters, &parameter_count);
+        current_token = parser_get_token(ctx);
+        parameter_presence = PARAMETER_PRESENCE_SPECIFIED;
     }
 
     if (!token_is_punctuator(current_token, ')')) {
         cclynx_fatal_error("ERROR: expected ')'!\n");
     }
 
+    function_symbol->parameter_presence = parameter_presence;
+    function_symbol->parameter_count = parameter_count;
+    for (unsigned int i = 0; i < parameter_count; i++) {
+        function_symbol->parameters[i] = parameters[i]->content.symbol;
+        parameters[i]->content.symbol->parameter_index = i;
+    }
+
     struct ast_node * compound_statement = parse_compound_statement(ctx);
 
-    ctx->current_scope = scope_pop(ctx->current_scope);
+    if (parameter_count > 0) {
+        ctx->current_scope = scope_pop(ctx->current_scope);
+    }
 
-    struct ast_node * function_definition = create_ast_node(ctx, AST_NODE_KIND_FUNCTION_DEFINITION);
+    struct ast_node * function_definition = ast_create_node(ctx->pool, AST_NODE_KIND_FUNCTION_DEFINITION, symbol->type);
     function_definition->content.function_definition.name = identifier;
     function_definition->content.function_definition.body = compound_statement;
     function_definition->content.function_definition.parameter_presence = parameter_presence;
-    function_definition->type = symbol->type;
+    memcpy(&function_definition->content.function_definition.parameters, &parameters, sizeof(struct ast_node *) * MAX_AST_FUNCTION_PARAMETER_COUNT);
+    function_definition->content.function_definition.parameter_count = parameter_count;
 
     return function_definition;
 }
@@ -396,9 +424,8 @@ struct ast_node * parse_declaration(struct parser_context * ctx)
     identifier_attach_symbol(ctx->pool, identifier, variable)
     scope_add_symbol(ctx->current_scope, variable, ctx->pool);
 
-    struct ast_node * declaration = create_ast_node(ctx, AST_NODE_KIND_VARIABLE_DECLARATION);
+    struct ast_node * declaration = ast_create_node(ctx->pool, AST_NODE_KIND_VARIABLE_DECLARATION, variable->type);
     declaration->content.symbol = variable;
-    declaration->type = variable->type;
 
     return declaration;
 }
@@ -416,7 +443,7 @@ struct ast_node * parse_assignment_expression(struct parser_context * ctx)
 
     struct ast_node * lhs = parse_equality_expression(ctx);
 
-    if (lhs->kind != AST_NODE_KIND_VARIABLE) {
+    if (lhs->kind != AST_NODE_KIND_VARIABLE_EXPRESSION) {
         return lhs;
     }
 
@@ -431,7 +458,7 @@ struct ast_node * parse_assignment_expression(struct parser_context * ctx)
         return lhs;
     }
 
-    struct ast_node * assignment_expression = create_ast_node(ctx, AST_NODE_KIND_ASSIGNMENT_EXPRESSION);
+    struct ast_node * assignment_expression = ast_create_node(ctx->pool, AST_NODE_KIND_ASSIGNMENT_EXPRESSION, &type_void);
     assignment_expression->content.assignment.type = ASSIGNMENT_REGULAR;
     assignment_expression->content.assignment.lhs = lhs;
     assignment_expression->content.assignment.initializer = initializer;
@@ -456,11 +483,10 @@ struct ast_node * parse_equality_expression(struct parser_context * ctx)
             : BINARY_OPERATION_INEQUALITY;
         struct ast_node * rhs = parse_relational_expression(ctx);
 
-        struct ast_node * binary_expression = create_ast_node(ctx, AST_NODE_KIND_EQUALITY_EXPRESSION);
+        struct ast_node * binary_expression = ast_create_node(ctx->pool, AST_NODE_KIND_EQUALITY_EXPRESSION, type_resolve(lhs->type, rhs->type));
         binary_expression->content.binary_expression.operation = operation;
         binary_expression->content.binary_expression.lhs = lhs;
         binary_expression->content.binary_expression.rhs = rhs;
-        binary_expression->type = check_type(lhs->type, rhs->type);
         lhs = binary_expression;
 
         current_token = parser_get_token(ctx);
@@ -490,11 +516,10 @@ struct ast_node * parse_relational_expression(struct parser_context * ctx) {
             : BINARY_OPERATION_GREATER_THAN;
         struct ast_node * rhs = parse_additive_expression(ctx);
 
-        struct ast_node * binary_expression = create_ast_node(ctx, AST_NODE_KIND_RELATIONAL_EXPRESSION);
+        struct ast_node * binary_expression = ast_create_node(ctx->pool, AST_NODE_KIND_RELATIONAL_EXPRESSION, type_resolve(lhs->type, rhs->type));
         binary_expression->content.binary_expression.operation = operation;
         binary_expression->content.binary_expression.lhs = lhs;
         binary_expression->content.binary_expression.rhs = rhs;
-        binary_expression->type = check_type(lhs->type, rhs->type);
         lhs = binary_expression;
 
         current_token = parser_get_token(ctx);
@@ -526,11 +551,10 @@ struct ast_node * parse_additive_expression(struct parser_context * ctx)
             : BINARY_OPERATION_SUBTRACTION;
         struct ast_node * rhs = parse_multiplicative_expression(ctx);
 
-        struct ast_node * binary_expression = create_ast_node(ctx, AST_NODE_KIND_ADDITIVE_EXPRESSION);
+        struct ast_node * binary_expression = ast_create_node(ctx->pool, AST_NODE_KIND_ADDITIVE_EXPRESSION, type_resolve(lhs->type, rhs->type));
         binary_expression->content.binary_expression.operation = operation;
         binary_expression->content.binary_expression.lhs = lhs;
         binary_expression->content.binary_expression.rhs = rhs;
-        binary_expression->type = check_type(lhs->type, rhs->type);
         lhs = binary_expression;
 
         current_token = parser_get_token(ctx);
@@ -561,11 +585,10 @@ struct ast_node * parse_multiplicative_expression(struct parser_context * ctx)
             : BINARY_OPERATION_DIVIDE;
         struct ast_node * rhs = parse_cast_expression(ctx);
 
-        struct ast_node * binary_expression = create_ast_node(ctx, AST_NODE_KIND_MULTIPLICATIVE_EXPRESSION);
+        struct ast_node * binary_expression = ast_create_node(ctx->pool, AST_NODE_KIND_MULTIPLICATIVE_EXPRESSION, type_resolve(lhs->type, rhs->type));
         binary_expression->content.binary_expression.operation = operation;
         binary_expression->content.binary_expression.lhs = lhs;
         binary_expression->content.binary_expression.rhs = rhs;
-        binary_expression->type = check_type(lhs->type, rhs->type);
         lhs = binary_expression;
 
         current_token = parser_get_token(ctx);
@@ -584,7 +607,7 @@ struct ast_node * parse_cast_expression(struct parser_context * ctx)
 
     if (!token_is_punctuator(current_token, '(')) {
         parser_putback_token(current_token, ctx);
-        return parse_primary_expression(ctx);
+        return parse_postfix_expression(ctx);
     }
 
     struct token * previous_token = current_token;
@@ -594,7 +617,7 @@ struct ast_node * parse_cast_expression(struct parser_context * ctx)
     if (current_token->kind != TOKEN_KIND_IDENTIFIER) {
         parser_putback_token(current_token, ctx);
         parser_putback_token(previous_token, ctx);
-        return parse_primary_expression(ctx);
+        return parse_postfix_expression(ctx);
     }
 
     const struct symbol * symbol = symbol_lookup(current_token->identifier, SYMBOL_KIND_TYPE_SPECIFIER);
@@ -602,7 +625,7 @@ struct ast_node * parse_cast_expression(struct parser_context * ctx)
     if (symbol == NULL) {
         parser_putback_token(current_token, ctx);
         parser_putback_token(previous_token, ctx);
-        return parse_primary_expression(ctx);
+        return parse_postfix_expression(ctx);
     }
 
     struct type * type = symbol->type;
@@ -613,13 +636,86 @@ struct ast_node * parse_cast_expression(struct parser_context * ctx)
         cclynx_fatal_error("ERROR: expected ')'!\n");
     }
 
-    struct ast_node * expression = parse_primary_expression(ctx);
+    struct ast_node * expression = parse_postfix_expression(ctx);
 
-    struct ast_node * cast_expression = create_ast_node(ctx, AST_NODE_KIND_CAST_EXPRESSION);
-    cast_expression->type = type;
+    struct ast_node * cast_expression = ast_create_node(ctx->pool, AST_NODE_KIND_CAST_EXPRESSION, type);
     cast_expression->content.node = expression;
 
     return cast_expression;
+}
+
+struct ast_node * parse_postfix_expression(struct parser_context * ctx)
+{
+    assert(ctx != NULL);
+
+    struct token * current_token = parser_get_token(ctx);
+
+    if (token_is_identifier(current_token)) {
+        struct token * next_token = parser_get_token(ctx);
+
+        if (token_is_punctuator(next_token, '(')) {
+            struct symbol * function_symbol = symbol_lookup(current_token->identifier, SYMBOL_KIND_FUNCTION);
+
+            if (function_symbol == NULL) {
+                cclynx_fatal_error("ERROR: try to call unknown function '%s'\n", current_token->identifier->name);
+            }
+
+            struct ast_node * arguments[MAX_AST_FUNCTION_ARGUMENT_COUNT] = {0};
+            unsigned int argument_count = 0;
+
+            next_token = parser_get_token(ctx);
+
+            if (!token_is_punctuator(next_token, ')')) {
+                parser_putback_token(next_token, ctx);
+
+                do {
+                    struct ast_node * argument = parse_assignment_expression(ctx);
+                    arguments[argument_count++] = argument;
+                    next_token = parser_get_token(ctx);
+
+                    if (token_is_punctuator(next_token, ',') && argument_count >= MAX_AST_FUNCTION_ARGUMENT_COUNT) {
+                        cclynx_fatal_error("ERROR: only 3 arguments per function call are supported for now!\n");
+                    }
+                } while (token_is_punctuator(next_token, ','));
+
+                if (!token_is_punctuator(next_token, ')')) {
+                    cclynx_fatal_error("ERROR: expected ')'\n");
+                }
+            }
+
+            if (function_symbol->parameter_presence != PARAMETER_PRESENCE_UNSPECIFIED) {
+                if (function_symbol->parameter_count != argument_count) {
+                    cclynx_fatal_error("ERROR: function '%s' expects %u arguments but %u were provided\n",
+                        function_symbol->identifier->name, function_symbol->parameter_count, argument_count);
+                }
+
+                for (unsigned int i = 0; i < argument_count; i++) {
+                    if (arguments[i]->type != function_symbol->parameters[i]->type) {
+                        cclynx_fatal_error("ERROR: argument %u of function '%s' has type '%s' but expected '%s'\n",
+                            i + 1, function_symbol->identifier->name,
+                            type_stringify(arguments[i]->type),
+                            type_stringify(function_symbol->parameters[i]->type));
+                    }
+                }
+            }
+
+            struct ast_node * function_call = ast_create_node(ctx->pool, AST_NODE_KIND_FUNCTION_CALL_EXPRESSION, function_symbol->type);
+            function_call->content.function_call.function = function_symbol;
+            function_call->content.function_call.argument_count = argument_count;
+            memcpy(&function_call->content.function_call.arguments, &arguments, sizeof(struct ast_node *) * MAX_AST_FUNCTION_ARGUMENT_COUNT);
+            return function_call;
+        }
+
+        parser_putback_token(next_token, ctx);
+        parser_putback_token(current_token, ctx);
+
+        goto fallback;
+    } else {
+        parser_putback_token(current_token, ctx);
+    }
+
+fallback:
+    return parse_primary_expression(ctx);
 }
 
 struct ast_node * parse_primary_expression(struct parser_context * ctx)
@@ -632,15 +728,13 @@ struct ast_node * parse_primary_expression(struct parser_context * ctx)
         const char * number_ptr = current_token->source->content + current_token->span.offset;
 
         if ((current_token->flags & TOKEN_FLAG_IS_FLOAT) > 0) {
-            struct ast_node * number = create_ast_node(ctx, AST_NODE_KIND_FLOAT_CONSTANT);
+            struct ast_node * number = ast_create_node(ctx->pool, AST_NODE_KIND_FLOAT_CONSTANT_EXPRESSION, &type_float);
             number->content.constant.value.float_constant = (float)strtod(number_ptr, NULL);
-            number->type = &type_float;
             return number;
         }
 
-        struct ast_node * number = create_ast_node(ctx, AST_NODE_KIND_INTEGER_CONSTANT);
+        struct ast_node * number = ast_create_node(ctx->pool, AST_NODE_KIND_INTEGER_CONSTANT_EXPRESSION, &type_integer);
         number->content.constant.value.integer_constant = (int)strtol(number_ptr, NULL, 10);
-        number->type = &type_integer;
         return number;
     }
 
@@ -655,9 +749,8 @@ struct ast_node * parse_primary_expression(struct parser_context * ctx)
             cclynx_fatal_error("ERROR: undeclared variable \"%s\"!\n", current_token->identifier->name);
         }
 
-        struct ast_node * variable = create_ast_node(ctx, AST_NODE_KIND_VARIABLE);
+        struct ast_node * variable = ast_create_node(ctx->pool, AST_NODE_KIND_VARIABLE_EXPRESSION, symbol->type);
         variable->content.symbol = symbol;
-        variable->type = symbol->type;
         return variable;
     }
 
@@ -719,23 +812,81 @@ void parser_init_context(struct parser_context * ctx, struct token * tokens, str
     ctx->source_filename = source_filename;
 }
 
-struct ast_node * create_ast_node(struct parser_context * ctx, enum ast_node_kind kind)
-{
-    struct ast_node * node = memory_blob_pool_alloc(ctx->pool, sizeof(struct ast_node));
-    memset(node, 0, sizeof(struct ast_node));
-    node->kind = kind;
-    node->type = &type_void;
-    return node;
-}
 
-struct type * check_type(struct type * lhs, struct type * rhs)
+struct ast_node * parse_function_parameter(struct parser_context * ctx)
 {
-    assert(lhs != NULL);
-    assert(rhs != NULL);
+    assert(ctx != NULL);
 
-    if (lhs->kind != rhs->kind) {
-        cclynx_fatal_error("ERROR: type mismatch between '%s' and '%s'\n", type_stringify(lhs), type_stringify(rhs));
+    struct token * current_token = parser_get_token(ctx);
+
+    if (current_token->kind != TOKEN_KIND_IDENTIFIER) {
+        return NULL;
     }
 
-    return lhs;
+    const struct symbol * symbol = symbol_lookup(current_token->identifier, SYMBOL_KIND_TYPE_SPECIFIER);
+
+    if (symbol == NULL) {
+        cclynx_fatal_error("ERROR: expected type specifier!\n");
+    }
+
+    struct type * parameter_type = symbol->type;
+
+    current_token = parser_get_token(ctx);
+
+    if (current_token->kind != TOKEN_KIND_IDENTIFIER) {
+        cclynx_fatal_error("ERROR: expected identifier!\n");
+    }
+
+    if (current_token->identifier->is_keyword) {
+        cclynx_fatal_error("ERROR: expected identifier but not a keyword!\n");
+    }
+
+    struct identifier * parameter_identifier = current_token->identifier;
+
+    symbol = scope_find_symbol(ctx->current_scope, parameter_identifier, SYMBOL_KIND_VARIABLE);
+
+    if (symbol != NULL) {
+        cclynx_fatal_error("ERROR: parameter '%s' already declared!\n", parameter_identifier->name);
+    }
+
+    struct symbol * parameter_symbol = memory_blob_pool_alloc(ctx->pool, sizeof(struct symbol));
+    memset(parameter_symbol, 0, sizeof(struct symbol));
+    parameter_symbol->kind = SYMBOL_KIND_VARIABLE;
+    parameter_symbol->flags = SYMBOL_FLAG_FUNCTION_PARAMETER;
+    parameter_symbol->type = parameter_type;
+    parameter_symbol->identifier = parameter_identifier;
+
+    identifier_attach_symbol(ctx->pool, parameter_identifier, parameter_symbol)
+    scope_add_symbol(ctx->current_scope, parameter_symbol, ctx->pool);
+
+    struct ast_node * parameter = ast_create_node(ctx->pool, AST_NODE_KIND_FUNCTION_PARAMETER, parameter_symbol->type);
+    parameter->content.symbol = parameter_symbol;
+
+    return parameter;
+}
+
+void parse_function_parameter_list(struct parser_context * ctx, struct ast_node ** parameters, unsigned int * parameter_count)
+{
+    assert(ctx != NULL);
+    assert(parameters != NULL);
+    assert(parameter_count != NULL);
+
+    struct token * token;
+
+    do {
+        struct ast_node * parameter = parse_function_parameter(ctx);
+
+        if (parameter == NULL) {
+            return;
+        }
+
+        parameters[(*parameter_count)++] = parameter;
+        token = parser_get_token(ctx);
+
+        if (token_is_punctuator(token, ',') && *parameter_count >= MAX_AST_FUNCTION_PARAMETER_COUNT) {
+            cclynx_fatal_error("ERROR: only 3 parameters per function are supported for now!\n");
+        }
+    } while (token_is_punctuator(token, ','));
+
+    parser_putback_token(token, ctx);
 }
