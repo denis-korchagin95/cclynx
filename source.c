@@ -1,9 +1,12 @@
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "source.h"
 #include "errors.h"
+
+#define SOURCE_LOAD_CHUNK_SIZE 4096
 
 void source_load(struct source * source, const char * path)
 {
@@ -16,18 +19,48 @@ void source_load(struct source * source, const char * path)
         cclynx_fatal_error("ERROR: cannot open file '%s'\n", path);
     }
 
+    char * content = NULL;
+    size_t read_size = 0;
+
     fseek(file, 0, SEEK_END);
     long file_size = ftell(file);
-    fseek(file, 0, SEEK_SET);
 
-    char * content = malloc(file_size + 1);
+    if (file_size >= 0) {
+        fseek(file, 0, SEEK_SET);
 
-    if (content == NULL) {
-        fclose(file);
-        cclynx_fatal_error("ERROR: cannot allocate memory for file '%s'\n", path);
+        content = malloc(file_size + 1);
+
+        if (content == NULL) {
+            fclose(file);
+            cclynx_fatal_error("ERROR: cannot allocate memory for file '%s'\n", path);
+        }
+
+        read_size = fread(content, 1, file_size, file);
+    } else {
+        size_t capacity = SOURCE_LOAD_CHUNK_SIZE;
+        content = malloc(capacity);
+
+        if (content == NULL) {
+            fclose(file);
+            cclynx_fatal_error("ERROR: cannot allocate memory for file '%s'\n", path);
+        }
+
+        size_t n;
+        while ((n = fread(content + read_size, 1, capacity - read_size, file)) > 0) {
+            read_size += n;
+            if (read_size == capacity) {
+                capacity *= 2;
+                char * new_content = realloc(content, capacity);
+                if (new_content == NULL) {
+                    free(content);
+                    fclose(file);
+                    cclynx_fatal_error("ERROR: cannot allocate memory for file '%s'\n", path);
+                }
+                content = new_content;
+            }
+        }
     }
 
-    size_t read_size = fread(content, 1, file_size, file);
     fclose(file);
 
     content[read_size] = '\0';

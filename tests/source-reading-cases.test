@@ -1,0 +1,49 @@
+@test("It should parse source from a file")
+@given("file")
+int main() {
+    return 42;
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+|
++-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
+    |
+    +-> CompoundStatement
+        |
+        +-> ReturnStatement
+            |
+            +-> IntegerConstant: '42' {type: 'int'}
+
+@endtest
+
+@test("It should parse source from stdin via /dev/stdin")
+@given("file")
+int main() {
+    return 42;
+}
+@whenRun("./scripts/cclynx-stdin-runner.sh", args="--emit-ast")
+@expectOutput("stdout")
+TranslationUnit: 'stdin'
+|
++-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
+    |
+    +-> CompoundStatement
+        |
+        +-> ReturnStatement
+            |
+            +-> IntegerConstant: '42' {type: 'int'}
+
+@endtest
+
+@test("It should report errors when parsing from stdin via /dev/stdin")
+@given("file")
+int main() {
+    float int x = 1;
+    return 0;
+}
+@whenRun("./scripts/cclynx-stdin-runner.sh", args="--emit-ast")
+@expectOutput("stderr")
+ERROR: mixed types!
+
+@endtest
