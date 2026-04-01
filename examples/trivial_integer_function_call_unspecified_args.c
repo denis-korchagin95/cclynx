@@ -1,5 +1,5 @@
 // expected return: 42
-int foo(void) {
+int foo() {
     return 7;
 }
 int main() {

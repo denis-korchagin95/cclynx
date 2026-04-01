@@ -24,6 +24,7 @@ struct symbol
     unsigned int flags;
     unsigned int parameter_count; /* SYMBOL_KIND_FUNCTION only */
     unsigned int parameter_index; /* SYMBOL_FLAG_FUNCTION_PARAMETER only */
+    int parameter_presence; /* SYMBOL_KIND_FUNCTION only */
     struct symbol * parameters[MAX_SYMBOL_FUNCTION_PARAMETER_COUNT]; /* SYMBOL_KIND_FUNCTION only */
 };
 

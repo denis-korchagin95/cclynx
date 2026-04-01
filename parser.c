@@ -350,6 +350,13 @@ struct ast_node * parse_function_definition(struct parser_context * ctx)
         cclynx_fatal_error("ERROR: expected ')'!\n");
     }
 
+    function_symbol->parameter_presence = parameter_presence;
+    function_symbol->parameter_count = parameter_count;
+    for (unsigned int i = 0; i < parameter_count; i++) {
+        function_symbol->parameters[i] = parameters[i]->content.symbol;
+        parameters[i]->content.symbol->parameter_index = i;
+    }
+
     struct ast_node * compound_statement = parse_compound_statement(ctx);
 
     if (parameter_count > 0) {
@@ -653,15 +660,49 @@ struct ast_node * parse_postfix_expression(struct parser_context * ctx)
                 cclynx_fatal_error("ERROR: try to call unknown function '%s'\n", current_token->identifier->name);
             }
 
+            struct ast_node * arguments[MAX_AST_FUNCTION_ARGUMENT_COUNT] = {0};
+            unsigned int argument_count = 0;
+
             next_token = parser_get_token(ctx);
 
             if (!token_is_punctuator(next_token, ')')) {
-                cclynx_fatal_error("ERROR: expected ')'");
+                parser_putback_token(next_token, ctx);
+
+                do {
+                    struct ast_node * argument = parse_assignment_expression(ctx);
+                    arguments[argument_count++] = argument;
+                    next_token = parser_get_token(ctx);
+
+                    if (token_is_punctuator(next_token, ',') && argument_count >= MAX_AST_FUNCTION_ARGUMENT_COUNT) {
+                        cclynx_fatal_error("ERROR: only 3 arguments per function call are supported for now!\n");
+                    }
+                } while (token_is_punctuator(next_token, ','));
+
+                if (!token_is_punctuator(next_token, ')')) {
+                    cclynx_fatal_error("ERROR: expected ')'\n");
+                }
+            }
+
+            if (function_symbol->parameter_presence != PARAMETER_PRESENCE_UNSPECIFIED) {
+                if (function_symbol->parameter_count != argument_count) {
+                    cclynx_fatal_error("ERROR: function '%s' expects %u arguments but %u were provided\n",
+                        function_symbol->identifier->name, function_symbol->parameter_count, argument_count);
+                }
+
+                for (unsigned int i = 0; i < argument_count; i++) {
+                    if (arguments[i]->type != function_symbol->parameters[i]->type) {
+                        cclynx_fatal_error("ERROR: argument %u of function '%s' has type '%s' but expected '%s'\n",
+                            i + 1, function_symbol->identifier->name,
+                            type_stringify(arguments[i]->type),
+                            type_stringify(function_symbol->parameters[i]->type));
+                    }
+                }
             }
 
             struct ast_node * function_call = ast_create_node(ctx->pool, AST_NODE_KIND_FUNCTION_CALL_EXPRESSION, function_symbol->type);
             function_call->content.function_call.function = function_symbol;
-            function_call->content.function_call.argument_count = 0;
+            function_call->content.function_call.argument_count = argument_count;
+            memcpy(&function_call->content.function_call.arguments, &arguments, sizeof(struct ast_node *) * MAX_AST_FUNCTION_ARGUMENT_COUNT);
             return function_call;
         }
 

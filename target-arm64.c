@@ -498,6 +498,21 @@ void target_arm64_generate(struct codegen_context * ctx, struct ir_program * pro
                     push_reg(ctx, result_reg);
                 }
                 break;
+            case OP_STORE_PARAM:
+                {
+                    size_t offset = instruction->op1->content.variable.offset;
+                    int param_index = (int) instruction->op2->content.int_value;
+                    fprintf(file, "    str w%d, [sp, #%zu]\n", param_index, offset);
+                }
+                break;
+            case OP_ARG:
+                {
+                    struct codegen_reg * arg_reg = pop_reg(ctx);
+                    int arg_index = (int) instruction->op2->content.int_value;
+                    fprintf(file, "    mov w%d, %s\n", arg_index, arg_reg->name);
+                    free_reg(arg_reg);
+                }
+                break;
             case OP_CALL:
                 {
                     size_t saved_active_reg_count = ctx->reg_stack_pos;

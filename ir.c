@@ -59,6 +59,27 @@ void ir_program_generate(struct ir_context * ctx, struct ir_program * program, c
         ir_emit(program, instruction);
     }
 
+    for (unsigned int i = 0; i < ast->content.function_definition.parameter_count; i++) {
+        struct ast_node * param = ast->content.function_definition.parameters[i];
+        struct symbol * param_symbol = param->content.symbol;
+
+        struct ir_operand * variable = alloc_operand(ctx);
+        variable->kind = OPERAND_KIND_VARIABLE;
+        variable->content.variable.symbol = param_symbol;
+        variable->content.variable.offset = ctx->current_func->result->content.function.local_vars_size;
+        variable->type = param_symbol->type;
+        ctx->current_func->result->content.function.local_vars_size += param_symbol->type->size;
+
+        struct ir_instruction * store_param = ir_create_instruction(ctx, OP_STORE_PARAM);
+        store_param->op1 = variable;
+
+        struct ir_operand * index = ir_create_operand(ctx, OPERAND_KIND_CONSTANT);
+        index->content.int_value = i;
+        store_param->op2 = index;
+
+        ir_emit(program, store_param);
+    }
+
     do_generate_ir(ctx, program, ast->content.function_definition.body);
 
     {
@@ -360,6 +381,19 @@ void do_generate_ir(struct ir_context * ctx, struct ir_program * program, const 
             break;
         case AST_NODE_KIND_FUNCTION_CALL_EXPRESSION:
             {
+                for (unsigned int i = 0; i < node->content.function_call.argument_count; i++) {
+                    do_generate_ir(ctx, program, node->content.function_call.arguments[i]);
+
+                    struct ir_instruction * arg_instruction = ir_create_instruction(ctx, OP_ARG);
+                    arg_instruction->op1 = program->instructions[program->position - 1]->result;
+
+                    struct ir_operand * index = ir_create_operand(ctx, OPERAND_KIND_CONSTANT);
+                    index->content.int_value = i;
+                    arg_instruction->op2 = index;
+
+                    ir_emit(program, arg_instruction);
+                }
+
                 struct ir_instruction * call_instruction = ir_create_instruction(ctx, OP_CALL);
 
                 struct ir_operand * callee = ir_create_operand(ctx, OPERAND_KIND_FUNCTION_NAME);

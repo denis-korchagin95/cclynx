@@ -31,6 +31,135 @@ _main:
 
 @endtest
 
+@test("It should generate target arm64 code for function call with 1 argument")
+@given("file")
+int identity(int a) {
+    return a;
+}
+int main() {
+    return identity(42);
+}
+@whenRun("./bin/cclynx", args="--emit-asm")
+@expectOutput("stdout")
+.text
+.align 2
+
+.global _identity
+_identity:
+    stp x29, x30, [sp, -16]!
+    mov x29, sp
+    sub sp, sp, #16
+    str w0, [sp, #0]
+    ldr w9, [sp, #0]
+    mov w0, w9
+    add sp, sp, #16
+    ldp x29, x30, [sp], #16
+    ret
+.global _main
+_main:
+    stp x29, x30, [sp, -16]!
+    mov x29, sp
+    mov w9, #42
+    mov w0, w9
+    bl _identity
+    mov w9, w0
+    mov w0, w9
+    ldp x29, x30, [sp], #16
+    ret
+
+@endtest
+
+@test("It should generate target arm64 code for function call with 2 arguments")
+@given("file")
+int add(int a, int b) {
+    return a + b;
+}
+int main() {
+    return add(19, 23);
+}
+@whenRun("./bin/cclynx", args="--emit-asm")
+@expectOutput("stdout")
+.text
+.align 2
+
+.global _add
+_add:
+    stp x29, x30, [sp, -16]!
+    mov x29, sp
+    sub sp, sp, #16
+    str w0, [sp, #0]
+    str w1, [sp, #4]
+    ldr w9, [sp, #0]
+    ldr w10, [sp, #4]
+    add w11, w9, w10
+    mov w0, w11
+    add sp, sp, #16
+    ldp x29, x30, [sp], #16
+    ret
+.global _main
+_main:
+    stp x29, x30, [sp, -16]!
+    mov x29, sp
+    mov w9, #19
+    mov w0, w9
+    mov w9, #23
+    mov w1, w9
+    bl _add
+    mov w9, w0
+    mov w0, w9
+    ldp x29, x30, [sp], #16
+    ret
+
+@endtest
+
+@test("It should generate target arm64 code for function call with 3 arguments")
+@given("file")
+int foo(int a, int b, int c) {
+    return a + b + c;
+}
+int main() {
+    return foo(1, 2, 3);
+}
+@whenRun("./bin/cclynx", args="--emit-asm")
+@expectOutput("stdout")
+.text
+.align 2
+
+.global _foo
+_foo:
+    stp x29, x30, [sp, -16]!
+    mov x29, sp
+    sub sp, sp, #16
+    str w0, [sp, #0]
+    str w1, [sp, #4]
+    str w2, [sp, #8]
+    ldr w9, [sp, #0]
+    ldr w10, [sp, #4]
+    add w11, w9, w10
+    ldr w9, [sp, #8]
+    add w10, w11, w9
+    mov w0, w10
+    add sp, sp, #16
+    ldp x29, x30, [sp], #16
+    ret
+.global _main
+_main:
+    stp x29, x30, [sp, -16]!
+    mov x29, sp
+    mov w9, #1
+    mov w0, w9
+    mov w9, #2
+    mov w1, w9
+    mov w9, #3
+    mov w2, w9
+    bl _foo
+    mov w9, w0
+    mov w0, w9
+    ldp x29, x30, [sp], #16
+    ret
+
+@endtest
+
 @test("It should generate target arm64 code for function call in expression")
 @given("file")
 int foo(void) {
