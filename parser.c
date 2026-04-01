@@ -33,6 +33,7 @@ static struct ast_node * parse_postfix_expression(struct parser_context * ctx);
 static struct ast_node * parse_primary_expression(struct parser_context * ctx);
 
 static void parse_function_parameter_list(struct parser_context * ctx, struct ast_node ** parameters, unsigned int * parameter_count);
+struct type * parse_type_specifiers(struct parser_context * ctx);
 
 
 struct ast_node * parser_parse(struct parser_context * ctx)
@@ -78,7 +79,7 @@ struct ast_node * parse_translation_unit(struct parser_context * ctx)
 
 struct ast_node * parse_statement(struct parser_context * ctx)
 {
-    assert(ctx!= NULL);
+    assert(ctx != NULL);
 
     struct token * current_token = parser_get_token(ctx);
 
@@ -108,7 +109,7 @@ struct ast_node * parse_statement(struct parser_context * ctx)
 
 struct ast_node * parse_compound_statement(struct parser_context * ctx)
 {
-    assert(ctx!= NULL);
+    assert(ctx != NULL);
 
     struct token * current_token = parser_get_token(ctx);
 
@@ -163,7 +164,7 @@ struct ast_node * parse_compound_statement(struct parser_context * ctx)
 
 struct ast_node * parse_if_statement(struct parser_context * ctx)
 {
-    assert(ctx!= NULL);
+    assert(ctx != NULL);
 
     struct token * current_token = parser_get_token(ctx);
 
@@ -203,7 +204,7 @@ struct ast_node * parse_if_statement(struct parser_context * ctx)
 
 struct ast_node * parse_return_statement(struct parser_context * ctx)
 {
-    assert(ctx!= NULL);
+    assert(ctx != NULL);
 
     struct token * current_token = parser_get_token(ctx);
 
@@ -227,7 +228,7 @@ struct ast_node * parse_return_statement(struct parser_context * ctx)
 
 struct ast_node * parse_while_statement(struct parser_context * ctx)
 {
-    assert(ctx!= NULL);
+    assert(ctx != NULL);
 
     const struct token * current_token = parser_get_token(ctx);
 
@@ -254,7 +255,7 @@ struct ast_node * parse_while_statement(struct parser_context * ctx)
 
 struct ast_node * parse_expression_statement(struct parser_context * ctx)
 {
-    assert(ctx!= NULL);
+    assert(ctx != NULL);
 
     struct token * current_token = parser_get_token(ctx);
 
@@ -278,21 +279,15 @@ struct ast_node * parse_expression_statement(struct parser_context * ctx)
 
 struct ast_node * parse_function_definition(struct parser_context * ctx)
 {
-    assert(ctx!= NULL);
+    assert(ctx != NULL);
 
-    struct token * current_token = parser_get_token(ctx);
+    struct type * type = parse_type_specifiers(ctx);
 
-    if (current_token->kind != TOKEN_KIND_IDENTIFIER) {
-        cclynx_fatal_error("ERROR: expected identifier!\n");
-    }
-
-    const struct symbol * symbol = symbol_lookup(current_token->identifier, SYMBOL_KIND_TYPE_SPECIFIER);
-
-    if (symbol == NULL) {
+    if (type == NULL) {
         cclynx_fatal_error("ERROR: expected type specifier!\n");
     }
 
-    current_token = parser_get_token(ctx);
+    struct token * current_token = parser_get_token(ctx);
 
     if (current_token->kind != TOKEN_KIND_IDENTIFIER) {
         cclynx_fatal_error("ERROR: expected identifier!\n");
@@ -319,7 +314,7 @@ struct ast_node * parse_function_definition(struct parser_context * ctx)
     function_symbol = memory_blob_pool_alloc(ctx->pool, sizeof(struct symbol));
     memset(function_symbol, 0, sizeof(struct symbol));
     function_symbol->identifier = identifier;
-    function_symbol->type = symbol->type;
+    function_symbol->type = type;
     function_symbol->kind = SYMBOL_KIND_FUNCTION;
 
     identifier_attach_symbol(ctx->pool, identifier, function_symbol)
@@ -363,7 +358,7 @@ struct ast_node * parse_function_definition(struct parser_context * ctx)
         ctx->current_scope = scope_pop(ctx->current_scope);
     }
 
-    struct ast_node * function_definition = ast_create_node(ctx->pool, AST_NODE_KIND_FUNCTION_DEFINITION, symbol->type);
+    struct ast_node * function_definition = ast_create_node(ctx->pool, AST_NODE_KIND_FUNCTION_DEFINITION, type);
     function_definition->content.function_definition.name = identifier;
     function_definition->content.function_definition.body = compound_statement;
     function_definition->content.function_definition.parameter_presence = parameter_presence;
@@ -375,23 +370,15 @@ struct ast_node * parse_function_definition(struct parser_context * ctx)
 
 struct ast_node * parse_declaration(struct parser_context * ctx)
 {
-    assert(ctx!= NULL);
+    assert(ctx != NULL);
 
-    const struct token * current_token = parser_get_token(ctx);
+    struct type * type = parse_type_specifiers(ctx);
 
-    if (current_token->kind != TOKEN_KIND_IDENTIFIER) {
-        cclynx_fatal_error("ERROR: expected identifier!\n");
-    }
-
-    const struct symbol * symbol = symbol_lookup(current_token->identifier, SYMBOL_KIND_TYPE_SPECIFIER);
-
-    if (symbol == NULL) {
+    if (type == NULL) {
         cclynx_fatal_error("ERROR: expected type specifier!\n");
     }
 
-    struct type * type = symbol->type;
-
-    current_token = parser_get_token(ctx);
+    const struct token * current_token = parser_get_token(ctx);
 
     if (current_token->kind != TOKEN_KIND_IDENTIFIER) {
         cclynx_fatal_error("ERROR: expected identifier!\n");
@@ -403,7 +390,7 @@ struct ast_node * parse_declaration(struct parser_context * ctx)
 
     struct identifier * identifier = current_token->identifier;
 
-    symbol = scope_find_symbol(ctx->current_scope, identifier, SYMBOL_KIND_VARIABLE);
+    const struct symbol * symbol = scope_find_symbol(ctx->current_scope, identifier, SYMBOL_KIND_VARIABLE);
 
     if (symbol != NULL) {
         cclynx_fatal_error("ERROR: variable '%s' already declared!\n", identifier->name);
@@ -432,14 +419,14 @@ struct ast_node * parse_declaration(struct parser_context * ctx)
 
 struct ast_node * parse_expression(struct parser_context * ctx)
 {
-    assert(ctx!= NULL);
+    assert(ctx != NULL);
 
     return parse_assignment_expression(ctx);
 }
 
 struct ast_node * parse_assignment_expression(struct parser_context * ctx)
 {
-    assert(ctx!= NULL);
+    assert(ctx != NULL);
 
     struct ast_node * lhs = parse_equality_expression(ctx);
 
@@ -468,7 +455,7 @@ struct ast_node * parse_assignment_expression(struct parser_context * ctx)
 
 struct ast_node * parse_equality_expression(struct parser_context * ctx)
 {
-    assert(ctx!= NULL);
+    assert(ctx != NULL);
 
     struct ast_node * lhs = parse_relational_expression(ctx);
 
@@ -498,7 +485,7 @@ struct ast_node * parse_equality_expression(struct parser_context * ctx)
 }
 
 struct ast_node * parse_relational_expression(struct parser_context * ctx) {
-    assert(ctx!= NULL);
+    assert(ctx != NULL);
 
     struct ast_node * lhs = parse_additive_expression(ctx);
 
@@ -533,7 +520,7 @@ struct ast_node * parse_relational_expression(struct parser_context * ctx) {
 
 struct ast_node * parse_additive_expression(struct parser_context * ctx)
 {
-    assert(ctx!= NULL);
+    assert(ctx != NULL);
 
     struct ast_node * lhs = parse_multiplicative_expression(ctx);
 
@@ -567,7 +554,7 @@ struct ast_node * parse_additive_expression(struct parser_context * ctx)
 
 struct ast_node * parse_multiplicative_expression(struct parser_context * ctx)
 {
-    assert(ctx!= NULL);
+    assert(ctx != NULL);
 
     struct ast_node * lhs = parse_cast_expression(ctx);
 
@@ -601,7 +588,7 @@ struct ast_node * parse_multiplicative_expression(struct parser_context * ctx)
 
 struct ast_node * parse_cast_expression(struct parser_context * ctx)
 {
-    assert(ctx!= NULL);
+    assert(ctx != NULL);
 
     struct token * current_token = parser_get_token(ctx);
 
@@ -612,23 +599,12 @@ struct ast_node * parse_cast_expression(struct parser_context * ctx)
 
     struct token * previous_token = current_token;
 
-    current_token = parser_get_token(ctx);
+    struct type * type = parse_type_specifiers(ctx);
 
-    if (current_token->kind != TOKEN_KIND_IDENTIFIER) {
-        parser_putback_token(current_token, ctx);
+    if (type == NULL) {
         parser_putback_token(previous_token, ctx);
         return parse_postfix_expression(ctx);
     }
-
-    const struct symbol * symbol = symbol_lookup(current_token->identifier, SYMBOL_KIND_TYPE_SPECIFIER);
-
-    if (symbol == NULL) {
-        parser_putback_token(current_token, ctx);
-        parser_putback_token(previous_token, ctx);
-        return parse_postfix_expression(ctx);
-    }
-
-    struct type * type = symbol->type;
 
     current_token = parser_get_token(ctx);
 
@@ -720,7 +696,7 @@ fallback:
 
 struct ast_node * parse_primary_expression(struct parser_context * ctx)
 {
-    assert(ctx!= NULL);
+    assert(ctx != NULL);
 
     const struct token * current_token = parser_get_token(ctx);
 
@@ -771,7 +747,7 @@ struct ast_node * parse_primary_expression(struct parser_context * ctx)
 
 struct token * parser_get_token(struct parser_context * ctx)
 {
-    assert(ctx!= NULL);
+    assert(ctx != NULL);
 
     if (ctx->token_buffer_pos > 0)
         return ctx->token_buffer[--ctx->token_buffer_pos];
@@ -785,7 +761,7 @@ struct token * parser_get_token(struct parser_context * ctx)
 void parser_putback_token(struct token * token, struct parser_context * ctx)
 {
     assert(token != NULL);
-    assert(ctx!= NULL);
+    assert(ctx != NULL);
 
     if (token == &eos_token) {
         cclynx_fatal_error("ERROR: Trying to putback EOS token!\n");
@@ -800,7 +776,7 @@ void parser_putback_token(struct token * token, struct parser_context * ctx)
 
 void parser_init_context(struct parser_context * ctx, struct token * tokens, struct memory_blob_pool * pool, struct scope * file_scope, const char * source_filename)
 {
-    assert(ctx!= NULL);
+    assert(ctx != NULL);
     assert(tokens != NULL);
     assert(pool != NULL);
 
@@ -817,21 +793,18 @@ struct ast_node * parse_function_parameter(struct parser_context * ctx)
 {
     assert(ctx != NULL);
 
-    struct token * current_token = parser_get_token(ctx);
+    struct type * parameter_type = parse_type_specifiers(ctx);
 
-    if (current_token->kind != TOKEN_KIND_IDENTIFIER) {
+    if (parameter_type == NULL) {
+        struct token * next = parser_get_token(ctx);
+        parser_putback_token(next, ctx);
+        if (token_is_identifier(next)) {
+            cclynx_fatal_error("ERROR: expected type specifier!\n");
+        }
         return NULL;
     }
 
-    const struct symbol * symbol = symbol_lookup(current_token->identifier, SYMBOL_KIND_TYPE_SPECIFIER);
-
-    if (symbol == NULL) {
-        cclynx_fatal_error("ERROR: expected type specifier!\n");
-    }
-
-    struct type * parameter_type = symbol->type;
-
-    current_token = parser_get_token(ctx);
+    struct token * current_token = parser_get_token(ctx);
 
     if (current_token->kind != TOKEN_KIND_IDENTIFIER) {
         cclynx_fatal_error("ERROR: expected identifier!\n");
@@ -843,9 +816,9 @@ struct ast_node * parse_function_parameter(struct parser_context * ctx)
 
     struct identifier * parameter_identifier = current_token->identifier;
 
-    symbol = scope_find_symbol(ctx->current_scope, parameter_identifier, SYMBOL_KIND_VARIABLE);
+    const struct symbol * existing_symbol = scope_find_symbol(ctx->current_scope, parameter_identifier, SYMBOL_KIND_VARIABLE);
 
-    if (symbol != NULL) {
+    if (existing_symbol != NULL) {
         cclynx_fatal_error("ERROR: parameter '%s' already declared!\n", parameter_identifier->name);
     }
 
@@ -889,4 +862,33 @@ void parse_function_parameter_list(struct parser_context * ctx, struct ast_node 
     } while (token_is_punctuator(token, ','));
 
     parser_putback_token(token, ctx);
+}
+
+struct type * parse_type_specifiers(struct parser_context * ctx)
+{
+    assert(ctx != NULL);
+
+    struct type * type = NULL;
+
+    struct token * current_token = parser_get_token(ctx);
+
+    while (current_token->kind == TOKEN_KIND_IDENTIFIER) {
+        struct symbol * symbol = symbol_lookup(current_token->identifier, SYMBOL_KIND_TYPE_SPECIFIER);
+
+        if (symbol == NULL) {
+            break;
+        }
+
+        if (type != NULL) {
+            cclynx_fatal_error("ERROR: mixed types!\n");
+        }
+
+        type = symbol->type;
+
+        current_token = parser_get_token(ctx);
+    }
+
+    parser_putback_token(current_token, ctx);
+
+    return type;
 }

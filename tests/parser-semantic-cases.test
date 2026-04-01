@@ -268,3 +268,15 @@ TranslationUnit: '{{any}}'
 
 @endtest
 
+@test("It should raise an error on mixed types in variable declaration")
+@given("file")
+int main() {
+    float int x = 1;
+    return 0;
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stderr")
+ERROR: mixed types!
+
+@endtest
+
