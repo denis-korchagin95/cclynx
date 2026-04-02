@@ -39,11 +39,11 @@ TranslationUnit: 'stdin'
 @test("It should report errors when parsing from stdin via /dev/stdin")
 @given("file")
 int main() {
-    float int x = 1;
+    float int x;
     return 0;
 }
 @whenRun("./scripts/cclynx-stdin-runner.sh", args="--emit-ast")
 @expectOutput("stderr")
-ERROR: mixed types!
+{{any}}:2:11: ERROR: mixed types
 
 @endtest

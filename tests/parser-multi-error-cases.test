@@ -1,0 +1,175 @@
+@test("It should report multiple undeclared variable errors")
+@given("file")
+int main() {
+    int result;
+    result = x + 1;
+    result = y + 2;
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stderr")
+{{any}}:3:14: ERROR: undeclared variable 'x'
+{{any}}:4:14: ERROR: undeclared variable 'y'
+
+@endtest
+
+@test("It should report redeclared variable and undeclared variable errors together")
+@given("file")
+int main() {
+    int x;
+    int x;
+    y = 1;
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stderr")
+{{any}}:3:9: ERROR: variable 'x' already declared
+{{any}}:4:5: ERROR: undeclared variable 'y'
+
+@endtest
+
+@test("It should report function redefinition and error inside duplicate body")
+@given("file")
+int foo() {
+    return 1;
+}
+
+int foo() {
+    return x;
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stderr")
+{{any}}:5:5: ERROR: function 'foo' already defined
+{{any}}:6:12: ERROR: undeclared variable 'x'
+
+@endtest
+
+@test("It should report errors in both if branches")
+@given("file")
+int main() {
+    int x;
+    if (x) {
+        y = 1;
+    } else {
+        z = 2;
+    }
+    return 0;
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stderr")
+{{any}}:4:9: ERROR: undeclared variable 'y'
+{{any}}:6:9: ERROR: undeclared variable 'z'
+
+@endtest
+
+@test("It should report multiple argument type mismatches")
+@given("file")
+int add(int a, int b) {
+    return a + b;
+}
+
+int main() {
+    return add((float) 1, (float) 2);
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stderr")
+{{any}}:6:12: ERROR: argument 1 of function 'add' has type 'float' but expected 'int'
+{{any}}:6:12: ERROR: argument 2 of function 'add' has type 'float' but expected 'int'
+
+@endtest
+
+@test("It should report errors across multiple functions")
+@given("file")
+int foo() {
+    return x;
+}
+
+int bar() {
+    return y;
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stderr")
+{{any}}:2:12: ERROR: undeclared variable 'x'
+{{any}}:6:12: ERROR: undeclared variable 'y'
+
+@endtest
+
+@test("It should recover from syntax error and report subsequent semantic error")
+@given("file")
+int main() {
+    int x;
+    x = 1
+    int y;
+    y = z;
+    return 0;
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stderr")
+{{any}}:4:5: ERROR: expected ';' but got keyword 'int'
+{{any}}:5:5: ERROR: undeclared variable 'y'
+
+@endtest
+
+@test("It should report unknown function call error and continue")
+@given("file")
+int main() {
+    int x;
+    x = unknown(1, 2);
+    x = y;
+    return x;
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stderr")
+{{any}}:3:9: ERROR: call to undeclared function 'unknown'
+{{any}}:4:9: ERROR: undeclared variable 'y'
+
+@endtest
+
+@test("It should limit the number of reported errors")
+@given("file")
+int main() {
+    a0 = 0;
+    a1 = 0;
+    a2 = 0;
+    a3 = 0;
+    a4 = 0;
+    a5 = 0;
+    a6 = 0;
+    a7 = 0;
+    a8 = 0;
+    a9 = 0;
+    b0 = 0;
+    b1 = 0;
+    b2 = 0;
+    b3 = 0;
+    b4 = 0;
+    b5 = 0;
+    b6 = 0;
+    b7 = 0;
+    b8 = 0;
+    b9 = 0;
+    c0 = 0;
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stderr")
+{{any}}:2:5: ERROR: undeclared variable 'a0'
+{{any}}:3:5: ERROR: undeclared variable 'a1'
+{{any}}:4:5: ERROR: undeclared variable 'a2'
+{{any}}:5:5: ERROR: undeclared variable 'a3'
+{{any}}:6:5: ERROR: undeclared variable 'a4'
+{{any}}:7:5: ERROR: undeclared variable 'a5'
+{{any}}:8:5: ERROR: undeclared variable 'a6'
+{{any}}:9:5: ERROR: undeclared variable 'a7'
+{{any}}:10:5: ERROR: undeclared variable 'a8'
+{{any}}:11:5: ERROR: undeclared variable 'a9'
+{{any}}:12:5: ERROR: undeclared variable 'b0'
+{{any}}:13:5: ERROR: undeclared variable 'b1'
+{{any}}:14:5: ERROR: undeclared variable 'b2'
+{{any}}:15:5: ERROR: undeclared variable 'b3'
+{{any}}:16:5: ERROR: undeclared variable 'b4'
+{{any}}:17:5: ERROR: undeclared variable 'b5'
+{{any}}:18:5: ERROR: undeclared variable 'b6'
+{{any}}:19:5: ERROR: undeclared variable 'b7'
+{{any}}:20:5: ERROR: undeclared variable 'b8'
+{{any}}:21:5: ERROR: undeclared variable 'b9'
+too many errors, 1 not shown
+
+@endtest

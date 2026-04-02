@@ -289,7 +289,8 @@ int foo(bar a) {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stderr")
-ERROR: expected type specifier!
+{{any}}:1:9: ERROR: expected type specifier but got identifier 'bar'
+{{any}}:1:9: ERROR: expected ')' but got identifier 'bar'
 
 @endtest
 
@@ -300,7 +301,7 @@ int foo(int) {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stderr")
-ERROR: expected identifier!
+{{any}}:1:12: ERROR: expected identifier but got ')'
 
 @endtest
 
@@ -311,7 +312,7 @@ int foo(int return) {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stderr")
-ERROR: expected identifier but not a keyword!
+{{any}}:1:13: ERROR: expected identifier but got keyword 'return'
 
 @endtest
 
@@ -322,6 +323,6 @@ int foo(int a, int b, int c, int d) {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stderr")
-ERROR: only 3 parameters per function are supported for now!
+{{any}}:1:28: ERROR: too many parameters, maximum is 3
 
 @endtest

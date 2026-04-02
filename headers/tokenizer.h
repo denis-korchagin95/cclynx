@@ -61,5 +61,6 @@ struct tokenizer_context {
 void tokenizer_init(struct tokenizer_context * ctx, struct hashmap * identifier_table, struct memory_blob_pool * pool);
 void tokenizer_get_one_token(struct tokenizer_context * ctx, struct source * source, struct token * token);
 struct token * tokenizer_tokenize_file(struct tokenizer_context * ctx, struct source * source);
+const char * token_stringify(const struct token * token);
 
 #endif /* CCLYNX_TOKENIZER_H */

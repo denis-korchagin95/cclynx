@@ -6,7 +6,7 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stderr")
-ERROR: variable 'result' already declared!
+{{any}}:3:9: ERROR: variable 'result' already declared
 
 @endtest
 
@@ -17,7 +17,7 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stderr")
-ERROR: expected identifier but not a keyword!
+{{any}}:2:9: ERROR: expected identifier but got keyword 'while'
 
 @endtest
 
@@ -29,7 +29,7 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stderr")
-ERROR: undeclared variable "x"!
+{{any}}:3:14: ERROR: undeclared variable 'x'
 
 @endtest
 
@@ -41,7 +41,7 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stderr")
-ERROR: expected identifier but not a keyword!
+{{any}}:3:14: ERROR: expected identifier but got keyword 'int'
 
 @endtest
 
@@ -56,7 +56,7 @@ int foo() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stderr")
-ERROR: function 'foo' already defined!
+{{any}}:5:5: ERROR: function 'foo' already defined
 
 @endtest
 
@@ -67,7 +67,7 @@ int while() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stderr")
-ERROR: expected identifier but not a keyword!
+{{any}}:1:5: ERROR: expected identifier but got keyword 'while'
 
 @endtest
 
@@ -140,7 +140,7 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stderr")
-ERROR: undeclared variable "y"!
+{{any}}:8:9: ERROR: undeclared variable 'y'
 
 @endtest
 
@@ -199,7 +199,7 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stderr")
-ERROR: variable 'y' already declared!
+{{any}}:4:13: ERROR: variable 'y' already declared
 
 @endtest
 
@@ -217,7 +217,7 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stderr")
-ERROR: undeclared variable "y"!
+{{any}}:7:9: ERROR: undeclared variable 'y'
 
 @endtest
 
@@ -271,12 +271,14 @@ TranslationUnit: '{{any}}'
 @test("It should raise an error on mixed types in variable declaration")
 @given("file")
 int main() {
-    float int x = 1;
+    float int x;
     return 0;
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stderr")
-ERROR: mixed types!
+{{any}}:2:11: ERROR: mixed types
 
 @endtest
+
+
 

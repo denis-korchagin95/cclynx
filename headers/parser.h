@@ -1,7 +1,10 @@
 #ifndef CCLYNX_PARSER_H
 #define CCLYNX_PARSER_H 1
 
+#include <stdbool.h>
+
 #include "ast.h"
+#include "errors.h"
 
 #define MAX_TOKEN_BUFFER_SIZE (4)
 
@@ -16,6 +19,8 @@ struct parser_context
     unsigned int token_buffer_pos;
     struct scope * current_scope;
     const char * source_filename;
+    struct error_list errors;
+    bool has_error;
 };
 
 void parser_init_context(struct parser_context * ctx, struct token * tokens, struct memory_blob_pool * pool, struct scope * file_scope, const char * source_filename);

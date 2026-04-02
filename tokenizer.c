@@ -267,6 +267,38 @@ void read_identifier(struct tokenizer_context * ctx, struct source * source, str
     token->identifier = identifier;
 }
 
+const char * token_stringify(const struct token * token)
+{
+    assert(token != NULL);
+
+    static char buffer[256];
+
+    if (token == &eos_token) {
+        return "end of file";
+    }
+
+    switch (token->kind) {
+        case TOKEN_KIND_IDENTIFIER:
+            if (token->identifier->is_keyword) {
+                snprintf(buffer, sizeof(buffer), "keyword '%s'", token->identifier->name);
+            } else {
+                snprintf(buffer, sizeof(buffer), "identifier '%s'", token->identifier->name);
+            }
+            return buffer;
+        case TOKEN_KIND_NUMBER:
+            return "number";
+        case TOKEN_KIND_PUNCTUATOR:
+            snprintf(buffer, sizeof(buffer), "'%c'", token_first_ch(token));
+            return buffer;
+        case TOKEN_KIND_EQUAL_PUNCTUATOR:
+            return "'=='";
+        case TOKEN_KIND_NOT_EQUAL_PUNCTUATOR:
+            return "'!='";
+        default:
+            return "unknown token";
+    }
+}
+
 void skip_single_line_comment(struct tokenizer_context * ctx, struct source * source)
 {
     assert(ctx != NULL);
