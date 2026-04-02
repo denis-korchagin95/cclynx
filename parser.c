@@ -17,10 +17,10 @@
 
 static struct ast_node * parse_translation_unit(struct parser_context * ctx);
 static struct ast_node * parse_expression(struct parser_context * ctx);
-static struct ast_node * parse_if_statement(struct parser_context * ctx);
+static struct ast_node * parse_if_statement(struct parser_context * ctx, struct token * keyword_token);
 static struct ast_node * parse_return_statement(struct parser_context * ctx);
 static struct ast_node * parse_statement(struct parser_context * ctx);
-static struct ast_node * parse_while_statement(struct parser_context * ctx);
+static struct ast_node * parse_while_statement(struct parser_context * ctx, struct token * keyword_token);
 static struct ast_node * parse_assignment_expression(struct parser_context * ctx);
 static struct ast_node * parse_compound_statement(struct parser_context * ctx);
 static struct ast_node * parse_expression_statement(struct parser_context * ctx);
@@ -55,8 +55,8 @@ static void parser_report_error(struct parser_context * ctx, const struct token 
 
     error_list_add(&ctx->errors, "%s:%u:%u: ERROR: %s\n",
         ctx->source_filename,
-        token->span.line,
-        token->span.column,
+        token->span.position.line,
+        token->span.position.column,
         message);
 }
 
@@ -74,8 +74,8 @@ static void parser_report_warning(struct parser_context * ctx, const struct toke
 
     error_list_add(&ctx->errors, "%s:%u:%u: WARNING: %s\n",
         ctx->source_filename,
-        token->span.line,
-        token->span.column,
+        token->span.position.line,
+        token->span.position.column,
         message);
 }
 
@@ -108,6 +108,25 @@ static void parser_synchronize_toplevel(struct parser_context * ctx)
         token = parser_get_token(ctx);
     }
     parser_putback_token(token, ctx);
+}
+
+static void report_unused_variables(struct parser_context * ctx)
+{
+    assert(ctx != NULL);
+
+    const struct symbol_list * it = ctx->current_scope->symbols;
+    while (it != NULL) {
+        if (it->symbol->kind == SYMBOL_KIND_VARIABLE && !(it->symbol->flags & SYMBOL_FLAG_USED)) {
+            const char * kind = (it->symbol->flags & SYMBOL_FLAG_FUNCTION_PARAMETER) ? "parameter" : "variable";
+            error_list_add(&ctx->errors, "%s:%u:%u: WARNING: unused %s '%s'\n",
+                ctx->source_filename,
+                it->symbol->declaration_position.line,
+                it->symbol->declaration_position.column,
+                kind,
+                it->symbol->identifier->name);
+        }
+        it = it->next;
+    }
 }
 
 
@@ -164,11 +183,11 @@ struct ast_node * parse_statement(struct parser_context * ctx)
 
     if (token_is_keyword(current_token)) {
         if (strcmp("while", current_token->identifier->name) == 0) {
-            statement = parse_while_statement(ctx);
+            statement = parse_while_statement(ctx, current_token);
         } else if (strcmp("return", current_token->identifier->name) == 0) {
             statement = parse_return_statement(ctx);
         } else if (strcmp("if", current_token->identifier->name) == 0) {
-            statement = parse_if_statement(ctx);
+            statement = parse_if_statement(ctx, current_token);
         } else {
             parser_putback_token(current_token, ctx);
             statement = parse_declaration(ctx);
@@ -218,9 +237,14 @@ struct ast_node * parse_compound_statement(struct parser_context * ctx)
         if (token_is_punctuator(current_token, '}') || current_token == &eos_token) {
             break;
         }
+        struct token * stmt_token = current_token;
         parser_putback_token(current_token, ctx);
 
         struct ast_node * statement = parse_statement(ctx);
+
+        if (ast_is_empty_compound_statement(statement)) {
+            parser_report_warning(ctx, stmt_token, "empty compound statement");
+        }
 
         if (statement != NULL) {
             struct ast_node_list * list = memory_blob_pool_alloc(ctx->pool, sizeof(struct ast_node_list));
@@ -237,6 +261,7 @@ struct ast_node * parse_compound_statement(struct parser_context * ctx)
         parser_report_error(ctx, current_token, "expected '}' but got %s", token_stringify(current_token));
     }
 
+    report_unused_variables(ctx);
     ctx->current_scope = scope_pop(ctx->current_scope);
 
     struct ast_node * compound_statement = ast_create_node(ctx->pool, AST_NODE_KIND_COMPOUND_STATEMENT, &type_void);
@@ -245,9 +270,10 @@ struct ast_node * parse_compound_statement(struct parser_context * ctx)
     return compound_statement;
 }
 
-struct ast_node * parse_if_statement(struct parser_context * ctx)
+struct ast_node * parse_if_statement(struct parser_context * ctx, struct token * keyword_token)
 {
     assert(ctx != NULL);
+    assert(keyword_token != NULL);
 
     struct token * current_token = parser_get_token(ctx);
 
@@ -274,6 +300,11 @@ struct ast_node * parse_if_statement(struct parser_context * ctx)
     }
 
     struct ast_node * true_branch = parse_statement(ctx);
+
+    if (ast_is_empty_compound_statement(true_branch)) {
+        parser_report_warning(ctx, keyword_token, "empty if body");
+    }
+
     struct ast_node * false_branch = NULL;
 
     current_token = parser_get_token(ctx);
@@ -282,7 +313,12 @@ struct ast_node * parse_if_statement(struct parser_context * ctx)
         token_is_keyword(current_token)
         && strcmp("else", current_token->identifier->name) == 0
     ) {
+        struct token * else_token = current_token;
         false_branch = parse_statement(ctx);
+
+        if (ast_is_empty_compound_statement(false_branch)) {
+            parser_report_warning(ctx, else_token, "empty else body");
+        }
     } else {
         parser_putback_token(current_token, ctx);
     }
@@ -334,9 +370,10 @@ struct ast_node * parse_return_statement(struct parser_context * ctx)
     return return_statement;
 }
 
-struct ast_node * parse_while_statement(struct parser_context * ctx)
+struct ast_node * parse_while_statement(struct parser_context * ctx, struct token * keyword_token)
 {
     assert(ctx != NULL);
+    assert(keyword_token != NULL);
 
     struct token * current_token = parser_get_token(ctx);
 
@@ -363,6 +400,10 @@ struct ast_node * parse_while_statement(struct parser_context * ctx)
     }
 
     struct ast_node * statement = parse_statement(ctx);
+
+    if (ast_is_empty_compound_statement(statement)) {
+        parser_report_warning(ctx, keyword_token, "empty while body");
+    }
 
     if (expression == NULL || statement == NULL) {
         return NULL;
@@ -427,6 +468,7 @@ struct ast_node * parse_function_definition(struct parser_context * ctx)
     }
 
     struct token * current_token = parser_get_token(ctx);
+    struct token * name_token = current_token;
 
     if (current_token->kind != TOKEN_KIND_IDENTIFIER) {
         parser_report_error(ctx, current_token, "expected identifier but got %s", token_stringify(current_token));
@@ -499,6 +541,7 @@ struct ast_node * parse_function_definition(struct parser_context * ctx)
         }
         parser_synchronize_toplevel(ctx);
         if (parameter_presence == PARAMETER_PRESENCE_SPECIFIED) {
+            report_unused_variables(ctx);
             ctx->current_scope = scope_pop(ctx->current_scope);
         }
         return NULL;
@@ -514,7 +557,14 @@ struct ast_node * parse_function_definition(struct parser_context * ctx)
     struct ast_node * compound_statement = parse_compound_statement(ctx);
 
     if (parameter_count > 0) {
+        report_unused_variables(ctx);
         ctx->current_scope = scope_pop(ctx->current_scope);
+    }
+
+    if (compound_statement != NULL && ast_is_empty_compound_statement(compound_statement)) {
+        parser_report_warning(ctx, name_token, "function '%s' has empty body", identifier->name);
+    } else if (type != &type_void && compound_statement != NULL && !ast_statement_always_returns(compound_statement)) {
+        parser_report_warning(ctx, name_token, "function '%s' missing return statement", identifier->name);
     }
 
     struct ast_node * function_definition = ast_create_node(ctx->pool, AST_NODE_KIND_FUNCTION_DEFINITION, type);
@@ -584,6 +634,8 @@ struct ast_node * parse_declaration(struct parser_context * ctx)
     variable->kind = SYMBOL_KIND_VARIABLE;
     variable->identifier = identifier;
     variable->type = type;
+    variable->declaration_position.line = current_token->span.position.line;
+    variable->declaration_position.column = current_token->span.position.column;
 
     identifier_attach_symbol(ctx->pool, identifier, variable)
     scope_add_symbol(ctx->current_scope, variable, ctx->pool);
@@ -968,6 +1020,8 @@ struct ast_node * parse_primary_expression(struct parser_context * ctx)
             return NULL;
         }
 
+        symbol->flags |= SYMBOL_FLAG_USED;
+
         struct ast_node * variable = ast_create_node(ctx->pool, AST_NODE_KIND_VARIABLE_EXPRESSION, symbol->type);
         variable->content.symbol = symbol;
         return variable;
@@ -1085,6 +1139,8 @@ struct ast_node * parse_function_parameter(struct parser_context * ctx)
     parameter_symbol->flags = SYMBOL_FLAG_FUNCTION_PARAMETER;
     parameter_symbol->type = parameter_type;
     parameter_symbol->identifier = parameter_identifier;
+    parameter_symbol->declaration_position.line = current_token->span.position.line;
+    parameter_symbol->declaration_position.column = current_token->span.position.column;
 
     identifier_attach_symbol(ctx->pool, parameter_identifier, parameter_symbol)
     scope_add_symbol(ctx->current_scope, parameter_symbol, ctx->pool);

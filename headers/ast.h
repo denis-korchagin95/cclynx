@@ -1,6 +1,8 @@
 #ifndef CCLYNX_AST_H
 #define CCLYNX_AST_H 1
 
+#include <stdbool.h>
+
 #define MAX_AST_FUNCTION_PARAMETER_COUNT (3)
 #define MAX_AST_FUNCTION_ARGUMENT_COUNT (3)
 
@@ -118,5 +120,13 @@ struct ast_node
 struct memory_blob_pool;
 
 struct ast_node * ast_create_node(struct memory_blob_pool * pool, enum ast_node_kind kind, struct type * type);
+bool ast_statement_always_returns(const struct ast_node * node);
+
+static inline bool ast_is_empty_compound_statement(const struct ast_node * node)
+{
+    return node != NULL
+        && node->kind == AST_NODE_KIND_COMPOUND_STATEMENT
+        && node->content.list == NULL;
+}
 
 #endif /* CCLYNX_AST_H */

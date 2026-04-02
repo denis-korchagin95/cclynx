@@ -7,6 +7,9 @@ int main() {
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stderr")
 {{any}}:3:9: ERROR: variable 'result' already declared
+{{any}}:3:15: WARNING: unused variable 'result'
+{{any}}:2:15: WARNING: unused variable 'result'
+{{any}}:1:5: WARNING: function 'main' missing return statement
 
 @endtest
 
@@ -18,6 +21,7 @@ int main() {
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stderr")
 {{any}}:2:9: ERROR: expected identifier but got keyword 'while'
+{{any}}:1:5: WARNING: function 'main' has empty body
 
 @endtest
 
@@ -30,6 +34,7 @@ int main() {
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stderr")
 {{any}}:3:14: ERROR: undeclared variable 'x'
+{{any}}:1:5: WARNING: function 'main' missing return statement
 
 @endtest
 
@@ -42,6 +47,7 @@ int main() {
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stderr")
 {{any}}:3:14: ERROR: expected identifier but got keyword 'int'
+{{any}}:1:5: WARNING: function 'main' missing return statement
 
 @endtest
 
@@ -200,6 +206,8 @@ int main() {
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stderr")
 {{any}}:4:13: ERROR: variable 'y' already declared
+{{any}}:4:14: WARNING: unused variable 'y'
+{{any}}:3:14: WARNING: unused variable 'y'
 
 @endtest
 
@@ -218,6 +226,7 @@ int main() {
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stderr")
 {{any}}:7:9: ERROR: undeclared variable 'y'
+{{any}}:6:5: WARNING: empty compound statement
 
 @endtest
 
@@ -277,6 +286,7 @@ int main() {
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stderr")
 {{any}}:2:11: ERROR: mixed types
+{{any}}:2:16: WARNING: unused variable 'x'
 
 @endtest
 

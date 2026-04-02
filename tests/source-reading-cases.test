@@ -45,5 +45,6 @@ int main() {
 @whenRun("./scripts/cclynx-stdin-runner.sh", args="--emit-ast")
 @expectOutput("stderr")
 {{any}}:2:11: ERROR: mixed types
+{{any}}:2:16: WARNING: unused variable 'x'
 
 @endtest
