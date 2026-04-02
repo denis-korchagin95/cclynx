@@ -8,6 +8,8 @@ struct source_span
 {
     uint32_t offset;
     uint32_t length;
+    uint32_t line;
+    uint32_t column;
 };
 
 struct source
