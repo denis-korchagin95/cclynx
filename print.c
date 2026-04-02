@@ -507,13 +507,13 @@ void print_ir_program(const struct ir_program * program, FILE * file)
                 snprintf(buf, sizeof(buf), "t%llu, t%llu, \".L%llu\"", instruction->op1->content.temp_id, instruction->op2->content.temp_id, instruction->result->content.label_id);
                 fprintf(file, "OP_JUMP_IF_NOT_EQUAL %s\n", buf);
                 break;
-            case OP_JUMP_IF_LESS_OR_EQUAL:
+            case OP_JUMP_IF_LESS_THAN_OR_EQUAL:
                 snprintf(buf, sizeof(buf), "t%llu, t%llu, \".L%llu\"", instruction->op1->content.temp_id, instruction->op2->content.temp_id, instruction->result->content.label_id);
-                fprintf(file, "OP_JUMP_IF_LESS_OR_EQUAL %s\n", buf);
+                fprintf(file, "OP_JUMP_IF_LESS_THAN_OR_EQUAL %s\n", buf);
                 break;
-            case OP_JUMP_IF_GREATER_OR_EQUAL:
+            case OP_JUMP_IF_GREATER_THAN_OR_EQUAL:
                 snprintf(buf, sizeof(buf), "t%llu, t%llu, \".L%llu\"", instruction->op1->content.temp_id, instruction->op2->content.temp_id, instruction->result->content.label_id);
-                fprintf(file, "OP_JUMP_IF_GREATER_OR_EQUAL %s\n", buf);
+                fprintf(file, "OP_JUMP_IF_GREATER_THAN_OR_EQUAL %s\n", buf);
                 break;
             case OP_LABEL:
                 snprintf(buf, sizeof(buf), "\".L%llu\"", instruction->op1->content.label_id);

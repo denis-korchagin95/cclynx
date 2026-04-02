@@ -187,13 +187,13 @@ void target_arm64_generate(struct codegen_context * ctx, struct ir_program * pro
                     free_reg(op2_reg);
                 }
                 break;
-            case OP_JUMP_IF_LESS_OR_EQUAL:
+            case OP_JUMP_IF_LESS_THAN_OR_EQUAL:
                 {
                     struct codegen_reg * op2_reg = pop_reg(ctx);
                     struct codegen_reg * op1_reg = pop_reg(ctx);
 
                     if (op1_reg->kind != op2_reg->kind) {
-                        cclynx_fatal_error("ERROR: register type mismatch (OP_JUMP_IF_LESS_OR_EQUAL)!\n");
+                        cclynx_fatal_error("ERROR: register type mismatch (OP_JUMP_IF_LESS_THAN_OR_EQUAL)!\n");
                     }
 
                     if (op1_reg->kind == CODEGEN_REG_KIND_INTEGER) {
@@ -203,20 +203,20 @@ void target_arm64_generate(struct codegen_context * ctx, struct ir_program * pro
                         fprintf(file, "    fcmp %s, %s\n", op1_reg->name, op2_reg->name);
                         fprintf(file, "    b.le .L%llu\n", instruction->result->content.label_id);
                     } else {
-                        cclynx_fatal_error("ERROR: unsupported reg kind (OP_JUMP_IF_LESS_OR_EQUAL)!\n");
+                        cclynx_fatal_error("ERROR: unsupported reg kind (OP_JUMP_IF_LESS_THAN_OR_EQUAL)!\n");
                     }
 
                     free_reg(op1_reg);
                     free_reg(op2_reg);
                 }
                 break;
-            case OP_JUMP_IF_GREATER_OR_EQUAL:
+            case OP_JUMP_IF_GREATER_THAN_OR_EQUAL:
                 {
                     struct codegen_reg * op2_reg = pop_reg(ctx);
                     struct codegen_reg * op1_reg = pop_reg(ctx);
 
                     if (op1_reg->kind != op2_reg->kind) {
-                        cclynx_fatal_error("ERROR: register type mismatch (OP_JUMP_IF_GREATER_OR_EQUAL)!\n");
+                        cclynx_fatal_error("ERROR: register type mismatch (OP_JUMP_IF_GREATER_THAN_OR_EQUAL)!\n");
                     }
 
                     if (op1_reg->kind == CODEGEN_REG_KIND_INTEGER) {
@@ -226,7 +226,7 @@ void target_arm64_generate(struct codegen_context * ctx, struct ir_program * pro
                         fprintf(file, "    fcmp %s, %s\n", op1_reg->name, op2_reg->name);
                         fprintf(file, "    b.ge .L%llu\n", instruction->result->content.label_id);
                     } else {
-                        cclynx_fatal_error("ERROR: unsupported reg kind (OP_JUMP_IF_GREATER_OR_EQUAL)!\n");
+                        cclynx_fatal_error("ERROR: unsupported reg kind (OP_JUMP_IF_GREATER_THAN_OR_EQUAL)!\n");
                     }
 
                     free_reg(op1_reg);
