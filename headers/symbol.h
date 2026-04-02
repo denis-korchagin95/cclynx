@@ -1,6 +1,9 @@
 #ifndef CCLYNX_SYMBOL_H
 #define CCLYNX_SYMBOL_H 1
 
+#include <stdint.h>
+#include "source.h"
+
 #define MAX_SYMBOL_FUNCTION_PARAMETER_COUNT (3)
 
 struct hashmap;
@@ -15,6 +18,7 @@ enum symbol_kind
 };
 
 #define SYMBOL_FLAG_FUNCTION_PARAMETER (1 << 0)
+#define SYMBOL_FLAG_USED              (1 << 1)
 
 struct symbol
 {
@@ -22,6 +26,7 @@ struct symbol
     struct type * type;
     enum symbol_kind kind;
     unsigned int flags;
+    struct source_position declaration_position;
     unsigned int parameter_count; /* SYMBOL_KIND_FUNCTION only */
     unsigned int parameter_index; /* SYMBOL_FLAG_FUNCTION_PARAMETER only */
     int parameter_presence; /* SYMBOL_KIND_FUNCTION only */

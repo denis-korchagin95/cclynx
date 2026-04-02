@@ -84,6 +84,17 @@ int main(const int argc, const char * argv[])
 
     struct ast_node * ast = parser_parse(&parser_ctx);
 
+    int exit_code = 0;
+
+    if (parser_ctx.errors.count > 0) {
+        error_list_print(&parser_ctx.errors);
+    }
+
+    if (parser_ctx.has_error) {
+        exit_code = 1;
+        goto cleanup;
+    }
+
     if (output_stage == STAGE_AST) {
         if (output_format == FORMAT_DOT) {
             print_ast_dot(ast, stdout);
@@ -120,7 +131,7 @@ cleanup:
     source_free(&source);
     cclynx_free(&ctx);
 
-    return 0;
+    return exit_code;
 }
 
 

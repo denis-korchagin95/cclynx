@@ -4,10 +4,17 @@
 #include <stddef.h>
 #include <stdint.h>
 
+struct source_position
+{
+    uint32_t line;
+    uint32_t column;
+};
+
 struct source_span
 {
     uint32_t offset;
     uint32_t length;
+    struct source_position position;
 };
 
 struct source

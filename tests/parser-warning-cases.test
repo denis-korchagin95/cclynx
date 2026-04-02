@@ -1,0 +1,193 @@
+@test("It should not warn when function has a return statement")
+@given("file")
+int foo(void) {
+    return 1;
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stderr")
+
+@endtest
+
+@test("It should warn when non-void function is missing return statement")
+@given("file")
+int foo(void) {
+    int x;
+    x = 1;
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stderr")
+{{any}}:1:5: WARNING: function 'foo' missing return statement
+
+@endtest
+
+@test("It should warn when non-void function has empty body")
+@given("file")
+int foo(void) { }
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stderr")
+{{any}}:1:5: WARNING: function 'foo' has empty body
+
+@endtest
+
+@test("It should not warn when if-else both branches return")
+@given("file")
+int foo(int x) {
+    if (x) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stderr")
+
+@endtest
+
+@test("It should warn when if without else has return")
+@given("file")
+int foo(int x) {
+    if (x) {
+        return 1;
+    }
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stderr")
+{{any}}:1:5: WARNING: function 'foo' missing return statement
+
+@endtest
+
+@test("It should not warn when return is in nested compound statement")
+@given("file")
+int foo(void) {
+    { return 1; }
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stderr")
+
+@endtest
+
+@test("It should not warn when if-else returns with dead code after")
+@given("file")
+int foo(int x) {
+    if (x) { return 1; } else { return 0; }
+    x = 1;
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stderr")
+
+@endtest
+
+@test("It should warn when void function has empty body")
+@given("file")
+void foo(void) { }
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stderr")
+{{any}}:1:6: WARNING: function 'foo' has empty body
+
+@endtest
+
+@test("It should warn about unused variable")
+@given("file")
+int foo(void) {
+    int x;
+    return 0;
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stderr")
+{{any}}:2:10: WARNING: unused variable 'x'
+
+@endtest
+
+@test("It should warn about unused parameter")
+@given("file")
+int foo(int a) {
+    return 0;
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stderr")
+{{any}}:1:13: WARNING: unused parameter 'a'
+
+@endtest
+
+@test("It should not warn about used variable")
+@given("file")
+int foo(void) {
+    int x;
+    x = 1;
+    return x;
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stderr")
+
+@endtest
+
+@test("It should not warn about used parameter")
+@given("file")
+int foo(int a) {
+    return a;
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stderr")
+
+@endtest
+
+@test("It should warn when calling function with unspecified parameters with arguments")
+@given("file")
+int foo() {
+    return 7;
+}
+
+int main() {
+    return foo(42);
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stderr")
+{{any}}:6:12: WARNING: function 'foo' has unspecified parameters, consider using 'foo(void)' or adding parameter types
+
+@endtest
+
+@test("It should warn about empty if body")
+@given("file")
+void foo(int x) {
+    if (x) { }
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stderr")
+{{any}}:2:5: WARNING: empty if body
+
+@endtest
+
+@test("It should warn about empty else body")
+@given("file")
+void foo(int x) {
+    if (x) {
+        x = 1;
+    } else { }
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stderr")
+{{any}}:4:7: WARNING: empty else body
+
+@endtest
+
+@test("It should warn about empty while body")
+@given("file")
+void foo(int x) {
+    while (x) { }
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stderr")
+{{any}}:2:5: WARNING: empty while body
+
+@endtest
+
+@test("It should not warn about non-empty if-else and while")
+@given("file")
+void foo(int x) {
+    if (x) { x = 1; } else { x = 0; }
+    while (x) { x = x - 1; }
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stderr")
+
+@endtest

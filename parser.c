@@ -1,5 +1,7 @@
 #include <assert.h>
 #include <memory.h>
+#include <stdarg.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -15,10 +17,10 @@
 
 static struct ast_node * parse_translation_unit(struct parser_context * ctx);
 static struct ast_node * parse_expression(struct parser_context * ctx);
-static struct ast_node * parse_if_statement(struct parser_context * ctx);
+static struct ast_node * parse_if_statement(struct parser_context * ctx, struct token * keyword_token);
 static struct ast_node * parse_return_statement(struct parser_context * ctx);
 static struct ast_node * parse_statement(struct parser_context * ctx);
-static struct ast_node * parse_while_statement(struct parser_context * ctx);
+static struct ast_node * parse_while_statement(struct parser_context * ctx, struct token * keyword_token);
 static struct ast_node * parse_assignment_expression(struct parser_context * ctx);
 static struct ast_node * parse_compound_statement(struct parser_context * ctx);
 static struct ast_node * parse_expression_statement(struct parser_context * ctx);
@@ -34,6 +36,98 @@ static struct ast_node * parse_primary_expression(struct parser_context * ctx);
 
 static void parse_function_parameter_list(struct parser_context * ctx, struct ast_node ** parameters, unsigned int * parameter_count);
 struct type * parse_type_specifiers(struct parser_context * ctx);
+
+
+
+static void parser_report_error(struct parser_context * ctx, const struct token * token, const char * fmt, ...)
+{
+    assert(ctx != NULL);
+    assert(token != NULL);
+    assert(fmt != NULL);
+
+    ctx->has_error = true;
+
+    char message[512];
+    va_list args;
+    va_start(args, fmt);
+    vsnprintf(message, sizeof(message), fmt, args);
+    va_end(args);
+
+    error_list_add(&ctx->errors, "%s:%u:%u: ERROR: %s\n",
+        ctx->source_filename,
+        token->span.position.line,
+        token->span.position.column,
+        message);
+}
+
+static void parser_report_warning(struct parser_context * ctx, const struct token * token, const char * fmt, ...)
+{
+    assert(ctx != NULL);
+    assert(token != NULL);
+    assert(fmt != NULL);
+
+    char message[512];
+    va_list args;
+    va_start(args, fmt);
+    vsnprintf(message, sizeof(message), fmt, args);
+    va_end(args);
+
+    error_list_add(&ctx->errors, "%s:%u:%u: WARNING: %s\n",
+        ctx->source_filename,
+        token->span.position.line,
+        token->span.position.column,
+        message);
+}
+
+static void parser_synchronize_statement(struct parser_context * ctx)
+{
+    assert(ctx != NULL);
+
+    struct token * token = parser_get_token(ctx);
+    while (token != &eos_token) {
+        if (token_is_punctuator(token, ';')) {
+            return;
+        }
+        if (token_is_punctuator(token, '}')) {
+            parser_putback_token(token, ctx);
+            return;
+        }
+        token = parser_get_token(ctx);
+    }
+}
+
+static void parser_synchronize_toplevel(struct parser_context * ctx)
+{
+    assert(ctx != NULL);
+
+    struct token * token = parser_get_token(ctx);
+    while (token != &eos_token) {
+        if (token_is_punctuator(token, '}')) {
+            return;
+        }
+        token = parser_get_token(ctx);
+    }
+    parser_putback_token(token, ctx);
+}
+
+static void report_unused_variables(struct parser_context * ctx)
+{
+    assert(ctx != NULL);
+
+    const struct symbol_list * it = ctx->current_scope->symbols;
+    while (it != NULL) {
+        if (it->symbol->kind == SYMBOL_KIND_VARIABLE && !(it->symbol->flags & SYMBOL_FLAG_USED)) {
+            const char * kind = (it->symbol->flags & SYMBOL_FLAG_FUNCTION_PARAMETER) ? "parameter" : "variable";
+            error_list_add(&ctx->errors, "%s:%u:%u: WARNING: unused %s '%s'\n",
+                ctx->source_filename,
+                it->symbol->declaration_position.line,
+                it->symbol->declaration_position.column,
+                kind,
+                it->symbol->identifier->name);
+        }
+        it = it->next;
+    }
+}
 
 
 struct ast_node * parser_parse(struct parser_context * ctx)
@@ -59,11 +153,13 @@ struct ast_node * parse_translation_unit(struct parser_context * ctx)
 
         struct ast_node * function_def = parse_function_definition(ctx);
 
-        struct ast_node_list * element = memory_blob_pool_alloc(ctx->pool, sizeof(struct ast_node_list));
-        memset(element, 0, sizeof(struct ast_node_list));
-        element->node = function_def;
-        *tail = element;
-        tail = &element->next;
+        if (function_def != NULL) {
+            struct ast_node_list * element = memory_blob_pool_alloc(ctx->pool, sizeof(struct ast_node_list));
+            memset(element, 0, sizeof(struct ast_node_list));
+            element->node = function_def;
+            *tail = element;
+            tail = &element->next;
+        }
 
         current_token = parser_get_token(ctx);
     }
@@ -87,11 +183,11 @@ struct ast_node * parse_statement(struct parser_context * ctx)
 
     if (token_is_keyword(current_token)) {
         if (strcmp("while", current_token->identifier->name) == 0) {
-            statement = parse_while_statement(ctx);
+            statement = parse_while_statement(ctx, current_token);
         } else if (strcmp("return", current_token->identifier->name) == 0) {
             statement = parse_return_statement(ctx);
         } else if (strcmp("if", current_token->identifier->name) == 0) {
-            statement = parse_if_statement(ctx);
+            statement = parse_if_statement(ctx, current_token);
         } else {
             parser_putback_token(current_token, ctx);
             statement = parse_declaration(ctx);
@@ -114,7 +210,11 @@ struct ast_node * parse_compound_statement(struct parser_context * ctx)
     struct token * current_token = parser_get_token(ctx);
 
     if (!token_is_punctuator(current_token, '{')) {
-        cclynx_fatal_error("ERROR: expected '{'!\n");
+        parser_report_error(ctx, current_token, "expected '{' but got %s", token_stringify(current_token));
+        if (current_token != &eos_token) {
+            parser_putback_token(current_token, ctx);
+        }
+        return NULL;
     }
 
     current_token = parser_get_token(ctx);
@@ -132,28 +232,36 @@ struct ast_node * parse_compound_statement(struct parser_context * ctx)
     struct ast_node_list * statement_list = NULL;
     struct ast_node_list ** statement_list_end = &statement_list;
 
-    do {
+    for (;;) {
+        current_token = parser_get_token(ctx);
+        if (token_is_punctuator(current_token, '}') || current_token == &eos_token) {
+            break;
+        }
+        struct token * stmt_token = current_token;
+        parser_putback_token(current_token, ctx);
+
         struct ast_node * statement = parse_statement(ctx);
 
-        struct ast_node_list * list = memory_blob_pool_alloc(ctx->pool, sizeof(struct ast_node_list));
-        memset(list, 0, sizeof(struct ast_node_list));
-        list->node = statement;
-        list->next = NULL;
+        if (ast_is_empty_compound_statement(statement)) {
+            parser_report_warning(ctx, stmt_token, "empty compound statement");
+        }
 
-        *statement_list_end = list;
-        statement_list_end = &list->next;
+        if (statement != NULL) {
+            struct ast_node_list * list = memory_blob_pool_alloc(ctx->pool, sizeof(struct ast_node_list));
+            memset(list, 0, sizeof(struct ast_node_list));
+            list->node = statement;
+            list->next = NULL;
 
-        current_token = parser_get_token(ctx);
-        parser_putback_token(current_token, ctx);
-    }
-    while (!token_is_punctuator(current_token, '}'));
-
-    if (!token_is_punctuator(current_token, '}')) {
-        cclynx_fatal_error("ERROR: expected '}'!\n");
+            *statement_list_end = list;
+            statement_list_end = &list->next;
+        }
     }
 
-    (void)parser_get_token(ctx);
+    if (current_token == &eos_token) {
+        parser_report_error(ctx, current_token, "expected '}' but got %s", token_stringify(current_token));
+    }
 
+    report_unused_variables(ctx);
     ctx->current_scope = scope_pop(ctx->current_scope);
 
     struct ast_node * compound_statement = ast_create_node(ctx->pool, AST_NODE_KIND_COMPOUND_STATEMENT, &type_void);
@@ -162,14 +270,20 @@ struct ast_node * parse_compound_statement(struct parser_context * ctx)
     return compound_statement;
 }
 
-struct ast_node * parse_if_statement(struct parser_context * ctx)
+struct ast_node * parse_if_statement(struct parser_context * ctx, struct token * keyword_token)
 {
     assert(ctx != NULL);
+    assert(keyword_token != NULL);
 
     struct token * current_token = parser_get_token(ctx);
 
     if (!token_is_punctuator(current_token, '(')) {
-        cclynx_fatal_error("ERROR: expected '('!\n");
+        parser_report_error(ctx, current_token, "expected '(' but got %s", token_stringify(current_token));
+        if (current_token != &eos_token) {
+            parser_putback_token(current_token, ctx);
+        }
+        parser_synchronize_statement(ctx);
+        return NULL;
     }
 
     struct ast_node * condition = parse_expression(ctx);
@@ -177,10 +291,20 @@ struct ast_node * parse_if_statement(struct parser_context * ctx)
     current_token = parser_get_token(ctx);
 
     if (!token_is_punctuator(current_token, ')')) {
-        cclynx_fatal_error("ERROR: expected ')'!\n");
+        parser_report_error(ctx, current_token, "expected ')' but got %s", token_stringify(current_token));
+        if (current_token != &eos_token) {
+            parser_putback_token(current_token, ctx);
+        }
+        parser_synchronize_statement(ctx);
+        return NULL;
     }
 
     struct ast_node * true_branch = parse_statement(ctx);
+
+    if (ast_is_empty_compound_statement(true_branch)) {
+        parser_report_warning(ctx, keyword_token, "empty if body");
+    }
+
     struct ast_node * false_branch = NULL;
 
     current_token = parser_get_token(ctx);
@@ -189,9 +313,18 @@ struct ast_node * parse_if_statement(struct parser_context * ctx)
         token_is_keyword(current_token)
         && strcmp("else", current_token->identifier->name) == 0
     ) {
+        struct token * else_token = current_token;
         false_branch = parse_statement(ctx);
+
+        if (ast_is_empty_compound_statement(false_branch)) {
+            parser_report_warning(ctx, else_token, "empty else body");
+        }
     } else {
         parser_putback_token(current_token, ctx);
+    }
+
+    if (condition == NULL || true_branch == NULL) {
+        return NULL;
     }
 
     struct ast_node * if_statement = ast_create_node(ctx->pool, AST_NODE_KIND_IF_STATEMENT, &type_void);
@@ -213,11 +346,22 @@ struct ast_node * parse_return_statement(struct parser_context * ctx)
     if (!token_is_punctuator(current_token, ';')) {
         parser_putback_token(current_token, ctx);
         expression = parse_expression(ctx);
+
+        if (expression == NULL) {
+            parser_synchronize_statement(ctx);
+            return NULL;
+        }
+
         current_token = parser_get_token(ctx);
     }
 
     if (!token_is_punctuator(current_token, ';')) {
-        cclynx_fatal_error("ERROR: expected ';'!\n");
+        parser_report_error(ctx, current_token, "expected ';' but got %s", token_stringify(current_token));
+        if (current_token != &eos_token) {
+            parser_putback_token(current_token, ctx);
+        }
+        parser_synchronize_statement(ctx);
+        return NULL;
     }
 
     struct ast_node * return_statement = ast_create_node(ctx->pool, AST_NODE_KIND_RETURN_STATEMENT, &type_void);
@@ -226,14 +370,20 @@ struct ast_node * parse_return_statement(struct parser_context * ctx)
     return return_statement;
 }
 
-struct ast_node * parse_while_statement(struct parser_context * ctx)
+struct ast_node * parse_while_statement(struct parser_context * ctx, struct token * keyword_token)
 {
     assert(ctx != NULL);
+    assert(keyword_token != NULL);
 
-    const struct token * current_token = parser_get_token(ctx);
+    struct token * current_token = parser_get_token(ctx);
 
     if (!token_is_punctuator(current_token, '(')) {
-        cclynx_fatal_error("ERROR: expected '('!\n");
+        parser_report_error(ctx, current_token, "expected '(' but got %s", token_stringify(current_token));
+        if (current_token != &eos_token) {
+            parser_putback_token(current_token, ctx);
+        }
+        parser_synchronize_statement(ctx);
+        return NULL;
     }
 
     struct ast_node * expression = parse_expression(ctx);
@@ -241,10 +391,23 @@ struct ast_node * parse_while_statement(struct parser_context * ctx)
     current_token = parser_get_token(ctx);
 
     if (!token_is_punctuator(current_token, ')')) {
-        cclynx_fatal_error("ERROR: expected ')'!\n");
+        parser_report_error(ctx, current_token, "expected ')' but got %s", token_stringify(current_token));
+        if (current_token != &eos_token) {
+            parser_putback_token(current_token, ctx);
+        }
+        parser_synchronize_statement(ctx);
+        return NULL;
     }
 
     struct ast_node * statement = parse_statement(ctx);
+
+    if (ast_is_empty_compound_statement(statement)) {
+        parser_report_warning(ctx, keyword_token, "empty while body");
+    }
+
+    if (expression == NULL || statement == NULL) {
+        return NULL;
+    }
 
     struct ast_node * while_statement = ast_create_node(ctx->pool, AST_NODE_KIND_WHILE_STATEMENT, &type_void);
     while_statement->content.while_statement.condition = expression;
@@ -264,11 +427,22 @@ struct ast_node * parse_expression_statement(struct parser_context * ctx)
     if (!token_is_punctuator(current_token, ';')) {
         parser_putback_token(current_token, ctx);
         expression = parse_expression(ctx);
+
+        if (expression == NULL) {
+            parser_synchronize_statement(ctx);
+            return NULL;
+        }
+
         current_token = parser_get_token(ctx);
     }
 
     if (!token_is_punctuator(current_token, ';')) {
-        cclynx_fatal_error("ERROR: expected ';'!\n");
+        parser_report_error(ctx, current_token, "expected ';' but got %s", token_stringify(current_token));
+        if (current_token != &eos_token) {
+            parser_putback_token(current_token, ctx);
+        }
+        parser_synchronize_statement(ctx);
+        return NULL;
     }
 
     struct ast_node * expression_statement = ast_create_node(ctx->pool, AST_NODE_KIND_EXPRESSION_STATEMENT, &type_void);
@@ -284,17 +458,31 @@ struct ast_node * parse_function_definition(struct parser_context * ctx)
     struct type * type = parse_type_specifiers(ctx);
 
     if (type == NULL) {
-        cclynx_fatal_error("ERROR: expected type specifier!\n");
+        struct token * error_token = parser_get_token(ctx);
+        parser_report_error(ctx, error_token, "expected type specifier but got %s", token_stringify(error_token));
+        if (error_token != &eos_token) {
+            parser_putback_token(error_token, ctx);
+        }
+        parser_synchronize_toplevel(ctx);
+        return NULL;
     }
 
     struct token * current_token = parser_get_token(ctx);
+    struct token * name_token = current_token;
 
     if (current_token->kind != TOKEN_KIND_IDENTIFIER) {
-        cclynx_fatal_error("ERROR: expected identifier!\n");
+        parser_report_error(ctx, current_token, "expected identifier but got %s", token_stringify(current_token));
+        if (current_token != &eos_token) {
+            parser_putback_token(current_token, ctx);
+        }
+        parser_synchronize_toplevel(ctx);
+        return NULL;
     }
 
     if (current_token->identifier->is_keyword) {
-        cclynx_fatal_error("ERROR: expected identifier but not a keyword!\n");
+        parser_report_error(ctx, current_token, "expected identifier but got keyword '%s'", current_token->identifier->name);
+        parser_synchronize_toplevel(ctx);
+        return NULL;
     }
 
     struct identifier * identifier = current_token->identifier;
@@ -302,13 +490,18 @@ struct ast_node * parse_function_definition(struct parser_context * ctx)
     struct symbol * function_symbol = scope_find_symbol(ctx->current_scope, identifier, SYMBOL_KIND_FUNCTION);
 
     if (function_symbol != NULL) {
-        cclynx_fatal_error("ERROR: function '%s' already defined!\n", identifier->name);
+        parser_report_error(ctx, current_token, "function '%s' already defined", identifier->name);
     }
 
     current_token = parser_get_token(ctx);
 
     if (!token_is_punctuator(current_token, '(')) {
-        cclynx_fatal_error("ERROR: expected '('!\n");
+        parser_report_error(ctx, current_token, "expected '(' but got %s", token_stringify(current_token));
+        if (current_token != &eos_token) {
+            parser_putback_token(current_token, ctx);
+        }
+        parser_synchronize_toplevel(ctx);
+        return NULL;
     }
 
     function_symbol = memory_blob_pool_alloc(ctx->pool, sizeof(struct symbol));
@@ -342,7 +535,16 @@ struct ast_node * parse_function_definition(struct parser_context * ctx)
     }
 
     if (!token_is_punctuator(current_token, ')')) {
-        cclynx_fatal_error("ERROR: expected ')'!\n");
+        parser_report_error(ctx, current_token, "expected ')' but got %s", token_stringify(current_token));
+        if (current_token != &eos_token) {
+            parser_putback_token(current_token, ctx);
+        }
+        parser_synchronize_toplevel(ctx);
+        if (parameter_presence == PARAMETER_PRESENCE_SPECIFIED) {
+            report_unused_variables(ctx);
+            ctx->current_scope = scope_pop(ctx->current_scope);
+        }
+        return NULL;
     }
 
     function_symbol->parameter_presence = parameter_presence;
@@ -355,7 +557,14 @@ struct ast_node * parse_function_definition(struct parser_context * ctx)
     struct ast_node * compound_statement = parse_compound_statement(ctx);
 
     if (parameter_count > 0) {
+        report_unused_variables(ctx);
         ctx->current_scope = scope_pop(ctx->current_scope);
+    }
+
+    if (compound_statement != NULL && ast_is_empty_compound_statement(compound_statement)) {
+        parser_report_warning(ctx, name_token, "function '%s' has empty body", identifier->name);
+    } else if (type != &type_void && compound_statement != NULL && !ast_statement_always_returns(compound_statement)) {
+        parser_report_warning(ctx, name_token, "function '%s' missing return statement", identifier->name);
     }
 
     struct ast_node * function_definition = ast_create_node(ctx->pool, AST_NODE_KIND_FUNCTION_DEFINITION, type);
@@ -375,17 +584,30 @@ struct ast_node * parse_declaration(struct parser_context * ctx)
     struct type * type = parse_type_specifiers(ctx);
 
     if (type == NULL) {
-        cclynx_fatal_error("ERROR: expected type specifier!\n");
+        struct token * error_token = parser_get_token(ctx);
+        parser_report_error(ctx, error_token, "expected type specifier but got %s", token_stringify(error_token));
+        if (error_token != &eos_token) {
+            parser_putback_token(error_token, ctx);
+        }
+        parser_synchronize_statement(ctx);
+        return NULL;
     }
 
-    const struct token * current_token = parser_get_token(ctx);
+    struct token * current_token = parser_get_token(ctx);
 
     if (current_token->kind != TOKEN_KIND_IDENTIFIER) {
-        cclynx_fatal_error("ERROR: expected identifier!\n");
+        parser_report_error(ctx, current_token, "expected identifier but got %s", token_stringify(current_token));
+        if (current_token != &eos_token) {
+            parser_putback_token(current_token, ctx);
+        }
+        parser_synchronize_statement(ctx);
+        return NULL;
     }
 
     if (current_token->identifier->is_keyword) {
-        cclynx_fatal_error("ERROR: expected identifier but not a keyword!\n");
+        parser_report_error(ctx, current_token, "expected identifier but got keyword '%s'", current_token->identifier->name);
+        parser_synchronize_statement(ctx);
+        return NULL;
     }
 
     struct identifier * identifier = current_token->identifier;
@@ -393,13 +615,18 @@ struct ast_node * parse_declaration(struct parser_context * ctx)
     const struct symbol * symbol = scope_find_symbol(ctx->current_scope, identifier, SYMBOL_KIND_VARIABLE);
 
     if (symbol != NULL) {
-        cclynx_fatal_error("ERROR: variable '%s' already declared!\n", identifier->name);
+        parser_report_error(ctx, current_token, "variable '%s' already declared", identifier->name);
     }
 
     current_token = parser_get_token(ctx);
 
     if (!token_is_punctuator(current_token, ';')) {
-        cclynx_fatal_error("ERROR: expected ';'!\n");
+        parser_report_error(ctx, current_token, "expected ';' but got %s", token_stringify(current_token));
+        if (current_token != &eos_token) {
+            parser_putback_token(current_token, ctx);
+        }
+        parser_synchronize_statement(ctx);
+        return NULL;
     }
 
     struct symbol * variable = memory_blob_pool_alloc(ctx->pool, sizeof(struct symbol));
@@ -407,6 +634,8 @@ struct ast_node * parse_declaration(struct parser_context * ctx)
     variable->kind = SYMBOL_KIND_VARIABLE;
     variable->identifier = identifier;
     variable->type = type;
+    variable->declaration_position.line = current_token->span.position.line;
+    variable->declaration_position.column = current_token->span.position.column;
 
     identifier_attach_symbol(ctx->pool, identifier, variable)
     scope_add_symbol(ctx->current_scope, variable, ctx->pool);
@@ -430,7 +659,7 @@ struct ast_node * parse_assignment_expression(struct parser_context * ctx)
 
     struct ast_node * lhs = parse_equality_expression(ctx);
 
-    if (lhs->kind != AST_NODE_KIND_VARIABLE_EXPRESSION) {
+    if (lhs == NULL || lhs->kind != AST_NODE_KIND_VARIABLE_EXPRESSION) {
         return lhs;
     }
 
@@ -440,6 +669,9 @@ struct ast_node * parse_assignment_expression(struct parser_context * ctx)
 
     if (token_is_punctuator(current_token, '=')) {
         initializer = parse_equality_expression(ctx);
+        if (initializer == NULL) {
+            return NULL;
+        }
     } else {
         parser_putback_token(current_token, ctx);
         return lhs;
@@ -459,6 +691,10 @@ struct ast_node * parse_equality_expression(struct parser_context * ctx)
 
     struct ast_node * lhs = parse_relational_expression(ctx);
 
+    if (lhs == NULL) {
+        return NULL;
+    }
+
     struct token * current_token = parser_get_token(ctx);
 
     while (
@@ -469,6 +705,10 @@ struct ast_node * parse_equality_expression(struct parser_context * ctx)
             ? BINARY_OPERATION_EQUALITY
             : BINARY_OPERATION_INEQUALITY;
         struct ast_node * rhs = parse_relational_expression(ctx);
+
+        if (rhs == NULL) {
+            return NULL;
+        }
 
         struct ast_node * binary_expression = ast_create_node(ctx->pool, AST_NODE_KIND_EQUALITY_EXPRESSION, type_resolve(lhs->type, rhs->type));
         binary_expression->content.binary_expression.operation = operation;
@@ -489,6 +729,10 @@ struct ast_node * parse_relational_expression(struct parser_context * ctx) {
 
     struct ast_node * lhs = parse_additive_expression(ctx);
 
+    if (lhs == NULL) {
+        return NULL;
+    }
+
     struct token * current_token = parser_get_token(ctx);
 
     while (
@@ -502,6 +746,10 @@ struct ast_node * parse_relational_expression(struct parser_context * ctx) {
             ? BINARY_OPERATION_LESS_THAN
             : BINARY_OPERATION_GREATER_THAN;
         struct ast_node * rhs = parse_additive_expression(ctx);
+
+        if (rhs == NULL) {
+            return NULL;
+        }
 
         struct ast_node * binary_expression = ast_create_node(ctx->pool, AST_NODE_KIND_RELATIONAL_EXPRESSION, type_resolve(lhs->type, rhs->type));
         binary_expression->content.binary_expression.operation = operation;
@@ -524,6 +772,10 @@ struct ast_node * parse_additive_expression(struct parser_context * ctx)
 
     struct ast_node * lhs = parse_multiplicative_expression(ctx);
 
+    if (lhs == NULL) {
+        return NULL;
+    }
+
     struct token * current_token = parser_get_token(ctx);
 
     while (
@@ -537,6 +789,10 @@ struct ast_node * parse_additive_expression(struct parser_context * ctx)
             ? BINARY_OPERATION_ADDITION
             : BINARY_OPERATION_SUBTRACTION;
         struct ast_node * rhs = parse_multiplicative_expression(ctx);
+
+        if (rhs == NULL) {
+            return NULL;
+        }
 
         struct ast_node * binary_expression = ast_create_node(ctx->pool, AST_NODE_KIND_ADDITIVE_EXPRESSION, type_resolve(lhs->type, rhs->type));
         binary_expression->content.binary_expression.operation = operation;
@@ -558,6 +814,10 @@ struct ast_node * parse_multiplicative_expression(struct parser_context * ctx)
 
     struct ast_node * lhs = parse_cast_expression(ctx);
 
+    if (lhs == NULL) {
+        return NULL;
+    }
+
     struct token * current_token = parser_get_token(ctx);
 
     while (
@@ -571,6 +831,10 @@ struct ast_node * parse_multiplicative_expression(struct parser_context * ctx)
             ? BINARY_OPERATION_MULTIPLY
             : BINARY_OPERATION_DIVIDE;
         struct ast_node * rhs = parse_cast_expression(ctx);
+
+        if (rhs == NULL) {
+            return NULL;
+        }
 
         struct ast_node * binary_expression = ast_create_node(ctx->pool, AST_NODE_KIND_MULTIPLICATIVE_EXPRESSION, type_resolve(lhs->type, rhs->type));
         binary_expression->content.binary_expression.operation = operation;
@@ -609,10 +873,18 @@ struct ast_node * parse_cast_expression(struct parser_context * ctx)
     current_token = parser_get_token(ctx);
 
     if (!token_is_punctuator(current_token, ')')) {
-        cclynx_fatal_error("ERROR: expected ')'!\n");
+        parser_report_error(ctx, current_token, "expected ')' but got %s", token_stringify(current_token));
+        if (current_token != &eos_token) {
+            parser_putback_token(current_token, ctx);
+        }
+        return NULL;
     }
 
     struct ast_node * expression = parse_postfix_expression(ctx);
+
+    if (expression == NULL) {
+        return NULL;
+    }
 
     struct ast_node * cast_expression = ast_create_node(ctx->pool, AST_NODE_KIND_CAST_EXPRESSION, type);
     cast_expression->content.node = expression;
@@ -633,7 +905,13 @@ struct ast_node * parse_postfix_expression(struct parser_context * ctx)
             struct symbol * function_symbol = symbol_lookup(current_token->identifier, SYMBOL_KIND_FUNCTION);
 
             if (function_symbol == NULL) {
-                cclynx_fatal_error("ERROR: try to call unknown function '%s'\n", current_token->identifier->name);
+                parser_report_error(ctx, current_token, "call to undeclared function '%s'", current_token->identifier->name);
+
+                next_token = parser_get_token(ctx);
+                while (!token_is_punctuator(next_token, ')') && next_token != &eos_token) {
+                    next_token = parser_get_token(ctx);
+                }
+                return NULL;
             }
 
             struct ast_node * arguments[MAX_AST_FUNCTION_ARGUMENT_COUNT] = {0};
@@ -650,24 +928,39 @@ struct ast_node * parse_postfix_expression(struct parser_context * ctx)
                     next_token = parser_get_token(ctx);
 
                     if (token_is_punctuator(next_token, ',') && argument_count >= MAX_AST_FUNCTION_ARGUMENT_COUNT) {
-                        cclynx_fatal_error("ERROR: only 3 arguments per function call are supported for now!\n");
+                        parser_report_error(ctx, next_token, "too many arguments, maximum is 3");
+                        while (!token_is_punctuator(next_token, ')') && next_token != &eos_token) {
+                            next_token = parser_get_token(ctx);
+                        }
+                        return NULL;
                     }
                 } while (token_is_punctuator(next_token, ','));
 
                 if (!token_is_punctuator(next_token, ')')) {
-                    cclynx_fatal_error("ERROR: expected ')'\n");
+                    parser_report_error(ctx, next_token, "expected ')' but got %s", token_stringify(next_token));
+                    if (next_token != &eos_token) {
+                        parser_putback_token(next_token, ctx);
+                    }
+                    return NULL;
                 }
+            }
+
+            if (function_symbol->parameter_presence == PARAMETER_PRESENCE_UNSPECIFIED && argument_count > 0) {
+                parser_report_warning(ctx, current_token,
+                    "function '%s' has unspecified parameters, consider using '%s(void)' or adding parameter types",
+                    function_symbol->identifier->name, function_symbol->identifier->name);
             }
 
             if (function_symbol->parameter_presence != PARAMETER_PRESENCE_UNSPECIFIED) {
                 if (function_symbol->parameter_count != argument_count) {
-                    cclynx_fatal_error("ERROR: function '%s' expects %u arguments but %u were provided\n",
+                    parser_report_error(ctx, current_token, "function '%s' expects %u arguments but %u were provided",
                         function_symbol->identifier->name, function_symbol->parameter_count, argument_count);
+                    return NULL;
                 }
 
                 for (unsigned int i = 0; i < argument_count; i++) {
-                    if (arguments[i]->type != function_symbol->parameters[i]->type) {
-                        cclynx_fatal_error("ERROR: argument %u of function '%s' has type '%s' but expected '%s'\n",
+                    if (arguments[i] != NULL && arguments[i]->type != function_symbol->parameters[i]->type) {
+                        parser_report_error(ctx, current_token, "argument %u of function '%s' has type '%s' but expected '%s'",
                             i + 1, function_symbol->identifier->name,
                             type_stringify(arguments[i]->type),
                             type_stringify(function_symbol->parameters[i]->type));
@@ -698,7 +991,7 @@ struct ast_node * parse_primary_expression(struct parser_context * ctx)
 {
     assert(ctx != NULL);
 
-    const struct token * current_token = parser_get_token(ctx);
+    struct token * current_token = parser_get_token(ctx);
 
     if (current_token->kind == TOKEN_KIND_NUMBER) {
         const char * number_ptr = current_token->source->content + current_token->span.offset;
@@ -716,14 +1009,18 @@ struct ast_node * parse_primary_expression(struct parser_context * ctx)
 
     if (current_token->kind == TOKEN_KIND_IDENTIFIER) {
         if (current_token->identifier->is_keyword) {
-            cclynx_fatal_error("ERROR: expected identifier but not a keyword!\n");
+            parser_report_error(ctx, current_token, "expected identifier but got keyword '%s'", current_token->identifier->name);
+            return NULL;
         }
 
         struct symbol * symbol = symbol_lookup(current_token->identifier, SYMBOL_KIND_VARIABLE);
 
         if (symbol == NULL) {
-            cclynx_fatal_error("ERROR: undeclared variable \"%s\"!\n", current_token->identifier->name);
+            parser_report_error(ctx, current_token, "undeclared variable '%s'", current_token->identifier->name);
+            return NULL;
         }
+
+        symbol->flags |= SYMBOL_FLAG_USED;
 
         struct ast_node * variable = ast_create_node(ctx->pool, AST_NODE_KIND_VARIABLE_EXPRESSION, symbol->type);
         variable->content.symbol = symbol;
@@ -736,13 +1033,21 @@ struct ast_node * parse_primary_expression(struct parser_context * ctx)
         current_token = parser_get_token(ctx);
 
         if (!token_is_punctuator(current_token, ')')) {
-            cclynx_fatal_error("ERROR: expected ')'!\n");
+            parser_report_error(ctx, current_token, "expected ')' but got %s", token_stringify(current_token));
+            if (current_token != &eos_token) {
+                parser_putback_token(current_token, ctx);
+            }
+            return NULL;
         }
 
         return expression;
     }
 
-    cclynx_fatal_error("ERROR: expected number or variable!\n");
+    parser_report_error(ctx, current_token, "expected expression but got %s", token_stringify(current_token));
+    if (current_token != &eos_token) {
+        parser_putback_token(current_token, ctx);
+    }
+    return NULL;
 }
 
 struct token * parser_get_token(struct parser_context * ctx)
@@ -786,8 +1091,9 @@ void parser_init_context(struct parser_context * ctx, struct token * tokens, str
     ctx->iterator = ctx->tokens;
     ctx->current_scope = file_scope;
     ctx->source_filename = source_filename;
+    error_list_init(&ctx->errors, pool);
+    ctx->has_error = false;
 }
-
 
 struct ast_node * parse_function_parameter(struct parser_context * ctx)
 {
@@ -799,7 +1105,7 @@ struct ast_node * parse_function_parameter(struct parser_context * ctx)
         struct token * next = parser_get_token(ctx);
         parser_putback_token(next, ctx);
         if (token_is_identifier(next)) {
-            cclynx_fatal_error("ERROR: expected type specifier!\n");
+            parser_report_error(ctx, next, "expected type specifier but got %s", token_stringify(next));
         }
         return NULL;
     }
@@ -807,11 +1113,16 @@ struct ast_node * parse_function_parameter(struct parser_context * ctx)
     struct token * current_token = parser_get_token(ctx);
 
     if (current_token->kind != TOKEN_KIND_IDENTIFIER) {
-        cclynx_fatal_error("ERROR: expected identifier!\n");
+        parser_report_error(ctx, current_token, "expected identifier but got %s", token_stringify(current_token));
+        if (current_token != &eos_token) {
+            parser_putback_token(current_token, ctx);
+        }
+        return NULL;
     }
 
     if (current_token->identifier->is_keyword) {
-        cclynx_fatal_error("ERROR: expected identifier but not a keyword!\n");
+        parser_report_error(ctx, current_token, "expected identifier but got keyword '%s'", current_token->identifier->name);
+        return NULL;
     }
 
     struct identifier * parameter_identifier = current_token->identifier;
@@ -819,7 +1130,7 @@ struct ast_node * parse_function_parameter(struct parser_context * ctx)
     const struct symbol * existing_symbol = scope_find_symbol(ctx->current_scope, parameter_identifier, SYMBOL_KIND_VARIABLE);
 
     if (existing_symbol != NULL) {
-        cclynx_fatal_error("ERROR: parameter '%s' already declared!\n", parameter_identifier->name);
+        parser_report_error(ctx, current_token, "parameter '%s' already declared", parameter_identifier->name);
     }
 
     struct symbol * parameter_symbol = memory_blob_pool_alloc(ctx->pool, sizeof(struct symbol));
@@ -828,6 +1139,8 @@ struct ast_node * parse_function_parameter(struct parser_context * ctx)
     parameter_symbol->flags = SYMBOL_FLAG_FUNCTION_PARAMETER;
     parameter_symbol->type = parameter_type;
     parameter_symbol->identifier = parameter_identifier;
+    parameter_symbol->declaration_position.line = current_token->span.position.line;
+    parameter_symbol->declaration_position.column = current_token->span.position.column;
 
     identifier_attach_symbol(ctx->pool, parameter_identifier, parameter_symbol)
     scope_add_symbol(ctx->current_scope, parameter_symbol, ctx->pool);
@@ -857,7 +1170,12 @@ void parse_function_parameter_list(struct parser_context * ctx, struct ast_node 
         token = parser_get_token(ctx);
 
         if (token_is_punctuator(token, ',') && *parameter_count >= MAX_AST_FUNCTION_PARAMETER_COUNT) {
-            cclynx_fatal_error("ERROR: only 3 parameters per function are supported for now!\n");
+            parser_report_error(ctx, token, "too many parameters, maximum is 3");
+            while (!token_is_punctuator(token, ')') && token != &eos_token) {
+                token = parser_get_token(ctx);
+            }
+            parser_putback_token(token, ctx);
+            return;
         }
     } while (token_is_punctuator(token, ','));
 
@@ -880,7 +1198,9 @@ struct type * parse_type_specifiers(struct parser_context * ctx)
         }
 
         if (type != NULL) {
-            cclynx_fatal_error("ERROR: mixed types!\n");
+            parser_report_error(ctx, current_token, "mixed types");
+            current_token = parser_get_token(ctx);
+            continue;
         }
 
         type = symbol->type;
