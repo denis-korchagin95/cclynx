@@ -16,12 +16,24 @@ struct symbol;
         (identifier)->symbols = element;                                    \
     }
 
+enum keyword_code
+{
+    KEYWORD_NONE = 0,
+    KEYWORD_VOID,
+    KEYWORD_INT,
+    KEYWORD_RETURN,
+    KEYWORD_WHILE,
+    KEYWORD_UNSIGNED,
+    KEYWORD_FLOAT,
+    KEYWORD_IF,
+    KEYWORD_ELSE,
+};
+
 struct identifier
 {
     char * name;
     struct symbol_list * symbols;
-    unsigned int is_keyword:1;
-    unsigned int reserved:31;
+    enum keyword_code keyword_code;
 };
 
 void init_keywords(struct hashmap * identifier_table, struct memory_blob_pool * pool);

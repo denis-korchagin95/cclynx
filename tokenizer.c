@@ -279,7 +279,7 @@ const char * token_stringify(const struct token * token)
 
     switch (token->kind) {
         case TOKEN_KIND_IDENTIFIER:
-            if (token->identifier->is_keyword) {
+            if (token->identifier->keyword_code != KEYWORD_NONE) {
                 snprintf(buffer, sizeof(buffer), "keyword '%s'", token->identifier->name);
             } else {
                 snprintf(buffer, sizeof(buffer), "identifier '%s'", token->identifier->name);

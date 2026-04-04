@@ -182,11 +182,11 @@ struct ast_node * parse_statement(struct parser_context * ctx)
     struct ast_node * statement = NULL;
 
     if (token_is_keyword(current_token)) {
-        if (strcmp("while", current_token->identifier->name) == 0) {
+        if (current_token->identifier->keyword_code == KEYWORD_WHILE) {
             statement = parse_while_statement(ctx, current_token);
-        } else if (strcmp("return", current_token->identifier->name) == 0) {
+        } else if (current_token->identifier->keyword_code == KEYWORD_RETURN) {
             statement = parse_return_statement(ctx);
-        } else if (strcmp("if", current_token->identifier->name) == 0) {
+        } else if (current_token->identifier->keyword_code == KEYWORD_IF) {
             statement = parse_if_statement(ctx, current_token);
         } else {
             parser_putback_token(current_token, ctx);
@@ -479,7 +479,7 @@ struct ast_node * parse_function_definition(struct parser_context * ctx)
         return NULL;
     }
 
-    if (current_token->identifier->is_keyword) {
+    if (token_is_keyword(current_token)) {
         parser_report_error(ctx, current_token, "expected identifier but got keyword '%s'", current_token->identifier->name);
         parser_synchronize_toplevel(ctx);
         return NULL;
@@ -604,7 +604,7 @@ struct ast_node * parse_declaration(struct parser_context * ctx)
         return NULL;
     }
 
-    if (current_token->identifier->is_keyword) {
+    if (token_is_keyword(current_token)) {
         parser_report_error(ctx, current_token, "expected identifier but got keyword '%s'", current_token->identifier->name);
         parser_synchronize_statement(ctx);
         return NULL;
@@ -1008,7 +1008,7 @@ struct ast_node * parse_primary_expression(struct parser_context * ctx)
     }
 
     if (current_token->kind == TOKEN_KIND_IDENTIFIER) {
-        if (current_token->identifier->is_keyword) {
+        if (token_is_keyword(current_token)) {
             parser_report_error(ctx, current_token, "expected identifier but got keyword '%s'", current_token->identifier->name);
             return NULL;
         }
@@ -1120,7 +1120,7 @@ struct ast_node * parse_function_parameter(struct parser_context * ctx)
         return NULL;
     }
 
-    if (current_token->identifier->is_keyword) {
+    if (token_is_keyword(current_token)) {
         parser_report_error(ctx, current_token, "expected identifier but got keyword '%s'", current_token->identifier->name);
         return NULL;
     }

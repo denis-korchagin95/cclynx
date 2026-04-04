@@ -16,10 +16,10 @@ struct hashmap;
 #define token_first_ch(token) ((token)->source->content[(token)->span.offset])
 
 #define token_is_identifier(token) \
-    ((token)->kind == TOKEN_KIND_IDENTIFIER && !(token)->identifier->is_keyword)
+    ((token)->kind == TOKEN_KIND_IDENTIFIER && (token)->identifier->keyword_code == KEYWORD_NONE)
 
 #define token_is_keyword(token) \
-    ((token)->kind == TOKEN_KIND_IDENTIFIER && (token)->identifier->is_keyword)
+    ((token)->kind == TOKEN_KIND_IDENTIFIER && (token)->identifier->keyword_code != KEYWORD_NONE)
 
 #define token_is_punctuator(token, ch) \
     ((token)->kind == TOKEN_KIND_PUNCTUATOR && token_first_ch(token) == (ch))
