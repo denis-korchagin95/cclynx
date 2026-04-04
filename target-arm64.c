@@ -17,21 +17,10 @@ static const struct codegen_reg initial_regs[CODEGEN_REG_COUNT] = {
     { "w13", CODEGEN_REG_KIND_INTEGER,   0, },
     { "w14", CODEGEN_REG_KIND_INTEGER,   0, },
     { "w15", CODEGEN_REG_KIND_INTEGER,   0, },
-    { "s8",  CODEGEN_REG_KIND_FLOAT,     0, },
-    { "s9",  CODEGEN_REG_KIND_FLOAT,     0, },
-    { "s10", CODEGEN_REG_KIND_FLOAT,     0, },
-    { "s11", CODEGEN_REG_KIND_FLOAT,     0, },
-    { "s12", CODEGEN_REG_KIND_FLOAT,     0, },
-    { "s13", CODEGEN_REG_KIND_FLOAT,     0, },
-    { "s14", CODEGEN_REG_KIND_FLOAT,     0, },
-    { "s15", CODEGEN_REG_KIND_FLOAT,     0, },
 };
-
-static enum codegen_reg_kind get_reg_kind(struct type * type);
 
 static void op_const(struct codegen_context * ctx, FILE * output, struct ir_operand * op1);
 static void op_load(struct codegen_context * ctx, FILE * output, struct ir_operand * op1);
-static const char * reg_kind_stringify(enum codegen_reg_kind kind);
 
 static void push_reg(struct codegen_context * ctx, struct codegen_reg * reg)
 {
@@ -128,210 +117,101 @@ void target_arm64_generate(struct codegen_context * ctx, struct ir_program * pro
             case OP_JUMP_IF_FALSE:
                 {
                     struct codegen_reg * op1_reg = pop_reg(ctx);
-
-                    if (op1_reg->kind == CODEGEN_REG_KIND_INTEGER) {
-                        fprintf(file, "    cbz %s, .L%llu\n", op1_reg->name, instruction->op2->content.label_id);
-                    } else if (op1_reg->kind == CODEGEN_REG_KIND_FLOAT) {
-                        fprintf(file, "    fcmp %s, #0.0\n", op1_reg->name);
-                        fprintf(file, "    b.eq .L%llu\n", instruction->op2->content.label_id);
-                    } else {
-                        cclynx_fatal_error("ERROR: unsupported reg kind (OP_JUMP_IF_FALSE)!\n");
-                    }
-
+                    fprintf(file, "    cbz %s, .L%llu\n", op1_reg->name, instruction->op2->content.label_id);
                     free_reg(op1_reg);
                 }
                 break;
-            case OP_JUMP_IF_EQUAL:
+            case OP_JUMP_IF_EQ:
                 {
                     struct codegen_reg * op2_reg = pop_reg(ctx);
                     struct codegen_reg * op1_reg = pop_reg(ctx);
-
-                    if (op1_reg->kind != op2_reg->kind) {
-                        cclynx_fatal_error("ERROR: register type mismatch (OP_JUMP_IF_EQUAL)!\n");
-                    }
-
-                    if (op1_reg->kind == CODEGEN_REG_KIND_INTEGER) {
-                        fprintf(file, "    cmp %s, %s\n", op1_reg->name, op2_reg->name);
-                        fprintf(file, "    b.eq .L%llu\n", instruction->result->content.label_id);
-                    } else if (op1_reg->kind == CODEGEN_REG_KIND_FLOAT) {
-                        fprintf(file, "    fcmp %s, %s\n", op1_reg->name, op2_reg->name);
-                        fprintf(file, "    b.eq .L%llu\n", instruction->result->content.label_id);
-                    } else {
-                        cclynx_fatal_error("ERROR: unsupported reg kind (OP_JUMP_IF_EQUAL)!\n");
-                    }
-
+                    fprintf(file, "    cmp %s, %s\n", op1_reg->name, op2_reg->name);
+                    fprintf(file, "    b.eq .L%llu\n", instruction->result->content.label_id);
                     free_reg(op1_reg);
                     free_reg(op2_reg);
                 }
                 break;
-            case OP_JUMP_IF_NOT_EQUAL:
+            case OP_JUMP_IF_NE:
                 {
                     struct codegen_reg * op2_reg = pop_reg(ctx);
                     struct codegen_reg * op1_reg = pop_reg(ctx);
-
-                    if (op1_reg->kind != op2_reg->kind) {
-                        cclynx_fatal_error("ERROR: register type mismatch (OP_JUMP_IF_NOT_EQUAL)!\n");
-                    }
-
-                    if (op1_reg->kind == CODEGEN_REG_KIND_INTEGER) {
-                        fprintf(file, "    cmp %s, %s\n", op1_reg->name, op2_reg->name);
-                        fprintf(file, "    b.ne .L%llu\n", instruction->result->content.label_id);
-                    } else if (op1_reg->kind == CODEGEN_REG_KIND_FLOAT) {
-                        fprintf(file, "    fcmp %s, %s\n", op1_reg->name, op2_reg->name);
-                        fprintf(file, "    b.ne .L%llu\n", instruction->result->content.label_id);
-                    } else {
-                        cclynx_fatal_error("ERROR: unsupported reg kind (OP_JUMP_IF_NOT_EQUAL)!\n");
-                    }
-
+                    fprintf(file, "    cmp %s, %s\n", op1_reg->name, op2_reg->name);
+                    fprintf(file, "    b.ne .L%llu\n", instruction->result->content.label_id);
                     free_reg(op1_reg);
                     free_reg(op2_reg);
                 }
                 break;
-            case OP_JUMP_IF_LESS_THAN_OR_EQUAL:
+            case OP_JUMP_IF_LTE:
+            case OP_JUMP_IF_UNSIGNED_LTE:
                 {
                     struct codegen_reg * op2_reg = pop_reg(ctx);
                     struct codegen_reg * op1_reg = pop_reg(ctx);
-
-                    if (op1_reg->kind != op2_reg->kind) {
-                        cclynx_fatal_error("ERROR: register type mismatch (OP_JUMP_IF_LESS_THAN_OR_EQUAL)!\n");
-                    }
-
-                    if (op1_reg->kind == CODEGEN_REG_KIND_INTEGER) {
-                        fprintf(file, "    cmp %s, %s\n", op1_reg->name, op2_reg->name);
-                        fprintf(file, "    b.le .L%llu\n", instruction->result->content.label_id);
-                    } else if (op1_reg->kind == CODEGEN_REG_KIND_FLOAT) {
-                        fprintf(file, "    fcmp %s, %s\n", op1_reg->name, op2_reg->name);
-                        fprintf(file, "    b.le .L%llu\n", instruction->result->content.label_id);
-                    } else {
-                        cclynx_fatal_error("ERROR: unsupported reg kind (OP_JUMP_IF_LESS_THAN_OR_EQUAL)!\n");
-                    }
-
+                    const char * cond = instruction->code == OP_JUMP_IF_UNSIGNED_LTE ? "b.ls" : "b.le";
+                    fprintf(file, "    cmp %s, %s\n", op1_reg->name, op2_reg->name);
+                    fprintf(file, "    %s .L%llu\n", cond, instruction->result->content.label_id);
                     free_reg(op1_reg);
                     free_reg(op2_reg);
                 }
                 break;
-            case OP_JUMP_IF_GREATER_THAN_OR_EQUAL:
+            case OP_JUMP_IF_GTE:
+            case OP_JUMP_IF_UNSIGNED_GTE:
                 {
                     struct codegen_reg * op2_reg = pop_reg(ctx);
                     struct codegen_reg * op1_reg = pop_reg(ctx);
-
-                    if (op1_reg->kind != op2_reg->kind) {
-                        cclynx_fatal_error("ERROR: register type mismatch (OP_JUMP_IF_GREATER_THAN_OR_EQUAL)!\n");
-                    }
-
-                    if (op1_reg->kind == CODEGEN_REG_KIND_INTEGER) {
-                        fprintf(file, "    cmp %s, %s\n", op1_reg->name, op2_reg->name);
-                        fprintf(file, "    b.ge .L%llu\n", instruction->result->content.label_id);
-                    } else if (op1_reg->kind == CODEGEN_REG_KIND_FLOAT) {
-                        fprintf(file, "    fcmp %s, %s\n", op1_reg->name, op2_reg->name);
-                        fprintf(file, "    b.ge .L%llu\n", instruction->result->content.label_id);
-                    } else {
-                        cclynx_fatal_error("ERROR: unsupported reg kind (OP_JUMP_IF_GREATER_THAN_OR_EQUAL)!\n");
-                    }
-
+                    const char * cond = instruction->code == OP_JUMP_IF_UNSIGNED_GTE ? "b.hs" : "b.ge";
+                    fprintf(file, "    cmp %s, %s\n", op1_reg->name, op2_reg->name);
+                    fprintf(file, "    %s .L%llu\n", cond, instruction->result->content.label_id);
                     free_reg(op1_reg);
                     free_reg(op2_reg);
                 }
                 break;
-            case OP_IS_GREATER_THAN:
+            case OP_GT:
+            case OP_UNSIGNED_GT:
                 {
                     struct codegen_reg * op2_reg = pop_reg(ctx);
                     struct codegen_reg * op1_reg = pop_reg(ctx);
-
-                    if (op1_reg->kind != op2_reg->kind) {
-                        cclynx_fatal_error("ERROR: register type mismatch (OP_IS_GREATER_THAN)!\n");
-                    }
-
                     struct codegen_reg * result_reg = alloc_reg(ctx, CODEGEN_REG_KIND_INTEGER);
-
-                    if (op1_reg->kind == CODEGEN_REG_KIND_INTEGER) {
-                        fprintf(file, "    cmp %s, %s\n", op1_reg->name, op2_reg->name);
-                        fprintf(file, "    cset %s, gt\n", result_reg->name);
-                    } else if (op1_reg->kind == CODEGEN_REG_KIND_FLOAT) {
-                        fprintf(file, "    fcmp %s, %s\n", op1_reg->name, op2_reg->name);
-                        fprintf(file, "    cset %s, gt\n", result_reg->name);
-                    } else {
-                        cclynx_fatal_error("ERROR: unsupported reg kind (OP_IS_GREATER_THAN)!\n");
-                    }
-
+                    const char * cond = instruction->code == OP_UNSIGNED_GT ? "hi" : "gt";
+                    fprintf(file, "    cmp %s, %s\n", op1_reg->name, op2_reg->name);
+                    fprintf(file, "    cset %s, %s\n", result_reg->name, cond);
                     free_reg(op1_reg);
                     free_reg(op2_reg);
                     push_reg(ctx, result_reg);
                 }
                 break;
-            case OP_IS_LESS_THAN:
+            case OP_LT:
+            case OP_UNSIGNED_LT:
                 {
                     struct codegen_reg * op2_reg = pop_reg(ctx);
                     struct codegen_reg * op1_reg = pop_reg(ctx);
-
-                    if (op1_reg->kind != op2_reg->kind) {
-                        cclynx_fatal_error("ERROR: register type mismatch (OP_IS_LESS_THAN)!\n");
-                    }
-
                     struct codegen_reg * result_reg = alloc_reg(ctx, CODEGEN_REG_KIND_INTEGER);
-
-                    if (op1_reg->kind == CODEGEN_REG_KIND_INTEGER) {
-                        fprintf(file, "    cmp %s, %s\n", op1_reg->name, op2_reg->name);
-                        fprintf(file, "    cset %s, lt\n", result_reg->name);
-                    } else if (op1_reg->kind == CODEGEN_REG_KIND_FLOAT) {
-                        fprintf(file, "    fcmp %s, %s\n", op1_reg->name, op2_reg->name);
-                        fprintf(file, "    cset %s, lt\n", result_reg->name);
-                    } else {
-                        cclynx_fatal_error("ERROR: unsupported reg kind (OP_IS_LESS_THAN)!\n");
-                    }
-
+                    const char * cond = instruction->code == OP_UNSIGNED_LT ? "lo" : "lt";
+                    fprintf(file, "    cmp %s, %s\n", op1_reg->name, op2_reg->name);
+                    fprintf(file, "    cset %s, %s\n", result_reg->name, cond);
                     free_reg(op1_reg);
                     free_reg(op2_reg);
                     push_reg(ctx, result_reg);
                 }
                 break;
-            case OP_IS_EQUAL:
+            case OP_EQ:
                 {
                     struct codegen_reg * op2_reg = pop_reg(ctx);
                     struct codegen_reg * op1_reg = pop_reg(ctx);
-
-                    if (op1_reg->kind != op2_reg->kind) {
-                        cclynx_fatal_error("ERROR: register type mismatch (OP_IS_EQUAL)!\n");
-                    }
-
                     struct codegen_reg * result_reg = alloc_reg(ctx, CODEGEN_REG_KIND_INTEGER);
-
-                    if (op1_reg->kind == CODEGEN_REG_KIND_INTEGER) {
-                        fprintf(file, "    cmp %s, %s\n", op1_reg->name, op2_reg->name);
-                        fprintf(file, "    cset %s, eq\n", result_reg->name);
-                    } else if (op1_reg->kind == CODEGEN_REG_KIND_FLOAT) {
-                        fprintf(file, "    fcmp %s, %s\n", op1_reg->name, op2_reg->name);
-                        fprintf(file, "    cset %s, eq\n", result_reg->name);
-                    } else {
-                        cclynx_fatal_error("ERROR: unsupported reg kind (OP_IS_EQUAL)!\n");
-                    }
-
+                    fprintf(file, "    cmp %s, %s\n", op1_reg->name, op2_reg->name);
+                    fprintf(file, "    cset %s, eq\n", result_reg->name);
                     free_reg(op1_reg);
                     free_reg(op2_reg);
                     push_reg(ctx, result_reg);
                 }
                 break;
-            case OP_IS_NOT_EQUAL:
+            case OP_NE:
                 {
                     struct codegen_reg * op2_reg = pop_reg(ctx);
                     struct codegen_reg * op1_reg = pop_reg(ctx);
-
-                    if (op1_reg->kind != op2_reg->kind) {
-                        cclynx_fatal_error("ERROR: register type mismatch (OP_IS_NOT_EQUAL)!\n");
-                    }
-
                     struct codegen_reg * result_reg = alloc_reg(ctx, CODEGEN_REG_KIND_INTEGER);
-
-                    if (op1_reg->kind == CODEGEN_REG_KIND_INTEGER) {
-                        fprintf(file, "    cmp %s, %s\n", op1_reg->name, op2_reg->name);
-                        fprintf(file, "    cset %s, ne\n", result_reg->name);
-                    } else if (op1_reg->kind == CODEGEN_REG_KIND_FLOAT) {
-                        fprintf(file, "    fcmp %s, %s\n", op1_reg->name, op2_reg->name);
-                        fprintf(file, "    cset %s, ne\n", result_reg->name);
-                    } else {
-                        cclynx_fatal_error("ERROR: unsupported reg kind (OP_IS_NOT_EQUAL)!\n");
-                    }
-
+                    fprintf(file, "    cmp %s, %s\n", op1_reg->name, op2_reg->name);
+                    fprintf(file, "    cset %s, ne\n", result_reg->name);
                     free_reg(op1_reg);
                     free_reg(op2_reg);
                     push_reg(ctx, result_reg);
@@ -347,45 +227,21 @@ void target_arm64_generate(struct codegen_context * ctx, struct ir_program * pro
                 {
                     struct codegen_reg * op2_reg = pop_reg(ctx);
                     struct codegen_reg * op1_reg = pop_reg(ctx);
-
-                    if (op1_reg->kind != op2_reg->kind) {
-                        cclynx_fatal_error("ERROR: register type mismatch (OP_MUL)!\n");
-                    }
-
-                    struct codegen_reg * result_reg = alloc_reg(ctx, op1_reg->kind);
-
-                    if (result_reg->kind == CODEGEN_REG_KIND_INTEGER) {
-                        fprintf(file, "    mul %s, %s, %s\n", result_reg->name, op1_reg->name, op2_reg->name);
-                    } else if (result_reg->kind == CODEGEN_REG_KIND_FLOAT) {
-                        fprintf(file, "    fmul %s, %s, %s\n", result_reg->name, op1_reg->name, op2_reg->name);
-                    } else {
-                        cclynx_fatal_error("ERROR: unsupported reg kind (OP_MUL)!\n");
-                    }
-
+                    struct codegen_reg * result_reg = alloc_reg(ctx, CODEGEN_REG_KIND_INTEGER);
+                    fprintf(file, "    mul %s, %s, %s\n", result_reg->name, op1_reg->name, op2_reg->name);
                     free_reg(op1_reg);
                     free_reg(op2_reg);
                     push_reg(ctx, result_reg);
                 }
                 break;
             case OP_DIV:
+            case OP_UNSIGNED_DIV:
                 {
                     struct codegen_reg * op2_reg = pop_reg(ctx);
                     struct codegen_reg * op1_reg = pop_reg(ctx);
-
-                    if (op1_reg->kind != op2_reg->kind) {
-                        cclynx_fatal_error("ERROR: register type mismatch (OP_DIV)!\n");
-                    }
-
-                    struct codegen_reg * result_reg = alloc_reg(ctx, op1_reg->kind);
-
-                    if (result_reg->kind == CODEGEN_REG_KIND_INTEGER) {
-                        fprintf(file, "    sdiv %s, %s, %s\n", result_reg->name, op1_reg->name, op2_reg->name);
-                    } else if (result_reg->kind == CODEGEN_REG_KIND_FLOAT) {
-                        fprintf(file, "    fdiv %s, %s, %s\n", result_reg->name, op1_reg->name, op2_reg->name);
-                    } else {
-                        cclynx_fatal_error("ERROR: unsupported reg kind (OP_DIV)!\n");
-                    }
-
+                    struct codegen_reg * result_reg = alloc_reg(ctx, CODEGEN_REG_KIND_INTEGER);
+                    const char * op = instruction->code == OP_UNSIGNED_DIV ? "udiv" : "sdiv";
+                    fprintf(file, "    %s %s, %s, %s\n", op, result_reg->name, op1_reg->name, op2_reg->name);
                     free_reg(op1_reg);
                     free_reg(op2_reg);
                     push_reg(ctx, result_reg);
@@ -395,21 +251,8 @@ void target_arm64_generate(struct codegen_context * ctx, struct ir_program * pro
                 {
                     struct codegen_reg * op2_reg = pop_reg(ctx);
                     struct codegen_reg * op1_reg = pop_reg(ctx);
-
-                    if (op1_reg->kind != op2_reg->kind) {
-                        cclynx_fatal_error("ERROR: register type mismatch (OP_SUB)!\n");
-                    }
-
-                    struct codegen_reg * result_reg = alloc_reg(ctx, op1_reg->kind);
-
-                    if (result_reg->kind == CODEGEN_REG_KIND_INTEGER) {
-                        fprintf(file, "    sub %s, %s, %s\n", result_reg->name, op1_reg->name, op2_reg->name);
-                    } else if (result_reg->kind == CODEGEN_REG_KIND_FLOAT) {
-                        fprintf(file, "    fsub %s, %s, %s\n", result_reg->name, op1_reg->name, op2_reg->name);
-                    } else {
-                        cclynx_fatal_error("ERROR: unsupported reg kind (OP_SUB)!\n");
-                    }
-
+                    struct codegen_reg * result_reg = alloc_reg(ctx, CODEGEN_REG_KIND_INTEGER);
+                    fprintf(file, "    sub %s, %s, %s\n", result_reg->name, op1_reg->name, op2_reg->name);
                     free_reg(op1_reg);
                     free_reg(op2_reg);
                     push_reg(ctx, result_reg);
@@ -419,21 +262,8 @@ void target_arm64_generate(struct codegen_context * ctx, struct ir_program * pro
                 {
                     struct codegen_reg * op2_reg = pop_reg(ctx);
                     struct codegen_reg * op1_reg = pop_reg(ctx);
-
-                    if (op1_reg->kind != op2_reg->kind) {
-                        cclynx_fatal_error("ERROR: register type mismatch (OP_ADD)!\n");
-                    }
-
-                    struct codegen_reg * result_reg = alloc_reg(ctx, op1_reg->kind);
-
-                    if (result_reg->kind == CODEGEN_REG_KIND_INTEGER) {
-                        fprintf(file, "    add %s, %s, %s\n", result_reg->name, op1_reg->name, op2_reg->name);
-                    } else if (result_reg->kind == CODEGEN_REG_KIND_FLOAT) {
-                        fprintf(file, "    fadd %s, %s, %s\n", result_reg->name, op1_reg->name, op2_reg->name);
-                    } else {
-                        cclynx_fatal_error("ERROR: unsupported reg kind (OP_ADD)!\n");
-                    }
-
+                    struct codegen_reg * result_reg = alloc_reg(ctx, CODEGEN_REG_KIND_INTEGER);
+                    fprintf(file, "    add %s, %s, %s\n", result_reg->name, op1_reg->name, op2_reg->name);
                     free_reg(op1_reg);
                     free_reg(op2_reg);
                     push_reg(ctx, result_reg);
@@ -443,15 +273,7 @@ void target_arm64_generate(struct codegen_context * ctx, struct ir_program * pro
                 {
                     if (instruction->op1 != NULL) {
                         struct codegen_reg * result_reg = pop_reg(ctx);
-
-                        if (result_reg->kind == CODEGEN_REG_KIND_INTEGER) {
-                            fprintf(file, "    mov w0, %s\n", result_reg->name);
-                        } else if (result_reg->kind == CODEGEN_REG_KIND_FLOAT) {
-                            fprintf(file, "    fmov s0, %s\n", result_reg->name);
-                        } else {
-                            cclynx_fatal_error("ERROR: unsupported reg kind (OP_RETURN)!\n");
-                        }
-
+                        fprintf(file, "    mov w0, %s\n", result_reg->name);
                         free_reg(result_reg);
                     }
 
@@ -460,42 +282,6 @@ void target_arm64_generate(struct codegen_context * ctx, struct ir_program * pro
                     }
                     fprintf(file, "    ldp x29, x30, [sp], #16\n");
                     fprintf(file, "    ret\n");
-                }
-                break;
-            case OP_INT_CAST:
-                {
-                    struct codegen_reg * op_reg = pop_reg(ctx);
-
-                    struct codegen_reg * result_reg = NULL;
-
-                    if (op_reg->kind != CODEGEN_REG_KIND_FLOAT) {
-                        cclynx_fatal_error("ERROR: unsupported reg kind '%s' for OP_INT_CAST operation!\n", reg_kind_stringify(op_reg->kind));
-                    }
-
-                    result_reg = alloc_reg(ctx, CODEGEN_REG_KIND_INTEGER);
-
-                    fprintf(file, "    fcvtzs %s, %s\n", result_reg->name, op_reg->name);
-
-                    free_reg(op_reg);
-                    push_reg(ctx, result_reg);
-                }
-                break;
-            case OP_FLOAT_CAST:
-                {
-                    struct codegen_reg * op_reg = pop_reg(ctx);
-
-                    struct codegen_reg * result_reg = NULL;
-
-                    if (op_reg->kind != CODEGEN_REG_KIND_INTEGER) {
-                        cclynx_fatal_error("ERROR: unsupported reg kind '%s' for OP_FLOAT_CAST operation!\n", reg_kind_stringify(op_reg->kind));
-                    }
-
-                    result_reg = alloc_reg(ctx, CODEGEN_REG_KIND_FLOAT);
-
-                    fprintf(file, "    scvtf %s, %s\n", result_reg->name, op_reg->name);
-
-                    free_reg(op_reg);
-                    push_reg(ctx, result_reg);
                 }
                 break;
             case OP_STORE_PARAM:
@@ -534,7 +320,7 @@ void target_arm64_generate(struct codegen_context * ctx, struct ir_program * pro
                         fprintf(file, "    add sp, sp, #%zu\n", spill_memory_size);
                     }
 
-                    struct codegen_reg * result_reg = alloc_reg(ctx, get_reg_kind(instruction->result->type));
+                    struct codegen_reg * result_reg = alloc_reg(ctx, CODEGEN_REG_KIND_INTEGER);
                     fprintf(file, "    mov %s, w0\n", result_reg->name);
                     push_reg(ctx, result_reg);
                 }
@@ -547,19 +333,6 @@ void target_arm64_generate(struct codegen_context * ctx, struct ir_program * pro
     fflush(file);
 }
 
-enum codegen_reg_kind get_reg_kind(struct type * type)
-{
-    assert(type != NULL);
-
-    if (type->kind == TYPE_KIND_INTEGER)
-        return CODEGEN_REG_KIND_INTEGER;
-
-    if (type->kind == TYPE_KIND_FLOAT)
-        return CODEGEN_REG_KIND_FLOAT;
-
-    cclynx_fatal_error("ERROR: unsupported type \"%s\" for target arm64 code generation!\n", type_stringify(type));
-}
-
 void op_const(struct codegen_context * ctx, FILE * output, struct ir_operand * op1)
 {
     assert(ctx != NULL);
@@ -567,43 +340,21 @@ void op_const(struct codegen_context * ctx, FILE * output, struct ir_operand * o
     assert(op1 != NULL);
     assert(op1->type != NULL);
 
-    struct codegen_reg * result_reg = alloc_reg(ctx, get_reg_kind(op1->type));
+    struct codegen_reg * result_reg = alloc_reg(ctx, CODEGEN_REG_KIND_INTEGER);
 
-    if (result_reg->kind == CODEGEN_REG_KIND_INTEGER) {
-        unsigned int bits = (unsigned int) op1->content.int_value;
-        unsigned int lo = bits & 0xFFFF;
-        unsigned int hi = (bits >> 16) & 0xFFFF;
+    unsigned int bits = (unsigned int) op1->content.int_value;
+    unsigned int lo = bits & 0xFFFF;
+    unsigned int hi = (bits >> 16) & 0xFFFF;
 
-        if (hi == 0) {
-            snprintf(ctx->buf, CODEGEN_BUF_SIZE, "%lld", op1->content.int_value);
-            fprintf(output, "    mov %s, #%s\n", result_reg->name, ctx->buf);
-        } else {
-            fprintf(output, "    movz %s, #0x%x\n", result_reg->name, lo);
-            fprintf(output, "    movk %s, #0x%x, lsl #16\n", result_reg->name, hi);
-        }
-
-        push_reg(ctx, result_reg);
-        return;
-    }
-    else if (result_reg->kind == CODEGEN_REG_KIND_FLOAT) {
-        unsigned int bits;
-        memcpy(&bits, &op1->content.float_value, sizeof(bits));
-
-        unsigned int lo = bits & 0xFFFF;
-        unsigned int hi = (bits >> 16) & 0xFFFF;
-
-        struct codegen_reg * tmp_reg = alloc_reg(ctx, CODEGEN_REG_KIND_INTEGER);
-        fprintf(output, "    movz %s, #0x%x\n", tmp_reg->name, lo);
-        if (hi != 0) {
-            fprintf(output, "    movk %s, #0x%x, lsl #16\n", tmp_reg->name, hi);
-        }
-        fprintf(output, "    fmov %s, %s\n", result_reg->name, tmp_reg->name);
-        free_reg(tmp_reg);
-        push_reg(ctx, result_reg);
-        return;
+    if (hi == 0) {
+        snprintf(ctx->buf, CODEGEN_BUF_SIZE, "%lld", op1->content.int_value);
+        fprintf(output, "    mov %s, #%s\n", result_reg->name, ctx->buf);
+    } else {
+        fprintf(output, "    movz %s, #0x%x\n", result_reg->name, lo);
+        fprintf(output, "    movk %s, #0x%x, lsl #16\n", result_reg->name, hi);
     }
 
-    cclynx_fatal_error("ERROR: unsupported reg kind (OP_CONST)!\n");
+    push_reg(ctx, result_reg);
 }
 
 void op_load(struct codegen_context * ctx, FILE * output, struct ir_operand * op1)
@@ -613,18 +364,7 @@ void op_load(struct codegen_context * ctx, FILE * output, struct ir_operand * op
     assert(op1 != NULL);
     assert(op1->type != NULL);
 
-    struct codegen_reg * result_reg = alloc_reg(ctx, get_reg_kind(op1->type));
+    struct codegen_reg * result_reg = alloc_reg(ctx, CODEGEN_REG_KIND_INTEGER);
     fprintf(output, "    ldr %s, [sp, #%zu]\n", result_reg->name, op1->content.variable.offset);
     push_reg(ctx, result_reg);
-}
-
-const char * reg_kind_stringify(enum codegen_reg_kind kind)
-{
-    if (kind == CODEGEN_REG_KIND_INTEGER)
-        return "int";
-
-    if (kind == CODEGEN_REG_KIND_FLOAT)
-        return "float";
-
-    return "<unknown reg kind>";
 }

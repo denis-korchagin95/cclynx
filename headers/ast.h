@@ -24,7 +24,6 @@ enum ast_node_kind
     AST_NODE_KIND_IF_STATEMENT,
 
     AST_NODE_KIND_INTEGER_CONSTANT_EXPRESSION,
-    AST_NODE_KIND_FLOAT_CONSTANT_EXPRESSION,
     AST_NODE_KIND_VARIABLE_EXPRESSION,
     AST_NODE_KIND_FUNCTION_CALL_EXPRESSION,
     AST_NODE_KIND_CAST_EXPRESSION,
@@ -69,10 +68,7 @@ struct ast_node
         struct ast_node * node;
         struct constant
         {
-            union {
-                long long int integer_constant;
-                float float_constant;
-            } value;
+            long long int value;
         } constant;
         struct binary_expression
         {

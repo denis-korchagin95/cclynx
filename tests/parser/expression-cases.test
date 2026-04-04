@@ -1,0 +1,1290 @@
+@test("It should parse an integer constant")
+@given("file", filename="expr_1.c")
+int main() {
+    777;
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        └── ExpressionStatement
+            └── IntegerConstant: '777'
+                └── Type
+                    ├── category: 'basic'
+                    └── descriptor: 'int'
+
+@endtest
+
+@test("It should parse a multiplicative expression (*) (primitive case)")
+@given("file")
+int main() {
+    7 * 8;
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        └── ExpressionStatement
+            └── MultiplicativeExpression: '*'
+                ├── Type
+                │   ├── category: 'basic'
+                │   └── descriptor: 'int'
+                ├── IntegerConstant: '7'
+                │   └── Type
+                │       ├── category: 'basic'
+                │       └── descriptor: 'int'
+                └── IntegerConstant: '8'
+                    └── Type
+                        ├── category: 'basic'
+                        └── descriptor: 'int'
+
+@endtest
+
+@test("It should parse a multiplicative expression (*) (nested level 2 primitive case)")
+@given("file")
+int main() {
+    7 * 6 * 8;
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        └── ExpressionStatement
+            └── MultiplicativeExpression: '*'
+                ├── Type
+                │   ├── category: 'basic'
+                │   └── descriptor: 'int'
+                ├── MultiplicativeExpression: '*'
+                │   ├── Type
+                │   │   ├── category: 'basic'
+                │   │   └── descriptor: 'int'
+                │   ├── IntegerConstant: '7'
+                │   │   └── Type
+                │   │       ├── category: 'basic'
+                │   │       └── descriptor: 'int'
+                │   └── IntegerConstant: '6'
+                │       └── Type
+                │           ├── category: 'basic'
+                │           └── descriptor: 'int'
+                └── IntegerConstant: '8'
+                    └── Type
+                        ├── category: 'basic'
+                        └── descriptor: 'int'
+
+@endtest
+
+@test("It should parse a multiplicative expression (*) (nested level 4 primitive case)")
+@given("file")
+int main() {
+    7 * 6 * 8 * 10 * 15;
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        └── ExpressionStatement
+            └── MultiplicativeExpression: '*'
+                ├── Type
+                │   ├── category: 'basic'
+                │   └── descriptor: 'int'
+                ├── MultiplicativeExpression: '*'
+                │   ├── Type
+                │   │   ├── category: 'basic'
+                │   │   └── descriptor: 'int'
+                │   ├── MultiplicativeExpression: '*'
+                │   │   ├── Type
+                │   │   │   ├── category: 'basic'
+                │   │   │   └── descriptor: 'int'
+                │   │   ├── MultiplicativeExpression: '*'
+                │   │   │   ├── Type
+                │   │   │   │   ├── category: 'basic'
+                │   │   │   │   └── descriptor: 'int'
+                │   │   │   ├── IntegerConstant: '7'
+                │   │   │   │   └── Type
+                │   │   │   │       ├── category: 'basic'
+                │   │   │   │       └── descriptor: 'int'
+                │   │   │   └── IntegerConstant: '6'
+                │   │   │       └── Type
+                │   │   │           ├── category: 'basic'
+                │   │   │           └── descriptor: 'int'
+                │   │   └── IntegerConstant: '8'
+                │   │       └── Type
+                │   │           ├── category: 'basic'
+                │   │           └── descriptor: 'int'
+                │   └── IntegerConstant: '10'
+                │       └── Type
+                │           ├── category: 'basic'
+                │           └── descriptor: 'int'
+                └── IntegerConstant: '15'
+                    └── Type
+                        ├── category: 'basic'
+                        └── descriptor: 'int'
+
+@endtest
+
+@test("It should parse a multiplicative expression (combination *, /) (with nested level primitive case)")
+@given("file")
+int main() {
+    15 / 3 * 101;
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        └── ExpressionStatement
+            └── MultiplicativeExpression: '*'
+                ├── Type
+                │   ├── category: 'basic'
+                │   └── descriptor: 'int'
+                ├── MultiplicativeExpression: '/'
+                │   ├── Type
+                │   │   ├── category: 'basic'
+                │   │   └── descriptor: 'int'
+                │   ├── IntegerConstant: '15'
+                │   │   └── Type
+                │   │       ├── category: 'basic'
+                │   │       └── descriptor: 'int'
+                │   └── IntegerConstant: '3'
+                │       └── Type
+                │           ├── category: 'basic'
+                │           └── descriptor: 'int'
+                └── IntegerConstant: '101'
+                    └── Type
+                        ├── category: 'basic'
+                        └── descriptor: 'int'
+
+@endtest
+
+@test("It should parse an additive expression (+) (primitive case)")
+@given("file")
+int main() {
+    7 + 8;
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        └── ExpressionStatement
+            └── AdditiveExpression: '+'
+                ├── Type
+                │   ├── category: 'basic'
+                │   └── descriptor: 'int'
+                ├── IntegerConstant: '7'
+                │   └── Type
+                │       ├── category: 'basic'
+                │       └── descriptor: 'int'
+                └── IntegerConstant: '8'
+                    └── Type
+                        ├── category: 'basic'
+                        └── descriptor: 'int'
+
+@endtest
+
+@test("It should parse an additive expression (+) (nested level 2 primitive case)")
+@given("file")
+int main() {
+    7 + 6 + 8;
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        └── ExpressionStatement
+            └── AdditiveExpression: '+'
+                ├── Type
+                │   ├── category: 'basic'
+                │   └── descriptor: 'int'
+                ├── AdditiveExpression: '+'
+                │   ├── Type
+                │   │   ├── category: 'basic'
+                │   │   └── descriptor: 'int'
+                │   ├── IntegerConstant: '7'
+                │   │   └── Type
+                │   │       ├── category: 'basic'
+                │   │       └── descriptor: 'int'
+                │   └── IntegerConstant: '6'
+                │       └── Type
+                │           ├── category: 'basic'
+                │           └── descriptor: 'int'
+                └── IntegerConstant: '8'
+                    └── Type
+                        ├── category: 'basic'
+                        └── descriptor: 'int'
+
+@endtest
+
+@test("It should parse an additive expression (+) (nested level 4 primitive case)")
+@given("file")
+int main() {
+    7 + 6 + 8 + 10 + 15;
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        └── ExpressionStatement
+            └── AdditiveExpression: '+'
+                ├── Type
+                │   ├── category: 'basic'
+                │   └── descriptor: 'int'
+                ├── AdditiveExpression: '+'
+                │   ├── Type
+                │   │   ├── category: 'basic'
+                │   │   └── descriptor: 'int'
+                │   ├── AdditiveExpression: '+'
+                │   │   ├── Type
+                │   │   │   ├── category: 'basic'
+                │   │   │   └── descriptor: 'int'
+                │   │   ├── AdditiveExpression: '+'
+                │   │   │   ├── Type
+                │   │   │   │   ├── category: 'basic'
+                │   │   │   │   └── descriptor: 'int'
+                │   │   │   ├── IntegerConstant: '7'
+                │   │   │   │   └── Type
+                │   │   │   │       ├── category: 'basic'
+                │   │   │   │       └── descriptor: 'int'
+                │   │   │   └── IntegerConstant: '6'
+                │   │   │       └── Type
+                │   │   │           ├── category: 'basic'
+                │   │   │           └── descriptor: 'int'
+                │   │   └── IntegerConstant: '8'
+                │   │       └── Type
+                │   │           ├── category: 'basic'
+                │   │           └── descriptor: 'int'
+                │   └── IntegerConstant: '10'
+                │       └── Type
+                │           ├── category: 'basic'
+                │           └── descriptor: 'int'
+                └── IntegerConstant: '15'
+                    └── Type
+                        ├── category: 'basic'
+                        └── descriptor: 'int'
+
+@endtest
+
+@test("It should parse an additive expression (combination +, -) (with nested level primitive case)")
+@given("file")
+int main() {
+    15 + 3 - 101;
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        └── ExpressionStatement
+            └── AdditiveExpression: '-'
+                ├── Type
+                │   ├── category: 'basic'
+                │   └── descriptor: 'int'
+                ├── AdditiveExpression: '+'
+                │   ├── Type
+                │   │   ├── category: 'basic'
+                │   │   └── descriptor: 'int'
+                │   ├── IntegerConstant: '15'
+                │   │   └── Type
+                │   │       ├── category: 'basic'
+                │   │       └── descriptor: 'int'
+                │   └── IntegerConstant: '3'
+                │       └── Type
+                │           ├── category: 'basic'
+                │           └── descriptor: 'int'
+                └── IntegerConstant: '101'
+                    └── Type
+                        ├── category: 'basic'
+                        └── descriptor: 'int'
+
+@endtest
+
+@test("It should parse an expression with combination (additive, multiplicative)")
+@given("file")
+int main() {
+    1 + 7 * 6 - 4;
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        └── ExpressionStatement
+            └── AdditiveExpression: '-'
+                ├── Type
+                │   ├── category: 'basic'
+                │   └── descriptor: 'int'
+                ├── AdditiveExpression: '+'
+                │   ├── Type
+                │   │   ├── category: 'basic'
+                │   │   └── descriptor: 'int'
+                │   ├── IntegerConstant: '1'
+                │   │   └── Type
+                │   │       ├── category: 'basic'
+                │   │       └── descriptor: 'int'
+                │   └── MultiplicativeExpression: '*'
+                │       ├── Type
+                │       │   ├── category: 'basic'
+                │       │   └── descriptor: 'int'
+                │       ├── IntegerConstant: '7'
+                │       │   └── Type
+                │       │       ├── category: 'basic'
+                │       │       └── descriptor: 'int'
+                │       └── IntegerConstant: '6'
+                │           └── Type
+                │               ├── category: 'basic'
+                │               └── descriptor: 'int'
+                └── IntegerConstant: '4'
+                    └── Type
+                        ├── category: 'basic'
+                        └── descriptor: 'int'
+
+@endtest
+
+@test("It should parse a relational expression (<) (primitive case)")
+@given("file")
+int main() {
+    7 < 8;
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        └── ExpressionStatement
+            └── RelationalExpression: '<'
+                ├── Type
+                │   ├── category: 'basic'
+                │   └── descriptor: 'int'
+                ├── IntegerConstant: '7'
+                │   └── Type
+                │       ├── category: 'basic'
+                │       └── descriptor: 'int'
+                └── IntegerConstant: '8'
+                    └── Type
+                        ├── category: 'basic'
+                        └── descriptor: 'int'
+
+@endtest
+
+@test("It should parse a relational expression (<) (nested level 2 primitive case)")
+@given("file")
+int main() {
+    7 < 6 < 8;
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        └── ExpressionStatement
+            └── RelationalExpression: '<'
+                ├── Type
+                │   ├── category: 'basic'
+                │   └── descriptor: 'int'
+                ├── RelationalExpression: '<'
+                │   ├── Type
+                │   │   ├── category: 'basic'
+                │   │   └── descriptor: 'int'
+                │   ├── IntegerConstant: '7'
+                │   │   └── Type
+                │   │       ├── category: 'basic'
+                │   │       └── descriptor: 'int'
+                │   └── IntegerConstant: '6'
+                │       └── Type
+                │           ├── category: 'basic'
+                │           └── descriptor: 'int'
+                └── IntegerConstant: '8'
+                    └── Type
+                        ├── category: 'basic'
+                        └── descriptor: 'int'
+
+@endtest
+
+@test("It should parse a relational expression (<) (nested level 4 primitive case)")
+@given("file")
+int main() {
+    7 < 6 < 8 < 10 < 15;
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        └── ExpressionStatement
+            └── RelationalExpression: '<'
+                ├── Type
+                │   ├── category: 'basic'
+                │   └── descriptor: 'int'
+                ├── RelationalExpression: '<'
+                │   ├── Type
+                │   │   ├── category: 'basic'
+                │   │   └── descriptor: 'int'
+                │   ├── RelationalExpression: '<'
+                │   │   ├── Type
+                │   │   │   ├── category: 'basic'
+                │   │   │   └── descriptor: 'int'
+                │   │   ├── RelationalExpression: '<'
+                │   │   │   ├── Type
+                │   │   │   │   ├── category: 'basic'
+                │   │   │   │   └── descriptor: 'int'
+                │   │   │   ├── IntegerConstant: '7'
+                │   │   │   │   └── Type
+                │   │   │   │       ├── category: 'basic'
+                │   │   │   │       └── descriptor: 'int'
+                │   │   │   └── IntegerConstant: '6'
+                │   │   │       └── Type
+                │   │   │           ├── category: 'basic'
+                │   │   │           └── descriptor: 'int'
+                │   │   └── IntegerConstant: '8'
+                │   │       └── Type
+                │   │           ├── category: 'basic'
+                │   │           └── descriptor: 'int'
+                │   └── IntegerConstant: '10'
+                │       └── Type
+                │           ├── category: 'basic'
+                │           └── descriptor: 'int'
+                └── IntegerConstant: '15'
+                    └── Type
+                        ├── category: 'basic'
+                        └── descriptor: 'int'
+
+@endtest
+
+@test("It should parse a relational expression (combination <, >) (with nested level primitive case)")
+@given("file")
+int main() {
+    15 < 3 > 101;
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        └── ExpressionStatement
+            └── RelationalExpression: '>'
+                ├── Type
+                │   ├── category: 'basic'
+                │   └── descriptor: 'int'
+                ├── RelationalExpression: '<'
+                │   ├── Type
+                │   │   ├── category: 'basic'
+                │   │   └── descriptor: 'int'
+                │   ├── IntegerConstant: '15'
+                │   │   └── Type
+                │   │       ├── category: 'basic'
+                │   │       └── descriptor: 'int'
+                │   └── IntegerConstant: '3'
+                │       └── Type
+                │           ├── category: 'basic'
+                │           └── descriptor: 'int'
+                └── IntegerConstant: '101'
+                    └── Type
+                        ├── category: 'basic'
+                        └── descriptor: 'int'
+
+@endtest
+
+@test("It should parse a equality expression (==) (primitive case)")
+@given("file")
+int main() {
+    7 == 8;
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        └── ExpressionStatement
+            └── EqualityExpression: '=='
+                ├── Type
+                │   ├── category: 'basic'
+                │   └── descriptor: 'int'
+                ├── IntegerConstant: '7'
+                │   └── Type
+                │       ├── category: 'basic'
+                │       └── descriptor: 'int'
+                └── IntegerConstant: '8'
+                    └── Type
+                        ├── category: 'basic'
+                        └── descriptor: 'int'
+
+@endtest
+
+@test("It should parse a equality expression (==) (nested level 2 primitive case)")
+@given("file")
+int main() {
+    7 == 6 == 8;
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        └── ExpressionStatement
+            └── EqualityExpression: '=='
+                ├── Type
+                │   ├── category: 'basic'
+                │   └── descriptor: 'int'
+                ├── EqualityExpression: '=='
+                │   ├── Type
+                │   │   ├── category: 'basic'
+                │   │   └── descriptor: 'int'
+                │   ├── IntegerConstant: '7'
+                │   │   └── Type
+                │   │       ├── category: 'basic'
+                │   │       └── descriptor: 'int'
+                │   └── IntegerConstant: '6'
+                │       └── Type
+                │           ├── category: 'basic'
+                │           └── descriptor: 'int'
+                └── IntegerConstant: '8'
+                    └── Type
+                        ├── category: 'basic'
+                        └── descriptor: 'int'
+
+@endtest
+
+@test("It should parse a equality expression (==) (nested level 4 primitive case)")
+@given("file")
+int main() {
+    7 == 6 == 8 == 10 == 15;
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        └── ExpressionStatement
+            └── EqualityExpression: '=='
+                ├── Type
+                │   ├── category: 'basic'
+                │   └── descriptor: 'int'
+                ├── EqualityExpression: '=='
+                │   ├── Type
+                │   │   ├── category: 'basic'
+                │   │   └── descriptor: 'int'
+                │   ├── EqualityExpression: '=='
+                │   │   ├── Type
+                │   │   │   ├── category: 'basic'
+                │   │   │   └── descriptor: 'int'
+                │   │   ├── EqualityExpression: '=='
+                │   │   │   ├── Type
+                │   │   │   │   ├── category: 'basic'
+                │   │   │   │   └── descriptor: 'int'
+                │   │   │   ├── IntegerConstant: '7'
+                │   │   │   │   └── Type
+                │   │   │   │       ├── category: 'basic'
+                │   │   │   │       └── descriptor: 'int'
+                │   │   │   └── IntegerConstant: '6'
+                │   │   │       └── Type
+                │   │   │           ├── category: 'basic'
+                │   │   │           └── descriptor: 'int'
+                │   │   └── IntegerConstant: '8'
+                │   │       └── Type
+                │   │           ├── category: 'basic'
+                │   │           └── descriptor: 'int'
+                │   └── IntegerConstant: '10'
+                │       └── Type
+                │           ├── category: 'basic'
+                │           └── descriptor: 'int'
+                └── IntegerConstant: '15'
+                    └── Type
+                        ├── category: 'basic'
+                        └── descriptor: 'int'
+
+@endtest
+
+@test("It should parse a equality expression (combination ==, !=) (with nested level primitive case)")
+@given("file")
+int main() {
+    15 == 3 != 101;
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        └── ExpressionStatement
+            └── EqualityExpression: '!='
+                ├── Type
+                │   ├── category: 'basic'
+                │   └── descriptor: 'int'
+                ├── EqualityExpression: '=='
+                │   ├── Type
+                │   │   ├── category: 'basic'
+                │   │   └── descriptor: 'int'
+                │   ├── IntegerConstant: '15'
+                │   │   └── Type
+                │   │       ├── category: 'basic'
+                │   │       └── descriptor: 'int'
+                │   └── IntegerConstant: '3'
+                │       └── Type
+                │           ├── category: 'basic'
+                │           └── descriptor: 'int'
+                └── IntegerConstant: '101'
+                    └── Type
+                        ├── category: 'basic'
+                        └── descriptor: 'int'
+
+@endtest
+
+@test("It should parse an equality expression with additive RHS (operator precedence)")
+@given("file")
+int main() {
+    1 == 2 + 3;
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        └── ExpressionStatement
+            └── EqualityExpression: '=='
+                ├── Type
+                │   ├── category: 'basic'
+                │   └── descriptor: 'int'
+                ├── IntegerConstant: '1'
+                │   └── Type
+                │       ├── category: 'basic'
+                │       └── descriptor: 'int'
+                └── AdditiveExpression: '+'
+                    ├── Type
+                    │   ├── category: 'basic'
+                    │   └── descriptor: 'int'
+                    ├── IntegerConstant: '2'
+                    │   └── Type
+                    │       ├── category: 'basic'
+                    │       └── descriptor: 'int'
+                    └── IntegerConstant: '3'
+                        └── Type
+                            ├── category: 'basic'
+                            └── descriptor: 'int'
+
+@endtest
+
+@test("It should parse a relational expression with additive RHS (operator precedence)")
+@given("file")
+int main() {
+    1 < 2 + 3;
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        └── ExpressionStatement
+            └── RelationalExpression: '<'
+                ├── Type
+                │   ├── category: 'basic'
+                │   └── descriptor: 'int'
+                ├── IntegerConstant: '1'
+                │   └── Type
+                │       ├── category: 'basic'
+                │       └── descriptor: 'int'
+                └── AdditiveExpression: '+'
+                    ├── Type
+                    │   ├── category: 'basic'
+                    │   └── descriptor: 'int'
+                    ├── IntegerConstant: '2'
+                    │   └── Type
+                    │       ├── category: 'basic'
+                    │       └── descriptor: 'int'
+                    └── IntegerConstant: '3'
+                        └── Type
+                            ├── category: 'basic'
+                            └── descriptor: 'int'
+
+@endtest
+
+@test("It should parse an assignment expression (simple version)")
+@given("file")
+int main() {
+    int x;
+    x = 3;
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        ├── VariableDeclaration: 'x'
+        │   └── Type
+        │       ├── category: 'basic'
+        │       └── descriptor: 'int'
+        └── ExpressionStatement
+            └── AssignmentExpression: '='
+                ├── VariableExpression: 'x'
+                │   └── Type
+                │       ├── category: 'basic'
+                │       └── descriptor: 'int'
+                └── IntegerConstant: '3'
+                    └── Type
+                        ├── category: 'basic'
+                        └── descriptor: 'int'
+
+@endtest
+
+@test("It should parse nested expressions")
+@given("file")
+int main() {
+    77 * (1 + 23);
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        └── ExpressionStatement
+            └── MultiplicativeExpression: '*'
+                ├── Type
+                │   ├── category: 'basic'
+                │   └── descriptor: 'int'
+                ├── IntegerConstant: '77'
+                │   └── Type
+                │       ├── category: 'basic'
+                │       └── descriptor: 'int'
+                └── AdditiveExpression: '+'
+                    ├── Type
+                    │   ├── category: 'basic'
+                    │   └── descriptor: 'int'
+                    ├── IntegerConstant: '1'
+                    │   └── Type
+                    │       ├── category: 'basic'
+                    │       └── descriptor: 'int'
+                    └── IntegerConstant: '23'
+                        └── Type
+                            ├── category: 'basic'
+                            └── descriptor: 'int'
+
+@endtest
+
+@test("It should insert implicit cast on additive expression with mixed signedness")
+@given("file")
+int main() {
+    int x;
+    unsigned int y;
+    x = 1;
+    y = 2;
+    return x + y;
+}
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        ├── VariableDeclaration: 'x'
+        │   └── Type
+        │       ├── category: 'basic'
+        │       └── descriptor: 'int'
+        ├── VariableDeclaration: 'y'
+        │   └── Type
+        │       ├── category: 'basic'
+        │       └── descriptor: 'unsigned int'
+        ├── ExpressionStatement
+        │   └── AssignmentExpression: '='
+        │       ├── VariableExpression: 'x'
+        │       │   └── Type
+        │       │       ├── category: 'basic'
+        │       │       └── descriptor: 'int'
+        │       └── IntegerConstant: '1'
+        │           └── Type
+        │               ├── category: 'basic'
+        │               └── descriptor: 'int'
+        ├── ExpressionStatement
+        │   └── AssignmentExpression: '='
+        │       ├── VariableExpression: 'y'
+        │       │   └── Type
+        │       │       ├── category: 'basic'
+        │       │       └── descriptor: 'unsigned int'
+        │       └── CastExpression
+        │           ├── Type
+        │           │   ├── category: 'basic'
+        │           │   └── descriptor: 'unsigned int'
+        │           └── IntegerConstant: '2'
+        │               └── Type
+        │                   ├── category: 'basic'
+        │                   └── descriptor: 'int'
+        └── ReturnStatement
+            └── CastExpression
+                ├── Type
+                │   ├── category: 'basic'
+                │   └── descriptor: 'int'
+                └── AdditiveExpression: '+'
+                    ├── Type
+                    │   ├── category: 'basic'
+                    │   └── descriptor: 'unsigned int'
+                    ├── CastExpression
+                    │   ├── Type
+                    │   │   ├── category: 'basic'
+                    │   │   └── descriptor: 'unsigned int'
+                    │   └── VariableExpression: 'x'
+                    │       └── Type
+                    │           ├── category: 'basic'
+                    │           └── descriptor: 'int'
+                    └── VariableExpression: 'y'
+                        └── Type
+                            ├── category: 'basic'
+                            └── descriptor: 'unsigned int'
+
+@endtest
+
+@test("It should insert implicit cast on multiplicative expression with mixed signedness")
+@given("file")
+int main() {
+    int x;
+    unsigned int y;
+    x = 1;
+    y = 2;
+    return x * y;
+}
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        ├── VariableDeclaration: 'x'
+        │   └── Type
+        │       ├── category: 'basic'
+        │       └── descriptor: 'int'
+        ├── VariableDeclaration: 'y'
+        │   └── Type
+        │       ├── category: 'basic'
+        │       └── descriptor: 'unsigned int'
+        ├── ExpressionStatement
+        │   └── AssignmentExpression: '='
+        │       ├── VariableExpression: 'x'
+        │       │   └── Type
+        │       │       ├── category: 'basic'
+        │       │       └── descriptor: 'int'
+        │       └── IntegerConstant: '1'
+        │           └── Type
+        │               ├── category: 'basic'
+        │               └── descriptor: 'int'
+        ├── ExpressionStatement
+        │   └── AssignmentExpression: '='
+        │       ├── VariableExpression: 'y'
+        │       │   └── Type
+        │       │       ├── category: 'basic'
+        │       │       └── descriptor: 'unsigned int'
+        │       └── CastExpression
+        │           ├── Type
+        │           │   ├── category: 'basic'
+        │           │   └── descriptor: 'unsigned int'
+        │           └── IntegerConstant: '2'
+        │               └── Type
+        │                   ├── category: 'basic'
+        │                   └── descriptor: 'int'
+        └── ReturnStatement
+            └── CastExpression
+                ├── Type
+                │   ├── category: 'basic'
+                │   └── descriptor: 'int'
+                └── MultiplicativeExpression: '*'
+                    ├── Type
+                    │   ├── category: 'basic'
+                    │   └── descriptor: 'unsigned int'
+                    ├── CastExpression
+                    │   ├── Type
+                    │   │   ├── category: 'basic'
+                    │   │   └── descriptor: 'unsigned int'
+                    │   └── VariableExpression: 'x'
+                    │       └── Type
+                    │           ├── category: 'basic'
+                    │           └── descriptor: 'int'
+                    └── VariableExpression: 'y'
+                        └── Type
+                            ├── category: 'basic'
+                            └── descriptor: 'unsigned int'
+
+@endtest
+
+@test("It should insert implicit cast on relational expression with mixed signedness")
+@given("file")
+int main() {
+    int x;
+    unsigned int y;
+    x = 1;
+    y = 2;
+    int z;
+    z = x < y;
+    return z;
+}
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        ├── VariableDeclaration: 'x'
+        │   └── Type
+        │       ├── category: 'basic'
+        │       └── descriptor: 'int'
+        ├── VariableDeclaration: 'y'
+        │   └── Type
+        │       ├── category: 'basic'
+        │       └── descriptor: 'unsigned int'
+        ├── ExpressionStatement
+        │   └── AssignmentExpression: '='
+        │       ├── VariableExpression: 'x'
+        │       │   └── Type
+        │       │       ├── category: 'basic'
+        │       │       └── descriptor: 'int'
+        │       └── IntegerConstant: '1'
+        │           └── Type
+        │               ├── category: 'basic'
+        │               └── descriptor: 'int'
+        ├── ExpressionStatement
+        │   └── AssignmentExpression: '='
+        │       ├── VariableExpression: 'y'
+        │       │   └── Type
+        │       │       ├── category: 'basic'
+        │       │       └── descriptor: 'unsigned int'
+        │       └── CastExpression
+        │           ├── Type
+        │           │   ├── category: 'basic'
+        │           │   └── descriptor: 'unsigned int'
+        │           └── IntegerConstant: '2'
+        │               └── Type
+        │                   ├── category: 'basic'
+        │                   └── descriptor: 'int'
+        ├── VariableDeclaration: 'z'
+        │   └── Type
+        │       ├── category: 'basic'
+        │       └── descriptor: 'int'
+        ├── ExpressionStatement
+        │   └── AssignmentExpression: '='
+        │       ├── VariableExpression: 'z'
+        │       │   └── Type
+        │       │       ├── category: 'basic'
+        │       │       └── descriptor: 'int'
+        │       └── CastExpression
+        │           ├── Type
+        │           │   ├── category: 'basic'
+        │           │   └── descriptor: 'int'
+        │           └── RelationalExpression: '<'
+        │               ├── Type
+        │               │   ├── category: 'basic'
+        │               │   └── descriptor: 'unsigned int'
+        │               ├── CastExpression
+        │               │   ├── Type
+        │               │   │   ├── category: 'basic'
+        │               │   │   └── descriptor: 'unsigned int'
+        │               │   └── VariableExpression: 'x'
+        │               │       └── Type
+        │               │           ├── category: 'basic'
+        │               │           └── descriptor: 'int'
+        │               └── VariableExpression: 'y'
+        │                   └── Type
+        │                       ├── category: 'basic'
+        │                       └── descriptor: 'unsigned int'
+        └── ReturnStatement
+            └── VariableExpression: 'z'
+                └── Type
+                    ├── category: 'basic'
+                    └── descriptor: 'int'
+
+@endtest
+
+@test("It should insert implicit cast on equality expression with mixed signedness")
+@given("file")
+int main() {
+    int x;
+    unsigned int y;
+    x = 1;
+    y = 2;
+    int z;
+    z = x == y;
+    return z;
+}
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        ├── VariableDeclaration: 'x'
+        │   └── Type
+        │       ├── category: 'basic'
+        │       └── descriptor: 'int'
+        ├── VariableDeclaration: 'y'
+        │   └── Type
+        │       ├── category: 'basic'
+        │       └── descriptor: 'unsigned int'
+        ├── ExpressionStatement
+        │   └── AssignmentExpression: '='
+        │       ├── VariableExpression: 'x'
+        │       │   └── Type
+        │       │       ├── category: 'basic'
+        │       │       └── descriptor: 'int'
+        │       └── IntegerConstant: '1'
+        │           └── Type
+        │               ├── category: 'basic'
+        │               └── descriptor: 'int'
+        ├── ExpressionStatement
+        │   └── AssignmentExpression: '='
+        │       ├── VariableExpression: 'y'
+        │       │   └── Type
+        │       │       ├── category: 'basic'
+        │       │       └── descriptor: 'unsigned int'
+        │       └── CastExpression
+        │           ├── Type
+        │           │   ├── category: 'basic'
+        │           │   └── descriptor: 'unsigned int'
+        │           └── IntegerConstant: '2'
+        │               └── Type
+        │                   ├── category: 'basic'
+        │                   └── descriptor: 'int'
+        ├── VariableDeclaration: 'z'
+        │   └── Type
+        │       ├── category: 'basic'
+        │       └── descriptor: 'int'
+        ├── ExpressionStatement
+        │   └── AssignmentExpression: '='
+        │       ├── VariableExpression: 'z'
+        │       │   └── Type
+        │       │       ├── category: 'basic'
+        │       │       └── descriptor: 'int'
+        │       └── CastExpression
+        │           ├── Type
+        │           │   ├── category: 'basic'
+        │           │   └── descriptor: 'int'
+        │           └── EqualityExpression: '=='
+        │               ├── Type
+        │               │   ├── category: 'basic'
+        │               │   └── descriptor: 'unsigned int'
+        │               ├── CastExpression
+        │               │   ├── Type
+        │               │   │   ├── category: 'basic'
+        │               │   │   └── descriptor: 'unsigned int'
+        │               │   └── VariableExpression: 'x'
+        │               │       └── Type
+        │               │           ├── category: 'basic'
+        │               │           └── descriptor: 'int'
+        │               └── VariableExpression: 'y'
+        │                   └── Type
+        │                       ├── category: 'basic'
+        │                       └── descriptor: 'unsigned int'
+        └── ReturnStatement
+            └── VariableExpression: 'z'
+                └── Type
+                    ├── category: 'basic'
+                    └── descriptor: 'int'
+
+@endtest
+
+@test("It should allow additive expression with same unsigned type")
+@given("file")
+unsigned int foo() {
+    unsigned int x;
+    unsigned int y;
+    x = 1;
+    y = 2;
+    return x + y;
+}
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+└── FunctionDefinition: 'foo' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'unsigned int'
+    └── CompoundStatement
+        ├── VariableDeclaration: 'x'
+        │   └── Type
+        │       ├── category: 'basic'
+        │       └── descriptor: 'unsigned int'
+        ├── VariableDeclaration: 'y'
+        │   └── Type
+        │       ├── category: 'basic'
+        │       └── descriptor: 'unsigned int'
+        ├── ExpressionStatement
+        │   └── AssignmentExpression: '='
+        │       ├── VariableExpression: 'x'
+        │       │   └── Type
+        │       │       ├── category: 'basic'
+        │       │       └── descriptor: 'unsigned int'
+        │       └── CastExpression
+        │           ├── Type
+        │           │   ├── category: 'basic'
+        │           │   └── descriptor: 'unsigned int'
+        │           └── IntegerConstant: '1'
+        │               └── Type
+        │                   ├── category: 'basic'
+        │                   └── descriptor: 'int'
+        ├── ExpressionStatement
+        │   └── AssignmentExpression: '='
+        │       ├── VariableExpression: 'y'
+        │       │   └── Type
+        │       │       ├── category: 'basic'
+        │       │       └── descriptor: 'unsigned int'
+        │       └── CastExpression
+        │           ├── Type
+        │           │   ├── category: 'basic'
+        │           │   └── descriptor: 'unsigned int'
+        │           └── IntegerConstant: '2'
+        │               └── Type
+        │                   ├── category: 'basic'
+        │                   └── descriptor: 'int'
+        └── ReturnStatement
+            └── AdditiveExpression: '+'
+                ├── Type
+                │   ├── category: 'basic'
+                │   └── descriptor: 'unsigned int'
+                ├── VariableExpression: 'x'
+                │   └── Type
+                │       ├── category: 'basic'
+                │       └── descriptor: 'unsigned int'
+                └── VariableExpression: 'y'
+                    └── Type
+                        ├── category: 'basic'
+                        └── descriptor: 'unsigned int'
+
+@endtest
+
+@test("It should parse an unsigned integer constant with u suffix")
+@given("file")
+unsigned int main() {
+    return 42u;
+}
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'unsigned int'
+    └── CompoundStatement
+        └── ReturnStatement
+            └── IntegerConstant: '42'
+                └── Type
+                    ├── category: 'basic'
+                    └── descriptor: 'unsigned int'
+
+@endtest
+
+@test("It should parse unsigned constants in expressions without implicit cast")
+@given("file")
+unsigned int main() {
+    unsigned int x;
+    x = 10u;
+    return x + 5u;
+}
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'unsigned int'
+    └── CompoundStatement
+        ├── VariableDeclaration: 'x'
+        │   └── Type
+        │       ├── category: 'basic'
+        │       └── descriptor: 'unsigned int'
+        ├── ExpressionStatement
+        │   └── AssignmentExpression: '='
+        │       ├── VariableExpression: 'x'
+        │       │   └── Type
+        │       │       ├── category: 'basic'
+        │       │       └── descriptor: 'unsigned int'
+        │       └── IntegerConstant: '10'
+        │           └── Type
+        │               ├── category: 'basic'
+        │               └── descriptor: 'unsigned int'
+        └── ReturnStatement
+            └── AdditiveExpression: '+'
+                ├── Type
+                │   ├── category: 'basic'
+                │   └── descriptor: 'unsigned int'
+                ├── VariableExpression: 'x'
+                │   └── Type
+                │       ├── category: 'basic'
+                │       └── descriptor: 'unsigned int'
+                └── IntegerConstant: '5'
+                    └── Type
+                        ├── category: 'basic'
+                        └── descriptor: 'unsigned int'
+
+@endtest

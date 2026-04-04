@@ -210,7 +210,11 @@ void read_number(struct tokenizer_context * ctx, struct source * source, struct 
         ch = source_get_char(source);
 
         if (!isdigit(ch) && ch != '.') {
-            if (ch != EOF) source_unget_char(source, ch);
+            if (ch == 'u' || ch == 'U') {
+                token->flags |= TOKEN_FLAG_IS_UNSIGNED;
+            } else {
+                if (ch != EOF) source_unget_char(source, ch);
+            }
             break;
         }
     }
@@ -221,19 +225,15 @@ void read_number(struct tokenizer_context * ctx, struct source * source, struct 
     token->span.position.line = span_line;
     token->span.position.column = span_column;
 
-    size_t dot_count = 0;
     const char * ptr = source->content + span_start;
     for (uint32_t i = 0; i < token->span.length; ++i) {
-        if (ptr[i] == '.')
-            ++dot_count;
-    }
+        if (ptr[i] == 'u' || ptr[i] == 'U') {
+            continue;
+        }
 
-    if (dot_count > 1) {
-        cclynx_fatal_error("ERROR: incorrect number '%.*s'\n", token->span.length, ptr);
-    }
-
-    if (dot_count > 0) {
-        token->flags |= TOKEN_FLAG_IS_FLOAT;
+        if (ptr[i] == '.') {
+            cclynx_fatal_error("ERROR: float literals are not supported\n");
+        }
     }
 }
 
@@ -279,7 +279,7 @@ const char * token_stringify(const struct token * token)
 
     switch (token->kind) {
         case TOKEN_KIND_IDENTIFIER:
-            if (token->identifier->is_keyword) {
+            if (token->identifier->keyword_code != KEYWORD_NONE) {
                 snprintf(buffer, sizeof(buffer), "keyword '%s'", token->identifier->name);
             } else {
                 snprintf(buffer, sizeof(buffer), "identifier '%s'", token->identifier->name);

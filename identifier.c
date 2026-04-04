@@ -12,14 +12,15 @@
 static struct keyword
 {
     const char * name;
+    enum keyword_code code;
 } keywords[] = {
-    {"int"},
-    {"float"},
-    {"void"},
-    {"return"},
-    {"while"},
-    {"if"},
-    {"else"},
+    {"int",         KEYWORD_INT},
+    {"void",        KEYWORD_VOID},
+    {"return",      KEYWORD_RETURN},
+    {"while",       KEYWORD_WHILE},
+    {"if",          KEYWORD_IF},
+    {"else",        KEYWORD_ELSE},
+    {"unsigned",    KEYWORD_UNSIGNED}
 };
 
 
@@ -71,7 +72,7 @@ void init_keywords(struct hashmap * identifier_table, struct memory_blob_pool * 
         const struct keyword * keyword = &keywords[i];
 
         struct identifier * identifier = identifier_create(identifier_table, pool, keyword->name);
-        identifier->is_keyword = 1;
+        identifier->keyword_code = keyword->code;
     }
 }
 

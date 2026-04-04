@@ -237,23 +237,8 @@ void do_generate_ir(struct ir_context * ctx, struct ir_program * program, const 
             break;
         case AST_NODE_KIND_CAST_EXPRESSION:
             {
-                enum opcode cast_opcode = OP_NOP;
-
-                if (node->type->kind == TYPE_KIND_INTEGER) {
-                    cast_opcode = OP_INT_CAST;
-                } else if (node->type->kind == TYPE_KIND_FLOAT) {
-                    cast_opcode = OP_FLOAT_CAST;
-                } else {
-                    cclynx_fatal_error("ERROR: unsupported cast to '%s' yet!\n", type_stringify(node->type));
-                }
-
                 do_generate_ir(ctx, program, node->content.node);
-
-                struct ir_instruction * instruction = ir_create_instruction(ctx, cast_opcode);
-                instruction->op1 = program->instructions[program->position - 1]->result;
-                instruction->result = new_temporary_operand(ctx);
-
-                ir_emit(program, instruction);
+                /* integer-to-integer casts (signedness change) are no-ops at IR level */
             }
             break;
         case AST_NODE_KIND_ASSIGNMENT_EXPRESSION:
@@ -296,19 +281,19 @@ void do_generate_ir(struct ir_context * ctx, struct ir_program * program, const 
                         instruction->code = OP_MUL;
                         break;
                     case BINARY_OPERATION_DIVIDE:
-                        instruction->code = OP_DIV;
+                        instruction->code = type_is_unsigned(node->type) ? OP_UNSIGNED_DIV : OP_DIV;
                         break;
                     case BINARY_OPERATION_EQUALITY:
-                        instruction->code = OP_IS_EQUAL;
+                        instruction->code = OP_EQ;
                         break;
                     case BINARY_OPERATION_INEQUALITY:
-                        instruction->code = OP_IS_NOT_EQUAL;
+                        instruction->code = OP_NE;
                         break;
                     case BINARY_OPERATION_LESS_THAN:
-                        instruction->code = OP_IS_LESS_THAN;
+                        instruction->code = type_is_unsigned(node->type) ? OP_UNSIGNED_LT : OP_LT;
                         break;
                     case BINARY_OPERATION_GREATER_THAN:
-                        instruction->code = OP_IS_GREATER_THAN;
+                        instruction->code = type_is_unsigned(node->type) ? OP_UNSIGNED_GT : OP_GT;
                         break;
                     case BINARY_OPERATION_ADDITION:
                         instruction->code = OP_ADD;
@@ -360,18 +345,12 @@ void do_generate_ir(struct ir_context * ctx, struct ir_program * program, const 
             }
             break;
         case AST_NODE_KIND_INTEGER_CONSTANT_EXPRESSION:
-        case AST_NODE_KIND_FLOAT_CONSTANT_EXPRESSION:
             {
                 struct ir_instruction * instruction = ir_create_instruction(ctx, OP_CONST);
 
                 struct ir_operand * constant = ir_create_operand(ctx, OPERAND_KIND_CONSTANT);
                 constant->type = node->type;
-
-                if (constant->type->kind == TYPE_KIND_INTEGER) {
-                    constant->content.int_value = node->content.constant.value.integer_constant;
-                } else if (constant->type->kind == TYPE_KIND_FLOAT) {
-                    constant->content.float_value = node->content.constant.value.float_constant;
-                }
+                constant->content.int_value = node->content.constant.value;
 
                 instruction->op1 = constant;
                 instruction->result = new_temporary_operand(ctx);
@@ -497,7 +476,8 @@ void ir_generate_condition(struct ir_context * ctx, struct ir_program * program,
         do_generate_ir(ctx, program, condition->content.binary_expression.rhs);
         op2 = program->instructions[program->position - 1]->result;
 
-        struct ir_instruction * instruction = ir_create_instruction(ctx, OP_JUMP_IF_GREATER_THAN_OR_EQUAL);
+        enum opcode jump_op = type_is_unsigned(condition->type) ? OP_JUMP_IF_UNSIGNED_GTE : OP_JUMP_IF_GTE;
+        struct ir_instruction * instruction = ir_create_instruction(ctx, jump_op);
         instruction->op1 = op1;
         instruction->op2 = op2;
         instruction->result = jump_label;
@@ -512,7 +492,8 @@ void ir_generate_condition(struct ir_context * ctx, struct ir_program * program,
         do_generate_ir(ctx, program, condition->content.binary_expression.rhs);
         op2 = program->instructions[program->position - 1]->result;
 
-        struct ir_instruction * instruction = ir_create_instruction(ctx, OP_JUMP_IF_LESS_THAN_OR_EQUAL);
+        enum opcode jump_op = type_is_unsigned(condition->type) ? OP_JUMP_IF_UNSIGNED_LTE : OP_JUMP_IF_LTE;
+        struct ir_instruction * instruction = ir_create_instruction(ctx, jump_op);
         instruction->op1 = op1;
         instruction->op2 = op2;
         instruction->result = jump_label;
@@ -527,7 +508,7 @@ void ir_generate_condition(struct ir_context * ctx, struct ir_program * program,
         do_generate_ir(ctx, program, condition->content.binary_expression.rhs);
         op2 = program->instructions[program->position - 1]->result;
 
-        struct ir_instruction * instruction = ir_create_instruction(ctx, OP_JUMP_IF_NOT_EQUAL);
+        struct ir_instruction * instruction = ir_create_instruction(ctx, OP_JUMP_IF_NE);
         instruction->op1 = op1;
         instruction->op2 = op2;
         instruction->result = jump_label;
@@ -542,7 +523,7 @@ void ir_generate_condition(struct ir_context * ctx, struct ir_program * program,
         do_generate_ir(ctx, program, condition->content.binary_expression.rhs);
         op2 = program->instructions[program->position - 1]->result;
 
-        struct ir_instruction * instruction = ir_create_instruction(ctx, OP_JUMP_IF_EQUAL);
+        struct ir_instruction * instruction = ir_create_instruction(ctx, OP_JUMP_IF_EQ);
         instruction->op1 = op1;
         instruction->op2 = op2;
         instruction->result = jump_label;

@@ -20,7 +20,9 @@ struct parser_context
     struct scope * current_scope;
     const char * source_filename;
     struct error_list errors;
+    struct symbol * current_function;
     bool has_error;
+    bool suppress_warnings;
 };
 
 void parser_init_context(struct parser_context * ctx, struct token * tokens, struct memory_blob_pool * pool, struct scope * file_scope, const char * source_filename);

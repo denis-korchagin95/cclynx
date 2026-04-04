@@ -1,0 +1,535 @@
+@test("It should parse main function with void argument list")
+@given("file")
+int main(void) {
+    return 42;
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+└── FunctionDefinition: 'main' <no-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        └── ReturnStatement
+            └── IntegerConstant: '42'
+                └── Type
+                    ├── category: 'basic'
+                    └── descriptor: 'int'
+
+@endtest
+
+@test("It should parse main function (with basic expression)")
+@given("file")
+int main() {
+    7 * 8;
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        └── ExpressionStatement
+            └── MultiplicativeExpression: '*'
+                ├── Type
+                │   ├── category: 'basic'
+                │   └── descriptor: 'int'
+                ├── IntegerConstant: '7'
+                │   └── Type
+                │       ├── category: 'basic'
+                │       └── descriptor: 'int'
+                └── IntegerConstant: '8'
+                    └── Type
+                        ├── category: 'basic'
+                        └── descriptor: 'int'
+
+@endtest
+
+@test("It should parse main function (with two variable declarations x and y)")
+@given("file")
+int main() {
+    int x;
+    int y;
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        ├── VariableDeclaration: 'x'
+        │   └── Type
+        │       ├── category: 'basic'
+        │       └── descriptor: 'int'
+        └── VariableDeclaration: 'y'
+            └── Type
+                ├── category: 'basic'
+                └── descriptor: 'int'
+
+@endtest
+
+@test("It should parse main function with return expression")
+@given("file")
+int main() {
+    return 7;
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        └── ReturnStatement
+            └── IntegerConstant: '7'
+                └── Type
+                    ├── category: 'basic'
+                    └── descriptor: 'int'
+
+@endtest
+
+@test("It should parse main function with return (empty expression)")
+@given("file")
+int main() {
+    return;
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        └── ReturnStatement
+
+@endtest
+
+@test("It should parse main function with return variable")
+@given("file")
+int main() {
+    int result;
+    result = 1;
+    return result;
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        ├── VariableDeclaration: 'result'
+        │   └── Type
+        │       ├── category: 'basic'
+        │       └── descriptor: 'int'
+        ├── ExpressionStatement
+        │   └── AssignmentExpression: '='
+        │       ├── VariableExpression: 'result'
+        │       │   └── Type
+        │       │       ├── category: 'basic'
+        │       │       └── descriptor: 'int'
+        │       └── IntegerConstant: '1'
+        │           └── Type
+        │               ├── category: 'basic'
+        │               └── descriptor: 'int'
+        └── ReturnStatement
+            └── VariableExpression: 'result'
+                └── Type
+                    ├── category: 'basic'
+                    └── descriptor: 'int'
+
+@endtest
+
+@test("It should parse multiple function definitions")
+@given("file")
+int foo() {
+    return 1;
+}
+
+int bar() {
+    return 2;
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+├── FunctionDefinition: 'foo' <unspecified-parameters>
+│   ├── ReturnType
+│   │   ├── category: 'basic'
+│   │   └── descriptor: 'int'
+│   └── CompoundStatement
+│       └── ReturnStatement
+│           └── IntegerConstant: '1'
+│               └── Type
+│                   ├── category: 'basic'
+│                   └── descriptor: 'int'
+└── FunctionDefinition: 'bar' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        └── ReturnStatement
+            └── IntegerConstant: '2'
+                └── Type
+                    ├── category: 'basic'
+                    └── descriptor: 'int'
+
+@endtest
+
+@test("It should parse multiple functions with same variable names in different scopes")
+@given("file")
+int foo() {
+    int x;
+    return x;
+}
+
+int bar() {
+    int x;
+    return x;
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+├── FunctionDefinition: 'foo' <unspecified-parameters>
+│   ├── ReturnType
+│   │   ├── category: 'basic'
+│   │   └── descriptor: 'int'
+│   └── CompoundStatement
+│       ├── VariableDeclaration: 'x'
+│       │   └── Type
+│       │       ├── category: 'basic'
+│       │       └── descriptor: 'int'
+│       └── ReturnStatement
+│           └── VariableExpression: 'x'
+│               └── Type
+│                   ├── category: 'basic'
+│                   └── descriptor: 'int'
+└── FunctionDefinition: 'bar' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        ├── VariableDeclaration: 'x'
+        │   └── Type
+        │       ├── category: 'basic'
+        │       └── descriptor: 'int'
+        └── ReturnStatement
+            └── VariableExpression: 'x'
+                └── Type
+                    ├── category: 'basic'
+                    └── descriptor: 'int'
+
+@endtest
+
+@test("It should parse function with 1 parameter")
+@given("file")
+int identity(int a) {
+    return a;
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+└── FunctionDefinition: 'identity' <1-parameter>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    ├── ParameterList
+    │   └── Parameter: 'a'
+    │       └── Type
+    │           ├── category: 'basic'
+    │           └── descriptor: 'int'
+    └── CompoundStatement
+        └── ReturnStatement
+            └── VariableExpression: 'a'
+                └── Type
+                    ├── category: 'basic'
+                    └── descriptor: 'int'
+
+@endtest
+
+@test("It should parse function with 2 parameters")
+@given("file")
+int add(int a, int b) {
+    return a + b;
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+└── FunctionDefinition: 'add' <2-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    ├── ParameterList
+    │   ├── Parameter: 'a'
+    │   │   └── Type
+    │   │       ├── category: 'basic'
+    │   │       └── descriptor: 'int'
+    │   └── Parameter: 'b'
+    │       └── Type
+    │           ├── category: 'basic'
+    │           └── descriptor: 'int'
+    └── CompoundStatement
+        └── ReturnStatement
+            └── AdditiveExpression: '+'
+                ├── Type
+                │   ├── category: 'basic'
+                │   └── descriptor: 'int'
+                ├── VariableExpression: 'a'
+                │   └── Type
+                │       ├── category: 'basic'
+                │       └── descriptor: 'int'
+                └── VariableExpression: 'b'
+                    └── Type
+                        ├── category: 'basic'
+                        └── descriptor: 'int'
+
+@endtest
+
+@test("It should parse function with 3 parameters")
+@given("file")
+int foo(int a, int b, int c) {
+    return a + b * c;
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+└── FunctionDefinition: 'foo' <3-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    ├── ParameterList
+    │   ├── Parameter: 'a'
+    │   │   └── Type
+    │   │       ├── category: 'basic'
+    │   │       └── descriptor: 'int'
+    │   ├── Parameter: 'b'
+    │   │   └── Type
+    │   │       ├── category: 'basic'
+    │   │       └── descriptor: 'int'
+    │   └── Parameter: 'c'
+    │       └── Type
+    │           ├── category: 'basic'
+    │           └── descriptor: 'int'
+    └── CompoundStatement
+        └── ReturnStatement
+            └── AdditiveExpression: '+'
+                ├── Type
+                │   ├── category: 'basic'
+                │   └── descriptor: 'int'
+                ├── VariableExpression: 'a'
+                │   └── Type
+                │       ├── category: 'basic'
+                │       └── descriptor: 'int'
+                └── MultiplicativeExpression: '*'
+                    ├── Type
+                    │   ├── category: 'basic'
+                    │   └── descriptor: 'int'
+                    ├── VariableExpression: 'b'
+                    │   └── Type
+                    │       ├── category: 'basic'
+                    │       └── descriptor: 'int'
+                    └── VariableExpression: 'c'
+                        └── Type
+                            ├── category: 'basic'
+                            └── descriptor: 'int'
+
+@endtest
+
+@test("It should parse function with unsigned int return type")
+@given("file")
+unsigned int foo() {
+    return 42;
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+└── FunctionDefinition: 'foo' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'unsigned int'
+    └── CompoundStatement
+        └── ReturnStatement
+            └── CastExpression
+                ├── Type
+                │   ├── category: 'basic'
+                │   └── descriptor: 'unsigned int'
+                └── IntegerConstant: '42'
+                    └── Type
+                        ├── category: 'basic'
+                        └── descriptor: 'int'
+
+@endtest
+
+@test("It should parse function with unsigned return type (implicit int)")
+@given("file")
+unsigned foo() {
+    return 42;
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+└── FunctionDefinition: 'foo' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'unsigned int'
+    └── CompoundStatement
+        └── ReturnStatement
+            └── CastExpression
+                ├── Type
+                │   ├── category: 'basic'
+                │   └── descriptor: 'unsigned int'
+                └── IntegerConstant: '42'
+                    └── Type
+                        ├── category: 'basic'
+                        └── descriptor: 'int'
+
+@endtest
+
+@test("It should parse function with unsigned int parameter")
+@given("file")
+int foo(unsigned int a) {
+    return a;
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+└── FunctionDefinition: 'foo' <1-parameter>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    ├── ParameterList
+    │   └── Parameter: 'a'
+    │       └── Type
+    │           ├── category: 'basic'
+    │           └── descriptor: 'unsigned int'
+    └── CompoundStatement
+        └── ReturnStatement
+            └── CastExpression
+                ├── Type
+                │   ├── category: 'basic'
+                │   └── descriptor: 'int'
+                └── VariableExpression: 'a'
+                    └── Type
+                        ├── category: 'basic'
+                        └── descriptor: 'unsigned int'
+
+@endtest
+
+@test("It should raise an error on function redefinition")
+@given("file")
+int foo() {
+    return 1;
+}
+
+int foo() {
+    return 2;
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stderr")
+{{any}}:5:5: ERROR: function 'foo' already defined
+
+@endtest
+
+@test("It should raise an error when function name is a keyword")
+@given("file")
+int while() {
+    return 1;
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stderr")
+{{any}}:1:5: ERROR: expected identifier but got keyword 'while'
+
+@endtest
+
+@test("It should raise an error when parameter type is not a type specifier")
+@given("file")
+int foo(bar a) {
+    return a;
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stderr")
+{{any}}:1:9: ERROR: expected type specifier but got identifier 'bar'
+{{any}}:1:9: ERROR: expected ')' but got identifier 'bar'
+
+@endtest
+
+@test("It should raise an error when parameter name is missing after type")
+@given("file")
+int foo(int) {
+    return 0;
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stderr")
+{{any}}:1:12: ERROR: expected identifier but got ')'
+
+@endtest
+
+@test("It should raise an error when parameter name is a keyword")
+@given("file")
+int foo(int return) {
+    return 0;
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stderr")
+{{any}}:1:13: ERROR: expected identifier but got keyword 'return'
+
+@endtest
+
+@test("It should raise an error when too many parameters")
+@given("file")
+int foo(int a, int b, int c, int d) {
+    return 0;
+}
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings")
+@expectOutput("stderr")
+{{any}}:1:28: ERROR: too many parameters, maximum is 3
+
+@endtest
+
+@test("It should insert implicit cast on return when signedness differs")
+@given("file")
+unsigned int foo() {
+    int x;
+    x = 1;
+    return x;
+}
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+└── FunctionDefinition: 'foo' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'unsigned int'
+    └── CompoundStatement
+        ├── VariableDeclaration: 'x'
+        │   └── Type
+        │       ├── category: 'basic'
+        │       └── descriptor: 'int'
+        ├── ExpressionStatement
+        │   └── AssignmentExpression: '='
+        │       ├── VariableExpression: 'x'
+        │       │   └── Type
+        │       │       ├── category: 'basic'
+        │       │       └── descriptor: 'int'
+        │       └── IntegerConstant: '1'
+        │           └── Type
+        │               ├── category: 'basic'
+        │               └── descriptor: 'int'
+        └── ReturnStatement
+            └── CastExpression
+                ├── Type
+                │   ├── category: 'basic'
+                │   └── descriptor: 'unsigned int'
+                └── VariableExpression: 'x'
+                    └── Type
+                        ├── category: 'basic'
+                        └── descriptor: 'int'
+
+@endtest

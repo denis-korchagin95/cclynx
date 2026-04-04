@@ -1,0 +1,482 @@
+@test("It should raise an error on variable redeclaration")
+@given("file")
+int main() {
+    int result;
+    int result;
+}
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings")
+@expectOutput("stderr")
+{{any}}:3:9: ERROR: variable 'result' already declared
+
+@endtest
+
+@test("It should raise an error when name of the variable is keyword")
+@given("file")
+int main() {
+    int while;
+}
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings")
+@expectOutput("stderr")
+{{any}}:2:9: ERROR: expected identifier but got keyword 'while'
+
+@endtest
+
+@test("It should raise an error when trying to use undeclared variable")
+@given("file")
+int main() {
+    int result;
+    result = x + 1;
+}
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings")
+@expectOutput("stderr")
+{{any}}:3:14: ERROR: undeclared variable 'x'
+
+@endtest
+
+@test("It should raise an error when trying to use keyword as variable")
+@given("file")
+int main() {
+    int result;
+    result = int + 1;
+}
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings")
+@expectOutput("stderr")
+{{any}}:3:14: ERROR: expected identifier but got keyword 'int'
+
+@endtest
+
+@test("It should allow the same variable name in two different function bodies")
+@given("file")
+int foo() {
+    int x;
+    x = 1;
+    return x;
+}
+
+int bar() {
+    int x;
+    x = 2;
+    return x;
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+├── FunctionDefinition: 'foo' <unspecified-parameters>
+│   ├── ReturnType
+│   │   ├── category: 'basic'
+│   │   └── descriptor: 'int'
+│   └── CompoundStatement
+│       ├── VariableDeclaration: 'x'
+│       │   └── Type
+│       │       ├── category: 'basic'
+│       │       └── descriptor: 'int'
+│       ├── ExpressionStatement
+│       │   └── AssignmentExpression: '='
+│       │       ├── VariableExpression: 'x'
+│       │       │   └── Type
+│       │       │       ├── category: 'basic'
+│       │       │       └── descriptor: 'int'
+│       │       └── IntegerConstant: '1'
+│       │           └── Type
+│       │               ├── category: 'basic'
+│       │               └── descriptor: 'int'
+│       └── ReturnStatement
+│           └── VariableExpression: 'x'
+│               └── Type
+│                   ├── category: 'basic'
+│                   └── descriptor: 'int'
+└── FunctionDefinition: 'bar' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        ├── VariableDeclaration: 'x'
+        │   └── Type
+        │       ├── category: 'basic'
+        │       └── descriptor: 'int'
+        ├── ExpressionStatement
+        │   └── AssignmentExpression: '='
+        │       ├── VariableExpression: 'x'
+        │       │   └── Type
+        │       │       ├── category: 'basic'
+        │       │       └── descriptor: 'int'
+        │       └── IntegerConstant: '2'
+        │           └── Type
+        │               ├── category: 'basic'
+        │               └── descriptor: 'int'
+        └── ReturnStatement
+            └── VariableExpression: 'x'
+                └── Type
+                    ├── category: 'basic'
+                    └── descriptor: 'int'
+
+@endtest
+
+@test("It should raise an error when variable is not visible outside its block")
+@given("file")
+int main() {
+    int x;
+    x = 1;
+    {
+        int y;
+        y = 2;
+    }
+    x = y;
+    return x;
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stderr")
+{{any}}:8:9: ERROR: undeclared variable 'y'
+
+@endtest
+
+@test("It should allow outer variable to be visible inside nested block")
+@given("file")
+int main() {
+    int x;
+    x = 1;
+    {
+        x = 2;
+    }
+    return x;
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        ├── VariableDeclaration: 'x'
+        │   └── Type
+        │       ├── category: 'basic'
+        │       └── descriptor: 'int'
+        ├── ExpressionStatement
+        │   └── AssignmentExpression: '='
+        │       ├── VariableExpression: 'x'
+        │       │   └── Type
+        │       │       ├── category: 'basic'
+        │       │       └── descriptor: 'int'
+        │       └── IntegerConstant: '1'
+        │           └── Type
+        │               ├── category: 'basic'
+        │               └── descriptor: 'int'
+        ├── CompoundStatement
+        │   └── ExpressionStatement
+        │       └── AssignmentExpression: '='
+        │           ├── VariableExpression: 'x'
+        │           │   └── Type
+        │           │       ├── category: 'basic'
+        │           │       └── descriptor: 'int'
+        │           └── IntegerConstant: '2'
+        │               └── Type
+        │                   ├── category: 'basic'
+        │                   └── descriptor: 'int'
+        └── ReturnStatement
+            └── VariableExpression: 'x'
+                └── Type
+                    ├── category: 'basic'
+                    └── descriptor: 'int'
+
+@endtest
+
+@test("It should raise an error on variable redeclaration in nested block")
+@given("file")
+int main() {
+    {
+        int y;
+        int y;
+    }
+    return 0;
+}
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings")
+@expectOutput("stderr")
+{{any}}:4:13: ERROR: variable 'y' already declared
+
+@endtest
+
+@test("It should raise an error when variable from sibling block is not visible")
+@given("file")
+int main() {
+    {
+        int y;
+        y = 1;
+    }
+    {
+        y = 2;
+    }
+    return 0;
+}
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings")
+@expectOutput("stderr")
+{{any}}:7:9: ERROR: undeclared variable 'y'
+
+@endtest
+
+@test("It should allow variable shadowing in nested block")
+@given("file")
+int main() {
+    int x;
+    x = 1;
+    {
+        int x;
+        x = 2;
+    }
+    return x;
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        ├── VariableDeclaration: 'x'
+        │   └── Type
+        │       ├── category: 'basic'
+        │       └── descriptor: 'int'
+        ├── ExpressionStatement
+        │   └── AssignmentExpression: '='
+        │       ├── VariableExpression: 'x'
+        │       │   └── Type
+        │       │       ├── category: 'basic'
+        │       │       └── descriptor: 'int'
+        │       └── IntegerConstant: '1'
+        │           └── Type
+        │               ├── category: 'basic'
+        │               └── descriptor: 'int'
+        ├── CompoundStatement
+        │   ├── VariableDeclaration: 'x'
+        │   │   └── Type
+        │   │       ├── category: 'basic'
+        │   │       └── descriptor: 'int'
+        │   └── ExpressionStatement
+        │       └── AssignmentExpression: '='
+        │           ├── VariableExpression: 'x'
+        │           │   └── Type
+        │           │       ├── category: 'basic'
+        │           │       └── descriptor: 'int'
+        │           └── IntegerConstant: '2'
+        │               └── Type
+        │                   ├── category: 'basic'
+        │                   └── descriptor: 'int'
+        └── ReturnStatement
+            └── VariableExpression: 'x'
+                └── Type
+                    ├── category: 'basic'
+                    └── descriptor: 'int'
+
+@endtest
+
+@test("It should parse an implicitly signed integer variable")
+@given("file")
+int main() {
+    int x;
+    return 0;
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        ├── VariableDeclaration: 'x'
+        │   └── Type
+        │       ├── category: 'basic'
+        │       └── descriptor: 'int'
+        └── ReturnStatement
+            └── IntegerConstant: '0'
+                └── Type
+                    ├── category: 'basic'
+                    └── descriptor: 'int'
+
+@endtest
+
+@test("It should parse an explicitly unsigned integer variable")
+@given("file")
+int main() {
+    unsigned int x;
+    return 0;
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        ├── VariableDeclaration: 'x'
+        │   └── Type
+        │       ├── category: 'basic'
+        │       └── descriptor: 'unsigned int'
+        └── ReturnStatement
+            └── IntegerConstant: '0'
+                └── Type
+                    ├── category: 'basic'
+                    └── descriptor: 'int'
+
+@endtest
+
+@test("It should parse unsigned as an integer variable by default")
+@given("file")
+int main() {
+    unsigned x;
+    return 0;
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        ├── VariableDeclaration: 'x'
+        │   └── Type
+        │       ├── category: 'basic'
+        │       └── descriptor: 'unsigned int'
+        └── ReturnStatement
+            └── IntegerConstant: '0'
+                └── Type
+                    ├── category: 'basic'
+                    └── descriptor: 'int'
+
+@endtest
+
+@test("It should show an error if unsigned duplicates more than one time")
+@given("file")
+int main() {
+    unsigned unsigned int x;
+    return 0;
+}
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings")
+@expectOutput("stderr")
+{{any}}:2:14: ERROR: duplicate 'unsigned' keyword
+
+@endtest
+
+@test("It should raise an error when unsigned is applied to void")
+@given("file")
+unsigned void foo() {
+    return;
+}
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings")
+@expectOutput("stderr")
+{{any}}:1:10: ERROR: 'unsigned' cannot be applied to 'void'
+
+@endtest
+
+@test("It should raise an error on void variable declaration")
+@given("file")
+int main() {
+    void x;
+    return 0;
+}
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings")
+@expectOutput("stderr")
+{{any}}:2:10: ERROR: variable cannot have 'void' type
+
+@endtest
+
+@test("It should insert implicit cast on assignment from unsigned to signed")
+@given("file")
+int main() {
+    int x;
+    x = 42u;
+    return x;
+}
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        ├── VariableDeclaration: 'x'
+        │   └── Type
+        │       ├── category: 'basic'
+        │       └── descriptor: 'int'
+        ├── ExpressionStatement
+        │   └── AssignmentExpression: '='
+        │       ├── VariableExpression: 'x'
+        │       │   └── Type
+        │       │       ├── category: 'basic'
+        │       │       └── descriptor: 'int'
+        │       └── CastExpression
+        │           ├── Type
+        │           │   ├── category: 'basic'
+        │           │   └── descriptor: 'int'
+        │           └── IntegerConstant: '42'
+        │               └── Type
+        │                   ├── category: 'basic'
+        │                   └── descriptor: 'unsigned int'
+        └── ReturnStatement
+            └── VariableExpression: 'x'
+                └── Type
+                    ├── category: 'basic'
+                    └── descriptor: 'int'
+
+@endtest
+
+@test("It should insert implicit cast on assignment from signed to unsigned")
+@given("file")
+unsigned int main() {
+    unsigned int x;
+    int y;
+    y = 1;
+    x = y;
+    return x;
+}
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'unsigned int'
+    └── CompoundStatement
+        ├── VariableDeclaration: 'x'
+        │   └── Type
+        │       ├── category: 'basic'
+        │       └── descriptor: 'unsigned int'
+        ├── VariableDeclaration: 'y'
+        │   └── Type
+        │       ├── category: 'basic'
+        │       └── descriptor: 'int'
+        ├── ExpressionStatement
+        │   └── AssignmentExpression: '='
+        │       ├── VariableExpression: 'y'
+        │       │   └── Type
+        │       │       ├── category: 'basic'
+        │       │       └── descriptor: 'int'
+        │       └── IntegerConstant: '1'
+        │           └── Type
+        │               ├── category: 'basic'
+        │               └── descriptor: 'int'
+        ├── ExpressionStatement
+        │   └── AssignmentExpression: '='
+        │       ├── VariableExpression: 'x'
+        │       │   └── Type
+        │       │       ├── category: 'basic'
+        │       │       └── descriptor: 'unsigned int'
+        │       └── CastExpression
+        │           ├── Type
+        │           │   ├── category: 'basic'
+        │           │   └── descriptor: 'unsigned int'
+        │           └── VariableExpression: 'y'
+        │               └── Type
+        │                   ├── category: 'basic'
+        │                   └── descriptor: 'int'
+        └── ReturnStatement
+            └── VariableExpression: 'x'
+                └── Type
+                    ├── category: 'basic'
+                    └── descriptor: 'unsigned int'
+
+@endtest

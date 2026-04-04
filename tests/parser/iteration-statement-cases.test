@@ -1,0 +1,175 @@
+@test("It should parse while loop")
+@given("file")
+int main() {
+    int i;
+    i = 0;
+    while(i < 10) {
+        i = i + 1;
+    }
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        ├── VariableDeclaration: 'i'
+        │   └── Type
+        │       ├── category: 'basic'
+        │       └── descriptor: 'int'
+        ├── ExpressionStatement
+        │   └── AssignmentExpression: '='
+        │       ├── VariableExpression: 'i'
+        │       │   └── Type
+        │       │       ├── category: 'basic'
+        │       │       └── descriptor: 'int'
+        │       └── IntegerConstant: '0'
+        │           └── Type
+        │               ├── category: 'basic'
+        │               └── descriptor: 'int'
+        └── WhileStatement
+            ├── (condition) RelationalExpression: '<'
+            │   ├── Type
+            │   │   ├── category: 'basic'
+            │   │   └── descriptor: 'int'
+            │   ├── VariableExpression: 'i'
+            │   │   └── Type
+            │   │       ├── category: 'basic'
+            │   │       └── descriptor: 'int'
+            │   └── IntegerConstant: '10'
+            │       └── Type
+            │           ├── category: 'basic'
+            │           └── descriptor: 'int'
+            └── (body) CompoundStatement
+                └── ExpressionStatement
+                    └── AssignmentExpression: '='
+                        ├── VariableExpression: 'i'
+                        │   └── Type
+                        │       ├── category: 'basic'
+                        │       └── descriptor: 'int'
+                        └── AdditiveExpression: '+'
+                            ├── Type
+                            │   ├── category: 'basic'
+                            │   └── descriptor: 'int'
+                            ├── VariableExpression: 'i'
+                            │   └── Type
+                            │       ├── category: 'basic'
+                            │       └── descriptor: 'int'
+                            └── IntegerConstant: '1'
+                                └── Type
+                                    ├── category: 'basic'
+                                    └── descriptor: 'int'
+
+@endtest
+
+@test("It should parse while with empty statement")
+@given("file")
+int main() {
+    int i;
+    i = 0;
+    while(i < 10);
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        ├── VariableDeclaration: 'i'
+        │   └── Type
+        │       ├── category: 'basic'
+        │       └── descriptor: 'int'
+        ├── ExpressionStatement
+        │   └── AssignmentExpression: '='
+        │       ├── VariableExpression: 'i'
+        │       │   └── Type
+        │       │       ├── category: 'basic'
+        │       │       └── descriptor: 'int'
+        │       └── IntegerConstant: '0'
+        │           └── Type
+        │               ├── category: 'basic'
+        │               └── descriptor: 'int'
+        └── WhileStatement
+            ├── (condition) RelationalExpression: '<'
+            │   ├── Type
+            │   │   ├── category: 'basic'
+            │   │   └── descriptor: 'int'
+            │   ├── VariableExpression: 'i'
+            │   │   └── Type
+            │   │       ├── category: 'basic'
+            │   │       └── descriptor: 'int'
+            │   └── IntegerConstant: '10'
+            │       └── Type
+            │           ├── category: 'basic'
+            │           └── descriptor: 'int'
+            └── (body) ExpressionStatement: {empty expression}
+
+@endtest
+
+@test("It should parse while with simple expression")
+@given("file")
+int main() {
+    int i;
+    i = 0;
+    while(i < 10)
+        i = i + 1;
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        ├── VariableDeclaration: 'i'
+        │   └── Type
+        │       ├── category: 'basic'
+        │       └── descriptor: 'int'
+        ├── ExpressionStatement
+        │   └── AssignmentExpression: '='
+        │       ├── VariableExpression: 'i'
+        │       │   └── Type
+        │       │       ├── category: 'basic'
+        │       │       └── descriptor: 'int'
+        │       └── IntegerConstant: '0'
+        │           └── Type
+        │               ├── category: 'basic'
+        │               └── descriptor: 'int'
+        └── WhileStatement
+            ├── (condition) RelationalExpression: '<'
+            │   ├── Type
+            │   │   ├── category: 'basic'
+            │   │   └── descriptor: 'int'
+            │   ├── VariableExpression: 'i'
+            │   │   └── Type
+            │   │       ├── category: 'basic'
+            │   │       └── descriptor: 'int'
+            │   └── IntegerConstant: '10'
+            │       └── Type
+            │           ├── category: 'basic'
+            │           └── descriptor: 'int'
+            └── (body) ExpressionStatement
+                └── AssignmentExpression: '='
+                    ├── VariableExpression: 'i'
+                    │   └── Type
+                    │       ├── category: 'basic'
+                    │       └── descriptor: 'int'
+                    └── AdditiveExpression: '+'
+                        ├── Type
+                        │   ├── category: 'basic'
+                        │   └── descriptor: 'int'
+                        ├── VariableExpression: 'i'
+                        │   └── Type
+                        │       ├── category: 'basic'
+                        │       └── descriptor: 'int'
+                        └── IntegerConstant: '1'
+                            └── Type
+                                ├── category: 'basic'
+                                └── descriptor: 'int'
+
+@endtest

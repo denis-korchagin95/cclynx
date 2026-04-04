@@ -1,0 +1,454 @@
+@test("It should parse function calls without parameters")
+@given("file")
+int foo(void) {
+   return 7;
+}
+
+int main() {
+    return 42 * foo();
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+├── FunctionDefinition: 'foo' <no-parameters>
+│   ├── ReturnType
+│   │   ├── category: 'basic'
+│   │   └── descriptor: 'int'
+│   └── CompoundStatement
+│       └── ReturnStatement
+│           └── IntegerConstant: '7'
+│               └── Type
+│                   ├── category: 'basic'
+│                   └── descriptor: 'int'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        └── ReturnStatement
+            └── MultiplicativeExpression: '*'
+                ├── Type
+                │   ├── category: 'basic'
+                │   └── descriptor: 'int'
+                ├── IntegerConstant: '42'
+                │   └── Type
+                │       ├── category: 'basic'
+                │       └── descriptor: 'int'
+                └── FunctionCallExpression: 'foo' <no-arguments>
+                    └── ReturnType
+                        ├── category: 'basic'
+                        └── descriptor: 'int'
+
+@endtest
+
+@test("It should parse function calls with unspecified parameters")
+@given("file")
+int foo() {
+   return 7;
+}
+
+int main() {
+    return 42 * foo();
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+├── FunctionDefinition: 'foo' <unspecified-parameters>
+│   ├── ReturnType
+│   │   ├── category: 'basic'
+│   │   └── descriptor: 'int'
+│   └── CompoundStatement
+│       └── ReturnStatement
+│           └── IntegerConstant: '7'
+│               └── Type
+│                   ├── category: 'basic'
+│                   └── descriptor: 'int'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        └── ReturnStatement
+            └── MultiplicativeExpression: '*'
+                ├── Type
+                │   ├── category: 'basic'
+                │   └── descriptor: 'int'
+                ├── IntegerConstant: '42'
+                │   └── Type
+                │       ├── category: 'basic'
+                │       └── descriptor: 'int'
+                └── FunctionCallExpression: 'foo' <no-arguments>
+                    └── ReturnType
+                        ├── category: 'basic'
+                        └── descriptor: 'int'
+
+@endtest
+
+@test("It should parse function call with unspecified parameters and arguments provided")
+@given("file")
+int foo() {
+   return 7;
+}
+
+int main() {
+    return foo(42);
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+├── FunctionDefinition: 'foo' <unspecified-parameters>
+│   ├── ReturnType
+│   │   ├── category: 'basic'
+│   │   └── descriptor: 'int'
+│   └── CompoundStatement
+│       └── ReturnStatement
+│           └── IntegerConstant: '7'
+│               └── Type
+│                   ├── category: 'basic'
+│                   └── descriptor: 'int'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        └── ReturnStatement
+            └── FunctionCallExpression: 'foo' <1-argument>
+                ├── ReturnType
+                │   ├── category: 'basic'
+                │   └── descriptor: 'int'
+                └── IntegerConstant: '42'
+                    └── Type
+                        ├── category: 'basic'
+                        └── descriptor: 'int'
+
+@endtest
+
+@test("It should parse function call with 1 argument")
+@given("file")
+int identity(int a) {
+    return a;
+}
+
+int main() {
+    return identity(42);
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+├── FunctionDefinition: 'identity' <1-parameter>
+│   ├── ReturnType
+│   │   ├── category: 'basic'
+│   │   └── descriptor: 'int'
+│   ├── ParameterList
+│   │   └── Parameter: 'a'
+│   │       └── Type
+│   │           ├── category: 'basic'
+│   │           └── descriptor: 'int'
+│   └── CompoundStatement
+│       └── ReturnStatement
+│           └── VariableExpression: 'a'
+│               └── Type
+│                   ├── category: 'basic'
+│                   └── descriptor: 'int'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        └── ReturnStatement
+            └── FunctionCallExpression: 'identity' <1-argument>
+                ├── ReturnType
+                │   ├── category: 'basic'
+                │   └── descriptor: 'int'
+                └── IntegerConstant: '42'
+                    └── Type
+                        ├── category: 'basic'
+                        └── descriptor: 'int'
+
+@endtest
+
+@test("It should parse function call with 2 arguments")
+@given("file")
+int add(int a, int b) {
+    return a + b;
+}
+
+int main() {
+    return add(19, 23);
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+├── FunctionDefinition: 'add' <2-parameters>
+│   ├── ReturnType
+│   │   ├── category: 'basic'
+│   │   └── descriptor: 'int'
+│   ├── ParameterList
+│   │   ├── Parameter: 'a'
+│   │   │   └── Type
+│   │   │       ├── category: 'basic'
+│   │   │       └── descriptor: 'int'
+│   │   └── Parameter: 'b'
+│   │       └── Type
+│   │           ├── category: 'basic'
+│   │           └── descriptor: 'int'
+│   └── CompoundStatement
+│       └── ReturnStatement
+│           └── AdditiveExpression: '+'
+│               ├── Type
+│               │   ├── category: 'basic'
+│               │   └── descriptor: 'int'
+│               ├── VariableExpression: 'a'
+│               │   └── Type
+│               │       ├── category: 'basic'
+│               │       └── descriptor: 'int'
+│               └── VariableExpression: 'b'
+│                   └── Type
+│                       ├── category: 'basic'
+│                       └── descriptor: 'int'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        └── ReturnStatement
+            └── FunctionCallExpression: 'add' <2-arguments>
+                ├── ReturnType
+                │   ├── category: 'basic'
+                │   └── descriptor: 'int'
+                ├── IntegerConstant: '19'
+                │   └── Type
+                │       ├── category: 'basic'
+                │       └── descriptor: 'int'
+                └── IntegerConstant: '23'
+                    └── Type
+                        ├── category: 'basic'
+                        └── descriptor: 'int'
+
+@endtest
+
+@test("It should parse function call with 3 arguments")
+@given("file")
+int foo(int a, int b, int c) {
+    return a + b * c;
+}
+
+int main() {
+    return foo(1, 2, 3);
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+├── FunctionDefinition: 'foo' <3-parameters>
+│   ├── ReturnType
+│   │   ├── category: 'basic'
+│   │   └── descriptor: 'int'
+│   ├── ParameterList
+│   │   ├── Parameter: 'a'
+│   │   │   └── Type
+│   │   │       ├── category: 'basic'
+│   │   │       └── descriptor: 'int'
+│   │   ├── Parameter: 'b'
+│   │   │   └── Type
+│   │   │       ├── category: 'basic'
+│   │   │       └── descriptor: 'int'
+│   │   └── Parameter: 'c'
+│   │       └── Type
+│   │           ├── category: 'basic'
+│   │           └── descriptor: 'int'
+│   └── CompoundStatement
+│       └── ReturnStatement
+│           └── AdditiveExpression: '+'
+│               ├── Type
+│               │   ├── category: 'basic'
+│               │   └── descriptor: 'int'
+│               ├── VariableExpression: 'a'
+│               │   └── Type
+│               │       ├── category: 'basic'
+│               │       └── descriptor: 'int'
+│               └── MultiplicativeExpression: '*'
+│                   ├── Type
+│                   │   ├── category: 'basic'
+│                   │   └── descriptor: 'int'
+│                   ├── VariableExpression: 'b'
+│                   │   └── Type
+│                   │       ├── category: 'basic'
+│                   │       └── descriptor: 'int'
+│                   └── VariableExpression: 'c'
+│                       └── Type
+│                           ├── category: 'basic'
+│                           └── descriptor: 'int'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        └── ReturnStatement
+            └── FunctionCallExpression: 'foo' <3-arguments>
+                ├── ReturnType
+                │   ├── category: 'basic'
+                │   └── descriptor: 'int'
+                ├── IntegerConstant: '1'
+                │   └── Type
+                │       ├── category: 'basic'
+                │       └── descriptor: 'int'
+                ├── IntegerConstant: '2'
+                │   └── Type
+                │       ├── category: 'basic'
+                │       └── descriptor: 'int'
+                └── IntegerConstant: '3'
+                    └── Type
+                        ├── category: 'basic'
+                        └── descriptor: 'int'
+
+@endtest
+
+@test("It should parse function call with expression arguments")
+@given("file")
+int add(int a, int b) {
+    return a + b;
+}
+
+int main() {
+    return add(1 + 2, 3 * 4);
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+├── FunctionDefinition: 'add' <2-parameters>
+│   ├── ReturnType
+│   │   ├── category: 'basic'
+│   │   └── descriptor: 'int'
+│   ├── ParameterList
+│   │   ├── Parameter: 'a'
+│   │   │   └── Type
+│   │   │       ├── category: 'basic'
+│   │   │       └── descriptor: 'int'
+│   │   └── Parameter: 'b'
+│   │       └── Type
+│   │           ├── category: 'basic'
+│   │           └── descriptor: 'int'
+│   └── CompoundStatement
+│       └── ReturnStatement
+│           └── AdditiveExpression: '+'
+│               ├── Type
+│               │   ├── category: 'basic'
+│               │   └── descriptor: 'int'
+│               ├── VariableExpression: 'a'
+│               │   └── Type
+│               │       ├── category: 'basic'
+│               │       └── descriptor: 'int'
+│               └── VariableExpression: 'b'
+│                   └── Type
+│                       ├── category: 'basic'
+│                       └── descriptor: 'int'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        └── ReturnStatement
+            └── FunctionCallExpression: 'add' <2-arguments>
+                ├── ReturnType
+                │   ├── category: 'basic'
+                │   └── descriptor: 'int'
+                ├── AdditiveExpression: '+'
+                │   ├── Type
+                │   │   ├── category: 'basic'
+                │   │   └── descriptor: 'int'
+                │   ├── IntegerConstant: '1'
+                │   │   └── Type
+                │   │       ├── category: 'basic'
+                │   │       └── descriptor: 'int'
+                │   └── IntegerConstant: '2'
+                │       └── Type
+                │           ├── category: 'basic'
+                │           └── descriptor: 'int'
+                └── MultiplicativeExpression: '*'
+                    ├── Type
+                    │   ├── category: 'basic'
+                    │   └── descriptor: 'int'
+                    ├── IntegerConstant: '3'
+                    │   └── Type
+                    │       ├── category: 'basic'
+                    │       └── descriptor: 'int'
+                    └── IntegerConstant: '4'
+                        └── Type
+                            ├── category: 'basic'
+                            └── descriptor: 'int'
+
+@endtest
+
+@test("It should raise an error on argument count mismatch")
+@given("file")
+int add(int a, int b) {
+    return a + b;
+}
+
+int main() {
+    return add(1);
+}
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings")
+@expectOutput("stderr")
+{{any}}:6:12: ERROR: function 'add' expects 2 arguments but 1 were provided
+
+@endtest
+
+@test("It should raise an error when function call uses a keyword as name")
+@given("file")
+int main() {
+    return 42 * while();
+}
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings")
+@expectOutput("stderr")
+{{any}}:2:17: ERROR: expected identifier but got keyword 'while'
+
+@endtest
+
+@test("It should insert implicit cast on function argument when signedness differs")
+@given("file")
+int foo(int a) {
+    return a;
+}
+
+int main() {
+    return foo(42u);
+}
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+├── FunctionDefinition: 'foo' <1-parameter>
+│   ├── ReturnType
+│   │   ├── category: 'basic'
+│   │   └── descriptor: 'int'
+│   ├── ParameterList
+│   │   └── Parameter: 'a'
+│   │       └── Type
+│   │           ├── category: 'basic'
+│   │           └── descriptor: 'int'
+│   └── CompoundStatement
+│       └── ReturnStatement
+│           └── VariableExpression: 'a'
+│               └── Type
+│                   ├── category: 'basic'
+│                   └── descriptor: 'int'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        └── ReturnStatement
+            └── FunctionCallExpression: 'foo' <1-argument>
+                ├── ReturnType
+                │   ├── category: 'basic'
+                │   └── descriptor: 'int'
+                └── CastExpression
+                    ├── Type
+                    │   ├── category: 'basic'
+                    │   └── descriptor: 'int'
+                    └── IntegerConstant: '42'
+                        └── Type
+                            ├── category: 'basic'
+                            └── descriptor: 'unsigned int'
+
+@endtest

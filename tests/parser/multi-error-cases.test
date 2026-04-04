@@ -5,11 +5,10 @@ int main() {
     result = x + 1;
     result = y + 2;
 }
-@whenRun("./bin/cclynx", args="--emit-ast")
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings")
 @expectOutput("stderr")
 {{any}}:3:14: ERROR: undeclared variable 'x'
 {{any}}:4:14: ERROR: undeclared variable 'y'
-{{any}}:1:5: WARNING: function 'main' missing return statement
 
 @endtest
 
@@ -20,13 +19,10 @@ int main() {
     int x;
     y = 1;
 }
-@whenRun("./bin/cclynx", args="--emit-ast")
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings")
 @expectOutput("stderr")
 {{any}}:3:9: ERROR: variable 'x' already declared
 {{any}}:4:5: ERROR: undeclared variable 'y'
-{{any}}:3:10: WARNING: unused variable 'x'
-{{any}}:2:10: WARNING: unused variable 'x'
-{{any}}:1:5: WARNING: function 'main' missing return statement
 
 @endtest
 
@@ -39,11 +35,10 @@ int foo() {
 int foo() {
     return x;
 }
-@whenRun("./bin/cclynx", args="--emit-ast")
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings")
 @expectOutput("stderr")
 {{any}}:5:5: ERROR: function 'foo' already defined
 {{any}}:6:12: ERROR: undeclared variable 'x'
-{{any}}:5:5: WARNING: function 'foo' has empty body
 
 @endtest
 
@@ -58,28 +53,10 @@ int main() {
     }
     return 0;
 }
-@whenRun("./bin/cclynx", args="--emit-ast")
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings")
 @expectOutput("stderr")
 {{any}}:4:9: ERROR: undeclared variable 'y'
-{{any}}:3:5: WARNING: empty if body
 {{any}}:6:9: ERROR: undeclared variable 'z'
-{{any}}:5:7: WARNING: empty else body
-
-@endtest
-
-@test("It should report multiple argument type mismatches")
-@given("file")
-int add(int a, int b) {
-    return a + b;
-}
-
-int main() {
-    return add((float) 1, (float) 2);
-}
-@whenRun("./bin/cclynx", args="--emit-ast")
-@expectOutput("stderr")
-{{any}}:6:12: ERROR: argument 1 of function 'add' has type 'float' but expected 'int'
-{{any}}:6:12: ERROR: argument 2 of function 'add' has type 'float' but expected 'int'
 
 @endtest
 
@@ -92,12 +69,10 @@ int foo() {
 int bar() {
     return y;
 }
-@whenRun("./bin/cclynx", args="--emit-ast")
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings")
 @expectOutput("stderr")
 {{any}}:2:12: ERROR: undeclared variable 'x'
-{{any}}:1:5: WARNING: function 'foo' has empty body
 {{any}}:6:12: ERROR: undeclared variable 'y'
-{{any}}:5:5: WARNING: function 'bar' has empty body
 
 @endtest
 

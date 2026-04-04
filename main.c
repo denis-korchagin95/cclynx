@@ -30,6 +30,7 @@ const char * source_filename = NULL;
 enum output_stage output_stage = STAGE_ASM;
 enum output_format output_format = FORMAT_TREE;
 bool output_format_explicit = false;
+bool suppress_warnings = false;
 
 static void parse_options(int argc, const char * argv[]);
 static void show_usage(const char * program_name, FILE * output);
@@ -71,6 +72,7 @@ int main(const int argc, const char * argv[])
 
     struct parser_context parser_ctx;
     parser_init_context(&parser_ctx, tokens, &ctx.pool, &ctx.global_scope, source_filename);
+    parser_ctx.suppress_warnings = suppress_warnings;
 
     if (output_stage == STAGE_TOKENS) {
         struct token * it = tokens;
@@ -172,6 +174,11 @@ void parse_options(const int argc, const char * argv[])
             continue;
         }
 
+        if (strncmp(arg, "--no-warnings", sizeof("--no-warnings") - 1) == 0) {
+            suppress_warnings = true;
+            continue;
+        }
+
         if (strncmp(arg, "--help", sizeof("--help") - 1) == 0) {
             show_usage(argv[0], stdout);
             exit(0);
@@ -193,4 +200,5 @@ void show_usage(const char * program_name, FILE * output)
     fprintf(output, "\t--format=tree|dot\n\t    Output format (default: tree).\n\n");
     fprintf(output, "\t--emit-ir\n\t    Produces intermediate representation.\n\n");
     fprintf(output, "\t--emit-asm\n\t    Produces assembly (default).\n\n");
+    fprintf(output, "\t--no-warnings\n\t    Suppress warning messages.\n\n");
 }

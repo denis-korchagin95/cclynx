@@ -15,6 +15,13 @@
 #include "errors.h"
 
 
+struct declaration_specifiers
+{
+    enum type_kind type_kind;
+    unsigned int modifiers;
+};
+
+
 static struct ast_node * parse_translation_unit(struct parser_context * ctx);
 static struct ast_node * parse_expression(struct parser_context * ctx);
 static struct ast_node * parse_if_statement(struct parser_context * ctx, struct token * keyword_token);
@@ -35,9 +42,11 @@ static struct ast_node * parse_postfix_expression(struct parser_context * ctx);
 static struct ast_node * parse_primary_expression(struct parser_context * ctx);
 
 static void parse_function_parameter_list(struct parser_context * ctx, struct ast_node ** parameters, unsigned int * parameter_count);
-struct type * parse_type_specifiers(struct parser_context * ctx);
+static struct ast_node * parse_number(struct parser_context * ctx, const struct token * token);
+void parse_declaration_specifiers(struct parser_context * ctx, struct declaration_specifiers * specifiers);
+struct type * resolve_type(struct declaration_specifiers * specifiers);
 
-
+static struct type * cast_binary_operands(struct parser_context * ctx, struct ast_node ** lhs_ptr, struct ast_node ** rhs_ptr);
 
 static void parser_report_error(struct parser_context * ctx, const struct token * token, const char * fmt, ...)
 {
@@ -65,6 +74,10 @@ static void parser_report_warning(struct parser_context * ctx, const struct toke
     assert(ctx != NULL);
     assert(token != NULL);
     assert(fmt != NULL);
+
+    if (ctx->suppress_warnings) {
+        return;
+    }
 
     char message[512];
     va_list args;
@@ -113,6 +126,10 @@ static void parser_synchronize_toplevel(struct parser_context * ctx)
 static void report_unused_variables(struct parser_context * ctx)
 {
     assert(ctx != NULL);
+
+    if (ctx->suppress_warnings) {
+        return;
+    }
 
     const struct symbol_list * it = ctx->current_scope->symbols;
     while (it != NULL) {
@@ -182,11 +199,11 @@ struct ast_node * parse_statement(struct parser_context * ctx)
     struct ast_node * statement = NULL;
 
     if (token_is_keyword(current_token)) {
-        if (strcmp("while", current_token->identifier->name) == 0) {
+        if (current_token->identifier->keyword_code == KEYWORD_WHILE) {
             statement = parse_while_statement(ctx, current_token);
-        } else if (strcmp("return", current_token->identifier->name) == 0) {
+        } else if (current_token->identifier->keyword_code == KEYWORD_RETURN) {
             statement = parse_return_statement(ctx);
-        } else if (strcmp("if", current_token->identifier->name) == 0) {
+        } else if (current_token->identifier->keyword_code == KEYWORD_IF) {
             statement = parse_if_statement(ctx, current_token);
         } else {
             parser_putback_token(current_token, ctx);
@@ -364,6 +381,18 @@ struct ast_node * parse_return_statement(struct parser_context * ctx)
         return NULL;
     }
 
+    if (
+        expression != NULL
+        && ctx->current_function != NULL
+        && expression->type->kind == ctx->current_function->type->kind
+        && type_signedness_differs(expression->type, ctx->current_function->type)
+    ) {
+        /* TODO: emit sign-conversion warning */
+        struct ast_node * cast = ast_create_node(ctx->pool, AST_NODE_KIND_CAST_EXPRESSION, ctx->current_function->type);
+        cast->content.node = expression;
+        expression = cast;
+    }
+
     struct ast_node * return_statement = ast_create_node(ctx->pool, AST_NODE_KIND_RETURN_STATEMENT, &type_void);
     return_statement->content.node = expression;
 
@@ -455,7 +484,12 @@ struct ast_node * parse_function_definition(struct parser_context * ctx)
 {
     assert(ctx != NULL);
 
-    struct type * type = parse_type_specifiers(ctx);
+    struct declaration_specifiers specifiers;
+    memset(&specifiers, 0, sizeof(struct declaration_specifiers));
+
+    parse_declaration_specifiers(ctx, &specifiers);
+
+    struct type * type = resolve_type(&specifiers);
 
     if (type == NULL) {
         struct token * error_token = parser_get_token(ctx);
@@ -479,7 +513,7 @@ struct ast_node * parse_function_definition(struct parser_context * ctx)
         return NULL;
     }
 
-    if (current_token->identifier->is_keyword) {
+    if (token_is_keyword(current_token)) {
         parser_report_error(ctx, current_token, "expected identifier but got keyword '%s'", current_token->identifier->name);
         parser_synchronize_toplevel(ctx);
         return NULL;
@@ -554,7 +588,12 @@ struct ast_node * parse_function_definition(struct parser_context * ctx)
         parameters[i]->content.symbol->parameter_index = i;
     }
 
+    struct symbol * saved_function = ctx->current_function;
+    ctx->current_function = function_symbol;
+
     struct ast_node * compound_statement = parse_compound_statement(ctx);
+
+    ctx->current_function = saved_function;
 
     if (parameter_count > 0) {
         report_unused_variables(ctx);
@@ -581,13 +620,28 @@ struct ast_node * parse_declaration(struct parser_context * ctx)
 {
     assert(ctx != NULL);
 
-    struct type * type = parse_type_specifiers(ctx);
+    struct declaration_specifiers specifiers;
+    memset(&specifiers, 0, sizeof(struct declaration_specifiers));
+
+    parse_declaration_specifiers(ctx, &specifiers);
+
+    struct type * type = resolve_type(&specifiers);
 
     if (type == NULL) {
         struct token * error_token = parser_get_token(ctx);
         parser_report_error(ctx, error_token, "expected type specifier but got %s", token_stringify(error_token));
         if (error_token != &eos_token) {
             parser_putback_token(error_token, ctx);
+        }
+        parser_synchronize_statement(ctx);
+        return NULL;
+    }
+
+    if (type->kind == TYPE_KIND_VOID) {
+        struct token * name_token = parser_get_token(ctx);
+        parser_report_error(ctx, name_token, "variable cannot have 'void' type");
+        if (name_token != &eos_token) {
+            parser_putback_token(name_token, ctx);
         }
         parser_synchronize_statement(ctx);
         return NULL;
@@ -604,7 +658,7 @@ struct ast_node * parse_declaration(struct parser_context * ctx)
         return NULL;
     }
 
-    if (current_token->identifier->is_keyword) {
+    if (token_is_keyword(current_token)) {
         parser_report_error(ctx, current_token, "expected identifier but got keyword '%s'", current_token->identifier->name);
         parser_synchronize_statement(ctx);
         return NULL;
@@ -677,12 +731,51 @@ struct ast_node * parse_assignment_expression(struct parser_context * ctx)
         return lhs;
     }
 
+    if (
+        lhs->type->kind == initializer->type->kind
+        && type_signedness_differs(lhs->type, initializer->type)
+    ) {
+        /* TODO: emit sign-conversion warning */
+        struct ast_node * cast = ast_create_node(ctx->pool, AST_NODE_KIND_CAST_EXPRESSION, lhs->type);
+        cast->content.node = initializer;
+        initializer = cast;
+    }
+
     struct ast_node * assignment_expression = ast_create_node(ctx->pool, AST_NODE_KIND_ASSIGNMENT_EXPRESSION, &type_void);
     assignment_expression->content.assignment.type = ASSIGNMENT_REGULAR;
     assignment_expression->content.assignment.lhs = lhs;
     assignment_expression->content.assignment.initializer = initializer;
 
     return assignment_expression;
+}
+
+struct type * cast_binary_operands(struct parser_context * ctx, struct ast_node ** lhs_ptr, struct ast_node ** rhs_ptr)
+{
+    assert(ctx != NULL);
+    assert(lhs_ptr != NULL);
+    assert(rhs_ptr != NULL);
+
+    struct type * lhs_type = (*lhs_ptr)->type;
+    struct type * rhs_type = (*rhs_ptr)->type;
+
+    if (lhs_type->kind == rhs_type->kind && type_signedness_differs(lhs_type, rhs_type)) {
+        /* TODO: emit sign-conversion warning */
+        struct type * target_type = type_is_unsigned(lhs_type) ? lhs_type : rhs_type;
+
+        if (!type_is_unsigned(lhs_type)) {
+            struct ast_node * cast = ast_create_node(ctx->pool, AST_NODE_KIND_CAST_EXPRESSION, target_type);
+            cast->content.node = *lhs_ptr;
+            *lhs_ptr = cast;
+        } else {
+            struct ast_node * cast = ast_create_node(ctx->pool, AST_NODE_KIND_CAST_EXPRESSION, target_type);
+            cast->content.node = *rhs_ptr;
+            *rhs_ptr = cast;
+        }
+
+        return target_type;
+    }
+
+    return type_resolve(lhs_type, rhs_type);
 }
 
 struct ast_node * parse_equality_expression(struct parser_context * ctx)
@@ -710,7 +803,7 @@ struct ast_node * parse_equality_expression(struct parser_context * ctx)
             return NULL;
         }
 
-        struct ast_node * binary_expression = ast_create_node(ctx->pool, AST_NODE_KIND_EQUALITY_EXPRESSION, type_resolve(lhs->type, rhs->type));
+        struct ast_node * binary_expression = ast_create_node(ctx->pool, AST_NODE_KIND_EQUALITY_EXPRESSION, cast_binary_operands(ctx, &lhs, &rhs));
         binary_expression->content.binary_expression.operation = operation;
         binary_expression->content.binary_expression.lhs = lhs;
         binary_expression->content.binary_expression.rhs = rhs;
@@ -751,7 +844,7 @@ struct ast_node * parse_relational_expression(struct parser_context * ctx) {
             return NULL;
         }
 
-        struct ast_node * binary_expression = ast_create_node(ctx->pool, AST_NODE_KIND_RELATIONAL_EXPRESSION, type_resolve(lhs->type, rhs->type));
+        struct ast_node * binary_expression = ast_create_node(ctx->pool, AST_NODE_KIND_RELATIONAL_EXPRESSION, cast_binary_operands(ctx, &lhs, &rhs));
         binary_expression->content.binary_expression.operation = operation;
         binary_expression->content.binary_expression.lhs = lhs;
         binary_expression->content.binary_expression.rhs = rhs;
@@ -794,7 +887,7 @@ struct ast_node * parse_additive_expression(struct parser_context * ctx)
             return NULL;
         }
 
-        struct ast_node * binary_expression = ast_create_node(ctx->pool, AST_NODE_KIND_ADDITIVE_EXPRESSION, type_resolve(lhs->type, rhs->type));
+        struct ast_node * binary_expression = ast_create_node(ctx->pool, AST_NODE_KIND_ADDITIVE_EXPRESSION, cast_binary_operands(ctx, &lhs, &rhs));
         binary_expression->content.binary_expression.operation = operation;
         binary_expression->content.binary_expression.lhs = lhs;
         binary_expression->content.binary_expression.rhs = rhs;
@@ -836,7 +929,7 @@ struct ast_node * parse_multiplicative_expression(struct parser_context * ctx)
             return NULL;
         }
 
-        struct ast_node * binary_expression = ast_create_node(ctx->pool, AST_NODE_KIND_MULTIPLICATIVE_EXPRESSION, type_resolve(lhs->type, rhs->type));
+        struct ast_node * binary_expression = ast_create_node(ctx->pool, AST_NODE_KIND_MULTIPLICATIVE_EXPRESSION, cast_binary_operands(ctx, &lhs, &rhs));
         binary_expression->content.binary_expression.operation = operation;
         binary_expression->content.binary_expression.lhs = lhs;
         binary_expression->content.binary_expression.rhs = rhs;
@@ -863,7 +956,12 @@ struct ast_node * parse_cast_expression(struct parser_context * ctx)
 
     struct token * previous_token = current_token;
 
-    struct type * type = parse_type_specifiers(ctx);
+    struct declaration_specifiers specifiers;
+    memset(&specifiers, 0, sizeof(struct declaration_specifiers));
+
+    parse_declaration_specifiers(ctx, &specifiers);
+
+    struct type * type = resolve_type(&specifiers);
 
     if (type == NULL) {
         parser_putback_token(previous_token, ctx);
@@ -959,11 +1057,27 @@ struct ast_node * parse_postfix_expression(struct parser_context * ctx)
                 }
 
                 for (unsigned int i = 0; i < argument_count; i++) {
-                    if (arguments[i] != NULL && arguments[i]->type != function_symbol->parameters[i]->type) {
+                    if (arguments[i] == NULL) {
+                        continue;
+                    }
+                    struct type * arg_type = arguments[i]->type;
+                    struct type * param_type = function_symbol->parameters[i]->type;
+                    if (arg_type == param_type) {
+                        continue;
+                    }
+                    if (
+                        arg_type->kind == param_type->kind
+                        && type_signedness_differs(arg_type, param_type)
+                    ) {
+                        /* TODO: emit sign-conversion warning */
+                        struct ast_node * cast = ast_create_node(ctx->pool, AST_NODE_KIND_CAST_EXPRESSION, param_type);
+                        cast->content.node = arguments[i];
+                        arguments[i] = cast;
+                    } else {
                         parser_report_error(ctx, current_token, "argument %u of function '%s' has type '%s' but expected '%s'",
                             i + 1, function_symbol->identifier->name,
-                            type_stringify(arguments[i]->type),
-                            type_stringify(function_symbol->parameters[i]->type));
+                            type_stringify(arg_type),
+                            type_stringify(param_type));
                     }
                 }
             }
@@ -987,6 +1101,30 @@ fallback:
     return parse_primary_expression(ctx);
 }
 
+struct ast_node * parse_number(struct parser_context * ctx, const struct token * token)
+{
+    assert(ctx != NULL);
+    assert(token != NULL);
+    assert(token->kind == TOKEN_KIND_NUMBER);
+
+    const char * ptr = token->source->content + token->span.offset;
+    int is_unsigned = token->flags & TOKEN_FLAG_IS_UNSIGNED;
+
+    long long int value = 0;
+    for (uint32_t i = 0; i < token->span.length; ++i) {
+        char ch = ptr[i];
+        if (ch >= '0' && ch <= '9') {
+            value = value * 10 + (ch - '0');
+        }
+    }
+
+    struct type * type = is_unsigned ? &type_uint32 : &type_sint32;
+    struct ast_node * number = ast_create_node(ctx->pool, AST_NODE_KIND_INTEGER_CONSTANT_EXPRESSION, type);
+    number->content.constant.value = value;
+
+    return number;
+}
+
 struct ast_node * parse_primary_expression(struct parser_context * ctx)
 {
     assert(ctx != NULL);
@@ -994,21 +1132,11 @@ struct ast_node * parse_primary_expression(struct parser_context * ctx)
     struct token * current_token = parser_get_token(ctx);
 
     if (current_token->kind == TOKEN_KIND_NUMBER) {
-        const char * number_ptr = current_token->source->content + current_token->span.offset;
-
-        if ((current_token->flags & TOKEN_FLAG_IS_FLOAT) > 0) {
-            struct ast_node * number = ast_create_node(ctx->pool, AST_NODE_KIND_FLOAT_CONSTANT_EXPRESSION, &type_float);
-            number->content.constant.value.float_constant = (float)strtod(number_ptr, NULL);
-            return number;
-        }
-
-        struct ast_node * number = ast_create_node(ctx->pool, AST_NODE_KIND_INTEGER_CONSTANT_EXPRESSION, &type_integer);
-        number->content.constant.value.integer_constant = (int)strtol(number_ptr, NULL, 10);
-        return number;
+        return parse_number(ctx, current_token);
     }
 
     if (current_token->kind == TOKEN_KIND_IDENTIFIER) {
-        if (current_token->identifier->is_keyword) {
+        if (token_is_keyword(current_token)) {
             parser_report_error(ctx, current_token, "expected identifier but got keyword '%s'", current_token->identifier->name);
             return NULL;
         }
@@ -1099,7 +1227,12 @@ struct ast_node * parse_function_parameter(struct parser_context * ctx)
 {
     assert(ctx != NULL);
 
-    struct type * parameter_type = parse_type_specifiers(ctx);
+    struct declaration_specifiers specifiers;
+    memset(&specifiers, 0, sizeof(struct declaration_specifiers));
+
+    parse_declaration_specifiers(ctx, &specifiers);
+
+    struct type * parameter_type = resolve_type(&specifiers);
 
     if (parameter_type == NULL) {
         struct token * next = parser_get_token(ctx);
@@ -1120,7 +1253,7 @@ struct ast_node * parse_function_parameter(struct parser_context * ctx)
         return NULL;
     }
 
-    if (current_token->identifier->is_keyword) {
+    if (token_is_keyword(current_token)) {
         parser_report_error(ctx, current_token, "expected identifier but got keyword '%s'", current_token->identifier->name);
         return NULL;
     }
@@ -1182,33 +1315,93 @@ void parse_function_parameter_list(struct parser_context * ctx, struct ast_node 
     parser_putback_token(token, ctx);
 }
 
-struct type * parse_type_specifiers(struct parser_context * ctx)
+void parse_declaration_specifiers(struct parser_context * ctx, struct declaration_specifiers * specifiers)
 {
     assert(ctx != NULL);
-
-    struct type * type = NULL;
+    assert(specifiers != NULL);
 
     struct token * current_token = parser_get_token(ctx);
 
     while (current_token->kind == TOKEN_KIND_IDENTIFIER) {
-        struct symbol * symbol = symbol_lookup(current_token->identifier, SYMBOL_KIND_TYPE_SPECIFIER);
-
-        if (symbol == NULL) {
+        if (current_token->identifier->keyword_code == KEYWORD_NONE) {
             break;
         }
 
-        if (type != NULL) {
-            parser_report_error(ctx, current_token, "mixed types");
-            current_token = parser_get_token(ctx);
-            continue;
+        switch (current_token->identifier->keyword_code) {
+            case KEYWORD_VOID:
+            case KEYWORD_INT:
+                if (specifiers->type_kind != TYPE_KIND_UNDEFINED) {
+                    parser_report_error(ctx, current_token, "mixed types");
+                    current_token = parser_get_token(ctx);
+                    continue;
+                }
+                if ((specifiers->modifiers & TYPE_MODIFIER_UNSIGNED) && current_token->identifier->keyword_code == KEYWORD_VOID) {
+                    parser_report_error(ctx, current_token, "'unsigned' cannot be applied to 'void'");
+                    current_token = parser_get_token(ctx);
+                    continue;
+                }
+                break;
+            case KEYWORD_UNSIGNED:
+                if (specifiers->modifiers & TYPE_MODIFIER_UNSIGNED) {
+                    parser_report_error(ctx, current_token, "duplicate 'unsigned' keyword");
+                    current_token = parser_get_token(ctx);
+                    continue;
+                }
+                if (specifiers->type_kind == TYPE_KIND_VOID) {
+                    parser_report_error(ctx, current_token, "'unsigned' cannot be applied to 'void'");
+                    current_token = parser_get_token(ctx);
+                    continue;
+                }
+                break;
+            default:
+                goto done;
         }
 
-        type = symbol->type;
+        switch (current_token->identifier->keyword_code) {
+            case KEYWORD_VOID:
+                specifiers->type_kind = TYPE_KIND_VOID;
+                break;
+            case KEYWORD_INT:
+                specifiers->type_kind = TYPE_KIND_INTEGER;
+                break;
+            case KEYWORD_UNSIGNED:
+                specifiers->modifiers |= TYPE_MODIFIER_UNSIGNED;
+                break;
+            default:
+                goto done;
+        }
 
         current_token = parser_get_token(ctx);
     }
 
+done:
     parser_putback_token(current_token, ctx);
+}
 
-    return type;
+struct type * resolve_type(struct declaration_specifiers * specifiers)
+{
+    assert(specifiers != NULL);
+
+    if (specifiers->type_kind == TYPE_KIND_UNDEFINED) {
+        if (specifiers->modifiers != 0) {
+            specifiers->type_kind = TYPE_KIND_INTEGER;
+        } else {
+            return NULL;
+        }
+    }
+
+    if (specifiers->type_kind == TYPE_KIND_VOID) {
+        return &type_void;
+    }
+
+    if (specifiers->type_kind == TYPE_KIND_INTEGER) {
+        if (specifiers->modifiers & TYPE_MODIFIER_UNSIGNED) {
+            return &type_uint32;
+        }
+        return &type_sint32;
+    }
+
+    cclynx_fatal_error("FATAL ERROR: unhandled type\n");
+
+    return NULL;
 }
