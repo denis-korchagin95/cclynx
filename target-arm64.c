@@ -142,44 +142,52 @@ void target_arm64_generate(struct codegen_context * ctx, struct ir_program * pro
                 }
                 break;
             case OP_JUMP_IF_LTE:
+            case OP_JUMP_IF_UNSIGNED_LTE:
                 {
                     struct codegen_reg * op2_reg = pop_reg(ctx);
                     struct codegen_reg * op1_reg = pop_reg(ctx);
+                    const char * cond = instruction->code == OP_JUMP_IF_UNSIGNED_LTE ? "b.ls" : "b.le";
                     fprintf(file, "    cmp %s, %s\n", op1_reg->name, op2_reg->name);
-                    fprintf(file, "    b.le .L%llu\n", instruction->result->content.label_id);
+                    fprintf(file, "    %s .L%llu\n", cond, instruction->result->content.label_id);
                     free_reg(op1_reg);
                     free_reg(op2_reg);
                 }
                 break;
             case OP_JUMP_IF_GTE:
+            case OP_JUMP_IF_UNSIGNED_GTE:
                 {
                     struct codegen_reg * op2_reg = pop_reg(ctx);
                     struct codegen_reg * op1_reg = pop_reg(ctx);
+                    const char * cond = instruction->code == OP_JUMP_IF_UNSIGNED_GTE ? "b.hs" : "b.ge";
                     fprintf(file, "    cmp %s, %s\n", op1_reg->name, op2_reg->name);
-                    fprintf(file, "    b.ge .L%llu\n", instruction->result->content.label_id);
+                    fprintf(file, "    %s .L%llu\n", cond, instruction->result->content.label_id);
                     free_reg(op1_reg);
                     free_reg(op2_reg);
                 }
                 break;
             case OP_GT:
+            case OP_UNSIGNED_GT:
                 {
                     struct codegen_reg * op2_reg = pop_reg(ctx);
                     struct codegen_reg * op1_reg = pop_reg(ctx);
                     struct codegen_reg * result_reg = alloc_reg(ctx, CODEGEN_REG_KIND_INTEGER);
+                    const char * cond = instruction->code == OP_UNSIGNED_GT ? "hi" : "gt";
                     fprintf(file, "    cmp %s, %s\n", op1_reg->name, op2_reg->name);
-                    fprintf(file, "    cset %s, gt\n", result_reg->name);
+                    fprintf(file, "    cset %s, %s\n", result_reg->name, cond);
                     free_reg(op1_reg);
                     free_reg(op2_reg);
                     push_reg(ctx, result_reg);
                 }
                 break;
             case OP_LT:
+            case OP_UNSIGNED_LT:
                 {
                     struct codegen_reg * op2_reg = pop_reg(ctx);
                     struct codegen_reg * op1_reg = pop_reg(ctx);
                     struct codegen_reg * result_reg = alloc_reg(ctx, CODEGEN_REG_KIND_INTEGER);
+                    const char * cond = instruction->code == OP_UNSIGNED_LT ? "lo" : "lt";
                     fprintf(file, "    cmp %s, %s\n", op1_reg->name, op2_reg->name);
-                    fprintf(file, "    cset %s, lt\n", result_reg->name);
+                    fprintf(file, "    cset %s, %s\n", result_reg->name, cond);
                     free_reg(op1_reg);
                     free_reg(op2_reg);
                     push_reg(ctx, result_reg);

@@ -233,3 +233,65 @@ OP_FUNC_END
 
 @endtest
 
+
+@test("It should generate OP_JUMP_IF_UNSIGNED_GTE for unsigned less than in while")
+@given("file")
+int main() {
+    unsigned int x;
+    x = 0u;
+    while (x < 3u) {
+        x = x + 1u;
+    }
+    return x;
+}
+@whenRun("./bin/cclynx", args="--emit-ir --no-warnings")
+@expectOutput("stdout")
+OP_FUNC "main"
+OP_CONST 0, t1
+OP_STORE x, t1
+OP_LABEL ".L1"
+OP_LOAD x, t2
+OP_CONST 3, t3
+OP_JUMP_IF_UNSIGNED_GTE t2, t3, ".L2"
+OP_LOAD x, t4
+OP_CONST 1, t5
+OP_ADD t4, t5, t6
+OP_STORE x, t6
+OP_JUMP ".L1"
+OP_LABEL ".L2"
+OP_LOAD x, t7
+OP_RETURN t7
+OP_FUNC_END
+
+@endtest
+
+@test("It should generate OP_JUMP_IF_UNSIGNED_LTE for unsigned greater than in while")
+@given("file")
+int main() {
+    unsigned int x;
+    x = 3u;
+    while (x > 0u) {
+        x = x - 1u;
+    }
+    return x;
+}
+@whenRun("./bin/cclynx", args="--emit-ir --no-warnings")
+@expectOutput("stdout")
+OP_FUNC "main"
+OP_CONST 3, t1
+OP_STORE x, t1
+OP_LABEL ".L1"
+OP_LOAD x, t2
+OP_CONST 0, t3
+OP_JUMP_IF_UNSIGNED_LTE t2, t3, ".L2"
+OP_LOAD x, t4
+OP_CONST 1, t5
+OP_SUB t4, t5, t6
+OP_STORE x, t6
+OP_JUMP ".L1"
+OP_LABEL ".L2"
+OP_LOAD x, t7
+OP_RETURN t7
+OP_FUNC_END
+
+@endtest

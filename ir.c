@@ -290,10 +290,10 @@ void do_generate_ir(struct ir_context * ctx, struct ir_program * program, const 
                         instruction->code = OP_NE;
                         break;
                     case BINARY_OPERATION_LESS_THAN:
-                        instruction->code = OP_LT;
+                        instruction->code = type_is_unsigned(node->type) ? OP_UNSIGNED_LT : OP_LT;
                         break;
                     case BINARY_OPERATION_GREATER_THAN:
-                        instruction->code = OP_GT;
+                        instruction->code = type_is_unsigned(node->type) ? OP_UNSIGNED_GT : OP_GT;
                         break;
                     case BINARY_OPERATION_ADDITION:
                         instruction->code = OP_ADD;
@@ -476,7 +476,8 @@ void ir_generate_condition(struct ir_context * ctx, struct ir_program * program,
         do_generate_ir(ctx, program, condition->content.binary_expression.rhs);
         op2 = program->instructions[program->position - 1]->result;
 
-        struct ir_instruction * instruction = ir_create_instruction(ctx, OP_JUMP_IF_GTE);
+        enum opcode jump_op = type_is_unsigned(condition->type) ? OP_JUMP_IF_UNSIGNED_GTE : OP_JUMP_IF_GTE;
+        struct ir_instruction * instruction = ir_create_instruction(ctx, jump_op);
         instruction->op1 = op1;
         instruction->op2 = op2;
         instruction->result = jump_label;
@@ -491,7 +492,8 @@ void ir_generate_condition(struct ir_context * ctx, struct ir_program * program,
         do_generate_ir(ctx, program, condition->content.binary_expression.rhs);
         op2 = program->instructions[program->position - 1]->result;
 
-        struct ir_instruction * instruction = ir_create_instruction(ctx, OP_JUMP_IF_LTE);
+        enum opcode jump_op = type_is_unsigned(condition->type) ? OP_JUMP_IF_UNSIGNED_LTE : OP_JUMP_IF_LTE;
+        struct ir_instruction * instruction = ir_create_instruction(ctx, jump_op);
         instruction->op1 = op1;
         instruction->op2 = op2;
         instruction->result = jump_label;

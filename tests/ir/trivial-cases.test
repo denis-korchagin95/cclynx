@@ -202,3 +202,59 @@ OP_RETURN t4
 OP_FUNC_END
 
 @endtest
+
+@test("It should generate OP_UNSIGNED_LT for unsigned less than")
+@given("file")
+int main() {
+    unsigned int a;
+    a = 3u;
+    unsigned int b;
+    b = 5u;
+    int r;
+    r = a < b;
+    return r;
+}
+@whenRun("./bin/cclynx", args="--emit-ir --no-warnings")
+@expectOutput("stdout")
+OP_FUNC "main"
+OP_CONST 3, t1
+OP_STORE a, t1
+OP_CONST 5, t2
+OP_STORE b, t2
+OP_LOAD a, t3
+OP_LOAD b, t4
+OP_UNSIGNED_LT t3, t4, t5
+OP_STORE r, t5
+OP_LOAD r, t6
+OP_RETURN t6
+OP_FUNC_END
+
+@endtest
+
+@test("It should generate OP_UNSIGNED_GT for unsigned greater than")
+@given("file")
+int main() {
+    unsigned int a;
+    a = 5u;
+    unsigned int b;
+    b = 3u;
+    int r;
+    r = a > b;
+    return r;
+}
+@whenRun("./bin/cclynx", args="--emit-ir --no-warnings")
+@expectOutput("stdout")
+OP_FUNC "main"
+OP_CONST 5, t1
+OP_STORE a, t1
+OP_CONST 3, t2
+OP_STORE b, t2
+OP_LOAD a, t3
+OP_LOAD b, t4
+OP_UNSIGNED_GT t3, t4, t5
+OP_STORE r, t5
+OP_LOAD r, t6
+OP_RETURN t6
+OP_FUNC_END
+
+@endtest

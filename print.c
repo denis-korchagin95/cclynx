@@ -552,6 +552,14 @@ void print_ir_program(const struct ir_program * program, FILE * file)
                 snprintf(buf, sizeof(buf), "t%llu, t%llu, \".L%llu\"", instruction->op1->content.temp_id, instruction->op2->content.temp_id, instruction->result->content.label_id);
                 fprintf(file, "OP_JUMP_IF_GTE %s\n", buf);
                 break;
+            case OP_JUMP_IF_UNSIGNED_LTE:
+                snprintf(buf, sizeof(buf), "t%llu, t%llu, \".L%llu\"", instruction->op1->content.temp_id, instruction->op2->content.temp_id, instruction->result->content.label_id);
+                fprintf(file, "OP_JUMP_IF_UNSIGNED_LTE %s\n", buf);
+                break;
+            case OP_JUMP_IF_UNSIGNED_GTE:
+                snprintf(buf, sizeof(buf), "t%llu, t%llu, \".L%llu\"", instruction->op1->content.temp_id, instruction->op2->content.temp_id, instruction->result->content.label_id);
+                fprintf(file, "OP_JUMP_IF_UNSIGNED_GTE %s\n", buf);
+                break;
             case OP_LABEL:
                 snprintf(buf, sizeof(buf), "\".L%llu\"", instruction->op1->content.label_id);
                 fprintf(file, "OP_LABEL %s\n", buf);
@@ -571,6 +579,14 @@ void print_ir_program(const struct ir_program * program, FILE * file)
             case OP_GT:
                 snprintf(buf, sizeof(buf), "t%llu, t%llu, t%llu", instruction->op1->content.temp_id, instruction->op2->content.temp_id, instruction->result->content.temp_id);
                 fprintf(file, "OP_GT %s\n", buf);
+                break;
+            case OP_UNSIGNED_LT:
+                snprintf(buf, sizeof(buf), "t%llu, t%llu, t%llu", instruction->op1->content.temp_id, instruction->op2->content.temp_id, instruction->result->content.temp_id);
+                fprintf(file, "OP_UNSIGNED_LT %s\n", buf);
+                break;
+            case OP_UNSIGNED_GT:
+                snprintf(buf, sizeof(buf), "t%llu, t%llu, t%llu", instruction->op1->content.temp_id, instruction->op2->content.temp_id, instruction->result->content.temp_id);
+                fprintf(file, "OP_UNSIGNED_GT %s\n", buf);
                 break;
             case OP_EQ:
                 snprintf(buf, sizeof(buf), "t%llu, t%llu, t%llu", instruction->op1->content.temp_id, instruction->op2->content.temp_id, instruction->result->content.temp_id);
