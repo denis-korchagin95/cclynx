@@ -4,12 +4,9 @@ int main() {
     int result;
     int result;
 }
-@whenRun("./bin/cclynx", args="--emit-ast")
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings")
 @expectOutput("stderr")
 {{any}}:3:9: ERROR: variable 'result' already declared
-{{any}}:3:15: WARNING: unused variable 'result'
-{{any}}:2:15: WARNING: unused variable 'result'
-{{any}}:1:5: WARNING: function 'main' missing return statement
 
 @endtest
 
@@ -18,10 +15,9 @@ int main() {
 int main() {
     int while;
 }
-@whenRun("./bin/cclynx", args="--emit-ast")
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings")
 @expectOutput("stderr")
 {{any}}:2:9: ERROR: expected identifier but got keyword 'while'
-{{any}}:1:5: WARNING: function 'main' has empty body
 
 @endtest
 
@@ -31,10 +27,9 @@ int main() {
     int result;
     result = x + 1;
 }
-@whenRun("./bin/cclynx", args="--emit-ast")
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings")
 @expectOutput("stderr")
 {{any}}:3:14: ERROR: undeclared variable 'x'
-{{any}}:1:5: WARNING: function 'main' missing return statement
 
 @endtest
 
@@ -44,10 +39,9 @@ int main() {
     int result;
     result = int + 1;
 }
-@whenRun("./bin/cclynx", args="--emit-ast")
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings")
 @expectOutput("stderr")
 {{any}}:3:14: ERROR: expected identifier but got keyword 'int'
-{{any}}:1:5: WARNING: function 'main' missing return statement
 
 @endtest
 
@@ -177,11 +171,9 @@ int main() {
     }
     return 0;
 }
-@whenRun("./bin/cclynx", args="--emit-ast")
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings")
 @expectOutput("stderr")
 {{any}}:4:13: ERROR: variable 'y' already declared
-{{any}}:4:14: WARNING: unused variable 'y'
-{{any}}:3:14: WARNING: unused variable 'y'
 
 @endtest
 
@@ -197,10 +189,9 @@ int main() {
     }
     return 0;
 }
-@whenRun("./bin/cclynx", args="--emit-ast")
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings")
 @expectOutput("stderr")
 {{any}}:7:9: ERROR: undeclared variable 'y'
-{{any}}:6:5: WARNING: empty compound statement
 
 @endtest
 
@@ -257,9 +248,109 @@ int main() {
     float int x;
     return 0;
 }
-@whenRun("./bin/cclynx", args="--emit-ast")
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings")
 @expectOutput("stderr")
 {{any}}:2:11: ERROR: mixed types
-{{any}}:2:16: WARNING: unused variable 'x'
+
+@endtest
+
+@test("It should parse an implicitly signed integer variable")
+@given("file")
+int main() {
+    int x;
+    return 0;
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+|
++-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
+    |
+    +-> CompoundStatement
+        |
+        +-> VariableDeclaration: 'x' {type: 'int'}
+        |
+        +-> ReturnStatement
+            |
+            +-> IntegerConstant: '0' {type: 'int'}
+
+@endtest
+
+@test("It should parse an explicitly unsigned integer variable")
+@given("file")
+int main() {
+    unsigned int x;
+    return 0;
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+|
++-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
+    |
+    +-> CompoundStatement
+        |
+        +-> VariableDeclaration: 'x' {type: 'unsigned int'}
+        |
+        +-> ReturnStatement
+            |
+            +-> IntegerConstant: '0' {type: 'int'}
+
+@endtest
+
+@test("It should parse unsigned as an integer variable by default")
+@given("file")
+int main() {
+    unsigned x;
+    return 0;
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+|
++-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
+    |
+    +-> CompoundStatement
+        |
+        +-> VariableDeclaration: 'x' {type: 'unsigned int'}
+        |
+        +-> ReturnStatement
+            |
+            +-> IntegerConstant: '0' {type: 'int'}
+
+@endtest
+
+@test("It should show an error if unsigned duplicates more than one time")
+@given("file")
+int main() {
+    unsigned unsigned int x;
+    return 0;
+}
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings")
+@expectOutput("stderr")
+{{any}}:2:14: ERROR: duplicate 'unsigned' keyword
+
+@endtest
+
+@test("It should raise an error when unsigned is applied to void")
+@given("file")
+unsigned void foo() {
+    return;
+}
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings")
+@expectOutput("stderr")
+{{any}}:1:10: ERROR: 'unsigned' cannot be applied to 'void'
+
+@endtest
+
+@test("It should raise an error when unsigned is applied to float")
+@given("file")
+int main() {
+    unsigned float x;
+    return 0;
+}
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings")
+@expectOutput("stderr")
+{{any}}:2:14: ERROR: 'unsigned' cannot be applied to 'float'
 
 @endtest

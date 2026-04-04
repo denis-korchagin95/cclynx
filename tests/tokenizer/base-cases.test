@@ -53,6 +53,7 @@ return
 while
 if
 else
+unsigned
 @whenRun("./bin/cclynx", args="--emit-tokens")
 @expectOutput("stdout")
 <TOKEN_KEYWORD 'int'>
@@ -60,6 +61,7 @@ else
 <TOKEN_KEYWORD 'while'>
 <TOKEN_KEYWORD 'if'>
 <TOKEN_KEYWORD 'else'>
+<TOKEN_KEYWORD 'unsigned'>
 <TOKEN_EOS>
 
 @endtest

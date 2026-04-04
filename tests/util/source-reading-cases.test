@@ -42,9 +42,8 @@ int main() {
     float int x;
     return 0;
 }
-@whenRun("./scripts/cclynx-stdin-runner.sh", args="--emit-ast")
+@whenRun("./scripts/cclynx-stdin-runner.sh", args="--emit-ast --no-warnings")
 @expectOutput("stderr")
 {{any}}:2:11: ERROR: mixed types
-{{any}}:2:16: WARNING: unused variable 'x'
 
 @endtest

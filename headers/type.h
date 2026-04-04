@@ -22,7 +22,8 @@ struct type
     unsigned int modifiers;
 };
 
-extern struct type type_integer;
+extern struct type type_sint32;
+extern struct type type_uint32;
 extern struct type type_void;
 extern struct type type_float;
 

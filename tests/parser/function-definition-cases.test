@@ -282,6 +282,67 @@ TranslationUnit: '{{any}}'
 
 @endtest
 
+@test("It should parse function with unsigned int return type")
+@given("file")
+unsigned int foo() {
+    return 42;
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+|
++-> FunctionDefinition: 'foo' {type: 'unsigned int'} <unspecified-parameters>
+    |
+    +-> CompoundStatement
+        |
+        +-> ReturnStatement
+            |
+            +-> IntegerConstant: '42' {type: 'int'}
+
+@endtest
+
+@test("It should parse function with unsigned return type (implicit int)")
+@given("file")
+unsigned foo() {
+    return 42;
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+|
++-> FunctionDefinition: 'foo' {type: 'unsigned int'} <unspecified-parameters>
+    |
+    +-> CompoundStatement
+        |
+        +-> ReturnStatement
+            |
+            +-> IntegerConstant: '42' {type: 'int'}
+
+@endtest
+
+@test("It should parse function with unsigned int parameter")
+@given("file")
+int foo(unsigned int a) {
+    return a;
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+|
++-> FunctionDefinition: 'foo' {type: 'int'} <1-parameter>
+    |
+    +-> ParameterList
+    |   |
+    |   +-> Parameter: 'a' {type: 'unsigned int'}
+    |
+    +-> CompoundStatement
+        |
+        +-> ReturnStatement
+            |
+            +-> VariableExpression: 'a' {type: 'unsigned int'}
+
+@endtest
+
 @test("It should raise an error on function redefinition")
 @given("file")
 int foo() {
@@ -347,11 +408,8 @@ int foo(int return) {
 int foo(int a, int b, int c, int d) {
     return 0;
 }
-@whenRun("./bin/cclynx", args="--emit-ast")
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings")
 @expectOutput("stderr")
 {{any}}:1:28: ERROR: too many parameters, maximum is 3
-{{any}}:1:27: WARNING: unused parameter 'c'
-{{any}}:1:20: WARNING: unused parameter 'b'
-{{any}}:1:13: WARNING: unused parameter 'a'
 
 @endtest

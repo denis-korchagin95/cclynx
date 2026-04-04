@@ -4,19 +4,29 @@
 #include "errors.h"
 
 struct type type_void = {TYPE_KIND_VOID, 0, 0, 0};
-struct type type_integer = {TYPE_KIND_INTEGER, 4, 4, TYPE_MODIFIER_SIGNED};
+struct type type_sint32 = {TYPE_KIND_INTEGER, 4, 4, TYPE_MODIFIER_SIGNED};
+struct type type_uint32 = {TYPE_KIND_INTEGER, 4, 4, TYPE_MODIFIER_UNSIGNED};
 struct type type_float = {TYPE_KIND_FLOAT, 4, 4, 0};
 
 const char * type_stringify(const struct type * type)
 {
     assert(type != NULL);
 
-    if (type->kind == TYPE_KIND_VOID)
+    if (type == &type_void) {
         return "void";
-    if (type->kind == TYPE_KIND_INTEGER)
-        return "int";
-    if (type->kind == TYPE_KIND_FLOAT)
+    }
+
+    if (type == &type_float) {
         return "float";
+    }
+
+    if (type == &type_sint32) {
+        return "int";
+    }
+
+    if (type == &type_uint32) {
+        return "unsigned int";
+    }
 
     return "<unknown type>";
 }

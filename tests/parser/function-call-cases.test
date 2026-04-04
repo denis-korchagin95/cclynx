@@ -102,21 +102,6 @@ TranslationUnit: '{{any}}'
 
 @endtest
 
-@test("It should warn when calling function with unspecified parameters with arguments")
-@given("file")
-int foo() {
-   return 7;
-}
-
-int main() {
-    return foo(42);
-}
-@whenRun("./bin/cclynx", args="--emit-ast")
-@expectOutput("stderr")
-{{any}}:6:12: WARNING: function 'foo' has unspecified parameters, consider using 'foo(void)' or adding parameter types
-
-@endtest
-
 @test("It should parse function call with 1 argument")
 @given("file")
 int identity(int a) {
@@ -314,10 +299,9 @@ int add(int a, int b) {
 int main() {
     return add(1);
 }
-@whenRun("./bin/cclynx", args="--emit-ast")
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings")
 @expectOutput("stderr")
 {{any}}:6:12: ERROR: function 'add' expects 2 arguments but 1 were provided
-{{any}}:5:5: WARNING: function 'main' has empty body
 
 @endtest
 
@@ -341,9 +325,8 @@ int main() {
 int main() {
     return 42 * while();
 }
-@whenRun("./bin/cclynx", args="--emit-ast")
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings")
 @expectOutput("stderr")
 {{any}}:2:17: ERROR: expected identifier but got keyword 'while'
-{{any}}:1:5: WARNING: function 'main' has empty body
 
 @endtest

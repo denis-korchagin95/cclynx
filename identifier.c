@@ -14,13 +14,14 @@ static struct keyword
     const char * name;
     enum keyword_code code;
 } keywords[] = {
-    {"int",     KEYWORD_INT},
-    {"float",   KEYWORD_FLOAT},
-    {"void",    KEYWORD_VOID},
-    {"return",  KEYWORD_RETURN},
-    {"while",   KEYWORD_WHILE},
-    {"if",      KEYWORD_IF},
-    {"else",    KEYWORD_ELSE},
+    {"int",         KEYWORD_INT},
+    {"float",       KEYWORD_FLOAT},
+    {"void",        KEYWORD_VOID},
+    {"return",      KEYWORD_RETURN},
+    {"while",       KEYWORD_WHILE},
+    {"if",          KEYWORD_IF},
+    {"else",        KEYWORD_ELSE},
+    {"unsigned",    KEYWORD_UNSIGNED}
 };
 
 

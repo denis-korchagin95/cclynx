@@ -87,3 +87,93 @@ TranslationUnit: '{{any}}'
             +-> VariableExpression: 'x' {type: 'float'}
 
 @endtest
+
+@test("An integer can be cast to unsigned int")
+@given("file")
+int main() {
+    int y;
+    y = 42;
+    unsigned int x;
+    x = (unsigned int)y;
+    return x;
+}
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+|
++-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
+    |
+    +-> CompoundStatement
+        |
+        +-> VariableDeclaration: 'y' {type: 'int'}
+        |
+        +-> ExpressionStatement
+        |   |
+        |   +-> AssignmentExpression: '='
+        |       |
+        |       +-> VariableExpression: 'y' {type: 'int'}
+        |       |
+        |       +-> IntegerConstant: '42' {type: 'int'}
+        |
+        +-> VariableDeclaration: 'x' {type: 'unsigned int'}
+        |
+        +-> ExpressionStatement
+        |   |
+        |   +-> AssignmentExpression: '='
+        |       |
+        |       +-> VariableExpression: 'x' {type: 'unsigned int'}
+        |       |
+        |       +-> CastExpression {type: 'unsigned int'}
+        |           |
+        |           +-> VariableExpression: 'y' {type: 'int'}
+        |
+        +-> ReturnStatement
+            |
+            +-> VariableExpression: 'x' {type: 'unsigned int'}
+
+@endtest
+
+@test("An integer can be cast to unsigned (implicit int)")
+@given("file")
+int main() {
+    int y;
+    y = 42;
+    unsigned x;
+    x = (unsigned)y;
+    return x;
+}
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+|
++-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
+    |
+    +-> CompoundStatement
+        |
+        +-> VariableDeclaration: 'y' {type: 'int'}
+        |
+        +-> ExpressionStatement
+        |   |
+        |   +-> AssignmentExpression: '='
+        |       |
+        |       +-> VariableExpression: 'y' {type: 'int'}
+        |       |
+        |       +-> IntegerConstant: '42' {type: 'int'}
+        |
+        +-> VariableDeclaration: 'x' {type: 'unsigned int'}
+        |
+        +-> ExpressionStatement
+        |   |
+        |   +-> AssignmentExpression: '='
+        |       |
+        |       +-> VariableExpression: 'x' {type: 'unsigned int'}
+        |       |
+        |       +-> CastExpression {type: 'unsigned int'}
+        |           |
+        |           +-> VariableExpression: 'y' {type: 'int'}
+        |
+        +-> ReturnStatement
+            |
+            +-> VariableExpression: 'x' {type: 'unsigned int'}
+
+@endtest
