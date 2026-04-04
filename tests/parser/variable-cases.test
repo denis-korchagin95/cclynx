@@ -371,3 +371,14 @@ unsigned void foo() {
 
 @endtest
 
+@test("It should raise an error on void variable declaration")
+@given("file")
+int main() {
+    void x;
+    return 0;
+}
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings")
+@expectOutput("stderr")
+{{any}}:2:10: ERROR: variable cannot have 'void' type
+
+@endtest

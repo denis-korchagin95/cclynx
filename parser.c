@@ -619,6 +619,16 @@ struct ast_node * parse_declaration(struct parser_context * ctx)
         return NULL;
     }
 
+    if (type->kind == TYPE_KIND_VOID) {
+        struct token * name_token = parser_get_token(ctx);
+        parser_report_error(ctx, name_token, "variable cannot have 'void' type");
+        if (name_token != &eos_token) {
+            parser_putback_token(name_token, ctx);
+        }
+        parser_synchronize_statement(ctx);
+        return NULL;
+    }
+
     struct token * current_token = parser_get_token(ctx);
 
     if (current_token->kind != TOKEN_KIND_IDENTIFIER) {
