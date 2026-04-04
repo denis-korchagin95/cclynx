@@ -45,7 +45,7 @@ static void parse_function_parameter_list(struct parser_context * ctx, struct as
 void parse_declaration_specifiers(struct parser_context * ctx, struct declaration_specifiers * specifiers);
 struct type * resolve_type(struct declaration_specifiers * specifiers);
 
-static struct type * resolve_binary_expression_type(struct parser_context * ctx, struct ast_node ** lhs_ptr, struct ast_node ** rhs_ptr);
+static struct type * cast_binary_operands(struct parser_context * ctx, struct ast_node ** lhs_ptr, struct ast_node ** rhs_ptr);
 
 static void parser_report_error(struct parser_context * ctx, const struct token * token, const char * fmt, ...)
 {
@@ -721,7 +721,7 @@ struct ast_node * parse_assignment_expression(struct parser_context * ctx)
     return assignment_expression;
 }
 
-struct type * resolve_binary_expression_type(struct parser_context * ctx, struct ast_node ** lhs_ptr, struct ast_node ** rhs_ptr)
+struct type * cast_binary_operands(struct parser_context * ctx, struct ast_node ** lhs_ptr, struct ast_node ** rhs_ptr)
 {
     assert(ctx != NULL);
     assert(lhs_ptr != NULL);
@@ -774,7 +774,7 @@ struct ast_node * parse_equality_expression(struct parser_context * ctx)
             return NULL;
         }
 
-        struct ast_node * binary_expression = ast_create_node(ctx->pool, AST_NODE_KIND_EQUALITY_EXPRESSION, resolve_binary_expression_type(ctx, &lhs, &rhs));
+        struct ast_node * binary_expression = ast_create_node(ctx->pool, AST_NODE_KIND_EQUALITY_EXPRESSION, cast_binary_operands(ctx, &lhs, &rhs));
         binary_expression->content.binary_expression.operation = operation;
         binary_expression->content.binary_expression.lhs = lhs;
         binary_expression->content.binary_expression.rhs = rhs;
@@ -815,7 +815,7 @@ struct ast_node * parse_relational_expression(struct parser_context * ctx) {
             return NULL;
         }
 
-        struct ast_node * binary_expression = ast_create_node(ctx->pool, AST_NODE_KIND_RELATIONAL_EXPRESSION, resolve_binary_expression_type(ctx, &lhs, &rhs));
+        struct ast_node * binary_expression = ast_create_node(ctx->pool, AST_NODE_KIND_RELATIONAL_EXPRESSION, cast_binary_operands(ctx, &lhs, &rhs));
         binary_expression->content.binary_expression.operation = operation;
         binary_expression->content.binary_expression.lhs = lhs;
         binary_expression->content.binary_expression.rhs = rhs;
@@ -858,7 +858,7 @@ struct ast_node * parse_additive_expression(struct parser_context * ctx)
             return NULL;
         }
 
-        struct ast_node * binary_expression = ast_create_node(ctx->pool, AST_NODE_KIND_ADDITIVE_EXPRESSION, resolve_binary_expression_type(ctx, &lhs, &rhs));
+        struct ast_node * binary_expression = ast_create_node(ctx->pool, AST_NODE_KIND_ADDITIVE_EXPRESSION, cast_binary_operands(ctx, &lhs, &rhs));
         binary_expression->content.binary_expression.operation = operation;
         binary_expression->content.binary_expression.lhs = lhs;
         binary_expression->content.binary_expression.rhs = rhs;
@@ -900,7 +900,7 @@ struct ast_node * parse_multiplicative_expression(struct parser_context * ctx)
             return NULL;
         }
 
-        struct ast_node * binary_expression = ast_create_node(ctx->pool, AST_NODE_KIND_MULTIPLICATIVE_EXPRESSION, resolve_binary_expression_type(ctx, &lhs, &rhs));
+        struct ast_node * binary_expression = ast_create_node(ctx->pool, AST_NODE_KIND_MULTIPLICATIVE_EXPRESSION, cast_binary_operands(ctx, &lhs, &rhs));
         binary_expression->content.binary_expression.operation = operation;
         binary_expression->content.binary_expression.lhs = lhs;
         binary_expression->content.binary_expression.rhs = rhs;
