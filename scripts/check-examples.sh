@@ -7,8 +7,7 @@ AS="aarch64-linux-gnu-as"
 GCC="aarch64-linux-gnu-gcc"
 QEMU="qemu-aarch64"
 QEMU_FLAGS="-L /usr/aarch64-linux-gnu"
-INT_WRAPPER="./scripts/int_wrapper.c"
-INT32_WRAPPER="./scripts/int32_wrapper.c"
+DEFAULT_WRAPPER="./scripts/int_wrapper.c"
 TMPDIR=$(mktemp -d)
 
 trap "rm -rf $TMPDIR" EXIT
@@ -20,27 +19,32 @@ errors=0
 for src in ./examples/*.c; do
     filename=$(basename "$src")
 
-    # parse "// expected return: <value> [(float)]" from first line
+    # parse "// expected return: <value>" from first line
     header=$(head -1 "$src")
     if ! echo "$header" | grep -q "// expected return:"; then
         echo "SKIP: $filename (no expected return comment)"
         continue
     fi
 
-    expected=$(echo "$header" | sed 's|// expected return: *||' | sed 's| *(int32).*||')
-    if echo "$header" | grep -q "(int32)"; then
-        type="int32"
+    expected=$(echo "$header" | sed 's|// expected return: *||')
+
+    # parse optional "// wrapper: <path>" from second line
+    wrapper_line=$(sed -n '2p' "$src")
+    if echo "$wrapper_line" | grep -q "// wrapper:"; then
+        wrapper=$(echo "$wrapper_line" | sed 's|// wrapper: *||')
+        skip_lines=2
     else
-        type="int"
+        wrapper="$DEFAULT_WRAPPER"
+        skip_lines=1
     fi
 
     asm_file="$TMPDIR/${filename%.c}.s"
     obj_file="$TMPDIR/${filename%.c}.o"
     bin_file="$TMPDIR/${filename%.c}"
 
-    # step 1: compile with cclynx (strip comment line first)
+    # step 1: compile with cclynx (strip comment lines first)
     stripped_file="$TMPDIR/${filename}"
-    tail -n +2 "$src" > "$stripped_file"
+    tail -n +$((skip_lines + 1)) "$src" > "$stripped_file"
     if ! $CCLYNX "$stripped_file" > "$asm_file" 2>&1; then
         echo "ERROR: $filename — cclynx compilation failed"
         errors=$((errors + 1))
@@ -55,23 +59,9 @@ for src in ./examples/*.c; do
     fi
 
     # step 3: link and run
-    if [ "$type" = "int32" ]; then
-        if ! $GCC -static -o "$bin_file" "$INT32_WRAPPER" "$obj_file" 2>&1; then
-            echo "ERROR: $filename — linking failed"
-            errors=$((errors + 1))
-            continue
-        fi
-
-        if $QEMU $QEMU_FLAGS "$bin_file" "$expected" 2>"$TMPDIR/stderr.txt"; then
-            echo "PASS: $filename (expected $expected)"
-            passed=$((passed + 1))
-        else
-            stderr_output=$(cat "$TMPDIR/stderr.txt")
-            echo "FAIL: $filename — $stderr_output"
-            failed=$((failed + 1))
-        fi
-    else
-        if ! $GCC -static -o "$bin_file" "$INT_WRAPPER" "$obj_file" 2>&1; then
+    if [ "$wrapper" = "$DEFAULT_WRAPPER" ]; then
+        # default wrapper: check via exit code
+        if ! $GCC -static -o "$bin_file" "$wrapper" "$obj_file" 2>&1; then
             echo "ERROR: $filename — linking failed"
             errors=$((errors + 1))
             continue
@@ -87,6 +77,22 @@ for src in ./examples/*.c; do
             passed=$((passed + 1))
         else
             echo "FAIL: $filename (expected $expected, got $actual)"
+            failed=$((failed + 1))
+        fi
+    else
+        # custom wrapper: pass expected as argument, check via exit code + stderr
+        if ! $GCC -static -o "$bin_file" "$wrapper" "$obj_file" 2>&1; then
+            echo "ERROR: $filename — linking failed"
+            errors=$((errors + 1))
+            continue
+        fi
+
+        if $QEMU $QEMU_FLAGS "$bin_file" "$expected" 2>"$TMPDIR/stderr.txt"; then
+            echo "PASS: $filename (expected $expected)"
+            passed=$((passed + 1))
+        else
+            stderr_output=$(cat "$TMPDIR/stderr.txt")
+            echo "FAIL: $filename — $stderr_output"
             failed=$((failed + 1))
         fi
     fi

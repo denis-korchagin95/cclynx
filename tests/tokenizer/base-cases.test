@@ -103,3 +103,19 @@ superVar_2
 <TOKEN_EOS>
 
 @endtest
+
+@test("It should tokenize unsigned int numbers")
+@given("file")
+0u
+1U
+42u
+10000780U
+@whenRun("./bin/cclynx", args="--emit-tokens")
+@expectOutput("stdout")
+<TOKEN_NUMBER '0u'>
+<TOKEN_NUMBER '1U'>
+<TOKEN_NUMBER '42u'>
+<TOKEN_NUMBER '10000780U'>
+<TOKEN_EOS>
+
+@endtest

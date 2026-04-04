@@ -210,7 +210,11 @@ void read_number(struct tokenizer_context * ctx, struct source * source, struct 
         ch = source_get_char(source);
 
         if (!isdigit(ch) && ch != '.') {
-            if (ch != EOF) source_unget_char(source, ch);
+            if (ch == 'u' || ch == 'U') {
+                token->flags |= TOKEN_FLAG_IS_UNSIGNED;
+            } else {
+                if (ch != EOF) source_unget_char(source, ch);
+            }
             break;
         }
     }
@@ -223,6 +227,10 @@ void read_number(struct tokenizer_context * ctx, struct source * source, struct 
 
     const char * ptr = source->content + span_start;
     for (uint32_t i = 0; i < token->span.length; ++i) {
+        if (ptr[i] == 'u' || ptr[i] == 'U') {
+            continue;
+        }
+
         if (ptr[i] == '.') {
             cclynx_fatal_error("ERROR: float literals are not supported\n");
         }

@@ -42,6 +42,7 @@ static struct ast_node * parse_postfix_expression(struct parser_context * ctx);
 static struct ast_node * parse_primary_expression(struct parser_context * ctx);
 
 static void parse_function_parameter_list(struct parser_context * ctx, struct ast_node ** parameters, unsigned int * parameter_count);
+static struct ast_node * parse_number(struct parser_context * ctx, const struct token * token);
 void parse_declaration_specifiers(struct parser_context * ctx, struct declaration_specifiers * specifiers);
 struct type * resolve_type(struct declaration_specifiers * specifiers);
 
@@ -1056,6 +1057,30 @@ fallback:
     return parse_primary_expression(ctx);
 }
 
+struct ast_node * parse_number(struct parser_context * ctx, const struct token * token)
+{
+    assert(ctx != NULL);
+    assert(token != NULL);
+    assert(token->kind == TOKEN_KIND_NUMBER);
+
+    const char * ptr = token->source->content + token->span.offset;
+    int is_unsigned = token->flags & TOKEN_FLAG_IS_UNSIGNED;
+
+    long long int value = 0;
+    for (uint32_t i = 0; i < token->span.length; ++i) {
+        char ch = ptr[i];
+        if (ch >= '0' && ch <= '9') {
+            value = value * 10 + (ch - '0');
+        }
+    }
+
+    struct type * type = is_unsigned ? &type_uint32 : &type_sint32;
+    struct ast_node * number = ast_create_node(ctx->pool, AST_NODE_KIND_INTEGER_CONSTANT_EXPRESSION, type);
+    number->content.constant.value = value;
+
+    return number;
+}
+
 struct ast_node * parse_primary_expression(struct parser_context * ctx)
 {
     assert(ctx != NULL);
@@ -1063,11 +1088,7 @@ struct ast_node * parse_primary_expression(struct parser_context * ctx)
     struct token * current_token = parser_get_token(ctx);
 
     if (current_token->kind == TOKEN_KIND_NUMBER) {
-        const char * number_ptr = current_token->source->content + current_token->span.offset;
-
-        struct ast_node * number = ast_create_node(ctx->pool, AST_NODE_KIND_INTEGER_CONSTANT_EXPRESSION, &type_sint32);
-        number->content.constant.value = (int)strtol(number_ptr, NULL, 10);
-        return number;
+        return parse_number(ctx, current_token);
     }
 
     if (current_token->kind == TOKEN_KIND_IDENTIFIER) {

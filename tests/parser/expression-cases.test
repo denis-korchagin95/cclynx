@@ -1182,3 +1182,69 @@ TranslationUnit: '{{any}}'
                         └── descriptor: 'unsigned int'
 
 @endtest
+
+@test("It should parse an unsigned integer constant with u suffix")
+@given("file")
+unsigned int main() {
+    return 42u;
+}
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'unsigned int'
+    └── CompoundStatement
+        └── ReturnStatement
+            └── IntegerConstant: '42'
+                └── Type
+                    ├── category: 'basic'
+                    └── descriptor: 'unsigned int'
+
+@endtest
+
+@test("It should parse unsigned constants in expressions without implicit cast")
+@given("file")
+unsigned int main() {
+    unsigned int x;
+    x = 10u;
+    return x + 5u;
+}
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'unsigned int'
+    └── CompoundStatement
+        ├── VariableDeclaration: 'x'
+        │   └── Type
+        │       ├── category: 'basic'
+        │       └── descriptor: 'unsigned int'
+        ├── ExpressionStatement
+        │   └── AssignmentExpression: '='
+        │       ├── VariableExpression: 'x'
+        │       │   └── Type
+        │       │       ├── category: 'basic'
+        │       │       └── descriptor: 'unsigned int'
+        │       └── IntegerConstant: '10'
+        │           └── Type
+        │               ├── category: 'basic'
+        │               └── descriptor: 'unsigned int'
+        └── ReturnStatement
+            └── AdditiveExpression: '+'
+                ├── Type
+                │   ├── category: 'basic'
+                │   └── descriptor: 'unsigned int'
+                ├── VariableExpression: 'x'
+                │   └── Type
+                │       ├── category: 'basic'
+                │       └── descriptor: 'unsigned int'
+                └── IntegerConstant: '5'
+                    └── Type
+                        ├── category: 'basic'
+                        └── descriptor: 'unsigned int'
+
+@endtest
