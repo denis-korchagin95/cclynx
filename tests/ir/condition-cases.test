@@ -305,30 +305,3 @@ OP_FUNC_END
 
 @endtest
 
-@test("It should generate IR code for if statement with float constant condition")
-@given("file")
-int main() {
-    float x;
-    x = 10;
-    if (x > 3.0) {
-        x = 777.0;
-    }
-    return (int)x;
-}
-@whenRun("./bin/cclynx", args="--emit-ir")
-@expectOutput("stdout")
-OP_FUNC "main"
-OP_CONST 10, t1
-OP_STORE x, t1
-OP_LOAD x, t2
-OP_CONST 3.000000, t3
-OP_JUMP_IF_LESS_THAN_OR_EQUAL t2, t3, ".L1"
-OP_CONST 777.000000, t4
-OP_STORE x, t4
-OP_LABEL ".L1"
-OP_LOAD x, t5
-OP_INT_CAST t5, t6
-OP_RETURN t6
-OP_FUNC_END
-
-@endtest

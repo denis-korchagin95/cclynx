@@ -221,19 +221,11 @@ void read_number(struct tokenizer_context * ctx, struct source * source, struct 
     token->span.position.line = span_line;
     token->span.position.column = span_column;
 
-    size_t dot_count = 0;
     const char * ptr = source->content + span_start;
     for (uint32_t i = 0; i < token->span.length; ++i) {
-        if (ptr[i] == '.')
-            ++dot_count;
-    }
-
-    if (dot_count > 1) {
-        cclynx_fatal_error("ERROR: incorrect number '%.*s'\n", token->span.length, ptr);
-    }
-
-    if (dot_count > 0) {
-        token->flags |= TOKEN_FLAG_IS_FLOAT;
+        if (ptr[i] == '.') {
+            cclynx_fatal_error("ERROR: float literals are not supported\n");
+        }
     }
 }
 

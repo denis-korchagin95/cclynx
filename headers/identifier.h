@@ -24,7 +24,6 @@ enum keyword_code
     KEYWORD_RETURN,
     KEYWORD_WHILE,
     KEYWORD_UNSIGNED,
-    KEYWORD_FLOAT,
     KEYWORD_IF,
     KEYWORD_ELSE,
 };

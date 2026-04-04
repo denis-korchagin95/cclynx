@@ -233,34 +233,3 @@ OP_FUNC_END
 
 @endtest
 
-@test("It should generate IR code for while loop with float condition")
-@given("file")
-int main() {
-    float n;
-    n = 10.0;
-    while (n > 5.0) {
-        n = n - 1.0;
-    }
-    return (int)n;
-}
-@whenRun("./bin/cclynx", args="--emit-ir")
-@expectOutput("stdout")
-OP_FUNC "main"
-OP_CONST 10.000000, t1
-OP_STORE n, t1
-OP_LABEL ".L1"
-OP_LOAD n, t2
-OP_CONST 5.000000, t3
-OP_JUMP_IF_LESS_THAN_OR_EQUAL t2, t3, ".L2"
-OP_LOAD n, t4
-OP_CONST 1.000000, t5
-OP_SUB t4, t5, t6
-OP_STORE n, t6
-OP_JUMP ".L1"
-OP_LABEL ".L2"
-OP_LOAD n, t7
-OP_INT_CAST t7, t8
-OP_RETURN t8
-OP_FUNC_END
-
-@endtest

@@ -84,7 +84,6 @@ TranslationUnit: '{{any}}'
 
 @endtest
 
-
 @test("It should parse function call with unspecified parameters and arguments provided")
 @given("file")
 int foo() {
@@ -392,21 +391,6 @@ int main() {
 @whenRun("./bin/cclynx", args="--emit-ast --no-warnings")
 @expectOutput("stderr")
 {{any}}:6:12: ERROR: function 'add' expects 2 arguments but 1 were provided
-
-@endtest
-
-@test("It should raise an error on argument type mismatch")
-@given("file")
-int identity(int a) {
-    return a;
-}
-
-int main() {
-    return identity((float) 1);
-}
-@whenRun("./bin/cclynx", args="--emit-ast")
-@expectOutput("stderr")
-{{any}}:6:12: ERROR: argument 1 of function 'identity' has type 'float' but expected 'int'
 
 @endtest
 

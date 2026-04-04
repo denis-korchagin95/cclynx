@@ -11,8 +11,6 @@ struct hashmap;
 #define is_start_identifier_char(ch) (is_char(ch))
 #define is_identifier_char(ch) (is_char(ch) || (ch) == '_')
 
-#define TOKEN_FLAG_IS_FLOAT (1 << 0)
-
 #define token_first_ch(token) ((token)->source->content[(token)->span.offset])
 
 #define token_is_identifier(token) \

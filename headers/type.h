@@ -13,7 +13,6 @@ enum type_kind
     TYPE_KIND_UNDEFINED = 0,
     TYPE_KIND_VOID,
     TYPE_KIND_INTEGER,
-    TYPE_KIND_FLOAT,
 };
 
 struct type
@@ -27,7 +26,6 @@ struct type
 extern struct type type_sint32;
 extern struct type type_uint32;
 extern struct type type_void;
-extern struct type type_float;
 
 static inline int type_signedness_differs(const struct type * a, const struct type * b)
 {

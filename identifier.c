@@ -15,7 +15,6 @@ static struct keyword
     enum keyword_code code;
 } keywords[] = {
     {"int",         KEYWORD_INT},
-    {"float",       KEYWORD_FLOAT},
     {"void",        KEYWORD_VOID},
     {"return",      KEYWORD_RETURN},
     {"while",       KEYWORD_WHILE},

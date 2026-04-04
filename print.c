@@ -248,13 +248,7 @@ void do_print_ast(const struct ast_node * ast, FILE * file, int depth, unsigned 
             break;
         case AST_NODE_KIND_INTEGER_CONSTANT_EXPRESSION:
             {
-                fprintf(file, "IntegerConstant: '%lld'\n", ast->content.constant.value.integer_constant);
-                print_type_child(file, depth, ancestors_info, ast->type, 0);
-            }
-            break;
-        case AST_NODE_KIND_FLOAT_CONSTANT_EXPRESSION:
-            {
-                fprintf(file, "FloatConstant: '%f'\n", ast->content.constant.value.float_constant);
+                fprintf(file, "IntegerConstant: '%lld'\n", ast->content.constant.value);
                 print_type_child(file, depth, ancestors_info, ast->type, 0);
             }
             break;
@@ -498,10 +492,7 @@ int do_print_ast_dot(const struct ast_node * ast, FILE * file, int next_id)
             }
             break;
         case AST_NODE_KIND_INTEGER_CONSTANT_EXPRESSION:
-            fprintf(file, "    n%d [label=\"IntegerConstant\\n%lld : %s\"];\n", id, ast->content.constant.value.integer_constant, type_stringify(ast->type));
-            break;
-        case AST_NODE_KIND_FLOAT_CONSTANT_EXPRESSION:
-            fprintf(file, "    n%d [label=\"FloatConstant\\n%f : %s\"];\n", id, ast->content.constant.value.float_constant, type_stringify(ast->type));
+            fprintf(file, "    n%d [label=\"IntegerConstant\\n%lld : %s\"];\n", id, ast->content.constant.value, type_stringify(ast->type));
             break;
         case AST_NODE_KIND_VARIABLE_EXPRESSION:
             fprintf(file, "    n%d [label=\"VariableExpression\\n'%s' : %s\"];\n", id, ast->content.symbol->identifier->name, type_stringify(ast->type));
@@ -545,14 +536,6 @@ void print_ir_program(const struct ir_program * program, FILE * file)
         struct ir_instruction * instruction = program->instructions[idx];
 
         switch (instruction->code) {
-            case OP_FLOAT_CAST:
-                snprintf(buf, sizeof(buf), "t%llu, t%llu", instruction->op1->content.temp_id, instruction->result->content.temp_id);
-                fprintf(file, "OP_FLOAT_CAST %s\n", buf);
-                break;
-            case OP_INT_CAST:
-                snprintf(buf, sizeof(buf), "t%llu, t%llu", instruction->op1->content.temp_id, instruction->result->content.temp_id);
-                fprintf(file, "OP_INT_CAST %s\n", buf);
-                break;
             case OP_JUMP_IF_EQUAL:
                 snprintf(buf, sizeof(buf), "t%llu, t%llu, \".L%llu\"", instruction->op1->content.temp_id, instruction->op2->content.temp_id, instruction->result->content.label_id);
                 fprintf(file, "OP_JUMP_IF_EQUAL %s\n", buf);
@@ -621,13 +604,7 @@ void print_ir_program(const struct ir_program * program, FILE * file)
                 break;
             case OP_CONST:
                 {
-                    if (instruction->op1->type->kind == TYPE_KIND_INTEGER) {
-                        snprintf(buf, sizeof(buf), "%lld, t%llu", instruction->op1->content.int_value, instruction->result->content.temp_id);
-                    } else if (instruction->op1->type->kind == TYPE_KIND_FLOAT) {
-                        snprintf(buf, sizeof(buf), "%f, t%llu", instruction->op1->content.float_value, instruction->result->content.temp_id);
-                    } else {
-                        snprintf(buf, sizeof(buf), "<unknown constant>");
-                    }
+                    snprintf(buf, sizeof(buf), "%lld, t%llu", instruction->op1->content.int_value, instruction->result->content.temp_id);
                     fprintf(file, "OP_CONST %s\n", buf);
                 }
                 break;

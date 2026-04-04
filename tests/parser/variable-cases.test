@@ -270,18 +270,6 @@ TranslationUnit: '{{any}}'
 
 @endtest
 
-@test("It should raise an error on mixed types in variable declaration")
-@given("file")
-int main() {
-    float int x;
-    return 0;
-}
-@whenRun("./bin/cclynx", args="--emit-ast --no-warnings")
-@expectOutput("stderr")
-{{any}}:2:11: ERROR: mixed types
-
-@endtest
-
 @test("It should parse an implicitly signed integer variable")
 @given("file")
 int main() {
@@ -383,14 +371,3 @@ unsigned void foo() {
 
 @endtest
 
-@test("It should raise an error when unsigned is applied to float")
-@given("file")
-int main() {
-    unsigned float x;
-    return 0;
-}
-@whenRun("./bin/cclynx", args="--emit-ast --no-warnings")
-@expectOutput("stderr")
-{{any}}:2:14: ERROR: 'unsigned' cannot be applied to 'float'
-
-@endtest

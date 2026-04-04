@@ -12,7 +12,6 @@ struct ir_program;
 enum codegen_reg_kind
 {
     CODEGEN_REG_KIND_INTEGER,
-    CODEGEN_REG_KIND_FLOAT,
 };
 
 struct codegen_reg

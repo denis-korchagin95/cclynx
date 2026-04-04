@@ -237,23 +237,8 @@ void do_generate_ir(struct ir_context * ctx, struct ir_program * program, const 
             break;
         case AST_NODE_KIND_CAST_EXPRESSION:
             {
-                enum opcode cast_opcode = OP_NOP;
-
-                if (node->type->kind == TYPE_KIND_INTEGER) {
-                    cast_opcode = OP_INT_CAST;
-                } else if (node->type->kind == TYPE_KIND_FLOAT) {
-                    cast_opcode = OP_FLOAT_CAST;
-                } else {
-                    cclynx_fatal_error("ERROR: unsupported cast to '%s' yet!\n", type_stringify(node->type));
-                }
-
                 do_generate_ir(ctx, program, node->content.node);
-
-                struct ir_instruction * instruction = ir_create_instruction(ctx, cast_opcode);
-                instruction->op1 = program->instructions[program->position - 1]->result;
-                instruction->result = new_temporary_operand(ctx);
-
-                ir_emit(program, instruction);
+                /* integer-to-integer casts (signedness change) are no-ops at IR level */
             }
             break;
         case AST_NODE_KIND_ASSIGNMENT_EXPRESSION:
@@ -360,18 +345,12 @@ void do_generate_ir(struct ir_context * ctx, struct ir_program * program, const 
             }
             break;
         case AST_NODE_KIND_INTEGER_CONSTANT_EXPRESSION:
-        case AST_NODE_KIND_FLOAT_CONSTANT_EXPRESSION:
             {
                 struct ir_instruction * instruction = ir_create_instruction(ctx, OP_CONST);
 
                 struct ir_operand * constant = ir_create_operand(ctx, OPERAND_KIND_CONSTANT);
                 constant->type = node->type;
-
-                if (constant->type->kind == TYPE_KIND_INTEGER) {
-                    constant->content.int_value = node->content.constant.value.integer_constant;
-                } else if (constant->type->kind == TYPE_KIND_FLOAT) {
-                    constant->content.float_value = node->content.constant.value.float_constant;
-                }
+                constant->content.int_value = node->content.constant.value;
 
                 instruction->op1 = constant;
                 instruction->result = new_temporary_operand(ctx);

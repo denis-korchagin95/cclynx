@@ -33,7 +33,6 @@ struct ir_operand
         unsigned long long int temp_id;
         unsigned long long int label_id;
         long long int int_value;
-        float float_value;
     } content;
     struct type * type;
     enum operand_kind kind;
@@ -63,8 +62,6 @@ enum opcode
     OP_MUL,
     OP_DIV,
     OP_SUB,
-    OP_INT_CAST,
-    OP_FLOAT_CAST,
     OP_CALL,
     OP_ARG,
     OP_STORE_PARAM,

@@ -60,22 +60,6 @@ int main() {
 
 @endtest
 
-@test("It should report multiple argument type mismatches")
-@given("file")
-int add(int a, int b) {
-    return a + b;
-}
-
-int main() {
-    return add((float) 1, (float) 2);
-}
-@whenRun("./bin/cclynx", args="--emit-ast")
-@expectOutput("stderr")
-{{any}}:6:12: ERROR: argument 1 of function 'add' has type 'float' but expected 'int'
-{{any}}:6:12: ERROR: argument 2 of function 'add' has type 'float' but expected 'int'
-
-@endtest
-
 @test("It should report errors across multiple functions")
 @given("file")
 int foo() {

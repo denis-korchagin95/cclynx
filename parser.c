@@ -1055,14 +1055,8 @@ struct ast_node * parse_primary_expression(struct parser_context * ctx)
     if (current_token->kind == TOKEN_KIND_NUMBER) {
         const char * number_ptr = current_token->source->content + current_token->span.offset;
 
-        if ((current_token->flags & TOKEN_FLAG_IS_FLOAT) > 0) {
-            struct ast_node * number = ast_create_node(ctx->pool, AST_NODE_KIND_FLOAT_CONSTANT_EXPRESSION, &type_float);
-            number->content.constant.value.float_constant = (float)strtod(number_ptr, NULL);
-            return number;
-        }
-
         struct ast_node * number = ast_create_node(ctx->pool, AST_NODE_KIND_INTEGER_CONSTANT_EXPRESSION, &type_sint32);
-        number->content.constant.value.integer_constant = (int)strtol(number_ptr, NULL, 10);
+        number->content.constant.value = (int)strtol(number_ptr, NULL, 10);
         return number;
     }
 
@@ -1261,15 +1255,13 @@ void parse_declaration_specifiers(struct parser_context * ctx, struct declaratio
         switch (current_token->identifier->keyword_code) {
             case KEYWORD_VOID:
             case KEYWORD_INT:
-            case KEYWORD_FLOAT:
                 if (specifiers->type_kind != TYPE_KIND_UNDEFINED) {
                     parser_report_error(ctx, current_token, "mixed types");
                     current_token = parser_get_token(ctx);
                     continue;
                 }
-                if ((specifiers->modifiers & TYPE_MODIFIER_UNSIGNED) && current_token->identifier->keyword_code != KEYWORD_INT) {
-                    const char * type_name = current_token->identifier->keyword_code == KEYWORD_VOID ? "void" : "float";
-                    parser_report_error(ctx, current_token, "'unsigned' cannot be applied to '%s'", type_name);
+                if ((specifiers->modifiers & TYPE_MODIFIER_UNSIGNED) && current_token->identifier->keyword_code == KEYWORD_VOID) {
+                    parser_report_error(ctx, current_token, "'unsigned' cannot be applied to 'void'");
                     current_token = parser_get_token(ctx);
                     continue;
                 }
@@ -1280,9 +1272,8 @@ void parse_declaration_specifiers(struct parser_context * ctx, struct declaratio
                     current_token = parser_get_token(ctx);
                     continue;
                 }
-                if (specifiers->type_kind == TYPE_KIND_VOID || specifiers->type_kind == TYPE_KIND_FLOAT) {
-                    const char * type_name = specifiers->type_kind == TYPE_KIND_VOID ? "void" : "float";
-                    parser_report_error(ctx, current_token, "'unsigned' cannot be applied to '%s'", type_name);
+                if (specifiers->type_kind == TYPE_KIND_VOID) {
+                    parser_report_error(ctx, current_token, "'unsigned' cannot be applied to 'void'");
                     current_token = parser_get_token(ctx);
                     continue;
                 }
@@ -1297,9 +1288,6 @@ void parse_declaration_specifiers(struct parser_context * ctx, struct declaratio
                 break;
             case KEYWORD_INT:
                 specifiers->type_kind = TYPE_KIND_INTEGER;
-                break;
-            case KEYWORD_FLOAT:
-                specifiers->type_kind = TYPE_KIND_FLOAT;
                 break;
             case KEYWORD_UNSIGNED:
                 specifiers->modifiers |= TYPE_MODIFIER_UNSIGNED;
@@ -1336,10 +1324,6 @@ struct type * resolve_type(struct declaration_specifiers * specifiers)
             return &type_uint32;
         }
         return &type_sint32;
-    }
-
-    if (specifiers->type_kind == TYPE_KIND_FLOAT) {
-        return &type_float;
     }
 
     cclynx_fatal_error("FATAL ERROR: unhandled type\n");

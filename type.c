@@ -6,7 +6,6 @@
 struct type type_void = {TYPE_KIND_VOID, 0, 0, 0};
 struct type type_sint32 = {TYPE_KIND_INTEGER, 4, 4, TYPE_MODIFIER_SIGNED};
 struct type type_uint32 = {TYPE_KIND_INTEGER, 4, 4, TYPE_MODIFIER_UNSIGNED};
-struct type type_float = {TYPE_KIND_FLOAT, 4, 4, 0};
 
 const char * type_stringify(const struct type * type)
 {
@@ -15,8 +14,6 @@ const char * type_stringify(const struct type * type)
     switch (type->kind) {
         case TYPE_KIND_VOID:
             return "void";
-        case TYPE_KIND_FLOAT:
-            return "float";
         case TYPE_KIND_INTEGER:
             if (type->modifiers & TYPE_MODIFIER_UNSIGNED) {
                 return "unsigned int";

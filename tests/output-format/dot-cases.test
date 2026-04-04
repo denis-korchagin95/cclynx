@@ -20,28 +20,6 @@ digraph AST {
 
 @endtest
 
-@test("DOT: float constant")
-@given("file")
-int main() {
-    3.14;
-}
-@whenRun("./bin/cclynx", args="--emit-ast --format=dot")
-@expectOutput("stdout")
-digraph AST {
-    node [shape=box, fontname="monospace"];
-    n0 [label="TranslationUnit\n'{{any}}'"];
-    n1 [label="FunctionDefinition\n'main' : int\nunspecified-parameters"];
-    n2 [label="CompoundStatement"];
-    n3 [label="ExpressionStatement"];
-    n4 [label="FloatConstant\n3.140000 : float"];
-    n3 -> n4;
-    n2 -> n3;
-    n1 -> n2;
-    n0 -> n1;
-}
-
-@endtest
-
 @test("DOT: variable declaration, assignment, and reference")
 @given("file")
 int main() {
@@ -300,30 +278,6 @@ digraph AST {
     n20 [label="VariableExpression\n'i' : int"];
     n19 -> n20;
     n2 -> n19;
-    n1 -> n2;
-    n0 -> n1;
-}
-
-@endtest
-
-@test("DOT: cast expression")
-@given("file")
-int main() {
-    return (int)3.14;
-}
-@whenRun("./bin/cclynx", args="--emit-ast --format=dot")
-@expectOutput("stdout")
-digraph AST {
-    node [shape=box, fontname="monospace"];
-    n0 [label="TranslationUnit\n'{{any}}'"];
-    n1 [label="FunctionDefinition\n'main' : int\nunspecified-parameters"];
-    n2 [label="CompoundStatement"];
-    n3 [label="ReturnStatement"];
-    n4 [label="CastExpression\n: int"];
-    n5 [label="FloatConstant\n3.140000 : float"];
-    n4 -> n5;
-    n3 -> n4;
-    n2 -> n3;
     n1 -> n2;
     n0 -> n1;
 }
