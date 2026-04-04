@@ -6,6 +6,7 @@
 #include <string.h>
 
 #include "parser.h"
+#include "binary_expression_parser.h"
 #include "tokenizer.h"
 #include "allocator.h"
 #include "identifier.h"
@@ -33,11 +34,6 @@ static struct ast_node * parse_compound_statement(struct parser_context * ctx);
 static struct ast_node * parse_expression_statement(struct parser_context * ctx);
 static struct ast_node * parse_function_definition(struct parser_context * ctx);
 static struct ast_node * parse_declaration(struct parser_context * ctx);
-static struct ast_node * parse_equality_expression(struct parser_context * ctx);
-static struct ast_node * parse_relational_expression(struct parser_context * ctx);
-static struct ast_node * parse_additive_expression(struct parser_context * ctx);
-static struct ast_node * parse_multiplicative_expression(struct parser_context * ctx);
-static struct ast_node * parse_cast_expression(struct parser_context * ctx);
 static struct ast_node * parse_postfix_expression(struct parser_context * ctx);
 static struct ast_node * parse_primary_expression(struct parser_context * ctx);
 
@@ -46,7 +42,6 @@ static struct ast_node * parse_number(struct parser_context * ctx, const struct 
 void parse_declaration_specifiers(struct parser_context * ctx, struct declaration_specifiers * specifiers);
 struct type * resolve_type(struct declaration_specifiers * specifiers);
 
-static struct type * cast_binary_operands(struct parser_context * ctx, struct ast_node ** lhs_ptr, struct ast_node ** rhs_ptr);
 
 static void parser_report_error(struct parser_context * ctx, const struct token * token, const char * fmt, ...)
 {
@@ -749,200 +744,6 @@ struct ast_node * parse_assignment_expression(struct parser_context * ctx)
     return assignment_expression;
 }
 
-struct type * cast_binary_operands(struct parser_context * ctx, struct ast_node ** lhs_ptr, struct ast_node ** rhs_ptr)
-{
-    assert(ctx != NULL);
-    assert(lhs_ptr != NULL);
-    assert(rhs_ptr != NULL);
-
-    struct type * lhs_type = (*lhs_ptr)->type;
-    struct type * rhs_type = (*rhs_ptr)->type;
-
-    if (lhs_type->kind == rhs_type->kind && type_signedness_differs(lhs_type, rhs_type)) {
-        /* TODO: emit sign-conversion warning */
-        struct type * target_type = type_is_unsigned(lhs_type) ? lhs_type : rhs_type;
-
-        if (!type_is_unsigned(lhs_type)) {
-            struct ast_node * cast = ast_create_node(ctx->pool, AST_NODE_KIND_CAST_EXPRESSION, target_type);
-            cast->content.node = *lhs_ptr;
-            *lhs_ptr = cast;
-        } else {
-            struct ast_node * cast = ast_create_node(ctx->pool, AST_NODE_KIND_CAST_EXPRESSION, target_type);
-            cast->content.node = *rhs_ptr;
-            *rhs_ptr = cast;
-        }
-
-        return target_type;
-    }
-
-    return type_resolve(lhs_type, rhs_type);
-}
-
-struct ast_node * parse_equality_expression(struct parser_context * ctx)
-{
-    assert(ctx != NULL);
-
-    struct ast_node * lhs = parse_relational_expression(ctx);
-
-    if (lhs == NULL) {
-        return NULL;
-    }
-
-    struct token * current_token = parser_get_token(ctx);
-
-    while (
-        current_token->kind == TOKEN_KIND_EQUAL_PUNCTUATOR
-        || current_token->kind == TOKEN_KIND_NOT_EQUAL_PUNCTUATOR
-    ) {
-        const enum binary_operation operation = current_token->kind == TOKEN_KIND_EQUAL_PUNCTUATOR
-            ? BINARY_OPERATION_EQUALITY
-            : BINARY_OPERATION_INEQUALITY;
-        struct ast_node * rhs = parse_relational_expression(ctx);
-
-        if (rhs == NULL) {
-            return NULL;
-        }
-
-        struct ast_node * binary_expression = ast_create_node(ctx->pool, AST_NODE_KIND_EQUALITY_EXPRESSION, cast_binary_operands(ctx, &lhs, &rhs));
-        binary_expression->content.binary_expression.operation = operation;
-        binary_expression->content.binary_expression.lhs = lhs;
-        binary_expression->content.binary_expression.rhs = rhs;
-        lhs = binary_expression;
-
-        current_token = parser_get_token(ctx);
-    }
-
-    parser_putback_token(current_token, ctx);
-
-    return lhs;
-}
-
-struct ast_node * parse_relational_expression(struct parser_context * ctx) {
-    assert(ctx != NULL);
-
-    struct ast_node * lhs = parse_additive_expression(ctx);
-
-    if (lhs == NULL) {
-        return NULL;
-    }
-
-    struct token * current_token = parser_get_token(ctx);
-
-    while (
-        current_token->kind == TOKEN_KIND_PUNCTUATOR
-        && (
-            token_first_ch(current_token) == '<'
-            || token_first_ch(current_token) == '>'
-        )
-    ) {
-        const enum binary_operation operation = token_first_ch(current_token) == '<'
-            ? BINARY_OPERATION_LESS_THAN
-            : BINARY_OPERATION_GREATER_THAN;
-        struct ast_node * rhs = parse_additive_expression(ctx);
-
-        if (rhs == NULL) {
-            return NULL;
-        }
-
-        struct ast_node * binary_expression = ast_create_node(ctx->pool, AST_NODE_KIND_RELATIONAL_EXPRESSION, cast_binary_operands(ctx, &lhs, &rhs));
-        binary_expression->content.binary_expression.operation = operation;
-        binary_expression->content.binary_expression.lhs = lhs;
-        binary_expression->content.binary_expression.rhs = rhs;
-        lhs = binary_expression;
-
-        current_token = parser_get_token(ctx);
-    }
-
-    parser_putback_token(current_token, ctx);
-
-    return lhs;
-}
-
-
-struct ast_node * parse_additive_expression(struct parser_context * ctx)
-{
-    assert(ctx != NULL);
-
-    struct ast_node * lhs = parse_multiplicative_expression(ctx);
-
-    if (lhs == NULL) {
-        return NULL;
-    }
-
-    struct token * current_token = parser_get_token(ctx);
-
-    while (
-        current_token->kind == TOKEN_KIND_PUNCTUATOR
-        && (
-            token_first_ch(current_token) == '+'
-            || token_first_ch(current_token) == '-'
-        )
-    ) {
-        const enum binary_operation operation = token_first_ch(current_token) == '+'
-            ? BINARY_OPERATION_ADDITION
-            : BINARY_OPERATION_SUBTRACTION;
-        struct ast_node * rhs = parse_multiplicative_expression(ctx);
-
-        if (rhs == NULL) {
-            return NULL;
-        }
-
-        struct ast_node * binary_expression = ast_create_node(ctx->pool, AST_NODE_KIND_ADDITIVE_EXPRESSION, cast_binary_operands(ctx, &lhs, &rhs));
-        binary_expression->content.binary_expression.operation = operation;
-        binary_expression->content.binary_expression.lhs = lhs;
-        binary_expression->content.binary_expression.rhs = rhs;
-        lhs = binary_expression;
-
-        current_token = parser_get_token(ctx);
-    }
-
-    parser_putback_token(current_token, ctx);
-
-    return lhs;
-}
-
-struct ast_node * parse_multiplicative_expression(struct parser_context * ctx)
-{
-    assert(ctx != NULL);
-
-    struct ast_node * lhs = parse_cast_expression(ctx);
-
-    if (lhs == NULL) {
-        return NULL;
-    }
-
-    struct token * current_token = parser_get_token(ctx);
-
-    while (
-        current_token->kind == TOKEN_KIND_PUNCTUATOR
-        && (
-            token_first_ch(current_token) == '*'
-            || token_first_ch(current_token) == '/'
-        )
-    ) {
-        const enum binary_operation operation = token_first_ch(current_token) == '*'
-            ? BINARY_OPERATION_MULTIPLY
-            : BINARY_OPERATION_DIVIDE;
-        struct ast_node * rhs = parse_cast_expression(ctx);
-
-        if (rhs == NULL) {
-            return NULL;
-        }
-
-        struct ast_node * binary_expression = ast_create_node(ctx->pool, AST_NODE_KIND_MULTIPLICATIVE_EXPRESSION, cast_binary_operands(ctx, &lhs, &rhs));
-        binary_expression->content.binary_expression.operation = operation;
-        binary_expression->content.binary_expression.lhs = lhs;
-        binary_expression->content.binary_expression.rhs = rhs;
-        lhs = binary_expression;
-
-        current_token = parser_get_token(ctx);
-    }
-
-    parser_putback_token(current_token, ctx);
-
-    return lhs;
-}
-
 struct ast_node * parse_cast_expression(struct parser_context * ctx)
 {
     assert(ctx != NULL);
@@ -1172,9 +973,11 @@ struct ast_node * parse_primary_expression(struct parser_context * ctx)
     }
 
     parser_report_error(ctx, current_token, "expected expression but got %s", token_stringify(current_token));
+
     if (current_token != &eos_token) {
         parser_putback_token(current_token, ctx);
     }
+
     return NULL;
 }
 

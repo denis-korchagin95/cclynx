@@ -33,6 +33,7 @@ OBJECTS+=print.o
 OBJECTS+=tokenizer.o
 OBJECTS+=ast.o
 OBJECTS+=parser.o
+OBJECTS+=binary_expression_parser.o
 OBJECTS+=ir.o
 OBJECTS+=target-arm64.o
 OBJECTS+=util.o
