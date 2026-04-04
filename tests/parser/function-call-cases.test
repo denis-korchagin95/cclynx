@@ -404,3 +404,51 @@ int main() {
 {{any}}:2:17: ERROR: expected identifier but got keyword 'while'
 
 @endtest
+
+@test("It should insert implicit cast on function argument when signedness differs")
+@given("file")
+int foo(int a) {
+    return a;
+}
+
+int main() {
+    return foo(42u);
+}
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+├── FunctionDefinition: 'foo' <1-parameter>
+│   ├── ReturnType
+│   │   ├── category: 'basic'
+│   │   └── descriptor: 'int'
+│   ├── ParameterList
+│   │   └── Parameter: 'a'
+│   │       └── Type
+│   │           ├── category: 'basic'
+│   │           └── descriptor: 'int'
+│   └── CompoundStatement
+│       └── ReturnStatement
+│           └── VariableExpression: 'a'
+│               └── Type
+│                   ├── category: 'basic'
+│                   └── descriptor: 'int'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        └── ReturnStatement
+            └── FunctionCallExpression: 'foo' <1-argument>
+                ├── ReturnType
+                │   ├── category: 'basic'
+                │   └── descriptor: 'int'
+                └── CastExpression
+                    ├── Type
+                    │   ├── category: 'basic'
+                    │   └── descriptor: 'int'
+                    └── IntegerConstant: '42'
+                        └── Type
+                            ├── category: 'basic'
+                            └── descriptor: 'unsigned int'
+
+@endtest

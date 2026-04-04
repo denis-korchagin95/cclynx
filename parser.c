@@ -381,6 +381,18 @@ struct ast_node * parse_return_statement(struct parser_context * ctx)
         return NULL;
     }
 
+    if (
+        expression != NULL
+        && ctx->current_function != NULL
+        && expression->type->kind == ctx->current_function->type->kind
+        && type_signedness_differs(expression->type, ctx->current_function->type)
+    ) {
+        /* TODO: emit sign-conversion warning */
+        struct ast_node * cast = ast_create_node(ctx->pool, AST_NODE_KIND_CAST_EXPRESSION, ctx->current_function->type);
+        cast->content.node = expression;
+        expression = cast;
+    }
+
     struct ast_node * return_statement = ast_create_node(ctx->pool, AST_NODE_KIND_RETURN_STATEMENT, &type_void);
     return_statement->content.node = expression;
 
@@ -576,7 +588,12 @@ struct ast_node * parse_function_definition(struct parser_context * ctx)
         parameters[i]->content.symbol->parameter_index = i;
     }
 
+    struct symbol * saved_function = ctx->current_function;
+    ctx->current_function = function_symbol;
+
     struct ast_node * compound_statement = parse_compound_statement(ctx);
+
+    ctx->current_function = saved_function;
 
     if (parameter_count > 0) {
         report_unused_variables(ctx);
@@ -714,6 +731,16 @@ struct ast_node * parse_assignment_expression(struct parser_context * ctx)
         return lhs;
     }
 
+    if (
+        lhs->type->kind == initializer->type->kind
+        && type_signedness_differs(lhs->type, initializer->type)
+    ) {
+        /* TODO: emit sign-conversion warning */
+        struct ast_node * cast = ast_create_node(ctx->pool, AST_NODE_KIND_CAST_EXPRESSION, lhs->type);
+        cast->content.node = initializer;
+        initializer = cast;
+    }
+
     struct ast_node * assignment_expression = ast_create_node(ctx->pool, AST_NODE_KIND_ASSIGNMENT_EXPRESSION, &type_void);
     assignment_expression->content.assignment.type = ASSIGNMENT_REGULAR;
     assignment_expression->content.assignment.lhs = lhs;
@@ -732,9 +759,10 @@ struct type * cast_binary_operands(struct parser_context * ctx, struct ast_node 
     struct type * rhs_type = (*rhs_ptr)->type;
 
     if (lhs_type->kind == rhs_type->kind && type_signedness_differs(lhs_type, rhs_type)) {
-        struct type * target_type = (lhs_type->modifiers & TYPE_MODIFIER_UNSIGNED) ? lhs_type : rhs_type;
+        /* TODO: emit sign-conversion warning */
+        struct type * target_type = type_is_unsigned(lhs_type) ? lhs_type : rhs_type;
 
-        if (!(lhs_type->modifiers & TYPE_MODIFIER_UNSIGNED)) {
+        if (!type_is_unsigned(lhs_type)) {
             struct ast_node * cast = ast_create_node(ctx->pool, AST_NODE_KIND_CAST_EXPRESSION, target_type);
             cast->content.node = *lhs_ptr;
             *lhs_ptr = cast;
@@ -1029,11 +1057,27 @@ struct ast_node * parse_postfix_expression(struct parser_context * ctx)
                 }
 
                 for (unsigned int i = 0; i < argument_count; i++) {
-                    if (arguments[i] != NULL && arguments[i]->type != function_symbol->parameters[i]->type) {
+                    if (arguments[i] == NULL) {
+                        continue;
+                    }
+                    struct type * arg_type = arguments[i]->type;
+                    struct type * param_type = function_symbol->parameters[i]->type;
+                    if (arg_type == param_type) {
+                        continue;
+                    }
+                    if (
+                        arg_type->kind == param_type->kind
+                        && type_signedness_differs(arg_type, param_type)
+                    ) {
+                        /* TODO: emit sign-conversion warning */
+                        struct ast_node * cast = ast_create_node(ctx->pool, AST_NODE_KIND_CAST_EXPRESSION, param_type);
+                        cast->content.node = arguments[i];
+                        arguments[i] = cast;
+                    } else {
                         parser_report_error(ctx, current_token, "argument %u of function '%s' has type '%s' but expected '%s'",
                             i + 1, function_symbol->identifier->name,
-                            type_stringify(arguments[i]->type),
-                            type_stringify(function_symbol->parameters[i]->type));
+                            type_stringify(arg_type),
+                            type_stringify(param_type));
                     }
                 }
             }

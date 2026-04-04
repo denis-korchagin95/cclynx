@@ -356,10 +356,14 @@ TranslationUnit: '{{any}}'
     │   └── descriptor: 'unsigned int'
     └── CompoundStatement
         └── ReturnStatement
-            └── IntegerConstant: '42'
-                └── Type
-                    ├── category: 'basic'
-                    └── descriptor: 'int'
+            └── CastExpression
+                ├── Type
+                │   ├── category: 'basic'
+                │   └── descriptor: 'unsigned int'
+                └── IntegerConstant: '42'
+                    └── Type
+                        ├── category: 'basic'
+                        └── descriptor: 'int'
 
 @endtest
 
@@ -377,10 +381,14 @@ TranslationUnit: '{{any}}'
     │   └── descriptor: 'unsigned int'
     └── CompoundStatement
         └── ReturnStatement
-            └── IntegerConstant: '42'
-                └── Type
-                    ├── category: 'basic'
-                    └── descriptor: 'int'
+            └── CastExpression
+                ├── Type
+                │   ├── category: 'basic'
+                │   └── descriptor: 'unsigned int'
+                └── IntegerConstant: '42'
+                    └── Type
+                        ├── category: 'basic'
+                        └── descriptor: 'int'
 
 @endtest
 
@@ -403,10 +411,14 @@ TranslationUnit: '{{any}}'
     │           └── descriptor: 'unsigned int'
     └── CompoundStatement
         └── ReturnStatement
-            └── VariableExpression: 'a'
-                └── Type
-                    ├── category: 'basic'
-                    └── descriptor: 'unsigned int'
+            └── CastExpression
+                ├── Type
+                │   ├── category: 'basic'
+                │   └── descriptor: 'int'
+                └── VariableExpression: 'a'
+                    └── Type
+                        ├── category: 'basic'
+                        └── descriptor: 'unsigned int'
 
 @endtest
 
@@ -478,5 +490,46 @@ int foo(int a, int b, int c, int d) {
 @whenRun("./bin/cclynx", args="--emit-ast --no-warnings")
 @expectOutput("stderr")
 {{any}}:1:28: ERROR: too many parameters, maximum is 3
+
+@endtest
+
+@test("It should insert implicit cast on return when signedness differs")
+@given("file")
+unsigned int foo() {
+    int x;
+    x = 1;
+    return x;
+}
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+└── FunctionDefinition: 'foo' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'unsigned int'
+    └── CompoundStatement
+        ├── VariableDeclaration: 'x'
+        │   └── Type
+        │       ├── category: 'basic'
+        │       └── descriptor: 'int'
+        ├── ExpressionStatement
+        │   └── AssignmentExpression: '='
+        │       ├── VariableExpression: 'x'
+        │       │   └── Type
+        │       │       ├── category: 'basic'
+        │       │       └── descriptor: 'int'
+        │       └── IntegerConstant: '1'
+        │           └── Type
+        │               ├── category: 'basic'
+        │               └── descriptor: 'int'
+        └── ReturnStatement
+            └── CastExpression
+                ├── Type
+                │   ├── category: 'basic'
+                │   └── descriptor: 'unsigned int'
+                └── VariableExpression: 'x'
+                    └── Type
+                        ├── category: 'basic'
+                        └── descriptor: 'int'
 
 @endtest

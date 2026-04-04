@@ -48,10 +48,14 @@ TranslationUnit: '{{any}}'
         │                   ├── category: 'basic'
         │                   └── descriptor: 'int'
         └── ReturnStatement
-            └── VariableExpression: 'x'
-                └── Type
-                    ├── category: 'basic'
-                    └── descriptor: 'unsigned int'
+            └── CastExpression
+                ├── Type
+                │   ├── category: 'basic'
+                │   └── descriptor: 'int'
+                └── VariableExpression: 'x'
+                    └── Type
+                        ├── category: 'basic'
+                        └── descriptor: 'unsigned int'
 
 @endtest
 
@@ -105,9 +109,13 @@ TranslationUnit: '{{any}}'
         │                   ├── category: 'basic'
         │                   └── descriptor: 'int'
         └── ReturnStatement
-            └── VariableExpression: 'x'
-                └── Type
-                    ├── category: 'basic'
-                    └── descriptor: 'unsigned int'
+            └── CastExpression
+                ├── Type
+                │   ├── category: 'basic'
+                │   └── descriptor: 'int'
+                └── VariableExpression: 'x'
+                    └── Type
+                        ├── category: 'basic'
+                        └── descriptor: 'unsigned int'
 
 @endtest

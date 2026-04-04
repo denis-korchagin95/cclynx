@@ -20,6 +20,7 @@ struct parser_context
     struct scope * current_scope;
     const char * source_filename;
     struct error_list errors;
+    struct symbol * current_function;
     bool has_error;
     bool suppress_warnings;
 };

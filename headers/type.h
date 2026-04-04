@@ -27,6 +27,13 @@ extern struct type type_sint32;
 extern struct type type_uint32;
 extern struct type type_void;
 
+static inline int type_is_unsigned(const struct type * t)
+{
+    assert(t != NULL);
+
+    return (t->modifiers & TYPE_MODIFIER_UNSIGNED) != 0;
+}
+
 static inline int type_signedness_differs(const struct type * a, const struct type * b)
 {
     assert(a != NULL);

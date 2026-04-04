@@ -871,27 +871,35 @@ TranslationUnit: '{{any}}'
         │       │   └── Type
         │       │       ├── category: 'basic'
         │       │       └── descriptor: 'unsigned int'
-        │       └── IntegerConstant: '2'
-        │           └── Type
-        │               ├── category: 'basic'
-        │               └── descriptor: 'int'
+        │       └── CastExpression
+        │           ├── Type
+        │           │   ├── category: 'basic'
+        │           │   └── descriptor: 'unsigned int'
+        │           └── IntegerConstant: '2'
+        │               └── Type
+        │                   ├── category: 'basic'
+        │                   └── descriptor: 'int'
         └── ReturnStatement
-            └── AdditiveExpression: '+'
+            └── CastExpression
                 ├── Type
                 │   ├── category: 'basic'
-                │   └── descriptor: 'unsigned int'
-                ├── CastExpression
-                │   ├── Type
-                │   │   ├── category: 'basic'
-                │   │   └── descriptor: 'unsigned int'
-                │   └── VariableExpression: 'x'
-                │       └── Type
-                │           ├── category: 'basic'
-                │           └── descriptor: 'int'
-                └── VariableExpression: 'y'
-                    └── Type
-                        ├── category: 'basic'
-                        └── descriptor: 'unsigned int'
+                │   └── descriptor: 'int'
+                └── AdditiveExpression: '+'
+                    ├── Type
+                    │   ├── category: 'basic'
+                    │   └── descriptor: 'unsigned int'
+                    ├── CastExpression
+                    │   ├── Type
+                    │   │   ├── category: 'basic'
+                    │   │   └── descriptor: 'unsigned int'
+                    │   └── VariableExpression: 'x'
+                    │       └── Type
+                    │           ├── category: 'basic'
+                    │           └── descriptor: 'int'
+                    └── VariableExpression: 'y'
+                        └── Type
+                            ├── category: 'basic'
+                            └── descriptor: 'unsigned int'
 
 @endtest
 
@@ -936,27 +944,35 @@ TranslationUnit: '{{any}}'
         │       │   └── Type
         │       │       ├── category: 'basic'
         │       │       └── descriptor: 'unsigned int'
-        │       └── IntegerConstant: '2'
-        │           └── Type
-        │               ├── category: 'basic'
-        │               └── descriptor: 'int'
+        │       └── CastExpression
+        │           ├── Type
+        │           │   ├── category: 'basic'
+        │           │   └── descriptor: 'unsigned int'
+        │           └── IntegerConstant: '2'
+        │               └── Type
+        │                   ├── category: 'basic'
+        │                   └── descriptor: 'int'
         └── ReturnStatement
-            └── MultiplicativeExpression: '*'
+            └── CastExpression
                 ├── Type
                 │   ├── category: 'basic'
-                │   └── descriptor: 'unsigned int'
-                ├── CastExpression
-                │   ├── Type
-                │   │   ├── category: 'basic'
-                │   │   └── descriptor: 'unsigned int'
-                │   └── VariableExpression: 'x'
-                │       └── Type
-                │           ├── category: 'basic'
-                │           └── descriptor: 'int'
-                └── VariableExpression: 'y'
-                    └── Type
-                        ├── category: 'basic'
-                        └── descriptor: 'unsigned int'
+                │   └── descriptor: 'int'
+                └── MultiplicativeExpression: '*'
+                    ├── Type
+                    │   ├── category: 'basic'
+                    │   └── descriptor: 'unsigned int'
+                    ├── CastExpression
+                    │   ├── Type
+                    │   │   ├── category: 'basic'
+                    │   │   └── descriptor: 'unsigned int'
+                    │   └── VariableExpression: 'x'
+                    │       └── Type
+                    │           ├── category: 'basic'
+                    │           └── descriptor: 'int'
+                    └── VariableExpression: 'y'
+                        └── Type
+                            ├── category: 'basic'
+                            └── descriptor: 'unsigned int'
 
 @endtest
 
@@ -1003,10 +1019,14 @@ TranslationUnit: '{{any}}'
         │       │   └── Type
         │       │       ├── category: 'basic'
         │       │       └── descriptor: 'unsigned int'
-        │       └── IntegerConstant: '2'
-        │           └── Type
-        │               ├── category: 'basic'
-        │               └── descriptor: 'int'
+        │       └── CastExpression
+        │           ├── Type
+        │           │   ├── category: 'basic'
+        │           │   └── descriptor: 'unsigned int'
+        │           └── IntegerConstant: '2'
+        │               └── Type
+        │                   ├── category: 'basic'
+        │                   └── descriptor: 'int'
         ├── VariableDeclaration: 'z'
         │   └── Type
         │       ├── category: 'basic'
@@ -1017,22 +1037,26 @@ TranslationUnit: '{{any}}'
         │       │   └── Type
         │       │       ├── category: 'basic'
         │       │       └── descriptor: 'int'
-        │       └── RelationalExpression: '<'
+        │       └── CastExpression
         │           ├── Type
         │           │   ├── category: 'basic'
-        │           │   └── descriptor: 'unsigned int'
-        │           ├── CastExpression
-        │           │   ├── Type
-        │           │   │   ├── category: 'basic'
-        │           │   │   └── descriptor: 'unsigned int'
-        │           │   └── VariableExpression: 'x'
-        │           │       └── Type
-        │           │           ├── category: 'basic'
-        │           │           └── descriptor: 'int'
-        │           └── VariableExpression: 'y'
-        │               └── Type
-        │                   ├── category: 'basic'
-        │                   └── descriptor: 'unsigned int'
+        │           │   └── descriptor: 'int'
+        │           └── RelationalExpression: '<'
+        │               ├── Type
+        │               │   ├── category: 'basic'
+        │               │   └── descriptor: 'unsigned int'
+        │               ├── CastExpression
+        │               │   ├── Type
+        │               │   │   ├── category: 'basic'
+        │               │   │   └── descriptor: 'unsigned int'
+        │               │   └── VariableExpression: 'x'
+        │               │       └── Type
+        │               │           ├── category: 'basic'
+        │               │           └── descriptor: 'int'
+        │               └── VariableExpression: 'y'
+        │                   └── Type
+        │                       ├── category: 'basic'
+        │                       └── descriptor: 'unsigned int'
         └── ReturnStatement
             └── VariableExpression: 'z'
                 └── Type
@@ -1084,10 +1108,14 @@ TranslationUnit: '{{any}}'
         │       │   └── Type
         │       │       ├── category: 'basic'
         │       │       └── descriptor: 'unsigned int'
-        │       └── IntegerConstant: '2'
-        │           └── Type
-        │               ├── category: 'basic'
-        │               └── descriptor: 'int'
+        │       └── CastExpression
+        │           ├── Type
+        │           │   ├── category: 'basic'
+        │           │   └── descriptor: 'unsigned int'
+        │           └── IntegerConstant: '2'
+        │               └── Type
+        │                   ├── category: 'basic'
+        │                   └── descriptor: 'int'
         ├── VariableDeclaration: 'z'
         │   └── Type
         │       ├── category: 'basic'
@@ -1098,22 +1126,26 @@ TranslationUnit: '{{any}}'
         │       │   └── Type
         │       │       ├── category: 'basic'
         │       │       └── descriptor: 'int'
-        │       └── EqualityExpression: '=='
+        │       └── CastExpression
         │           ├── Type
         │           │   ├── category: 'basic'
-        │           │   └── descriptor: 'unsigned int'
-        │           ├── CastExpression
-        │           │   ├── Type
-        │           │   │   ├── category: 'basic'
-        │           │   │   └── descriptor: 'unsigned int'
-        │           │   └── VariableExpression: 'x'
-        │           │       └── Type
-        │           │           ├── category: 'basic'
-        │           │           └── descriptor: 'int'
-        │           └── VariableExpression: 'y'
-        │               └── Type
-        │                   ├── category: 'basic'
-        │                   └── descriptor: 'unsigned int'
+        │           │   └── descriptor: 'int'
+        │           └── EqualityExpression: '=='
+        │               ├── Type
+        │               │   ├── category: 'basic'
+        │               │   └── descriptor: 'unsigned int'
+        │               ├── CastExpression
+        │               │   ├── Type
+        │               │   │   ├── category: 'basic'
+        │               │   │   └── descriptor: 'unsigned int'
+        │               │   └── VariableExpression: 'x'
+        │               │       └── Type
+        │               │           ├── category: 'basic'
+        │               │           └── descriptor: 'int'
+        │               └── VariableExpression: 'y'
+        │                   └── Type
+        │                       ├── category: 'basic'
+        │                       └── descriptor: 'unsigned int'
         └── ReturnStatement
             └── VariableExpression: 'z'
                 └── Type
@@ -1153,20 +1185,28 @@ TranslationUnit: '{{any}}'
         │       │   └── Type
         │       │       ├── category: 'basic'
         │       │       └── descriptor: 'unsigned int'
-        │       └── IntegerConstant: '1'
-        │           └── Type
-        │               ├── category: 'basic'
-        │               └── descriptor: 'int'
+        │       └── CastExpression
+        │           ├── Type
+        │           │   ├── category: 'basic'
+        │           │   └── descriptor: 'unsigned int'
+        │           └── IntegerConstant: '1'
+        │               └── Type
+        │                   ├── category: 'basic'
+        │                   └── descriptor: 'int'
         ├── ExpressionStatement
         │   └── AssignmentExpression: '='
         │       ├── VariableExpression: 'y'
         │       │   └── Type
         │       │       ├── category: 'basic'
         │       │       └── descriptor: 'unsigned int'
-        │       └── IntegerConstant: '2'
-        │           └── Type
-        │               ├── category: 'basic'
-        │               └── descriptor: 'int'
+        │       └── CastExpression
+        │           ├── Type
+        │           │   ├── category: 'basic'
+        │           │   └── descriptor: 'unsigned int'
+        │           └── IntegerConstant: '2'
+        │               └── Type
+        │                   ├── category: 'basic'
+        │                   └── descriptor: 'int'
         └── ReturnStatement
             └── AdditiveExpression: '+'
                 ├── Type
