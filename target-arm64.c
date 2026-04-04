@@ -121,7 +121,7 @@ void target_arm64_generate(struct codegen_context * ctx, struct ir_program * pro
                     free_reg(op1_reg);
                 }
                 break;
-            case OP_JUMP_IF_EQUAL:
+            case OP_JUMP_IF_EQ:
                 {
                     struct codegen_reg * op2_reg = pop_reg(ctx);
                     struct codegen_reg * op1_reg = pop_reg(ctx);
@@ -131,7 +131,7 @@ void target_arm64_generate(struct codegen_context * ctx, struct ir_program * pro
                     free_reg(op2_reg);
                 }
                 break;
-            case OP_JUMP_IF_NOT_EQUAL:
+            case OP_JUMP_IF_NE:
                 {
                     struct codegen_reg * op2_reg = pop_reg(ctx);
                     struct codegen_reg * op1_reg = pop_reg(ctx);
@@ -141,7 +141,7 @@ void target_arm64_generate(struct codegen_context * ctx, struct ir_program * pro
                     free_reg(op2_reg);
                 }
                 break;
-            case OP_JUMP_IF_LESS_THAN_OR_EQUAL:
+            case OP_JUMP_IF_LTE:
                 {
                     struct codegen_reg * op2_reg = pop_reg(ctx);
                     struct codegen_reg * op1_reg = pop_reg(ctx);
@@ -151,7 +151,7 @@ void target_arm64_generate(struct codegen_context * ctx, struct ir_program * pro
                     free_reg(op2_reg);
                 }
                 break;
-            case OP_JUMP_IF_GREATER_THAN_OR_EQUAL:
+            case OP_JUMP_IF_GTE:
                 {
                     struct codegen_reg * op2_reg = pop_reg(ctx);
                     struct codegen_reg * op1_reg = pop_reg(ctx);
@@ -161,7 +161,7 @@ void target_arm64_generate(struct codegen_context * ctx, struct ir_program * pro
                     free_reg(op2_reg);
                 }
                 break;
-            case OP_IS_GREATER_THAN:
+            case OP_GT:
                 {
                     struct codegen_reg * op2_reg = pop_reg(ctx);
                     struct codegen_reg * op1_reg = pop_reg(ctx);
@@ -173,7 +173,7 @@ void target_arm64_generate(struct codegen_context * ctx, struct ir_program * pro
                     push_reg(ctx, result_reg);
                 }
                 break;
-            case OP_IS_LESS_THAN:
+            case OP_LT:
                 {
                     struct codegen_reg * op2_reg = pop_reg(ctx);
                     struct codegen_reg * op1_reg = pop_reg(ctx);
@@ -185,7 +185,7 @@ void target_arm64_generate(struct codegen_context * ctx, struct ir_program * pro
                     push_reg(ctx, result_reg);
                 }
                 break;
-            case OP_IS_EQUAL:
+            case OP_EQ:
                 {
                     struct codegen_reg * op2_reg = pop_reg(ctx);
                     struct codegen_reg * op1_reg = pop_reg(ctx);
@@ -197,7 +197,7 @@ void target_arm64_generate(struct codegen_context * ctx, struct ir_program * pro
                     push_reg(ctx, result_reg);
                 }
                 break;
-            case OP_IS_NOT_EQUAL:
+            case OP_NE:
                 {
                     struct codegen_reg * op2_reg = pop_reg(ctx);
                     struct codegen_reg * op1_reg = pop_reg(ctx);
@@ -227,12 +227,12 @@ void target_arm64_generate(struct codegen_context * ctx, struct ir_program * pro
                 }
                 break;
             case OP_DIV:
-            case OP_UDIV:
+            case OP_UNSIGNED_DIV:
                 {
                     struct codegen_reg * op2_reg = pop_reg(ctx);
                     struct codegen_reg * op1_reg = pop_reg(ctx);
                     struct codegen_reg * result_reg = alloc_reg(ctx, CODEGEN_REG_KIND_INTEGER);
-                    const char * op = instruction->code == OP_UDIV ? "udiv" : "sdiv";
+                    const char * op = instruction->code == OP_UNSIGNED_DIV ? "udiv" : "sdiv";
                     fprintf(file, "    %s %s, %s, %s\n", op, result_reg->name, op1_reg->name, op2_reg->name);
                     free_reg(op1_reg);
                     free_reg(op2_reg);

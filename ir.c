@@ -281,19 +281,19 @@ void do_generate_ir(struct ir_context * ctx, struct ir_program * program, const 
                         instruction->code = OP_MUL;
                         break;
                     case BINARY_OPERATION_DIVIDE:
-                        instruction->code = type_is_unsigned(node->type) ? OP_UDIV : OP_DIV;
+                        instruction->code = type_is_unsigned(node->type) ? OP_UNSIGNED_DIV : OP_DIV;
                         break;
                     case BINARY_OPERATION_EQUALITY:
-                        instruction->code = OP_IS_EQUAL;
+                        instruction->code = OP_EQ;
                         break;
                     case BINARY_OPERATION_INEQUALITY:
-                        instruction->code = OP_IS_NOT_EQUAL;
+                        instruction->code = OP_NE;
                         break;
                     case BINARY_OPERATION_LESS_THAN:
-                        instruction->code = OP_IS_LESS_THAN;
+                        instruction->code = OP_LT;
                         break;
                     case BINARY_OPERATION_GREATER_THAN:
-                        instruction->code = OP_IS_GREATER_THAN;
+                        instruction->code = OP_GT;
                         break;
                     case BINARY_OPERATION_ADDITION:
                         instruction->code = OP_ADD;
@@ -476,7 +476,7 @@ void ir_generate_condition(struct ir_context * ctx, struct ir_program * program,
         do_generate_ir(ctx, program, condition->content.binary_expression.rhs);
         op2 = program->instructions[program->position - 1]->result;
 
-        struct ir_instruction * instruction = ir_create_instruction(ctx, OP_JUMP_IF_GREATER_THAN_OR_EQUAL);
+        struct ir_instruction * instruction = ir_create_instruction(ctx, OP_JUMP_IF_GTE);
         instruction->op1 = op1;
         instruction->op2 = op2;
         instruction->result = jump_label;
@@ -491,7 +491,7 @@ void ir_generate_condition(struct ir_context * ctx, struct ir_program * program,
         do_generate_ir(ctx, program, condition->content.binary_expression.rhs);
         op2 = program->instructions[program->position - 1]->result;
 
-        struct ir_instruction * instruction = ir_create_instruction(ctx, OP_JUMP_IF_LESS_THAN_OR_EQUAL);
+        struct ir_instruction * instruction = ir_create_instruction(ctx, OP_JUMP_IF_LTE);
         instruction->op1 = op1;
         instruction->op2 = op2;
         instruction->result = jump_label;
@@ -506,7 +506,7 @@ void ir_generate_condition(struct ir_context * ctx, struct ir_program * program,
         do_generate_ir(ctx, program, condition->content.binary_expression.rhs);
         op2 = program->instructions[program->position - 1]->result;
 
-        struct ir_instruction * instruction = ir_create_instruction(ctx, OP_JUMP_IF_NOT_EQUAL);
+        struct ir_instruction * instruction = ir_create_instruction(ctx, OP_JUMP_IF_NE);
         instruction->op1 = op1;
         instruction->op2 = op2;
         instruction->result = jump_label;
@@ -521,7 +521,7 @@ void ir_generate_condition(struct ir_context * ctx, struct ir_program * program,
         do_generate_ir(ctx, program, condition->content.binary_expression.rhs);
         op2 = program->instructions[program->position - 1]->result;
 
-        struct ir_instruction * instruction = ir_create_instruction(ctx, OP_JUMP_IF_EQUAL);
+        struct ir_instruction * instruction = ir_create_instruction(ctx, OP_JUMP_IF_EQ);
         instruction->op1 = op1;
         instruction->op2 = op2;
         instruction->result = jump_label;

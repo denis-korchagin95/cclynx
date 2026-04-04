@@ -109,7 +109,7 @@ int main() {
 OP_FUNC "main"
 OP_CONST 12, t1
 OP_CONST 3, t2
-OP_IS_GREATER_THAN t1, t2, t3
+OP_GT t1, t2, t3
 OP_RETURN t3
 OP_FUNC_END
 
@@ -125,7 +125,7 @@ int main() {
 OP_FUNC "main"
 OP_CONST 12, t1
 OP_CONST 3, t2
-OP_IS_LESS_THAN t1, t2, t3
+OP_LT t1, t2, t3
 OP_RETURN t3
 OP_FUNC_END
 
@@ -141,7 +141,7 @@ int main() {
 OP_FUNC "main"
 OP_CONST 12, t1
 OP_CONST 3, t2
-OP_IS_EQUAL t1, t2, t3
+OP_EQ t1, t2, t3
 OP_RETURN t3
 OP_FUNC_END
 
@@ -157,13 +157,13 @@ int main() {
 OP_FUNC "main"
 OP_CONST 12, t1
 OP_CONST 3, t2
-OP_IS_NOT_EQUAL t1, t2, t3
+OP_NE t1, t2, t3
 OP_RETURN t3
 OP_FUNC_END
 
 @endtest
 
-@test("It should generate OP_UDIV for unsigned int division")
+@test("It should generate OP_UNSIGNED_DIV for unsigned int division")
 @given("file")
 unsigned int main() {
     unsigned int x;
@@ -177,7 +177,7 @@ OP_CONST 10, t1
 OP_STORE x, t1
 OP_LOAD x, t2
 OP_CONST 3, t3
-OP_UDIV t2, t3, t4
+OP_UNSIGNED_DIV t2, t3, t4
 OP_RETURN t4
 OP_FUNC_END
 
