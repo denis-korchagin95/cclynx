@@ -8,7 +8,7 @@ GCC="aarch64-linux-gnu-gcc"
 QEMU="qemu-aarch64"
 QEMU_FLAGS="-L /usr/aarch64-linux-gnu"
 INT_WRAPPER="./scripts/int_wrapper.c"
-FLOAT_WRAPPER="./scripts/float_wrapper.c"
+INT32_WRAPPER="./scripts/int32_wrapper.c"
 TMPDIR=$(mktemp -d)
 
 trap "rm -rf $TMPDIR" EXIT
@@ -27,9 +27,9 @@ for src in ./examples/*.c; do
         continue
     fi
 
-    expected=$(echo "$header" | sed 's|// expected return: *||' | sed 's| *(float).*||')
-    if echo "$header" | grep -q "(float)"; then
-        type="float"
+    expected=$(echo "$header" | sed 's|// expected return: *||' | sed 's| *(int32).*||')
+    if echo "$header" | grep -q "(int32)"; then
+        type="int32"
     else
         type="int"
     fi
@@ -55,15 +55,15 @@ for src in ./examples/*.c; do
     fi
 
     # step 3: link and run
-    if [ "$type" = "float" ]; then
-        if ! $GCC -static -o "$bin_file" "$FLOAT_WRAPPER" "$obj_file" -lm 2>&1; then
+    if [ "$type" = "int32" ]; then
+        if ! $GCC -static -o "$bin_file" "$INT32_WRAPPER" "$obj_file" 2>&1; then
             echo "ERROR: $filename — linking failed"
             errors=$((errors + 1))
             continue
         fi
 
         if $QEMU $QEMU_FLAGS "$bin_file" "$expected" 2>"$TMPDIR/stderr.txt"; then
-            echo "PASS: $filename (float $expected)"
+            echo "PASS: $filename (expected $expected)"
             passed=$((passed + 1))
         else
             stderr_output=$(cat "$TMPDIR/stderr.txt")
