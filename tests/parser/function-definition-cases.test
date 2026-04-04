@@ -282,6 +282,32 @@ TranslationUnit: '{{any}}'
 
 @endtest
 
+@test("It should raise an error on function redefinition")
+@given("file")
+int foo() {
+    return 1;
+}
+
+int foo() {
+    return 2;
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stderr")
+{{any}}:5:5: ERROR: function 'foo' already defined
+
+@endtest
+
+@test("It should raise an error when function name is a keyword")
+@given("file")
+int while() {
+    return 1;
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stderr")
+{{any}}:1:5: ERROR: expected identifier but got keyword 'while'
+
+@endtest
+
 @test("It should raise an error when parameter type is not a type specifier")
 @given("file")
 int foo(bar a) {
