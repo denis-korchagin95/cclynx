@@ -602,6 +602,10 @@ void print_ir_program(const struct ir_program * program, FILE * file)
                 snprintf(buf, sizeof(buf), "t%llu, t%llu, t%llu", instruction->op1->content.temp_id, instruction->op2->content.temp_id, instruction->result->content.temp_id);
                 fprintf(file, "OP_DIV %s\n", buf);
                 break;
+            case OP_UDIV:
+                snprintf(buf, sizeof(buf), "t%llu, t%llu, t%llu", instruction->op1->content.temp_id, instruction->op2->content.temp_id, instruction->result->content.temp_id);
+                fprintf(file, "OP_UDIV %s\n", buf);
+                break;
             case OP_CONST:
                 {
                     snprintf(buf, sizeof(buf), "%lld, t%llu", instruction->op1->content.int_value, instruction->result->content.temp_id);

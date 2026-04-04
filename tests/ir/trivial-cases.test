@@ -162,3 +162,43 @@ OP_RETURN t3
 OP_FUNC_END
 
 @endtest
+
+@test("It should generate OP_UDIV for unsigned int division")
+@given("file")
+unsigned int main() {
+    unsigned int x;
+    x = 10u;
+    return x / 3u;
+}
+@whenRun("./bin/cclynx", args="--emit-ir --no-warnings")
+@expectOutput("stdout")
+OP_FUNC "main"
+OP_CONST 10, t1
+OP_STORE x, t1
+OP_LOAD x, t2
+OP_CONST 3, t3
+OP_UDIV t2, t3, t4
+OP_RETURN t4
+OP_FUNC_END
+
+@endtest
+
+@test("It should generate OP_DIV for signed int division")
+@given("file")
+int main() {
+    int x;
+    x = 10;
+    return x / 3;
+}
+@whenRun("./bin/cclynx", args="--emit-ir --no-warnings")
+@expectOutput("stdout")
+OP_FUNC "main"
+OP_CONST 10, t1
+OP_STORE x, t1
+OP_LOAD x, t2
+OP_CONST 3, t3
+OP_DIV t2, t3, t4
+OP_RETURN t4
+OP_FUNC_END
+
+@endtest

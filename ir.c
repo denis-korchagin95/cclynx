@@ -281,7 +281,7 @@ void do_generate_ir(struct ir_context * ctx, struct ir_program * program, const 
                         instruction->code = OP_MUL;
                         break;
                     case BINARY_OPERATION_DIVIDE:
-                        instruction->code = OP_DIV;
+                        instruction->code = type_is_unsigned(node->type) ? OP_UDIV : OP_DIV;
                         break;
                     case BINARY_OPERATION_EQUALITY:
                         instruction->code = OP_IS_EQUAL;

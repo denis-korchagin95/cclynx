@@ -227,11 +227,13 @@ void target_arm64_generate(struct codegen_context * ctx, struct ir_program * pro
                 }
                 break;
             case OP_DIV:
+            case OP_UDIV:
                 {
                     struct codegen_reg * op2_reg = pop_reg(ctx);
                     struct codegen_reg * op1_reg = pop_reg(ctx);
                     struct codegen_reg * result_reg = alloc_reg(ctx, CODEGEN_REG_KIND_INTEGER);
-                    fprintf(file, "    sdiv %s, %s, %s\n", result_reg->name, op1_reg->name, op2_reg->name);
+                    const char * op = instruction->code == OP_UDIV ? "udiv" : "sdiv";
+                    fprintf(file, "    %s %s, %s, %s\n", op, result_reg->name, op1_reg->name, op2_reg->name);
                     free_reg(op1_reg);
                     free_reg(op2_reg);
                     push_reg(ctx, result_reg);

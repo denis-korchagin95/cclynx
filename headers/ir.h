@@ -61,6 +61,7 @@ enum opcode
     OP_ADD,
     OP_MUL,
     OP_DIV,
+    OP_UDIV,
     OP_SUB,
     OP_CALL,
     OP_ARG,
