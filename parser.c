@@ -15,6 +15,13 @@
 #include "errors.h"
 
 
+struct declaration_specifiers
+{
+    enum type_kind type_kind;
+    unsigned int modifiers;
+};
+
+
 static struct ast_node * parse_translation_unit(struct parser_context * ctx);
 static struct ast_node * parse_expression(struct parser_context * ctx);
 static struct ast_node * parse_if_statement(struct parser_context * ctx, struct token * keyword_token);
@@ -35,7 +42,8 @@ static struct ast_node * parse_postfix_expression(struct parser_context * ctx);
 static struct ast_node * parse_primary_expression(struct parser_context * ctx);
 
 static void parse_function_parameter_list(struct parser_context * ctx, struct ast_node ** parameters, unsigned int * parameter_count);
-struct type * parse_type_specifiers(struct parser_context * ctx);
+void parse_declaration_specifiers(struct parser_context * ctx, struct declaration_specifiers * specifiers);
+struct type * resolve_type(struct declaration_specifiers * specifiers);
 
 
 
@@ -455,7 +463,12 @@ struct ast_node * parse_function_definition(struct parser_context * ctx)
 {
     assert(ctx != NULL);
 
-    struct type * type = parse_type_specifiers(ctx);
+    struct declaration_specifiers specifiers;
+    memset(&specifiers, 0, sizeof(struct declaration_specifiers));
+
+    parse_declaration_specifiers(ctx, &specifiers);
+
+    struct type * type = resolve_type(&specifiers);
 
     if (type == NULL) {
         struct token * error_token = parser_get_token(ctx);
@@ -581,7 +594,12 @@ struct ast_node * parse_declaration(struct parser_context * ctx)
 {
     assert(ctx != NULL);
 
-    struct type * type = parse_type_specifiers(ctx);
+    struct declaration_specifiers specifiers;
+    memset(&specifiers, 0, sizeof(struct declaration_specifiers));
+
+    parse_declaration_specifiers(ctx, &specifiers);
+
+    struct type * type = resolve_type(&specifiers);
 
     if (type == NULL) {
         struct token * error_token = parser_get_token(ctx);
@@ -863,7 +881,12 @@ struct ast_node * parse_cast_expression(struct parser_context * ctx)
 
     struct token * previous_token = current_token;
 
-    struct type * type = parse_type_specifiers(ctx);
+    struct declaration_specifiers specifiers;
+    memset(&specifiers, 0, sizeof(struct declaration_specifiers));
+
+    parse_declaration_specifiers(ctx, &specifiers);
+
+    struct type * type = resolve_type(&specifiers);
 
     if (type == NULL) {
         parser_putback_token(previous_token, ctx);
@@ -1099,7 +1122,12 @@ struct ast_node * parse_function_parameter(struct parser_context * ctx)
 {
     assert(ctx != NULL);
 
-    struct type * parameter_type = parse_type_specifiers(ctx);
+    struct declaration_specifiers specifiers;
+    memset(&specifiers, 0, sizeof(struct declaration_specifiers));
+
+    parse_declaration_specifiers(ctx, &specifiers);
+
+    struct type * parameter_type = resolve_type(&specifiers);
 
     if (parameter_type == NULL) {
         struct token * next = parser_get_token(ctx);
@@ -1182,33 +1210,78 @@ void parse_function_parameter_list(struct parser_context * ctx, struct ast_node 
     parser_putback_token(token, ctx);
 }
 
-struct type * parse_type_specifiers(struct parser_context * ctx)
+void parse_declaration_specifiers(struct parser_context * ctx, struct declaration_specifiers * specifiers)
 {
     assert(ctx != NULL);
-
-    struct type * type = NULL;
+    assert(specifiers != NULL);
 
     struct token * current_token = parser_get_token(ctx);
 
     while (current_token->kind == TOKEN_KIND_IDENTIFIER) {
-        struct symbol * symbol = symbol_lookup(current_token->identifier, SYMBOL_KIND_TYPE_SPECIFIER);
-
-        if (symbol == NULL) {
+        if (current_token->identifier->keyword_code == KEYWORD_NONE) {
             break;
         }
 
-        if (type != NULL) {
-            parser_report_error(ctx, current_token, "mixed types");
-            current_token = parser_get_token(ctx);
-            continue;
+        switch (current_token->identifier->keyword_code) {
+            case KEYWORD_VOID:
+            case KEYWORD_INT:
+            case KEYWORD_FLOAT:
+                if (specifiers->type_kind != TYPE_KIND_UNDEFINED) {
+                    parser_report_error(ctx, current_token, "mixed types");
+                    current_token = parser_get_token(ctx);
+                    continue;
+                }
+                break;
+            default:
+                goto done;
         }
 
-        type = symbol->type;
+        switch (current_token->identifier->keyword_code) {
+            case KEYWORD_VOID:
+                specifiers->type_kind = TYPE_KIND_VOID;
+                break;
+            case KEYWORD_INT:
+                specifiers->type_kind = TYPE_KIND_INTEGER;
+                break;
+            case KEYWORD_FLOAT:
+                specifiers->type_kind = TYPE_KIND_FLOAT;
+                break;
+            default:
+                goto done;
+        }
 
         current_token = parser_get_token(ctx);
     }
 
+done:
     parser_putback_token(current_token, ctx);
+}
 
-    return type;
+struct type * resolve_type(struct declaration_specifiers * specifiers)
+{
+    assert(specifiers != NULL);
+
+    if (specifiers->type_kind == TYPE_KIND_UNDEFINED) {
+        if (specifiers->modifiers != 0) {
+            specifiers->type_kind = TYPE_KIND_INTEGER;
+        } else {
+            return NULL;
+        }
+    }
+
+    if (specifiers->type_kind == TYPE_KIND_VOID) {
+        return &type_void;
+    }
+
+    if (specifiers->type_kind == TYPE_KIND_INTEGER) {
+        return &type_integer;
+    }
+
+    if (specifiers->type_kind == TYPE_KIND_FLOAT) {
+        return &type_float;
+    }
+
+    cclynx_fatal_error("FATAL ERROR: unhandled type\n");
+
+    return NULL;
 }

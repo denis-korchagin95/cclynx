@@ -3,11 +3,13 @@
 
 #include <stddef.h>
 
-#define TYPE_MODIFIER_SIGNED (1 << 0)
+#define TYPE_MODIFIER_SIGNED    (1 << 0)
+#define TYPE_MODIFIER_UNSIGNED  (1 << 1)
 
 enum type_kind
 {
-    TYPE_KIND_VOID = 0,
+    TYPE_KIND_UNDEFINED = 0,
+    TYPE_KIND_VOID,
     TYPE_KIND_INTEGER,
     TYPE_KIND_FLOAT,
 };
