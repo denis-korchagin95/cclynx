@@ -10,108 +10,57 @@ int main() {
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
-|
-+-> FunctionDefinition: 'main' <unspecified-parameters>
-    |
-    +-> ReturnType
-    |   |
-    |   +-> category: 'basic'
-    |   |
-    |   +-> descriptor: 'int'
-    |
-    +-> CompoundStatement
-        |
-        +-> VariableDeclaration: 'i'
-        |   |
-        |   +-> Type
-        |       |
-        |       +-> category: 'basic'
-        |       |
-        |       +-> descriptor: 'int'
-        |
-        +-> ExpressionStatement
-        |   |
-        |   +-> AssignmentExpression: '='
-        |       |
-        |       +-> VariableExpression: 'i'
-        |       |   |
-        |       |   +-> Type
-        |       |       |
-        |       |       +-> category: 'basic'
-        |       |       |
-        |       |       +-> descriptor: 'int'
-        |       |
-        |       +-> IntegerConstant: '0'
-        |           |
-        |           +-> Type
-        |               |
-        |               +-> category: 'basic'
-        |               |
-        |               +-> descriptor: 'int'
-        |
-        +-> WhileStatement
-            |
-            +-> (condition) RelationalExpression: '<'
-            |   |
-            |   +-> Type
-            |   |   |
-            |   |   +-> category: 'basic'
-            |   |   |
-            |   |   +-> descriptor: 'int'
-            |   |
-            |   +-> VariableExpression: 'i'
-            |   |   |
-            |   |   +-> Type
-            |   |       |
-            |   |       +-> category: 'basic'
-            |   |       |
-            |   |       +-> descriptor: 'int'
-            |   |
-            |   +-> IntegerConstant: '10'
-            |       |
-            |       +-> Type
-            |           |
-            |           +-> category: 'basic'
-            |           |
-            |           +-> descriptor: 'int'
-            |
-            +-> (body) CompoundStatement
-                |
-                +-> ExpressionStatement
-                    |
-                    +-> AssignmentExpression: '='
-                        |
-                        +-> VariableExpression: 'i'
-                        |   |
-                        |   +-> Type
-                        |       |
-                        |       +-> category: 'basic'
-                        |       |
-                        |       +-> descriptor: 'int'
-                        |
-                        +-> AdditiveExpression: '+'
-                            |
-                            +-> Type
-                            |   |
-                            |   +-> category: 'basic'
-                            |   |
-                            |   +-> descriptor: 'int'
-                            |
-                            +-> VariableExpression: 'i'
-                            |   |
-                            |   +-> Type
-                            |       |
-                            |       +-> category: 'basic'
-                            |       |
-                            |       +-> descriptor: 'int'
-                            |
-                            +-> IntegerConstant: '1'
-                                |
-                                +-> Type
-                                    |
-                                    +-> category: 'basic'
-                                    |
-                                    +-> descriptor: 'int'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        ├── VariableDeclaration: 'i'
+        │   └── Type
+        │       ├── category: 'basic'
+        │       └── descriptor: 'int'
+        ├── ExpressionStatement
+        │   └── AssignmentExpression: '='
+        │       ├── VariableExpression: 'i'
+        │       │   └── Type
+        │       │       ├── category: 'basic'
+        │       │       └── descriptor: 'int'
+        │       └── IntegerConstant: '0'
+        │           └── Type
+        │               ├── category: 'basic'
+        │               └── descriptor: 'int'
+        └── WhileStatement
+            ├── (condition) RelationalExpression: '<'
+            │   ├── Type
+            │   │   ├── category: 'basic'
+            │   │   └── descriptor: 'int'
+            │   ├── VariableExpression: 'i'
+            │   │   └── Type
+            │   │       ├── category: 'basic'
+            │   │       └── descriptor: 'int'
+            │   └── IntegerConstant: '10'
+            │       └── Type
+            │           ├── category: 'basic'
+            │           └── descriptor: 'int'
+            └── (body) CompoundStatement
+                └── ExpressionStatement
+                    └── AssignmentExpression: '='
+                        ├── VariableExpression: 'i'
+                        │   └── Type
+                        │       ├── category: 'basic'
+                        │       └── descriptor: 'int'
+                        └── AdditiveExpression: '+'
+                            ├── Type
+                            │   ├── category: 'basic'
+                            │   └── descriptor: 'int'
+                            ├── VariableExpression: 'i'
+                            │   └── Type
+                            │       ├── category: 'basic'
+                            │       └── descriptor: 'int'
+                            └── IntegerConstant: '1'
+                                └── Type
+                                    ├── category: 'basic'
+                                    └── descriptor: 'int'
 
 @endtest
 
@@ -125,72 +74,39 @@ int main() {
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
-|
-+-> FunctionDefinition: 'main' <unspecified-parameters>
-    |
-    +-> ReturnType
-    |   |
-    |   +-> category: 'basic'
-    |   |
-    |   +-> descriptor: 'int'
-    |
-    +-> CompoundStatement
-        |
-        +-> VariableDeclaration: 'i'
-        |   |
-        |   +-> Type
-        |       |
-        |       +-> category: 'basic'
-        |       |
-        |       +-> descriptor: 'int'
-        |
-        +-> ExpressionStatement
-        |   |
-        |   +-> AssignmentExpression: '='
-        |       |
-        |       +-> VariableExpression: 'i'
-        |       |   |
-        |       |   +-> Type
-        |       |       |
-        |       |       +-> category: 'basic'
-        |       |       |
-        |       |       +-> descriptor: 'int'
-        |       |
-        |       +-> IntegerConstant: '0'
-        |           |
-        |           +-> Type
-        |               |
-        |               +-> category: 'basic'
-        |               |
-        |               +-> descriptor: 'int'
-        |
-        +-> WhileStatement
-            |
-            +-> (condition) RelationalExpression: '<'
-            |   |
-            |   +-> Type
-            |   |   |
-            |   |   +-> category: 'basic'
-            |   |   |
-            |   |   +-> descriptor: 'int'
-            |   |
-            |   +-> VariableExpression: 'i'
-            |   |   |
-            |   |   +-> Type
-            |   |       |
-            |   |       +-> category: 'basic'
-            |   |       |
-            |   |       +-> descriptor: 'int'
-            |   |
-            |   +-> IntegerConstant: '10'
-            |       |
-            |       +-> Type
-            |           |
-            |           +-> category: 'basic'
-            |           |
-            |           +-> descriptor: 'int'
-            |
-            +-> (body) ExpressionStatement: {empty expression}
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        ├── VariableDeclaration: 'i'
+        │   └── Type
+        │       ├── category: 'basic'
+        │       └── descriptor: 'int'
+        ├── ExpressionStatement
+        │   └── AssignmentExpression: '='
+        │       ├── VariableExpression: 'i'
+        │       │   └── Type
+        │       │       ├── category: 'basic'
+        │       │       └── descriptor: 'int'
+        │       └── IntegerConstant: '0'
+        │           └── Type
+        │               ├── category: 'basic'
+        │               └── descriptor: 'int'
+        └── WhileStatement
+            ├── (condition) RelationalExpression: '<'
+            │   ├── Type
+            │   │   ├── category: 'basic'
+            │   │   └── descriptor: 'int'
+            │   ├── VariableExpression: 'i'
+            │   │   └── Type
+            │   │       ├── category: 'basic'
+            │   │       └── descriptor: 'int'
+            │   └── IntegerConstant: '10'
+            │       └── Type
+            │           ├── category: 'basic'
+            │           └── descriptor: 'int'
+            └── (body) ExpressionStatement: {empty expression}
 
 @endtest
 
@@ -205,105 +121,55 @@ int main() {
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
-|
-+-> FunctionDefinition: 'main' <unspecified-parameters>
-    |
-    +-> ReturnType
-    |   |
-    |   +-> category: 'basic'
-    |   |
-    |   +-> descriptor: 'int'
-    |
-    +-> CompoundStatement
-        |
-        +-> VariableDeclaration: 'i'
-        |   |
-        |   +-> Type
-        |       |
-        |       +-> category: 'basic'
-        |       |
-        |       +-> descriptor: 'int'
-        |
-        +-> ExpressionStatement
-        |   |
-        |   +-> AssignmentExpression: '='
-        |       |
-        |       +-> VariableExpression: 'i'
-        |       |   |
-        |       |   +-> Type
-        |       |       |
-        |       |       +-> category: 'basic'
-        |       |       |
-        |       |       +-> descriptor: 'int'
-        |       |
-        |       +-> IntegerConstant: '0'
-        |           |
-        |           +-> Type
-        |               |
-        |               +-> category: 'basic'
-        |               |
-        |               +-> descriptor: 'int'
-        |
-        +-> WhileStatement
-            |
-            +-> (condition) RelationalExpression: '<'
-            |   |
-            |   +-> Type
-            |   |   |
-            |   |   +-> category: 'basic'
-            |   |   |
-            |   |   +-> descriptor: 'int'
-            |   |
-            |   +-> VariableExpression: 'i'
-            |   |   |
-            |   |   +-> Type
-            |   |       |
-            |   |       +-> category: 'basic'
-            |   |       |
-            |   |       +-> descriptor: 'int'
-            |   |
-            |   +-> IntegerConstant: '10'
-            |       |
-            |       +-> Type
-            |           |
-            |           +-> category: 'basic'
-            |           |
-            |           +-> descriptor: 'int'
-            |
-            +-> (body) ExpressionStatement
-                |
-                +-> AssignmentExpression: '='
-                    |
-                    +-> VariableExpression: 'i'
-                    |   |
-                    |   +-> Type
-                    |       |
-                    |       +-> category: 'basic'
-                    |       |
-                    |       +-> descriptor: 'int'
-                    |
-                    +-> AdditiveExpression: '+'
-                        |
-                        +-> Type
-                        |   |
-                        |   +-> category: 'basic'
-                        |   |
-                        |   +-> descriptor: 'int'
-                        |
-                        +-> VariableExpression: 'i'
-                        |   |
-                        |   +-> Type
-                        |       |
-                        |       +-> category: 'basic'
-                        |       |
-                        |       +-> descriptor: 'int'
-                        |
-                        +-> IntegerConstant: '1'
-                            |
-                            +-> Type
-                                |
-                                +-> category: 'basic'
-                                |
-                                +-> descriptor: 'int'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        ├── VariableDeclaration: 'i'
+        │   └── Type
+        │       ├── category: 'basic'
+        │       └── descriptor: 'int'
+        ├── ExpressionStatement
+        │   └── AssignmentExpression: '='
+        │       ├── VariableExpression: 'i'
+        │       │   └── Type
+        │       │       ├── category: 'basic'
+        │       │       └── descriptor: 'int'
+        │       └── IntegerConstant: '0'
+        │           └── Type
+        │               ├── category: 'basic'
+        │               └── descriptor: 'int'
+        └── WhileStatement
+            ├── (condition) RelationalExpression: '<'
+            │   ├── Type
+            │   │   ├── category: 'basic'
+            │   │   └── descriptor: 'int'
+            │   ├── VariableExpression: 'i'
+            │   │   └── Type
+            │   │       ├── category: 'basic'
+            │   │       └── descriptor: 'int'
+            │   └── IntegerConstant: '10'
+            │       └── Type
+            │           ├── category: 'basic'
+            │           └── descriptor: 'int'
+            └── (body) ExpressionStatement
+                └── AssignmentExpression: '='
+                    ├── VariableExpression: 'i'
+                    │   └── Type
+                    │       ├── category: 'basic'
+                    │       └── descriptor: 'int'
+                    └── AdditiveExpression: '+'
+                        ├── Type
+                        │   ├── category: 'basic'
+                        │   └── descriptor: 'int'
+                        ├── VariableExpression: 'i'
+                        │   └── Type
+                        │       ├── category: 'basic'
+                        │       └── descriptor: 'int'
+                        └── IntegerConstant: '1'
+                            └── Type
+                                ├── category: 'basic'
+                                └── descriptor: 'int'
 
 @endtest

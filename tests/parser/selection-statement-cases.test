@@ -9,90 +9,48 @@ int main() {
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
-|
-+-> FunctionDefinition: 'main' <unspecified-parameters>
-    |
-    +-> ReturnType
-    |   |
-    |   +-> category: 'basic'
-    |   |
-    |   +-> descriptor: 'int'
-    |
-    +-> CompoundStatement
-        |
-        +-> VariableDeclaration: 'x'
-        |   |
-        |   +-> Type
-        |       |
-        |       +-> category: 'basic'
-        |       |
-        |       +-> descriptor: 'int'
-        |
-        +-> ExpressionStatement
-        |   |
-        |   +-> AssignmentExpression: '='
-        |       |
-        |       +-> VariableExpression: 'x'
-        |       |   |
-        |       |   +-> Type
-        |       |       |
-        |       |       +-> category: 'basic'
-        |       |       |
-        |       |       +-> descriptor: 'int'
-        |       |
-        |       +-> IntegerConstant: '10'
-        |           |
-        |           +-> Type
-        |               |
-        |               +-> category: 'basic'
-        |               |
-        |               +-> descriptor: 'int'
-        |
-        +-> IfStatement
-            |
-            +-> (condition) RelationalExpression: '<'
-            |   |
-            |   +-> Type
-            |   |   |
-            |   |   +-> category: 'basic'
-            |   |   |
-            |   |   +-> descriptor: 'int'
-            |   |
-            |   +-> VariableExpression: 'x'
-            |   |   |
-            |   |   +-> Type
-            |   |       |
-            |   |       +-> category: 'basic'
-            |   |       |
-            |   |       +-> descriptor: 'int'
-            |   |
-            |   +-> IntegerConstant: '5'
-            |       |
-            |       +-> Type
-            |           |
-            |           +-> category: 'basic'
-            |           |
-            |           +-> descriptor: 'int'
-            |
-            +-> (true branch) ExpressionStatement
-                |
-                +-> AssignmentExpression: '='
-                    |
-                    +-> VariableExpression: 'x'
-                    |   |
-                    |   +-> Type
-                    |       |
-                    |       +-> category: 'basic'
-                    |       |
-                    |       +-> descriptor: 'int'
-                    |
-                    +-> IntegerConstant: '10'
-                        |
-                        +-> Type
-                            |
-                            +-> category: 'basic'
-                            |
-                            +-> descriptor: 'int'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        ├── VariableDeclaration: 'x'
+        │   └── Type
+        │       ├── category: 'basic'
+        │       └── descriptor: 'int'
+        ├── ExpressionStatement
+        │   └── AssignmentExpression: '='
+        │       ├── VariableExpression: 'x'
+        │       │   └── Type
+        │       │       ├── category: 'basic'
+        │       │       └── descriptor: 'int'
+        │       └── IntegerConstant: '10'
+        │           └── Type
+        │               ├── category: 'basic'
+        │               └── descriptor: 'int'
+        └── IfStatement
+            ├── (condition) RelationalExpression: '<'
+            │   ├── Type
+            │   │   ├── category: 'basic'
+            │   │   └── descriptor: 'int'
+            │   ├── VariableExpression: 'x'
+            │   │   └── Type
+            │   │       ├── category: 'basic'
+            │   │       └── descriptor: 'int'
+            │   └── IntegerConstant: '5'
+            │       └── Type
+            │           ├── category: 'basic'
+            │           └── descriptor: 'int'
+            └── (true branch) ExpressionStatement
+                └── AssignmentExpression: '='
+                    ├── VariableExpression: 'x'
+                    │   └── Type
+                    │       ├── category: 'basic'
+                    │       └── descriptor: 'int'
+                    └── IntegerConstant: '10'
+                        └── Type
+                            ├── category: 'basic'
+                            └── descriptor: 'int'
 
 @endtest
 
@@ -106,72 +64,39 @@ int main() {
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
-|
-+-> FunctionDefinition: 'main' <unspecified-parameters>
-    |
-    +-> ReturnType
-    |   |
-    |   +-> category: 'basic'
-    |   |
-    |   +-> descriptor: 'int'
-    |
-    +-> CompoundStatement
-        |
-        +-> VariableDeclaration: 'x'
-        |   |
-        |   +-> Type
-        |       |
-        |       +-> category: 'basic'
-        |       |
-        |       +-> descriptor: 'int'
-        |
-        +-> ExpressionStatement
-        |   |
-        |   +-> AssignmentExpression: '='
-        |       |
-        |       +-> VariableExpression: 'x'
-        |       |   |
-        |       |   +-> Type
-        |       |       |
-        |       |       +-> category: 'basic'
-        |       |       |
-        |       |       +-> descriptor: 'int'
-        |       |
-        |       +-> IntegerConstant: '10'
-        |           |
-        |           +-> Type
-        |               |
-        |               +-> category: 'basic'
-        |               |
-        |               +-> descriptor: 'int'
-        |
-        +-> IfStatement
-            |
-            +-> (condition) RelationalExpression: '<'
-            |   |
-            |   +-> Type
-            |   |   |
-            |   |   +-> category: 'basic'
-            |   |   |
-            |   |   +-> descriptor: 'int'
-            |   |
-            |   +-> VariableExpression: 'x'
-            |   |   |
-            |   |   +-> Type
-            |   |       |
-            |   |       +-> category: 'basic'
-            |   |       |
-            |   |       +-> descriptor: 'int'
-            |   |
-            |   +-> IntegerConstant: '5'
-            |       |
-            |       +-> Type
-            |           |
-            |           +-> category: 'basic'
-            |           |
-            |           +-> descriptor: 'int'
-            |
-            +-> (true branch) ExpressionStatement: {empty expression}
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        ├── VariableDeclaration: 'x'
+        │   └── Type
+        │       ├── category: 'basic'
+        │       └── descriptor: 'int'
+        ├── ExpressionStatement
+        │   └── AssignmentExpression: '='
+        │       ├── VariableExpression: 'x'
+        │       │   └── Type
+        │       │       ├── category: 'basic'
+        │       │       └── descriptor: 'int'
+        │       └── IntegerConstant: '10'
+        │           └── Type
+        │               ├── category: 'basic'
+        │               └── descriptor: 'int'
+        └── IfStatement
+            ├── (condition) RelationalExpression: '<'
+            │   ├── Type
+            │   │   ├── category: 'basic'
+            │   │   └── descriptor: 'int'
+            │   ├── VariableExpression: 'x'
+            │   │   └── Type
+            │   │       ├── category: 'basic'
+            │   │       └── descriptor: 'int'
+            │   └── IntegerConstant: '5'
+            │       └── Type
+            │           ├── category: 'basic'
+            │           └── descriptor: 'int'
+            └── (true branch) ExpressionStatement: {empty expression}
 
 @endtest
 
@@ -188,128 +113,67 @@ int main() {
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
-|
-+-> FunctionDefinition: 'main' <unspecified-parameters>
-    |
-    +-> ReturnType
-    |   |
-    |   +-> category: 'basic'
-    |   |
-    |   +-> descriptor: 'int'
-    |
-    +-> CompoundStatement
-        |
-        +-> VariableDeclaration: 'x'
-        |   |
-        |   +-> Type
-        |       |
-        |       +-> category: 'basic'
-        |       |
-        |       +-> descriptor: 'int'
-        |
-        +-> ExpressionStatement
-        |   |
-        |   +-> AssignmentExpression: '='
-        |       |
-        |       +-> VariableExpression: 'x'
-        |       |   |
-        |       |   +-> Type
-        |       |       |
-        |       |       +-> category: 'basic'
-        |       |       |
-        |       |       +-> descriptor: 'int'
-        |       |
-        |       +-> IntegerConstant: '10'
-        |           |
-        |           +-> Type
-        |               |
-        |               +-> category: 'basic'
-        |               |
-        |               +-> descriptor: 'int'
-        |
-        +-> IfStatement
-            |
-            +-> (condition) RelationalExpression: '<'
-            |   |
-            |   +-> Type
-            |   |   |
-            |   |   +-> category: 'basic'
-            |   |   |
-            |   |   +-> descriptor: 'int'
-            |   |
-            |   +-> VariableExpression: 'x'
-            |   |   |
-            |   |   +-> Type
-            |   |       |
-            |   |       +-> category: 'basic'
-            |   |       |
-            |   |       +-> descriptor: 'int'
-            |   |
-            |   +-> IntegerConstant: '5'
-            |       |
-            |       +-> Type
-            |           |
-            |           +-> category: 'basic'
-            |           |
-            |           +-> descriptor: 'int'
-            |
-            +-> (true branch) CompoundStatement
-                |
-                +-> ExpressionStatement
-                |   |
-                |   +-> AssignmentExpression: '='
-                |       |
-                |       +-> VariableExpression: 'x'
-                |       |   |
-                |       |   +-> Type
-                |       |       |
-                |       |       +-> category: 'basic'
-                |       |       |
-                |       |       +-> descriptor: 'int'
-                |       |
-                |       +-> IntegerConstant: '10'
-                |           |
-                |           +-> Type
-                |               |
-                |               +-> category: 'basic'
-                |               |
-                |               +-> descriptor: 'int'
-                |
-                +-> ExpressionStatement
-                    |
-                    +-> AssignmentExpression: '='
-                        |
-                        +-> VariableExpression: 'x'
-                        |   |
-                        |   +-> Type
-                        |       |
-                        |       +-> category: 'basic'
-                        |       |
-                        |       +-> descriptor: 'int'
-                        |
-                        +-> AdditiveExpression: '+'
-                            |
-                            +-> Type
-                            |   |
-                            |   +-> category: 'basic'
-                            |   |
-                            |   +-> descriptor: 'int'
-                            |
-                            +-> VariableExpression: 'x'
-                            |   |
-                            |   +-> Type
-                            |       |
-                            |       +-> category: 'basic'
-                            |       |
-                            |       +-> descriptor: 'int'
-                            |
-                            +-> IntegerConstant: '15'
-                                |
-                                +-> Type
-                                    |
-                                    +-> category: 'basic'
-                                    |
-                                    +-> descriptor: 'int'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        ├── VariableDeclaration: 'x'
+        │   └── Type
+        │       ├── category: 'basic'
+        │       └── descriptor: 'int'
+        ├── ExpressionStatement
+        │   └── AssignmentExpression: '='
+        │       ├── VariableExpression: 'x'
+        │       │   └── Type
+        │       │       ├── category: 'basic'
+        │       │       └── descriptor: 'int'
+        │       └── IntegerConstant: '10'
+        │           └── Type
+        │               ├── category: 'basic'
+        │               └── descriptor: 'int'
+        └── IfStatement
+            ├── (condition) RelationalExpression: '<'
+            │   ├── Type
+            │   │   ├── category: 'basic'
+            │   │   └── descriptor: 'int'
+            │   ├── VariableExpression: 'x'
+            │   │   └── Type
+            │   │       ├── category: 'basic'
+            │   │       └── descriptor: 'int'
+            │   └── IntegerConstant: '5'
+            │       └── Type
+            │           ├── category: 'basic'
+            │           └── descriptor: 'int'
+            └── (true branch) CompoundStatement
+                ├── ExpressionStatement
+                │   └── AssignmentExpression: '='
+                │       ├── VariableExpression: 'x'
+                │       │   └── Type
+                │       │       ├── category: 'basic'
+                │       │       └── descriptor: 'int'
+                │       └── IntegerConstant: '10'
+                │           └── Type
+                │               ├── category: 'basic'
+                │               └── descriptor: 'int'
+                └── ExpressionStatement
+                    └── AssignmentExpression: '='
+                        ├── VariableExpression: 'x'
+                        │   └── Type
+                        │       ├── category: 'basic'
+                        │       └── descriptor: 'int'
+                        └── AdditiveExpression: '+'
+                            ├── Type
+                            │   ├── category: 'basic'
+                            │   └── descriptor: 'int'
+                            ├── VariableExpression: 'x'
+                            │   └── Type
+                            │       ├── category: 'basic'
+                            │       └── descriptor: 'int'
+                            └── IntegerConstant: '15'
+                                └── Type
+                                    ├── category: 'basic'
+                                    └── descriptor: 'int'
 
 @endtest
 
@@ -326,110 +190,58 @@ int main() {
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
-|
-+-> FunctionDefinition: 'main' <unspecified-parameters>
-    |
-    +-> ReturnType
-    |   |
-    |   +-> category: 'basic'
-    |   |
-    |   +-> descriptor: 'int'
-    |
-    +-> CompoundStatement
-        |
-        +-> VariableDeclaration: 'x'
-        |   |
-        |   +-> Type
-        |       |
-        |       +-> category: 'basic'
-        |       |
-        |       +-> descriptor: 'int'
-        |
-        +-> ExpressionStatement
-        |   |
-        |   +-> AssignmentExpression: '='
-        |       |
-        |       +-> VariableExpression: 'x'
-        |       |   |
-        |       |   +-> Type
-        |       |       |
-        |       |       +-> category: 'basic'
-        |       |       |
-        |       |       +-> descriptor: 'int'
-        |       |
-        |       +-> IntegerConstant: '10'
-        |           |
-        |           +-> Type
-        |               |
-        |               +-> category: 'basic'
-        |               |
-        |               +-> descriptor: 'int'
-        |
-        +-> IfStatement
-            |
-            +-> (condition) RelationalExpression: '<'
-            |   |
-            |   +-> Type
-            |   |   |
-            |   |   +-> category: 'basic'
-            |   |   |
-            |   |   +-> descriptor: 'int'
-            |   |
-            |   +-> VariableExpression: 'x'
-            |   |   |
-            |   |   +-> Type
-            |   |       |
-            |   |       +-> category: 'basic'
-            |   |       |
-            |   |       +-> descriptor: 'int'
-            |   |
-            |   +-> IntegerConstant: '5'
-            |       |
-            |       +-> Type
-            |           |
-            |           +-> category: 'basic'
-            |           |
-            |           +-> descriptor: 'int'
-            |
-            +-> (true branch) ExpressionStatement
-            |   |
-            |   +-> AssignmentExpression: '='
-            |       |
-            |       +-> VariableExpression: 'x'
-            |       |   |
-            |       |   +-> Type
-            |       |       |
-            |       |       +-> category: 'basic'
-            |       |       |
-            |       |       +-> descriptor: 'int'
-            |       |
-            |       +-> IntegerConstant: '10'
-            |           |
-            |           +-> Type
-            |               |
-            |               +-> category: 'basic'
-            |               |
-            |               +-> descriptor: 'int'
-            |
-            +-> (false branch) ExpressionStatement
-                |
-                +-> AssignmentExpression: '='
-                    |
-                    +-> VariableExpression: 'x'
-                    |   |
-                    |   +-> Type
-                    |       |
-                    |       +-> category: 'basic'
-                    |       |
-                    |       +-> descriptor: 'int'
-                    |
-                    +-> IntegerConstant: '77'
-                        |
-                        +-> Type
-                            |
-                            +-> category: 'basic'
-                            |
-                            +-> descriptor: 'int'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        ├── VariableDeclaration: 'x'
+        │   └── Type
+        │       ├── category: 'basic'
+        │       └── descriptor: 'int'
+        ├── ExpressionStatement
+        │   └── AssignmentExpression: '='
+        │       ├── VariableExpression: 'x'
+        │       │   └── Type
+        │       │       ├── category: 'basic'
+        │       │       └── descriptor: 'int'
+        │       └── IntegerConstant: '10'
+        │           └── Type
+        │               ├── category: 'basic'
+        │               └── descriptor: 'int'
+        └── IfStatement
+            ├── (condition) RelationalExpression: '<'
+            │   ├── Type
+            │   │   ├── category: 'basic'
+            │   │   └── descriptor: 'int'
+            │   ├── VariableExpression: 'x'
+            │   │   └── Type
+            │   │       ├── category: 'basic'
+            │   │       └── descriptor: 'int'
+            │   └── IntegerConstant: '5'
+            │       └── Type
+            │           ├── category: 'basic'
+            │           └── descriptor: 'int'
+            ├── (true branch) ExpressionStatement
+            │   └── AssignmentExpression: '='
+            │       ├── VariableExpression: 'x'
+            │       │   └── Type
+            │       │       ├── category: 'basic'
+            │       │       └── descriptor: 'int'
+            │       └── IntegerConstant: '10'
+            │           └── Type
+            │               ├── category: 'basic'
+            │               └── descriptor: 'int'
+            └── (false branch) ExpressionStatement
+                └── AssignmentExpression: '='
+                    ├── VariableExpression: 'x'
+                    │   └── Type
+                    │       ├── category: 'basic'
+                    │       └── descriptor: 'int'
+                    └── IntegerConstant: '77'
+                        └── Type
+                            ├── category: 'basic'
+                            └── descriptor: 'int'
 
 @endtest
 
@@ -445,92 +257,49 @@ int main() {
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
-|
-+-> FunctionDefinition: 'main' <unspecified-parameters>
-    |
-    +-> ReturnType
-    |   |
-    |   +-> category: 'basic'
-    |   |
-    |   +-> descriptor: 'int'
-    |
-    +-> CompoundStatement
-        |
-        +-> VariableDeclaration: 'x'
-        |   |
-        |   +-> Type
-        |       |
-        |       +-> category: 'basic'
-        |       |
-        |       +-> descriptor: 'int'
-        |
-        +-> ExpressionStatement
-        |   |
-        |   +-> AssignmentExpression: '='
-        |       |
-        |       +-> VariableExpression: 'x'
-        |       |   |
-        |       |   +-> Type
-        |       |       |
-        |       |       +-> category: 'basic'
-        |       |       |
-        |       |       +-> descriptor: 'int'
-        |       |
-        |       +-> IntegerConstant: '10'
-        |           |
-        |           +-> Type
-        |               |
-        |               +-> category: 'basic'
-        |               |
-        |               +-> descriptor: 'int'
-        |
-        +-> IfStatement
-            |
-            +-> (condition) RelationalExpression: '<'
-            |   |
-            |   +-> Type
-            |   |   |
-            |   |   +-> category: 'basic'
-            |   |   |
-            |   |   +-> descriptor: 'int'
-            |   |
-            |   +-> VariableExpression: 'x'
-            |   |   |
-            |   |   +-> Type
-            |   |       |
-            |   |       +-> category: 'basic'
-            |   |       |
-            |   |       +-> descriptor: 'int'
-            |   |
-            |   +-> IntegerConstant: '5'
-            |       |
-            |       +-> Type
-            |           |
-            |           +-> category: 'basic'
-            |           |
-            |           +-> descriptor: 'int'
-            |
-            +-> (true branch) ExpressionStatement
-            |   |
-            |   +-> AssignmentExpression: '='
-            |       |
-            |       +-> VariableExpression: 'x'
-            |       |   |
-            |       |   +-> Type
-            |       |       |
-            |       |       +-> category: 'basic'
-            |       |       |
-            |       |       +-> descriptor: 'int'
-            |       |
-            |       +-> IntegerConstant: '10'
-            |           |
-            |           +-> Type
-            |               |
-            |               +-> category: 'basic'
-            |               |
-            |               +-> descriptor: 'int'
-            |
-            +-> (false branch) ExpressionStatement: {empty expression}
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        ├── VariableDeclaration: 'x'
+        │   └── Type
+        │       ├── category: 'basic'
+        │       └── descriptor: 'int'
+        ├── ExpressionStatement
+        │   └── AssignmentExpression: '='
+        │       ├── VariableExpression: 'x'
+        │       │   └── Type
+        │       │       ├── category: 'basic'
+        │       │       └── descriptor: 'int'
+        │       └── IntegerConstant: '10'
+        │           └── Type
+        │               ├── category: 'basic'
+        │               └── descriptor: 'int'
+        └── IfStatement
+            ├── (condition) RelationalExpression: '<'
+            │   ├── Type
+            │   │   ├── category: 'basic'
+            │   │   └── descriptor: 'int'
+            │   ├── VariableExpression: 'x'
+            │   │   └── Type
+            │   │       ├── category: 'basic'
+            │   │       └── descriptor: 'int'
+            │   └── IntegerConstant: '5'
+            │       └── Type
+            │           ├── category: 'basic'
+            │           └── descriptor: 'int'
+            ├── (true branch) ExpressionStatement
+            │   └── AssignmentExpression: '='
+            │       ├── VariableExpression: 'x'
+            │       │   └── Type
+            │       │       ├── category: 'basic'
+            │       │       └── descriptor: 'int'
+            │       └── IntegerConstant: '10'
+            │           └── Type
+            │               ├── category: 'basic'
+            │               └── descriptor: 'int'
+            └── (false branch) ExpressionStatement: {empty expression}
 
 @endtest
 
@@ -549,147 +318,76 @@ int main() {
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
-|
-+-> FunctionDefinition: 'main' <unspecified-parameters>
-    |
-    +-> ReturnType
-    |   |
-    |   +-> category: 'basic'
-    |   |
-    |   +-> descriptor: 'int'
-    |
-    +-> CompoundStatement
-        |
-        +-> VariableDeclaration: 'x'
-        |   |
-        |   +-> Type
-        |       |
-        |       +-> category: 'basic'
-        |       |
-        |       +-> descriptor: 'int'
-        |
-        +-> ExpressionStatement
-        |   |
-        |   +-> AssignmentExpression: '='
-        |       |
-        |       +-> VariableExpression: 'x'
-        |       |   |
-        |       |   +-> Type
-        |       |       |
-        |       |       +-> category: 'basic'
-        |       |       |
-        |       |       +-> descriptor: 'int'
-        |       |
-        |       +-> IntegerConstant: '10'
-        |           |
-        |           +-> Type
-        |               |
-        |               +-> category: 'basic'
-        |               |
-        |               +-> descriptor: 'int'
-        |
-        +-> IfStatement
-            |
-            +-> (condition) RelationalExpression: '<'
-            |   |
-            |   +-> Type
-            |   |   |
-            |   |   +-> category: 'basic'
-            |   |   |
-            |   |   +-> descriptor: 'int'
-            |   |
-            |   +-> VariableExpression: 'x'
-            |   |   |
-            |   |   +-> Type
-            |   |       |
-            |   |       +-> category: 'basic'
-            |   |       |
-            |   |       +-> descriptor: 'int'
-            |   |
-            |   +-> IntegerConstant: '5'
-            |       |
-            |       +-> Type
-            |           |
-            |           +-> category: 'basic'
-            |           |
-            |           +-> descriptor: 'int'
-            |
-            +-> (true branch) ExpressionStatement
-            |   |
-            |   +-> AssignmentExpression: '='
-            |       |
-            |       +-> VariableExpression: 'x'
-            |       |   |
-            |       |   +-> Type
-            |       |       |
-            |       |       +-> category: 'basic'
-            |       |       |
-            |       |       +-> descriptor: 'int'
-            |       |
-            |       +-> IntegerConstant: '10'
-            |           |
-            |           +-> Type
-            |               |
-            |               +-> category: 'basic'
-            |               |
-            |               +-> descriptor: 'int'
-            |
-            +-> (false branch) CompoundStatement
-                |
-                +-> ExpressionStatement
-                |   |
-                |   +-> AssignmentExpression: '='
-                |       |
-                |       +-> VariableExpression: 'x'
-                |       |   |
-                |       |   +-> Type
-                |       |       |
-                |       |       +-> category: 'basic'
-                |       |       |
-                |       |       +-> descriptor: 'int'
-                |       |
-                |       +-> IntegerConstant: '77'
-                |           |
-                |           +-> Type
-                |               |
-                |               +-> category: 'basic'
-                |               |
-                |               +-> descriptor: 'int'
-                |
-                +-> ExpressionStatement
-                    |
-                    +-> AssignmentExpression: '='
-                        |
-                        +-> VariableExpression: 'x'
-                        |   |
-                        |   +-> Type
-                        |       |
-                        |       +-> category: 'basic'
-                        |       |
-                        |       +-> descriptor: 'int'
-                        |
-                        +-> AdditiveExpression: '-'
-                            |
-                            +-> Type
-                            |   |
-                            |   +-> category: 'basic'
-                            |   |
-                            |   +-> descriptor: 'int'
-                            |
-                            +-> VariableExpression: 'x'
-                            |   |
-                            |   +-> Type
-                            |       |
-                            |       +-> category: 'basic'
-                            |       |
-                            |       +-> descriptor: 'int'
-                            |
-                            +-> IntegerConstant: '1'
-                                |
-                                +-> Type
-                                    |
-                                    +-> category: 'basic'
-                                    |
-                                    +-> descriptor: 'int'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        ├── VariableDeclaration: 'x'
+        │   └── Type
+        │       ├── category: 'basic'
+        │       └── descriptor: 'int'
+        ├── ExpressionStatement
+        │   └── AssignmentExpression: '='
+        │       ├── VariableExpression: 'x'
+        │       │   └── Type
+        │       │       ├── category: 'basic'
+        │       │       └── descriptor: 'int'
+        │       └── IntegerConstant: '10'
+        │           └── Type
+        │               ├── category: 'basic'
+        │               └── descriptor: 'int'
+        └── IfStatement
+            ├── (condition) RelationalExpression: '<'
+            │   ├── Type
+            │   │   ├── category: 'basic'
+            │   │   └── descriptor: 'int'
+            │   ├── VariableExpression: 'x'
+            │   │   └── Type
+            │   │       ├── category: 'basic'
+            │   │       └── descriptor: 'int'
+            │   └── IntegerConstant: '5'
+            │       └── Type
+            │           ├── category: 'basic'
+            │           └── descriptor: 'int'
+            ├── (true branch) ExpressionStatement
+            │   └── AssignmentExpression: '='
+            │       ├── VariableExpression: 'x'
+            │       │   └── Type
+            │       │       ├── category: 'basic'
+            │       │       └── descriptor: 'int'
+            │       └── IntegerConstant: '10'
+            │           └── Type
+            │               ├── category: 'basic'
+            │               └── descriptor: 'int'
+            └── (false branch) CompoundStatement
+                ├── ExpressionStatement
+                │   └── AssignmentExpression: '='
+                │       ├── VariableExpression: 'x'
+                │       │   └── Type
+                │       │       ├── category: 'basic'
+                │       │       └── descriptor: 'int'
+                │       └── IntegerConstant: '77'
+                │           └── Type
+                │               ├── category: 'basic'
+                │               └── descriptor: 'int'
+                └── ExpressionStatement
+                    └── AssignmentExpression: '='
+                        ├── VariableExpression: 'x'
+                        │   └── Type
+                        │       ├── category: 'basic'
+                        │       └── descriptor: 'int'
+                        └── AdditiveExpression: '-'
+                            ├── Type
+                            │   ├── category: 'basic'
+                            │   └── descriptor: 'int'
+                            ├── VariableExpression: 'x'
+                            │   └── Type
+                            │       ├── category: 'basic'
+                            │       └── descriptor: 'int'
+                            └── IntegerConstant: '1'
+                                └── Type
+                                    ├── category: 'basic'
+                                    └── descriptor: 'int'
 
 @endtest

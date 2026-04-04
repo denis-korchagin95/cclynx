@@ -6,26 +6,16 @@ int main() {
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
-|
-+-> FunctionDefinition: 'main' <unspecified-parameters>
-    |
-    +-> ReturnType
-    |   |
-    |   +-> category: 'basic'
-    |   |
-    |   +-> descriptor: 'int'
-    |
-    +-> CompoundStatement
-        |
-        +-> ExpressionStatement
-            |
-            +-> IntegerConstant: '777'
-                |
-                +-> Type
-                    |
-                    +-> category: 'basic'
-                    |
-                    +-> descriptor: 'int'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        └── ExpressionStatement
+            └── IntegerConstant: '777'
+                └── Type
+                    ├── category: 'basic'
+                    └── descriptor: 'int'
 
 @endtest
 
@@ -37,26 +27,16 @@ int main() {
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
-|
-+-> FunctionDefinition: 'main' <unspecified-parameters>
-    |
-    +-> ReturnType
-    |   |
-    |   +-> category: 'basic'
-    |   |
-    |   +-> descriptor: 'int'
-    |
-    +-> CompoundStatement
-        |
-        +-> ExpressionStatement
-            |
-            +-> FloatConstant: '12.512000'
-                |
-                +-> Type
-                    |
-                    +-> category: 'basic'
-                    |
-                    +-> descriptor: 'float'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        └── ExpressionStatement
+            └── FloatConstant: '12.512000'
+                └── Type
+                    ├── category: 'basic'
+                    └── descriptor: 'float'
 
 @endtest
 
@@ -68,42 +48,24 @@ int main() {
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
-|
-+-> FunctionDefinition: 'main' <unspecified-parameters>
-    |
-    +-> ReturnType
-    |   |
-    |   +-> category: 'basic'
-    |   |
-    |   +-> descriptor: 'int'
-    |
-    +-> CompoundStatement
-        |
-        +-> ExpressionStatement
-            |
-            +-> MultiplicativeExpression: '*'
-                |
-                +-> Type
-                |   |
-                |   +-> category: 'basic'
-                |   |
-                |   +-> descriptor: 'int'
-                |
-                +-> IntegerConstant: '7'
-                |   |
-                |   +-> Type
-                |       |
-                |       +-> category: 'basic'
-                |       |
-                |       +-> descriptor: 'int'
-                |
-                +-> IntegerConstant: '8'
-                    |
-                    +-> Type
-                        |
-                        +-> category: 'basic'
-                        |
-                        +-> descriptor: 'int'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        └── ExpressionStatement
+            └── MultiplicativeExpression: '*'
+                ├── Type
+                │   ├── category: 'basic'
+                │   └── descriptor: 'int'
+                ├── IntegerConstant: '7'
+                │   └── Type
+                │       ├── category: 'basic'
+                │       └── descriptor: 'int'
+                └── IntegerConstant: '8'
+                    └── Type
+                        ├── category: 'basic'
+                        └── descriptor: 'int'
 
 @endtest
 
@@ -115,58 +77,32 @@ int main() {
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
-|
-+-> FunctionDefinition: 'main' <unspecified-parameters>
-    |
-    +-> ReturnType
-    |   |
-    |   +-> category: 'basic'
-    |   |
-    |   +-> descriptor: 'int'
-    |
-    +-> CompoundStatement
-        |
-        +-> ExpressionStatement
-            |
-            +-> MultiplicativeExpression: '*'
-                |
-                +-> Type
-                |   |
-                |   +-> category: 'basic'
-                |   |
-                |   +-> descriptor: 'int'
-                |
-                +-> MultiplicativeExpression: '*'
-                |   |
-                |   +-> Type
-                |   |   |
-                |   |   +-> category: 'basic'
-                |   |   |
-                |   |   +-> descriptor: 'int'
-                |   |
-                |   +-> IntegerConstant: '7'
-                |   |   |
-                |   |   +-> Type
-                |   |       |
-                |   |       +-> category: 'basic'
-                |   |       |
-                |   |       +-> descriptor: 'int'
-                |   |
-                |   +-> IntegerConstant: '6'
-                |       |
-                |       +-> Type
-                |           |
-                |           +-> category: 'basic'
-                |           |
-                |           +-> descriptor: 'int'
-                |
-                +-> IntegerConstant: '8'
-                    |
-                    +-> Type
-                        |
-                        +-> category: 'basic'
-                        |
-                        +-> descriptor: 'int'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        └── ExpressionStatement
+            └── MultiplicativeExpression: '*'
+                ├── Type
+                │   ├── category: 'basic'
+                │   └── descriptor: 'int'
+                ├── MultiplicativeExpression: '*'
+                │   ├── Type
+                │   │   ├── category: 'basic'
+                │   │   └── descriptor: 'int'
+                │   ├── IntegerConstant: '7'
+                │   │   └── Type
+                │   │       ├── category: 'basic'
+                │   │       └── descriptor: 'int'
+                │   └── IntegerConstant: '6'
+                │       └── Type
+                │           ├── category: 'basic'
+                │           └── descriptor: 'int'
+                └── IntegerConstant: '8'
+                    └── Type
+                        ├── category: 'basic'
+                        └── descriptor: 'int'
 
 @endtest
 
@@ -178,90 +114,48 @@ int main() {
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
-|
-+-> FunctionDefinition: 'main' <unspecified-parameters>
-    |
-    +-> ReturnType
-    |   |
-    |   +-> category: 'basic'
-    |   |
-    |   +-> descriptor: 'int'
-    |
-    +-> CompoundStatement
-        |
-        +-> ExpressionStatement
-            |
-            +-> MultiplicativeExpression: '*'
-                |
-                +-> Type
-                |   |
-                |   +-> category: 'basic'
-                |   |
-                |   +-> descriptor: 'int'
-                |
-                +-> MultiplicativeExpression: '*'
-                |   |
-                |   +-> Type
-                |   |   |
-                |   |   +-> category: 'basic'
-                |   |   |
-                |   |   +-> descriptor: 'int'
-                |   |
-                |   +-> MultiplicativeExpression: '*'
-                |   |   |
-                |   |   +-> Type
-                |   |   |   |
-                |   |   |   +-> category: 'basic'
-                |   |   |   |
-                |   |   |   +-> descriptor: 'int'
-                |   |   |
-                |   |   +-> MultiplicativeExpression: '*'
-                |   |   |   |
-                |   |   |   +-> Type
-                |   |   |   |   |
-                |   |   |   |   +-> category: 'basic'
-                |   |   |   |   |
-                |   |   |   |   +-> descriptor: 'int'
-                |   |   |   |
-                |   |   |   +-> IntegerConstant: '7'
-                |   |   |   |   |
-                |   |   |   |   +-> Type
-                |   |   |   |       |
-                |   |   |   |       +-> category: 'basic'
-                |   |   |   |       |
-                |   |   |   |       +-> descriptor: 'int'
-                |   |   |   |
-                |   |   |   +-> IntegerConstant: '6'
-                |   |   |       |
-                |   |   |       +-> Type
-                |   |   |           |
-                |   |   |           +-> category: 'basic'
-                |   |   |           |
-                |   |   |           +-> descriptor: 'int'
-                |   |   |
-                |   |   +-> IntegerConstant: '8'
-                |   |       |
-                |   |       +-> Type
-                |   |           |
-                |   |           +-> category: 'basic'
-                |   |           |
-                |   |           +-> descriptor: 'int'
-                |   |
-                |   +-> IntegerConstant: '10'
-                |       |
-                |       +-> Type
-                |           |
-                |           +-> category: 'basic'
-                |           |
-                |           +-> descriptor: 'int'
-                |
-                +-> IntegerConstant: '15'
-                    |
-                    +-> Type
-                        |
-                        +-> category: 'basic'
-                        |
-                        +-> descriptor: 'int'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        └── ExpressionStatement
+            └── MultiplicativeExpression: '*'
+                ├── Type
+                │   ├── category: 'basic'
+                │   └── descriptor: 'int'
+                ├── MultiplicativeExpression: '*'
+                │   ├── Type
+                │   │   ├── category: 'basic'
+                │   │   └── descriptor: 'int'
+                │   ├── MultiplicativeExpression: '*'
+                │   │   ├── Type
+                │   │   │   ├── category: 'basic'
+                │   │   │   └── descriptor: 'int'
+                │   │   ├── MultiplicativeExpression: '*'
+                │   │   │   ├── Type
+                │   │   │   │   ├── category: 'basic'
+                │   │   │   │   └── descriptor: 'int'
+                │   │   │   ├── IntegerConstant: '7'
+                │   │   │   │   └── Type
+                │   │   │   │       ├── category: 'basic'
+                │   │   │   │       └── descriptor: 'int'
+                │   │   │   └── IntegerConstant: '6'
+                │   │   │       └── Type
+                │   │   │           ├── category: 'basic'
+                │   │   │           └── descriptor: 'int'
+                │   │   └── IntegerConstant: '8'
+                │   │       └── Type
+                │   │           ├── category: 'basic'
+                │   │           └── descriptor: 'int'
+                │   └── IntegerConstant: '10'
+                │       └── Type
+                │           ├── category: 'basic'
+                │           └── descriptor: 'int'
+                └── IntegerConstant: '15'
+                    └── Type
+                        ├── category: 'basic'
+                        └── descriptor: 'int'
 
 @endtest
 
@@ -273,58 +167,32 @@ int main() {
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
-|
-+-> FunctionDefinition: 'main' <unspecified-parameters>
-    |
-    +-> ReturnType
-    |   |
-    |   +-> category: 'basic'
-    |   |
-    |   +-> descriptor: 'int'
-    |
-    +-> CompoundStatement
-        |
-        +-> ExpressionStatement
-            |
-            +-> MultiplicativeExpression: '*'
-                |
-                +-> Type
-                |   |
-                |   +-> category: 'basic'
-                |   |
-                |   +-> descriptor: 'int'
-                |
-                +-> MultiplicativeExpression: '/'
-                |   |
-                |   +-> Type
-                |   |   |
-                |   |   +-> category: 'basic'
-                |   |   |
-                |   |   +-> descriptor: 'int'
-                |   |
-                |   +-> IntegerConstant: '15'
-                |   |   |
-                |   |   +-> Type
-                |   |       |
-                |   |       +-> category: 'basic'
-                |   |       |
-                |   |       +-> descriptor: 'int'
-                |   |
-                |   +-> IntegerConstant: '3'
-                |       |
-                |       +-> Type
-                |           |
-                |           +-> category: 'basic'
-                |           |
-                |           +-> descriptor: 'int'
-                |
-                +-> IntegerConstant: '101'
-                    |
-                    +-> Type
-                        |
-                        +-> category: 'basic'
-                        |
-                        +-> descriptor: 'int'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        └── ExpressionStatement
+            └── MultiplicativeExpression: '*'
+                ├── Type
+                │   ├── category: 'basic'
+                │   └── descriptor: 'int'
+                ├── MultiplicativeExpression: '/'
+                │   ├── Type
+                │   │   ├── category: 'basic'
+                │   │   └── descriptor: 'int'
+                │   ├── IntegerConstant: '15'
+                │   │   └── Type
+                │   │       ├── category: 'basic'
+                │   │       └── descriptor: 'int'
+                │   └── IntegerConstant: '3'
+                │       └── Type
+                │           ├── category: 'basic'
+                │           └── descriptor: 'int'
+                └── IntegerConstant: '101'
+                    └── Type
+                        ├── category: 'basic'
+                        └── descriptor: 'int'
 
 @endtest
 
@@ -336,42 +204,24 @@ int main() {
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
-|
-+-> FunctionDefinition: 'main' <unspecified-parameters>
-    |
-    +-> ReturnType
-    |   |
-    |   +-> category: 'basic'
-    |   |
-    |   +-> descriptor: 'int'
-    |
-    +-> CompoundStatement
-        |
-        +-> ExpressionStatement
-            |
-            +-> AdditiveExpression: '+'
-                |
-                +-> Type
-                |   |
-                |   +-> category: 'basic'
-                |   |
-                |   +-> descriptor: 'int'
-                |
-                +-> IntegerConstant: '7'
-                |   |
-                |   +-> Type
-                |       |
-                |       +-> category: 'basic'
-                |       |
-                |       +-> descriptor: 'int'
-                |
-                +-> IntegerConstant: '8'
-                    |
-                    +-> Type
-                        |
-                        +-> category: 'basic'
-                        |
-                        +-> descriptor: 'int'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        └── ExpressionStatement
+            └── AdditiveExpression: '+'
+                ├── Type
+                │   ├── category: 'basic'
+                │   └── descriptor: 'int'
+                ├── IntegerConstant: '7'
+                │   └── Type
+                │       ├── category: 'basic'
+                │       └── descriptor: 'int'
+                └── IntegerConstant: '8'
+                    └── Type
+                        ├── category: 'basic'
+                        └── descriptor: 'int'
 
 @endtest
 
@@ -383,58 +233,32 @@ int main() {
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
-|
-+-> FunctionDefinition: 'main' <unspecified-parameters>
-    |
-    +-> ReturnType
-    |   |
-    |   +-> category: 'basic'
-    |   |
-    |   +-> descriptor: 'int'
-    |
-    +-> CompoundStatement
-        |
-        +-> ExpressionStatement
-            |
-            +-> AdditiveExpression: '+'
-                |
-                +-> Type
-                |   |
-                |   +-> category: 'basic'
-                |   |
-                |   +-> descriptor: 'int'
-                |
-                +-> AdditiveExpression: '+'
-                |   |
-                |   +-> Type
-                |   |   |
-                |   |   +-> category: 'basic'
-                |   |   |
-                |   |   +-> descriptor: 'int'
-                |   |
-                |   +-> IntegerConstant: '7'
-                |   |   |
-                |   |   +-> Type
-                |   |       |
-                |   |       +-> category: 'basic'
-                |   |       |
-                |   |       +-> descriptor: 'int'
-                |   |
-                |   +-> IntegerConstant: '6'
-                |       |
-                |       +-> Type
-                |           |
-                |           +-> category: 'basic'
-                |           |
-                |           +-> descriptor: 'int'
-                |
-                +-> IntegerConstant: '8'
-                    |
-                    +-> Type
-                        |
-                        +-> category: 'basic'
-                        |
-                        +-> descriptor: 'int'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        └── ExpressionStatement
+            └── AdditiveExpression: '+'
+                ├── Type
+                │   ├── category: 'basic'
+                │   └── descriptor: 'int'
+                ├── AdditiveExpression: '+'
+                │   ├── Type
+                │   │   ├── category: 'basic'
+                │   │   └── descriptor: 'int'
+                │   ├── IntegerConstant: '7'
+                │   │   └── Type
+                │   │       ├── category: 'basic'
+                │   │       └── descriptor: 'int'
+                │   └── IntegerConstant: '6'
+                │       └── Type
+                │           ├── category: 'basic'
+                │           └── descriptor: 'int'
+                └── IntegerConstant: '8'
+                    └── Type
+                        ├── category: 'basic'
+                        └── descriptor: 'int'
 
 @endtest
 
@@ -446,90 +270,48 @@ int main() {
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
-|
-+-> FunctionDefinition: 'main' <unspecified-parameters>
-    |
-    +-> ReturnType
-    |   |
-    |   +-> category: 'basic'
-    |   |
-    |   +-> descriptor: 'int'
-    |
-    +-> CompoundStatement
-        |
-        +-> ExpressionStatement
-            |
-            +-> AdditiveExpression: '+'
-                |
-                +-> Type
-                |   |
-                |   +-> category: 'basic'
-                |   |
-                |   +-> descriptor: 'int'
-                |
-                +-> AdditiveExpression: '+'
-                |   |
-                |   +-> Type
-                |   |   |
-                |   |   +-> category: 'basic'
-                |   |   |
-                |   |   +-> descriptor: 'int'
-                |   |
-                |   +-> AdditiveExpression: '+'
-                |   |   |
-                |   |   +-> Type
-                |   |   |   |
-                |   |   |   +-> category: 'basic'
-                |   |   |   |
-                |   |   |   +-> descriptor: 'int'
-                |   |   |
-                |   |   +-> AdditiveExpression: '+'
-                |   |   |   |
-                |   |   |   +-> Type
-                |   |   |   |   |
-                |   |   |   |   +-> category: 'basic'
-                |   |   |   |   |
-                |   |   |   |   +-> descriptor: 'int'
-                |   |   |   |
-                |   |   |   +-> IntegerConstant: '7'
-                |   |   |   |   |
-                |   |   |   |   +-> Type
-                |   |   |   |       |
-                |   |   |   |       +-> category: 'basic'
-                |   |   |   |       |
-                |   |   |   |       +-> descriptor: 'int'
-                |   |   |   |
-                |   |   |   +-> IntegerConstant: '6'
-                |   |   |       |
-                |   |   |       +-> Type
-                |   |   |           |
-                |   |   |           +-> category: 'basic'
-                |   |   |           |
-                |   |   |           +-> descriptor: 'int'
-                |   |   |
-                |   |   +-> IntegerConstant: '8'
-                |   |       |
-                |   |       +-> Type
-                |   |           |
-                |   |           +-> category: 'basic'
-                |   |           |
-                |   |           +-> descriptor: 'int'
-                |   |
-                |   +-> IntegerConstant: '10'
-                |       |
-                |       +-> Type
-                |           |
-                |           +-> category: 'basic'
-                |           |
-                |           +-> descriptor: 'int'
-                |
-                +-> IntegerConstant: '15'
-                    |
-                    +-> Type
-                        |
-                        +-> category: 'basic'
-                        |
-                        +-> descriptor: 'int'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        └── ExpressionStatement
+            └── AdditiveExpression: '+'
+                ├── Type
+                │   ├── category: 'basic'
+                │   └── descriptor: 'int'
+                ├── AdditiveExpression: '+'
+                │   ├── Type
+                │   │   ├── category: 'basic'
+                │   │   └── descriptor: 'int'
+                │   ├── AdditiveExpression: '+'
+                │   │   ├── Type
+                │   │   │   ├── category: 'basic'
+                │   │   │   └── descriptor: 'int'
+                │   │   ├── AdditiveExpression: '+'
+                │   │   │   ├── Type
+                │   │   │   │   ├── category: 'basic'
+                │   │   │   │   └── descriptor: 'int'
+                │   │   │   ├── IntegerConstant: '7'
+                │   │   │   │   └── Type
+                │   │   │   │       ├── category: 'basic'
+                │   │   │   │       └── descriptor: 'int'
+                │   │   │   └── IntegerConstant: '6'
+                │   │   │       └── Type
+                │   │   │           ├── category: 'basic'
+                │   │   │           └── descriptor: 'int'
+                │   │   └── IntegerConstant: '8'
+                │   │       └── Type
+                │   │           ├── category: 'basic'
+                │   │           └── descriptor: 'int'
+                │   └── IntegerConstant: '10'
+                │       └── Type
+                │           ├── category: 'basic'
+                │           └── descriptor: 'int'
+                └── IntegerConstant: '15'
+                    └── Type
+                        ├── category: 'basic'
+                        └── descriptor: 'int'
 
 @endtest
 
@@ -541,58 +323,32 @@ int main() {
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
-|
-+-> FunctionDefinition: 'main' <unspecified-parameters>
-    |
-    +-> ReturnType
-    |   |
-    |   +-> category: 'basic'
-    |   |
-    |   +-> descriptor: 'int'
-    |
-    +-> CompoundStatement
-        |
-        +-> ExpressionStatement
-            |
-            +-> AdditiveExpression: '-'
-                |
-                +-> Type
-                |   |
-                |   +-> category: 'basic'
-                |   |
-                |   +-> descriptor: 'int'
-                |
-                +-> AdditiveExpression: '+'
-                |   |
-                |   +-> Type
-                |   |   |
-                |   |   +-> category: 'basic'
-                |   |   |
-                |   |   +-> descriptor: 'int'
-                |   |
-                |   +-> IntegerConstant: '15'
-                |   |   |
-                |   |   +-> Type
-                |   |       |
-                |   |       +-> category: 'basic'
-                |   |       |
-                |   |       +-> descriptor: 'int'
-                |   |
-                |   +-> IntegerConstant: '3'
-                |       |
-                |       +-> Type
-                |           |
-                |           +-> category: 'basic'
-                |           |
-                |           +-> descriptor: 'int'
-                |
-                +-> IntegerConstant: '101'
-                    |
-                    +-> Type
-                        |
-                        +-> category: 'basic'
-                        |
-                        +-> descriptor: 'int'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        └── ExpressionStatement
+            └── AdditiveExpression: '-'
+                ├── Type
+                │   ├── category: 'basic'
+                │   └── descriptor: 'int'
+                ├── AdditiveExpression: '+'
+                │   ├── Type
+                │   │   ├── category: 'basic'
+                │   │   └── descriptor: 'int'
+                │   ├── IntegerConstant: '15'
+                │   │   └── Type
+                │   │       ├── category: 'basic'
+                │   │       └── descriptor: 'int'
+                │   └── IntegerConstant: '3'
+                │       └── Type
+                │           ├── category: 'basic'
+                │           └── descriptor: 'int'
+                └── IntegerConstant: '101'
+                    └── Type
+                        ├── category: 'basic'
+                        └── descriptor: 'int'
 
 @endtest
 
@@ -604,74 +360,40 @@ int main() {
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
-|
-+-> FunctionDefinition: 'main' <unspecified-parameters>
-    |
-    +-> ReturnType
-    |   |
-    |   +-> category: 'basic'
-    |   |
-    |   +-> descriptor: 'int'
-    |
-    +-> CompoundStatement
-        |
-        +-> ExpressionStatement
-            |
-            +-> AdditiveExpression: '-'
-                |
-                +-> Type
-                |   |
-                |   +-> category: 'basic'
-                |   |
-                |   +-> descriptor: 'int'
-                |
-                +-> AdditiveExpression: '+'
-                |   |
-                |   +-> Type
-                |   |   |
-                |   |   +-> category: 'basic'
-                |   |   |
-                |   |   +-> descriptor: 'int'
-                |   |
-                |   +-> IntegerConstant: '1'
-                |   |   |
-                |   |   +-> Type
-                |   |       |
-                |   |       +-> category: 'basic'
-                |   |       |
-                |   |       +-> descriptor: 'int'
-                |   |
-                |   +-> MultiplicativeExpression: '*'
-                |       |
-                |       +-> Type
-                |       |   |
-                |       |   +-> category: 'basic'
-                |       |   |
-                |       |   +-> descriptor: 'int'
-                |       |
-                |       +-> IntegerConstant: '7'
-                |       |   |
-                |       |   +-> Type
-                |       |       |
-                |       |       +-> category: 'basic'
-                |       |       |
-                |       |       +-> descriptor: 'int'
-                |       |
-                |       +-> IntegerConstant: '6'
-                |           |
-                |           +-> Type
-                |               |
-                |               +-> category: 'basic'
-                |               |
-                |               +-> descriptor: 'int'
-                |
-                +-> IntegerConstant: '4'
-                    |
-                    +-> Type
-                        |
-                        +-> category: 'basic'
-                        |
-                        +-> descriptor: 'int'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        └── ExpressionStatement
+            └── AdditiveExpression: '-'
+                ├── Type
+                │   ├── category: 'basic'
+                │   └── descriptor: 'int'
+                ├── AdditiveExpression: '+'
+                │   ├── Type
+                │   │   ├── category: 'basic'
+                │   │   └── descriptor: 'int'
+                │   ├── IntegerConstant: '1'
+                │   │   └── Type
+                │   │       ├── category: 'basic'
+                │   │       └── descriptor: 'int'
+                │   └── MultiplicativeExpression: '*'
+                │       ├── Type
+                │       │   ├── category: 'basic'
+                │       │   └── descriptor: 'int'
+                │       ├── IntegerConstant: '7'
+                │       │   └── Type
+                │       │       ├── category: 'basic'
+                │       │       └── descriptor: 'int'
+                │       └── IntegerConstant: '6'
+                │           └── Type
+                │               ├── category: 'basic'
+                │               └── descriptor: 'int'
+                └── IntegerConstant: '4'
+                    └── Type
+                        ├── category: 'basic'
+                        └── descriptor: 'int'
 
 @endtest
 
@@ -683,42 +405,24 @@ int main() {
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
-|
-+-> FunctionDefinition: 'main' <unspecified-parameters>
-    |
-    +-> ReturnType
-    |   |
-    |   +-> category: 'basic'
-    |   |
-    |   +-> descriptor: 'int'
-    |
-    +-> CompoundStatement
-        |
-        +-> ExpressionStatement
-            |
-            +-> RelationalExpression: '<'
-                |
-                +-> Type
-                |   |
-                |   +-> category: 'basic'
-                |   |
-                |   +-> descriptor: 'int'
-                |
-                +-> IntegerConstant: '7'
-                |   |
-                |   +-> Type
-                |       |
-                |       +-> category: 'basic'
-                |       |
-                |       +-> descriptor: 'int'
-                |
-                +-> IntegerConstant: '8'
-                    |
-                    +-> Type
-                        |
-                        +-> category: 'basic'
-                        |
-                        +-> descriptor: 'int'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        └── ExpressionStatement
+            └── RelationalExpression: '<'
+                ├── Type
+                │   ├── category: 'basic'
+                │   └── descriptor: 'int'
+                ├── IntegerConstant: '7'
+                │   └── Type
+                │       ├── category: 'basic'
+                │       └── descriptor: 'int'
+                └── IntegerConstant: '8'
+                    └── Type
+                        ├── category: 'basic'
+                        └── descriptor: 'int'
 
 @endtest
 
@@ -730,58 +434,32 @@ int main() {
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
-|
-+-> FunctionDefinition: 'main' <unspecified-parameters>
-    |
-    +-> ReturnType
-    |   |
-    |   +-> category: 'basic'
-    |   |
-    |   +-> descriptor: 'int'
-    |
-    +-> CompoundStatement
-        |
-        +-> ExpressionStatement
-            |
-            +-> RelationalExpression: '<'
-                |
-                +-> Type
-                |   |
-                |   +-> category: 'basic'
-                |   |
-                |   +-> descriptor: 'int'
-                |
-                +-> RelationalExpression: '<'
-                |   |
-                |   +-> Type
-                |   |   |
-                |   |   +-> category: 'basic'
-                |   |   |
-                |   |   +-> descriptor: 'int'
-                |   |
-                |   +-> IntegerConstant: '7'
-                |   |   |
-                |   |   +-> Type
-                |   |       |
-                |   |       +-> category: 'basic'
-                |   |       |
-                |   |       +-> descriptor: 'int'
-                |   |
-                |   +-> IntegerConstant: '6'
-                |       |
-                |       +-> Type
-                |           |
-                |           +-> category: 'basic'
-                |           |
-                |           +-> descriptor: 'int'
-                |
-                +-> IntegerConstant: '8'
-                    |
-                    +-> Type
-                        |
-                        +-> category: 'basic'
-                        |
-                        +-> descriptor: 'int'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        └── ExpressionStatement
+            └── RelationalExpression: '<'
+                ├── Type
+                │   ├── category: 'basic'
+                │   └── descriptor: 'int'
+                ├── RelationalExpression: '<'
+                │   ├── Type
+                │   │   ├── category: 'basic'
+                │   │   └── descriptor: 'int'
+                │   ├── IntegerConstant: '7'
+                │   │   └── Type
+                │   │       ├── category: 'basic'
+                │   │       └── descriptor: 'int'
+                │   └── IntegerConstant: '6'
+                │       └── Type
+                │           ├── category: 'basic'
+                │           └── descriptor: 'int'
+                └── IntegerConstant: '8'
+                    └── Type
+                        ├── category: 'basic'
+                        └── descriptor: 'int'
 
 @endtest
 
@@ -793,90 +471,48 @@ int main() {
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
-|
-+-> FunctionDefinition: 'main' <unspecified-parameters>
-    |
-    +-> ReturnType
-    |   |
-    |   +-> category: 'basic'
-    |   |
-    |   +-> descriptor: 'int'
-    |
-    +-> CompoundStatement
-        |
-        +-> ExpressionStatement
-            |
-            +-> RelationalExpression: '<'
-                |
-                +-> Type
-                |   |
-                |   +-> category: 'basic'
-                |   |
-                |   +-> descriptor: 'int'
-                |
-                +-> RelationalExpression: '<'
-                |   |
-                |   +-> Type
-                |   |   |
-                |   |   +-> category: 'basic'
-                |   |   |
-                |   |   +-> descriptor: 'int'
-                |   |
-                |   +-> RelationalExpression: '<'
-                |   |   |
-                |   |   +-> Type
-                |   |   |   |
-                |   |   |   +-> category: 'basic'
-                |   |   |   |
-                |   |   |   +-> descriptor: 'int'
-                |   |   |
-                |   |   +-> RelationalExpression: '<'
-                |   |   |   |
-                |   |   |   +-> Type
-                |   |   |   |   |
-                |   |   |   |   +-> category: 'basic'
-                |   |   |   |   |
-                |   |   |   |   +-> descriptor: 'int'
-                |   |   |   |
-                |   |   |   +-> IntegerConstant: '7'
-                |   |   |   |   |
-                |   |   |   |   +-> Type
-                |   |   |   |       |
-                |   |   |   |       +-> category: 'basic'
-                |   |   |   |       |
-                |   |   |   |       +-> descriptor: 'int'
-                |   |   |   |
-                |   |   |   +-> IntegerConstant: '6'
-                |   |   |       |
-                |   |   |       +-> Type
-                |   |   |           |
-                |   |   |           +-> category: 'basic'
-                |   |   |           |
-                |   |   |           +-> descriptor: 'int'
-                |   |   |
-                |   |   +-> IntegerConstant: '8'
-                |   |       |
-                |   |       +-> Type
-                |   |           |
-                |   |           +-> category: 'basic'
-                |   |           |
-                |   |           +-> descriptor: 'int'
-                |   |
-                |   +-> IntegerConstant: '10'
-                |       |
-                |       +-> Type
-                |           |
-                |           +-> category: 'basic'
-                |           |
-                |           +-> descriptor: 'int'
-                |
-                +-> IntegerConstant: '15'
-                    |
-                    +-> Type
-                        |
-                        +-> category: 'basic'
-                        |
-                        +-> descriptor: 'int'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        └── ExpressionStatement
+            └── RelationalExpression: '<'
+                ├── Type
+                │   ├── category: 'basic'
+                │   └── descriptor: 'int'
+                ├── RelationalExpression: '<'
+                │   ├── Type
+                │   │   ├── category: 'basic'
+                │   │   └── descriptor: 'int'
+                │   ├── RelationalExpression: '<'
+                │   │   ├── Type
+                │   │   │   ├── category: 'basic'
+                │   │   │   └── descriptor: 'int'
+                │   │   ├── RelationalExpression: '<'
+                │   │   │   ├── Type
+                │   │   │   │   ├── category: 'basic'
+                │   │   │   │   └── descriptor: 'int'
+                │   │   │   ├── IntegerConstant: '7'
+                │   │   │   │   └── Type
+                │   │   │   │       ├── category: 'basic'
+                │   │   │   │       └── descriptor: 'int'
+                │   │   │   └── IntegerConstant: '6'
+                │   │   │       └── Type
+                │   │   │           ├── category: 'basic'
+                │   │   │           └── descriptor: 'int'
+                │   │   └── IntegerConstant: '8'
+                │   │       └── Type
+                │   │           ├── category: 'basic'
+                │   │           └── descriptor: 'int'
+                │   └── IntegerConstant: '10'
+                │       └── Type
+                │           ├── category: 'basic'
+                │           └── descriptor: 'int'
+                └── IntegerConstant: '15'
+                    └── Type
+                        ├── category: 'basic'
+                        └── descriptor: 'int'
 
 @endtest
 
@@ -888,58 +524,32 @@ int main() {
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
-|
-+-> FunctionDefinition: 'main' <unspecified-parameters>
-    |
-    +-> ReturnType
-    |   |
-    |   +-> category: 'basic'
-    |   |
-    |   +-> descriptor: 'int'
-    |
-    +-> CompoundStatement
-        |
-        +-> ExpressionStatement
-            |
-            +-> RelationalExpression: '>'
-                |
-                +-> Type
-                |   |
-                |   +-> category: 'basic'
-                |   |
-                |   +-> descriptor: 'int'
-                |
-                +-> RelationalExpression: '<'
-                |   |
-                |   +-> Type
-                |   |   |
-                |   |   +-> category: 'basic'
-                |   |   |
-                |   |   +-> descriptor: 'int'
-                |   |
-                |   +-> IntegerConstant: '15'
-                |   |   |
-                |   |   +-> Type
-                |   |       |
-                |   |       +-> category: 'basic'
-                |   |       |
-                |   |       +-> descriptor: 'int'
-                |   |
-                |   +-> IntegerConstant: '3'
-                |       |
-                |       +-> Type
-                |           |
-                |           +-> category: 'basic'
-                |           |
-                |           +-> descriptor: 'int'
-                |
-                +-> IntegerConstant: '101'
-                    |
-                    +-> Type
-                        |
-                        +-> category: 'basic'
-                        |
-                        +-> descriptor: 'int'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        └── ExpressionStatement
+            └── RelationalExpression: '>'
+                ├── Type
+                │   ├── category: 'basic'
+                │   └── descriptor: 'int'
+                ├── RelationalExpression: '<'
+                │   ├── Type
+                │   │   ├── category: 'basic'
+                │   │   └── descriptor: 'int'
+                │   ├── IntegerConstant: '15'
+                │   │   └── Type
+                │   │       ├── category: 'basic'
+                │   │       └── descriptor: 'int'
+                │   └── IntegerConstant: '3'
+                │       └── Type
+                │           ├── category: 'basic'
+                │           └── descriptor: 'int'
+                └── IntegerConstant: '101'
+                    └── Type
+                        ├── category: 'basic'
+                        └── descriptor: 'int'
 
 @endtest
 
@@ -951,42 +561,24 @@ int main() {
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
-|
-+-> FunctionDefinition: 'main' <unspecified-parameters>
-    |
-    +-> ReturnType
-    |   |
-    |   +-> category: 'basic'
-    |   |
-    |   +-> descriptor: 'int'
-    |
-    +-> CompoundStatement
-        |
-        +-> ExpressionStatement
-            |
-            +-> EqualityExpression: '=='
-                |
-                +-> Type
-                |   |
-                |   +-> category: 'basic'
-                |   |
-                |   +-> descriptor: 'int'
-                |
-                +-> IntegerConstant: '7'
-                |   |
-                |   +-> Type
-                |       |
-                |       +-> category: 'basic'
-                |       |
-                |       +-> descriptor: 'int'
-                |
-                +-> IntegerConstant: '8'
-                    |
-                    +-> Type
-                        |
-                        +-> category: 'basic'
-                        |
-                        +-> descriptor: 'int'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        └── ExpressionStatement
+            └── EqualityExpression: '=='
+                ├── Type
+                │   ├── category: 'basic'
+                │   └── descriptor: 'int'
+                ├── IntegerConstant: '7'
+                │   └── Type
+                │       ├── category: 'basic'
+                │       └── descriptor: 'int'
+                └── IntegerConstant: '8'
+                    └── Type
+                        ├── category: 'basic'
+                        └── descriptor: 'int'
 
 @endtest
 
@@ -998,58 +590,32 @@ int main() {
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
-|
-+-> FunctionDefinition: 'main' <unspecified-parameters>
-    |
-    +-> ReturnType
-    |   |
-    |   +-> category: 'basic'
-    |   |
-    |   +-> descriptor: 'int'
-    |
-    +-> CompoundStatement
-        |
-        +-> ExpressionStatement
-            |
-            +-> EqualityExpression: '=='
-                |
-                +-> Type
-                |   |
-                |   +-> category: 'basic'
-                |   |
-                |   +-> descriptor: 'int'
-                |
-                +-> EqualityExpression: '=='
-                |   |
-                |   +-> Type
-                |   |   |
-                |   |   +-> category: 'basic'
-                |   |   |
-                |   |   +-> descriptor: 'int'
-                |   |
-                |   +-> IntegerConstant: '7'
-                |   |   |
-                |   |   +-> Type
-                |   |       |
-                |   |       +-> category: 'basic'
-                |   |       |
-                |   |       +-> descriptor: 'int'
-                |   |
-                |   +-> IntegerConstant: '6'
-                |       |
-                |       +-> Type
-                |           |
-                |           +-> category: 'basic'
-                |           |
-                |           +-> descriptor: 'int'
-                |
-                +-> IntegerConstant: '8'
-                    |
-                    +-> Type
-                        |
-                        +-> category: 'basic'
-                        |
-                        +-> descriptor: 'int'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        └── ExpressionStatement
+            └── EqualityExpression: '=='
+                ├── Type
+                │   ├── category: 'basic'
+                │   └── descriptor: 'int'
+                ├── EqualityExpression: '=='
+                │   ├── Type
+                │   │   ├── category: 'basic'
+                │   │   └── descriptor: 'int'
+                │   ├── IntegerConstant: '7'
+                │   │   └── Type
+                │   │       ├── category: 'basic'
+                │   │       └── descriptor: 'int'
+                │   └── IntegerConstant: '6'
+                │       └── Type
+                │           ├── category: 'basic'
+                │           └── descriptor: 'int'
+                └── IntegerConstant: '8'
+                    └── Type
+                        ├── category: 'basic'
+                        └── descriptor: 'int'
 
 @endtest
 
@@ -1061,90 +627,48 @@ int main() {
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
-|
-+-> FunctionDefinition: 'main' <unspecified-parameters>
-    |
-    +-> ReturnType
-    |   |
-    |   +-> category: 'basic'
-    |   |
-    |   +-> descriptor: 'int'
-    |
-    +-> CompoundStatement
-        |
-        +-> ExpressionStatement
-            |
-            +-> EqualityExpression: '=='
-                |
-                +-> Type
-                |   |
-                |   +-> category: 'basic'
-                |   |
-                |   +-> descriptor: 'int'
-                |
-                +-> EqualityExpression: '=='
-                |   |
-                |   +-> Type
-                |   |   |
-                |   |   +-> category: 'basic'
-                |   |   |
-                |   |   +-> descriptor: 'int'
-                |   |
-                |   +-> EqualityExpression: '=='
-                |   |   |
-                |   |   +-> Type
-                |   |   |   |
-                |   |   |   +-> category: 'basic'
-                |   |   |   |
-                |   |   |   +-> descriptor: 'int'
-                |   |   |
-                |   |   +-> EqualityExpression: '=='
-                |   |   |   |
-                |   |   |   +-> Type
-                |   |   |   |   |
-                |   |   |   |   +-> category: 'basic'
-                |   |   |   |   |
-                |   |   |   |   +-> descriptor: 'int'
-                |   |   |   |
-                |   |   |   +-> IntegerConstant: '7'
-                |   |   |   |   |
-                |   |   |   |   +-> Type
-                |   |   |   |       |
-                |   |   |   |       +-> category: 'basic'
-                |   |   |   |       |
-                |   |   |   |       +-> descriptor: 'int'
-                |   |   |   |
-                |   |   |   +-> IntegerConstant: '6'
-                |   |   |       |
-                |   |   |       +-> Type
-                |   |   |           |
-                |   |   |           +-> category: 'basic'
-                |   |   |           |
-                |   |   |           +-> descriptor: 'int'
-                |   |   |
-                |   |   +-> IntegerConstant: '8'
-                |   |       |
-                |   |       +-> Type
-                |   |           |
-                |   |           +-> category: 'basic'
-                |   |           |
-                |   |           +-> descriptor: 'int'
-                |   |
-                |   +-> IntegerConstant: '10'
-                |       |
-                |       +-> Type
-                |           |
-                |           +-> category: 'basic'
-                |           |
-                |           +-> descriptor: 'int'
-                |
-                +-> IntegerConstant: '15'
-                    |
-                    +-> Type
-                        |
-                        +-> category: 'basic'
-                        |
-                        +-> descriptor: 'int'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        └── ExpressionStatement
+            └── EqualityExpression: '=='
+                ├── Type
+                │   ├── category: 'basic'
+                │   └── descriptor: 'int'
+                ├── EqualityExpression: '=='
+                │   ├── Type
+                │   │   ├── category: 'basic'
+                │   │   └── descriptor: 'int'
+                │   ├── EqualityExpression: '=='
+                │   │   ├── Type
+                │   │   │   ├── category: 'basic'
+                │   │   │   └── descriptor: 'int'
+                │   │   ├── EqualityExpression: '=='
+                │   │   │   ├── Type
+                │   │   │   │   ├── category: 'basic'
+                │   │   │   │   └── descriptor: 'int'
+                │   │   │   ├── IntegerConstant: '7'
+                │   │   │   │   └── Type
+                │   │   │   │       ├── category: 'basic'
+                │   │   │   │       └── descriptor: 'int'
+                │   │   │   └── IntegerConstant: '6'
+                │   │   │       └── Type
+                │   │   │           ├── category: 'basic'
+                │   │   │           └── descriptor: 'int'
+                │   │   └── IntegerConstant: '8'
+                │   │       └── Type
+                │   │           ├── category: 'basic'
+                │   │           └── descriptor: 'int'
+                │   └── IntegerConstant: '10'
+                │       └── Type
+                │           ├── category: 'basic'
+                │           └── descriptor: 'int'
+                └── IntegerConstant: '15'
+                    └── Type
+                        ├── category: 'basic'
+                        └── descriptor: 'int'
 
 @endtest
 
@@ -1156,58 +680,32 @@ int main() {
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
-|
-+-> FunctionDefinition: 'main' <unspecified-parameters>
-    |
-    +-> ReturnType
-    |   |
-    |   +-> category: 'basic'
-    |   |
-    |   +-> descriptor: 'int'
-    |
-    +-> CompoundStatement
-        |
-        +-> ExpressionStatement
-            |
-            +-> EqualityExpression: '!='
-                |
-                +-> Type
-                |   |
-                |   +-> category: 'basic'
-                |   |
-                |   +-> descriptor: 'int'
-                |
-                +-> EqualityExpression: '=='
-                |   |
-                |   +-> Type
-                |   |   |
-                |   |   +-> category: 'basic'
-                |   |   |
-                |   |   +-> descriptor: 'int'
-                |   |
-                |   +-> IntegerConstant: '15'
-                |   |   |
-                |   |   +-> Type
-                |   |       |
-                |   |       +-> category: 'basic'
-                |   |       |
-                |   |       +-> descriptor: 'int'
-                |   |
-                |   +-> IntegerConstant: '3'
-                |       |
-                |       +-> Type
-                |           |
-                |           +-> category: 'basic'
-                |           |
-                |           +-> descriptor: 'int'
-                |
-                +-> IntegerConstant: '101'
-                    |
-                    +-> Type
-                        |
-                        +-> category: 'basic'
-                        |
-                        +-> descriptor: 'int'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        └── ExpressionStatement
+            └── EqualityExpression: '!='
+                ├── Type
+                │   ├── category: 'basic'
+                │   └── descriptor: 'int'
+                ├── EqualityExpression: '=='
+                │   ├── Type
+                │   │   ├── category: 'basic'
+                │   │   └── descriptor: 'int'
+                │   ├── IntegerConstant: '15'
+                │   │   └── Type
+                │   │       ├── category: 'basic'
+                │   │       └── descriptor: 'int'
+                │   └── IntegerConstant: '3'
+                │       └── Type
+                │           ├── category: 'basic'
+                │           └── descriptor: 'int'
+                └── IntegerConstant: '101'
+                    └── Type
+                        ├── category: 'basic'
+                        └── descriptor: 'int'
 
 @endtest
 
@@ -1219,58 +717,32 @@ int main() {
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
-|
-+-> FunctionDefinition: 'main' <unspecified-parameters>
-    |
-    +-> ReturnType
-    |   |
-    |   +-> category: 'basic'
-    |   |
-    |   +-> descriptor: 'int'
-    |
-    +-> CompoundStatement
-        |
-        +-> ExpressionStatement
-            |
-            +-> EqualityExpression: '=='
-                |
-                +-> Type
-                |   |
-                |   +-> category: 'basic'
-                |   |
-                |   +-> descriptor: 'int'
-                |
-                +-> IntegerConstant: '1'
-                |   |
-                |   +-> Type
-                |       |
-                |       +-> category: 'basic'
-                |       |
-                |       +-> descriptor: 'int'
-                |
-                +-> AdditiveExpression: '+'
-                    |
-                    +-> Type
-                    |   |
-                    |   +-> category: 'basic'
-                    |   |
-                    |   +-> descriptor: 'int'
-                    |
-                    +-> IntegerConstant: '2'
-                    |   |
-                    |   +-> Type
-                    |       |
-                    |       +-> category: 'basic'
-                    |       |
-                    |       +-> descriptor: 'int'
-                    |
-                    +-> IntegerConstant: '3'
-                        |
-                        +-> Type
-                            |
-                            +-> category: 'basic'
-                            |
-                            +-> descriptor: 'int'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        └── ExpressionStatement
+            └── EqualityExpression: '=='
+                ├── Type
+                │   ├── category: 'basic'
+                │   └── descriptor: 'int'
+                ├── IntegerConstant: '1'
+                │   └── Type
+                │       ├── category: 'basic'
+                │       └── descriptor: 'int'
+                └── AdditiveExpression: '+'
+                    ├── Type
+                    │   ├── category: 'basic'
+                    │   └── descriptor: 'int'
+                    ├── IntegerConstant: '2'
+                    │   └── Type
+                    │       ├── category: 'basic'
+                    │       └── descriptor: 'int'
+                    └── IntegerConstant: '3'
+                        └── Type
+                            ├── category: 'basic'
+                            └── descriptor: 'int'
 
 @endtest
 
@@ -1282,58 +754,32 @@ int main() {
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
-|
-+-> FunctionDefinition: 'main' <unspecified-parameters>
-    |
-    +-> ReturnType
-    |   |
-    |   +-> category: 'basic'
-    |   |
-    |   +-> descriptor: 'int'
-    |
-    +-> CompoundStatement
-        |
-        +-> ExpressionStatement
-            |
-            +-> RelationalExpression: '<'
-                |
-                +-> Type
-                |   |
-                |   +-> category: 'basic'
-                |   |
-                |   +-> descriptor: 'int'
-                |
-                +-> IntegerConstant: '1'
-                |   |
-                |   +-> Type
-                |       |
-                |       +-> category: 'basic'
-                |       |
-                |       +-> descriptor: 'int'
-                |
-                +-> AdditiveExpression: '+'
-                    |
-                    +-> Type
-                    |   |
-                    |   +-> category: 'basic'
-                    |   |
-                    |   +-> descriptor: 'int'
-                    |
-                    +-> IntegerConstant: '2'
-                    |   |
-                    |   +-> Type
-                    |       |
-                    |       +-> category: 'basic'
-                    |       |
-                    |       +-> descriptor: 'int'
-                    |
-                    +-> IntegerConstant: '3'
-                        |
-                        +-> Type
-                            |
-                            +-> category: 'basic'
-                            |
-                            +-> descriptor: 'int'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        └── ExpressionStatement
+            └── RelationalExpression: '<'
+                ├── Type
+                │   ├── category: 'basic'
+                │   └── descriptor: 'int'
+                ├── IntegerConstant: '1'
+                │   └── Type
+                │       ├── category: 'basic'
+                │       └── descriptor: 'int'
+                └── AdditiveExpression: '+'
+                    ├── Type
+                    │   ├── category: 'basic'
+                    │   └── descriptor: 'int'
+                    ├── IntegerConstant: '2'
+                    │   └── Type
+                    │       ├── category: 'basic'
+                    │       └── descriptor: 'int'
+                    └── IntegerConstant: '3'
+                        └── Type
+                            ├── category: 'basic'
+                            └── descriptor: 'int'
 
 @endtest
 
@@ -1346,44 +792,25 @@ int main() {
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
-|
-+-> FunctionDefinition: 'main' <unspecified-parameters>
-    |
-    +-> ReturnType
-    |   |
-    |   +-> category: 'basic'
-    |   |
-    |   +-> descriptor: 'int'
-    |
-    +-> CompoundStatement
-        |
-        +-> VariableDeclaration: 'x'
-        |   |
-        |   +-> Type
-        |       |
-        |       +-> category: 'basic'
-        |       |
-        |       +-> descriptor: 'int'
-        |
-        +-> ExpressionStatement
-            |
-            +-> AssignmentExpression: '='
-                |
-                +-> VariableExpression: 'x'
-                |   |
-                |   +-> Type
-                |       |
-                |       +-> category: 'basic'
-                |       |
-                |       +-> descriptor: 'int'
-                |
-                +-> IntegerConstant: '3'
-                    |
-                    +-> Type
-                        |
-                        +-> category: 'basic'
-                        |
-                        +-> descriptor: 'int'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        ├── VariableDeclaration: 'x'
+        │   └── Type
+        │       ├── category: 'basic'
+        │       └── descriptor: 'int'
+        └── ExpressionStatement
+            └── AssignmentExpression: '='
+                ├── VariableExpression: 'x'
+                │   └── Type
+                │       ├── category: 'basic'
+                │       └── descriptor: 'int'
+                └── IntegerConstant: '3'
+                    └── Type
+                        ├── category: 'basic'
+                        └── descriptor: 'int'
 
 @endtest
 
@@ -1395,58 +822,32 @@ int main() {
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
-|
-+-> FunctionDefinition: 'main' <unspecified-parameters>
-    |
-    +-> ReturnType
-    |   |
-    |   +-> category: 'basic'
-    |   |
-    |   +-> descriptor: 'int'
-    |
-    +-> CompoundStatement
-        |
-        +-> ExpressionStatement
-            |
-            +-> MultiplicativeExpression: '*'
-                |
-                +-> Type
-                |   |
-                |   +-> category: 'basic'
-                |   |
-                |   +-> descriptor: 'int'
-                |
-                +-> IntegerConstant: '77'
-                |   |
-                |   +-> Type
-                |       |
-                |       +-> category: 'basic'
-                |       |
-                |       +-> descriptor: 'int'
-                |
-                +-> AdditiveExpression: '+'
-                    |
-                    +-> Type
-                    |   |
-                    |   +-> category: 'basic'
-                    |   |
-                    |   +-> descriptor: 'int'
-                    |
-                    +-> IntegerConstant: '1'
-                    |   |
-                    |   +-> Type
-                    |       |
-                    |       +-> category: 'basic'
-                    |       |
-                    |       +-> descriptor: 'int'
-                    |
-                    +-> IntegerConstant: '23'
-                        |
-                        +-> Type
-                            |
-                            +-> category: 'basic'
-                            |
-                            +-> descriptor: 'int'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        └── ExpressionStatement
+            └── MultiplicativeExpression: '*'
+                ├── Type
+                │   ├── category: 'basic'
+                │   └── descriptor: 'int'
+                ├── IntegerConstant: '77'
+                │   └── Type
+                │       ├── category: 'basic'
+                │       └── descriptor: 'int'
+                └── AdditiveExpression: '+'
+                    ├── Type
+                    │   ├── category: 'basic'
+                    │   └── descriptor: 'int'
+                    ├── IntegerConstant: '1'
+                    │   └── Type
+                    │       ├── category: 'basic'
+                    │       └── descriptor: 'int'
+                    └── IntegerConstant: '23'
+                        └── Type
+                            ├── category: 'basic'
+                            └── descriptor: 'int'
 
 @endtest
 
@@ -1463,148 +864,77 @@ int main() {
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
-|
-+-> FunctionDefinition: 'main' <unspecified-parameters>
-    |
-    +-> ReturnType
-    |   |
-    |   +-> category: 'basic'
-    |   |
-    |   +-> descriptor: 'int'
-    |
-    +-> CompoundStatement
-        |
-        +-> VariableDeclaration: 'x'
-        |   |
-        |   +-> Type
-        |       |
-        |       +-> category: 'basic'
-        |       |
-        |       +-> descriptor: 'float'
-        |
-        +-> ExpressionStatement
-        |   |
-        |   +-> AssignmentExpression: '='
-        |       |
-        |       +-> VariableExpression: 'x'
-        |       |   |
-        |       |   +-> Type
-        |       |       |
-        |       |       +-> category: 'basic'
-        |       |       |
-        |       |       +-> descriptor: 'float'
-        |       |
-        |       +-> FloatConstant: '4.500000'
-        |           |
-        |           +-> Type
-        |               |
-        |               +-> category: 'basic'
-        |               |
-        |               +-> descriptor: 'float'
-        |
-        +-> ExpressionStatement
-        |   |
-        |   +-> AdditiveExpression: '+'
-        |       |
-        |       +-> Type
-        |       |   |
-        |       |   +-> category: 'basic'
-        |       |   |
-        |       |   +-> descriptor: 'float'
-        |       |
-        |       +-> FloatConstant: '12.300000'
-        |       |   |
-        |       |   +-> Type
-        |       |       |
-        |       |       +-> category: 'basic'
-        |       |       |
-        |       |       +-> descriptor: 'float'
-        |       |
-        |       +-> FloatConstant: '0.200000'
-        |           |
-        |           +-> Type
-        |               |
-        |               +-> category: 'basic'
-        |               |
-        |               +-> descriptor: 'float'
-        |
-        +-> ExpressionStatement
-        |   |
-        |   +-> AdditiveExpression: '-'
-        |       |
-        |       +-> Type
-        |       |   |
-        |       |   +-> category: 'basic'
-        |       |   |
-        |       |   +-> descriptor: 'float'
-        |       |
-        |       +-> FloatConstant: '12.700000'
-        |       |   |
-        |       |   +-> Type
-        |       |       |
-        |       |       +-> category: 'basic'
-        |       |       |
-        |       |       +-> descriptor: 'float'
-        |       |
-        |       +-> FloatConstant: '12.200000'
-        |           |
-        |           +-> Type
-        |               |
-        |               +-> category: 'basic'
-        |               |
-        |               +-> descriptor: 'float'
-        |
-        +-> ExpressionStatement
-        |   |
-        |   +-> AdditiveExpression: '+'
-        |       |
-        |       +-> Type
-        |       |   |
-        |       |   +-> category: 'basic'
-        |       |   |
-        |       |   +-> descriptor: 'float'
-        |       |
-        |       +-> FloatConstant: '0.500000'
-        |       |   |
-        |       |   +-> Type
-        |       |       |
-        |       |       +-> category: 'basic'
-        |       |       |
-        |       |       +-> descriptor: 'float'
-        |       |
-        |       +-> VariableExpression: 'x'
-        |           |
-        |           +-> Type
-        |               |
-        |               +-> category: 'basic'
-        |               |
-        |               +-> descriptor: 'float'
-        |
-        +-> ExpressionStatement
-            |
-            +-> AdditiveExpression: '-'
-                |
-                +-> Type
-                |   |
-                |   +-> category: 'basic'
-                |   |
-                |   +-> descriptor: 'float'
-                |
-                +-> VariableExpression: 'x'
-                |   |
-                |   +-> Type
-                |       |
-                |       +-> category: 'basic'
-                |       |
-                |       +-> descriptor: 'float'
-                |
-                +-> FloatConstant: '0.500000'
-                    |
-                    +-> Type
-                        |
-                        +-> category: 'basic'
-                        |
-                        +-> descriptor: 'float'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        ├── VariableDeclaration: 'x'
+        │   └── Type
+        │       ├── category: 'basic'
+        │       └── descriptor: 'float'
+        ├── ExpressionStatement
+        │   └── AssignmentExpression: '='
+        │       ├── VariableExpression: 'x'
+        │       │   └── Type
+        │       │       ├── category: 'basic'
+        │       │       └── descriptor: 'float'
+        │       └── FloatConstant: '4.500000'
+        │           └── Type
+        │               ├── category: 'basic'
+        │               └── descriptor: 'float'
+        ├── ExpressionStatement
+        │   └── AdditiveExpression: '+'
+        │       ├── Type
+        │       │   ├── category: 'basic'
+        │       │   └── descriptor: 'float'
+        │       ├── FloatConstant: '12.300000'
+        │       │   └── Type
+        │       │       ├── category: 'basic'
+        │       │       └── descriptor: 'float'
+        │       └── FloatConstant: '0.200000'
+        │           └── Type
+        │               ├── category: 'basic'
+        │               └── descriptor: 'float'
+        ├── ExpressionStatement
+        │   └── AdditiveExpression: '-'
+        │       ├── Type
+        │       │   ├── category: 'basic'
+        │       │   └── descriptor: 'float'
+        │       ├── FloatConstant: '12.700000'
+        │       │   └── Type
+        │       │       ├── category: 'basic'
+        │       │       └── descriptor: 'float'
+        │       └── FloatConstant: '12.200000'
+        │           └── Type
+        │               ├── category: 'basic'
+        │               └── descriptor: 'float'
+        ├── ExpressionStatement
+        │   └── AdditiveExpression: '+'
+        │       ├── Type
+        │       │   ├── category: 'basic'
+        │       │   └── descriptor: 'float'
+        │       ├── FloatConstant: '0.500000'
+        │       │   └── Type
+        │       │       ├── category: 'basic'
+        │       │       └── descriptor: 'float'
+        │       └── VariableExpression: 'x'
+        │           └── Type
+        │               ├── category: 'basic'
+        │               └── descriptor: 'float'
+        └── ExpressionStatement
+            └── AdditiveExpression: '-'
+                ├── Type
+                │   ├── category: 'basic'
+                │   └── descriptor: 'float'
+                ├── VariableExpression: 'x'
+                │   └── Type
+                │       ├── category: 'basic'
+                │       └── descriptor: 'float'
+                └── FloatConstant: '0.500000'
+                    └── Type
+                        ├── category: 'basic'
+                        └── descriptor: 'float'
 
 @endtest
 
@@ -1621,148 +951,77 @@ int main() {
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
-|
-+-> FunctionDefinition: 'main' <unspecified-parameters>
-    |
-    +-> ReturnType
-    |   |
-    |   +-> category: 'basic'
-    |   |
-    |   +-> descriptor: 'int'
-    |
-    +-> CompoundStatement
-        |
-        +-> VariableDeclaration: 'x'
-        |   |
-        |   +-> Type
-        |       |
-        |       +-> category: 'basic'
-        |       |
-        |       +-> descriptor: 'float'
-        |
-        +-> ExpressionStatement
-        |   |
-        |   +-> AssignmentExpression: '='
-        |       |
-        |       +-> VariableExpression: 'x'
-        |       |   |
-        |       |   +-> Type
-        |       |       |
-        |       |       +-> category: 'basic'
-        |       |       |
-        |       |       +-> descriptor: 'float'
-        |       |
-        |       +-> FloatConstant: '4.500000'
-        |           |
-        |           +-> Type
-        |               |
-        |               +-> category: 'basic'
-        |               |
-        |               +-> descriptor: 'float'
-        |
-        +-> ExpressionStatement
-        |   |
-        |   +-> MultiplicativeExpression: '*'
-        |       |
-        |       +-> Type
-        |       |   |
-        |       |   +-> category: 'basic'
-        |       |   |
-        |       |   +-> descriptor: 'float'
-        |       |
-        |       +-> FloatConstant: '12.300000'
-        |       |   |
-        |       |   +-> Type
-        |       |       |
-        |       |       +-> category: 'basic'
-        |       |       |
-        |       |       +-> descriptor: 'float'
-        |       |
-        |       +-> FloatConstant: '0.200000'
-        |           |
-        |           +-> Type
-        |               |
-        |               +-> category: 'basic'
-        |               |
-        |               +-> descriptor: 'float'
-        |
-        +-> ExpressionStatement
-        |   |
-        |   +-> MultiplicativeExpression: '/'
-        |       |
-        |       +-> Type
-        |       |   |
-        |       |   +-> category: 'basic'
-        |       |   |
-        |       |   +-> descriptor: 'float'
-        |       |
-        |       +-> FloatConstant: '12.700000'
-        |       |   |
-        |       |   +-> Type
-        |       |       |
-        |       |       +-> category: 'basic'
-        |       |       |
-        |       |       +-> descriptor: 'float'
-        |       |
-        |       +-> FloatConstant: '12.200000'
-        |           |
-        |           +-> Type
-        |               |
-        |               +-> category: 'basic'
-        |               |
-        |               +-> descriptor: 'float'
-        |
-        +-> ExpressionStatement
-        |   |
-        |   +-> MultiplicativeExpression: '*'
-        |       |
-        |       +-> Type
-        |       |   |
-        |       |   +-> category: 'basic'
-        |       |   |
-        |       |   +-> descriptor: 'float'
-        |       |
-        |       +-> FloatConstant: '0.500000'
-        |       |   |
-        |       |   +-> Type
-        |       |       |
-        |       |       +-> category: 'basic'
-        |       |       |
-        |       |       +-> descriptor: 'float'
-        |       |
-        |       +-> VariableExpression: 'x'
-        |           |
-        |           +-> Type
-        |               |
-        |               +-> category: 'basic'
-        |               |
-        |               +-> descriptor: 'float'
-        |
-        +-> ExpressionStatement
-            |
-            +-> MultiplicativeExpression: '/'
-                |
-                +-> Type
-                |   |
-                |   +-> category: 'basic'
-                |   |
-                |   +-> descriptor: 'float'
-                |
-                +-> VariableExpression: 'x'
-                |   |
-                |   +-> Type
-                |       |
-                |       +-> category: 'basic'
-                |       |
-                |       +-> descriptor: 'float'
-                |
-                +-> FloatConstant: '0.500000'
-                    |
-                    +-> Type
-                        |
-                        +-> category: 'basic'
-                        |
-                        +-> descriptor: 'float'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        ├── VariableDeclaration: 'x'
+        │   └── Type
+        │       ├── category: 'basic'
+        │       └── descriptor: 'float'
+        ├── ExpressionStatement
+        │   └── AssignmentExpression: '='
+        │       ├── VariableExpression: 'x'
+        │       │   └── Type
+        │       │       ├── category: 'basic'
+        │       │       └── descriptor: 'float'
+        │       └── FloatConstant: '4.500000'
+        │           └── Type
+        │               ├── category: 'basic'
+        │               └── descriptor: 'float'
+        ├── ExpressionStatement
+        │   └── MultiplicativeExpression: '*'
+        │       ├── Type
+        │       │   ├── category: 'basic'
+        │       │   └── descriptor: 'float'
+        │       ├── FloatConstant: '12.300000'
+        │       │   └── Type
+        │       │       ├── category: 'basic'
+        │       │       └── descriptor: 'float'
+        │       └── FloatConstant: '0.200000'
+        │           └── Type
+        │               ├── category: 'basic'
+        │               └── descriptor: 'float'
+        ├── ExpressionStatement
+        │   └── MultiplicativeExpression: '/'
+        │       ├── Type
+        │       │   ├── category: 'basic'
+        │       │   └── descriptor: 'float'
+        │       ├── FloatConstant: '12.700000'
+        │       │   └── Type
+        │       │       ├── category: 'basic'
+        │       │       └── descriptor: 'float'
+        │       └── FloatConstant: '12.200000'
+        │           └── Type
+        │               ├── category: 'basic'
+        │               └── descriptor: 'float'
+        ├── ExpressionStatement
+        │   └── MultiplicativeExpression: '*'
+        │       ├── Type
+        │       │   ├── category: 'basic'
+        │       │   └── descriptor: 'float'
+        │       ├── FloatConstant: '0.500000'
+        │       │   └── Type
+        │       │       ├── category: 'basic'
+        │       │       └── descriptor: 'float'
+        │       └── VariableExpression: 'x'
+        │           └── Type
+        │               ├── category: 'basic'
+        │               └── descriptor: 'float'
+        └── ExpressionStatement
+            └── MultiplicativeExpression: '/'
+                ├── Type
+                │   ├── category: 'basic'
+                │   └── descriptor: 'float'
+                ├── VariableExpression: 'x'
+                │   └── Type
+                │       ├── category: 'basic'
+                │       └── descriptor: 'float'
+                └── FloatConstant: '0.500000'
+                    └── Type
+                        ├── category: 'basic'
+                        └── descriptor: 'float'
 
 @endtest
 
@@ -1779,148 +1038,77 @@ int main() {
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
-|
-+-> FunctionDefinition: 'main' <unspecified-parameters>
-    |
-    +-> ReturnType
-    |   |
-    |   +-> category: 'basic'
-    |   |
-    |   +-> descriptor: 'int'
-    |
-    +-> CompoundStatement
-        |
-        +-> VariableDeclaration: 'x'
-        |   |
-        |   +-> Type
-        |       |
-        |       +-> category: 'basic'
-        |       |
-        |       +-> descriptor: 'float'
-        |
-        +-> ExpressionStatement
-        |   |
-        |   +-> AssignmentExpression: '='
-        |       |
-        |       +-> VariableExpression: 'x'
-        |       |   |
-        |       |   +-> Type
-        |       |       |
-        |       |       +-> category: 'basic'
-        |       |       |
-        |       |       +-> descriptor: 'float'
-        |       |
-        |       +-> FloatConstant: '4.500000'
-        |           |
-        |           +-> Type
-        |               |
-        |               +-> category: 'basic'
-        |               |
-        |               +-> descriptor: 'float'
-        |
-        +-> ExpressionStatement
-        |   |
-        |   +-> RelationalExpression: '<'
-        |       |
-        |       +-> Type
-        |       |   |
-        |       |   +-> category: 'basic'
-        |       |   |
-        |       |   +-> descriptor: 'float'
-        |       |
-        |       +-> FloatConstant: '12.300000'
-        |       |   |
-        |       |   +-> Type
-        |       |       |
-        |       |       +-> category: 'basic'
-        |       |       |
-        |       |       +-> descriptor: 'float'
-        |       |
-        |       +-> FloatConstant: '0.200000'
-        |           |
-        |           +-> Type
-        |               |
-        |               +-> category: 'basic'
-        |               |
-        |               +-> descriptor: 'float'
-        |
-        +-> ExpressionStatement
-        |   |
-        |   +-> RelationalExpression: '>'
-        |       |
-        |       +-> Type
-        |       |   |
-        |       |   +-> category: 'basic'
-        |       |   |
-        |       |   +-> descriptor: 'float'
-        |       |
-        |       +-> FloatConstant: '12.700000'
-        |       |   |
-        |       |   +-> Type
-        |       |       |
-        |       |       +-> category: 'basic'
-        |       |       |
-        |       |       +-> descriptor: 'float'
-        |       |
-        |       +-> FloatConstant: '12.200000'
-        |           |
-        |           +-> Type
-        |               |
-        |               +-> category: 'basic'
-        |               |
-        |               +-> descriptor: 'float'
-        |
-        +-> ExpressionStatement
-        |   |
-        |   +-> RelationalExpression: '<'
-        |       |
-        |       +-> Type
-        |       |   |
-        |       |   +-> category: 'basic'
-        |       |   |
-        |       |   +-> descriptor: 'float'
-        |       |
-        |       +-> FloatConstant: '0.500000'
-        |       |   |
-        |       |   +-> Type
-        |       |       |
-        |       |       +-> category: 'basic'
-        |       |       |
-        |       |       +-> descriptor: 'float'
-        |       |
-        |       +-> VariableExpression: 'x'
-        |           |
-        |           +-> Type
-        |               |
-        |               +-> category: 'basic'
-        |               |
-        |               +-> descriptor: 'float'
-        |
-        +-> ExpressionStatement
-            |
-            +-> RelationalExpression: '>'
-                |
-                +-> Type
-                |   |
-                |   +-> category: 'basic'
-                |   |
-                |   +-> descriptor: 'float'
-                |
-                +-> VariableExpression: 'x'
-                |   |
-                |   +-> Type
-                |       |
-                |       +-> category: 'basic'
-                |       |
-                |       +-> descriptor: 'float'
-                |
-                +-> FloatConstant: '0.500000'
-                    |
-                    +-> Type
-                        |
-                        +-> category: 'basic'
-                        |
-                        +-> descriptor: 'float'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        ├── VariableDeclaration: 'x'
+        │   └── Type
+        │       ├── category: 'basic'
+        │       └── descriptor: 'float'
+        ├── ExpressionStatement
+        │   └── AssignmentExpression: '='
+        │       ├── VariableExpression: 'x'
+        │       │   └── Type
+        │       │       ├── category: 'basic'
+        │       │       └── descriptor: 'float'
+        │       └── FloatConstant: '4.500000'
+        │           └── Type
+        │               ├── category: 'basic'
+        │               └── descriptor: 'float'
+        ├── ExpressionStatement
+        │   └── RelationalExpression: '<'
+        │       ├── Type
+        │       │   ├── category: 'basic'
+        │       │   └── descriptor: 'float'
+        │       ├── FloatConstant: '12.300000'
+        │       │   └── Type
+        │       │       ├── category: 'basic'
+        │       │       └── descriptor: 'float'
+        │       └── FloatConstant: '0.200000'
+        │           └── Type
+        │               ├── category: 'basic'
+        │               └── descriptor: 'float'
+        ├── ExpressionStatement
+        │   └── RelationalExpression: '>'
+        │       ├── Type
+        │       │   ├── category: 'basic'
+        │       │   └── descriptor: 'float'
+        │       ├── FloatConstant: '12.700000'
+        │       │   └── Type
+        │       │       ├── category: 'basic'
+        │       │       └── descriptor: 'float'
+        │       └── FloatConstant: '12.200000'
+        │           └── Type
+        │               ├── category: 'basic'
+        │               └── descriptor: 'float'
+        ├── ExpressionStatement
+        │   └── RelationalExpression: '<'
+        │       ├── Type
+        │       │   ├── category: 'basic'
+        │       │   └── descriptor: 'float'
+        │       ├── FloatConstant: '0.500000'
+        │       │   └── Type
+        │       │       ├── category: 'basic'
+        │       │       └── descriptor: 'float'
+        │       └── VariableExpression: 'x'
+        │           └── Type
+        │               ├── category: 'basic'
+        │               └── descriptor: 'float'
+        └── ExpressionStatement
+            └── RelationalExpression: '>'
+                ├── Type
+                │   ├── category: 'basic'
+                │   └── descriptor: 'float'
+                ├── VariableExpression: 'x'
+                │   └── Type
+                │       ├── category: 'basic'
+                │       └── descriptor: 'float'
+                └── FloatConstant: '0.500000'
+                    └── Type
+                        ├── category: 'basic'
+                        └── descriptor: 'float'
 
 @endtest
 
@@ -1937,147 +1125,76 @@ int main() {
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
-|
-+-> FunctionDefinition: 'main' <unspecified-parameters>
-    |
-    +-> ReturnType
-    |   |
-    |   +-> category: 'basic'
-    |   |
-    |   +-> descriptor: 'int'
-    |
-    +-> CompoundStatement
-        |
-        +-> VariableDeclaration: 'x'
-        |   |
-        |   +-> Type
-        |       |
-        |       +-> category: 'basic'
-        |       |
-        |       +-> descriptor: 'float'
-        |
-        +-> ExpressionStatement
-        |   |
-        |   +-> AssignmentExpression: '='
-        |       |
-        |       +-> VariableExpression: 'x'
-        |       |   |
-        |       |   +-> Type
-        |       |       |
-        |       |       +-> category: 'basic'
-        |       |       |
-        |       |       +-> descriptor: 'float'
-        |       |
-        |       +-> FloatConstant: '4.500000'
-        |           |
-        |           +-> Type
-        |               |
-        |               +-> category: 'basic'
-        |               |
-        |               +-> descriptor: 'float'
-        |
-        +-> ExpressionStatement
-        |   |
-        |   +-> EqualityExpression: '=='
-        |       |
-        |       +-> Type
-        |       |   |
-        |       |   +-> category: 'basic'
-        |       |   |
-        |       |   +-> descriptor: 'float'
-        |       |
-        |       +-> FloatConstant: '12.300000'
-        |       |   |
-        |       |   +-> Type
-        |       |       |
-        |       |       +-> category: 'basic'
-        |       |       |
-        |       |       +-> descriptor: 'float'
-        |       |
-        |       +-> FloatConstant: '0.200000'
-        |           |
-        |           +-> Type
-        |               |
-        |               +-> category: 'basic'
-        |               |
-        |               +-> descriptor: 'float'
-        |
-        +-> ExpressionStatement
-        |   |
-        |   +-> EqualityExpression: '!='
-        |       |
-        |       +-> Type
-        |       |   |
-        |       |   +-> category: 'basic'
-        |       |   |
-        |       |   +-> descriptor: 'float'
-        |       |
-        |       +-> FloatConstant: '12.700000'
-        |       |   |
-        |       |   +-> Type
-        |       |       |
-        |       |       +-> category: 'basic'
-        |       |       |
-        |       |       +-> descriptor: 'float'
-        |       |
-        |       +-> FloatConstant: '12.200000'
-        |           |
-        |           +-> Type
-        |               |
-        |               +-> category: 'basic'
-        |               |
-        |               +-> descriptor: 'float'
-        |
-        +-> ExpressionStatement
-        |   |
-        |   +-> EqualityExpression: '=='
-        |       |
-        |       +-> Type
-        |       |   |
-        |       |   +-> category: 'basic'
-        |       |   |
-        |       |   +-> descriptor: 'float'
-        |       |
-        |       +-> FloatConstant: '0.500000'
-        |       |   |
-        |       |   +-> Type
-        |       |       |
-        |       |       +-> category: 'basic'
-        |       |       |
-        |       |       +-> descriptor: 'float'
-        |       |
-        |       +-> VariableExpression: 'x'
-        |           |
-        |           +-> Type
-        |               |
-        |               +-> category: 'basic'
-        |               |
-        |               +-> descriptor: 'float'
-        |
-        +-> ExpressionStatement
-            |
-            +-> EqualityExpression: '!='
-                |
-                +-> Type
-                |   |
-                |   +-> category: 'basic'
-                |   |
-                |   +-> descriptor: 'float'
-                |
-                +-> VariableExpression: 'x'
-                |   |
-                |   +-> Type
-                |       |
-                |       +-> category: 'basic'
-                |       |
-                |       +-> descriptor: 'float'
-                |
-                +-> FloatConstant: '0.500000'
-                    |
-                    +-> Type
-                        |
-                        +-> category: 'basic'
-                        |
-                        +-> descriptor: 'float'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        ├── VariableDeclaration: 'x'
+        │   └── Type
+        │       ├── category: 'basic'
+        │       └── descriptor: 'float'
+        ├── ExpressionStatement
+        │   └── AssignmentExpression: '='
+        │       ├── VariableExpression: 'x'
+        │       │   └── Type
+        │       │       ├── category: 'basic'
+        │       │       └── descriptor: 'float'
+        │       └── FloatConstant: '4.500000'
+        │           └── Type
+        │               ├── category: 'basic'
+        │               └── descriptor: 'float'
+        ├── ExpressionStatement
+        │   └── EqualityExpression: '=='
+        │       ├── Type
+        │       │   ├── category: 'basic'
+        │       │   └── descriptor: 'float'
+        │       ├── FloatConstant: '12.300000'
+        │       │   └── Type
+        │       │       ├── category: 'basic'
+        │       │       └── descriptor: 'float'
+        │       └── FloatConstant: '0.200000'
+        │           └── Type
+        │               ├── category: 'basic'
+        │               └── descriptor: 'float'
+        ├── ExpressionStatement
+        │   └── EqualityExpression: '!='
+        │       ├── Type
+        │       │   ├── category: 'basic'
+        │       │   └── descriptor: 'float'
+        │       ├── FloatConstant: '12.700000'
+        │       │   └── Type
+        │       │       ├── category: 'basic'
+        │       │       └── descriptor: 'float'
+        │       └── FloatConstant: '12.200000'
+        │           └── Type
+        │               ├── category: 'basic'
+        │               └── descriptor: 'float'
+        ├── ExpressionStatement
+        │   └── EqualityExpression: '=='
+        │       ├── Type
+        │       │   ├── category: 'basic'
+        │       │   └── descriptor: 'float'
+        │       ├── FloatConstant: '0.500000'
+        │       │   └── Type
+        │       │       ├── category: 'basic'
+        │       │       └── descriptor: 'float'
+        │       └── VariableExpression: 'x'
+        │           └── Type
+        │               ├── category: 'basic'
+        │               └── descriptor: 'float'
+        └── ExpressionStatement
+            └── EqualityExpression: '!='
+                ├── Type
+                │   ├── category: 'basic'
+                │   └── descriptor: 'float'
+                ├── VariableExpression: 'x'
+                │   └── Type
+                │       ├── category: 'basic'
+                │       └── descriptor: 'float'
+                └── FloatConstant: '0.500000'
+                    └── Type
+                        ├── category: 'basic'
+                        └── descriptor: 'float'
 
 @endtest

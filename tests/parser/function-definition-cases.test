@@ -6,26 +6,16 @@ int main(void) {
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
-|
-+-> FunctionDefinition: 'main' <no-parameters>
-    |
-    +-> ReturnType
-    |   |
-    |   +-> category: 'basic'
-    |   |
-    |   +-> descriptor: 'int'
-    |
-    +-> CompoundStatement
-        |
-        +-> ReturnStatement
-            |
-            +-> IntegerConstant: '42'
-                |
-                +-> Type
-                    |
-                    +-> category: 'basic'
-                    |
-                    +-> descriptor: 'int'
+└── FunctionDefinition: 'main' <no-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        └── ReturnStatement
+            └── IntegerConstant: '42'
+                └── Type
+                    ├── category: 'basic'
+                    └── descriptor: 'int'
 
 @endtest
 
@@ -37,42 +27,24 @@ int main() {
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
-|
-+-> FunctionDefinition: 'main' <unspecified-parameters>
-    |
-    +-> ReturnType
-    |   |
-    |   +-> category: 'basic'
-    |   |
-    |   +-> descriptor: 'int'
-    |
-    +-> CompoundStatement
-        |
-        +-> ExpressionStatement
-            |
-            +-> MultiplicativeExpression: '*'
-                |
-                +-> Type
-                |   |
-                |   +-> category: 'basic'
-                |   |
-                |   +-> descriptor: 'int'
-                |
-                +-> IntegerConstant: '7'
-                |   |
-                |   +-> Type
-                |       |
-                |       +-> category: 'basic'
-                |       |
-                |       +-> descriptor: 'int'
-                |
-                +-> IntegerConstant: '8'
-                    |
-                    +-> Type
-                        |
-                        +-> category: 'basic'
-                        |
-                        +-> descriptor: 'int'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        └── ExpressionStatement
+            └── MultiplicativeExpression: '*'
+                ├── Type
+                │   ├── category: 'basic'
+                │   └── descriptor: 'int'
+                ├── IntegerConstant: '7'
+                │   └── Type
+                │       ├── category: 'basic'
+                │       └── descriptor: 'int'
+                └── IntegerConstant: '8'
+                    └── Type
+                        ├── category: 'basic'
+                        └── descriptor: 'int'
 
 @endtest
 
@@ -85,32 +57,19 @@ int main() {
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
-|
-+-> FunctionDefinition: 'main' <unspecified-parameters>
-    |
-    +-> ReturnType
-    |   |
-    |   +-> category: 'basic'
-    |   |
-    |   +-> descriptor: 'int'
-    |
-    +-> CompoundStatement
-        |
-        +-> VariableDeclaration: 'x'
-        |   |
-        |   +-> Type
-        |       |
-        |       +-> category: 'basic'
-        |       |
-        |       +-> descriptor: 'int'
-        |
-        +-> VariableDeclaration: 'y'
-            |
-            +-> Type
-                |
-                +-> category: 'basic'
-                |
-                +-> descriptor: 'int'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        ├── VariableDeclaration: 'x'
+        │   └── Type
+        │       ├── category: 'basic'
+        │       └── descriptor: 'int'
+        └── VariableDeclaration: 'y'
+            └── Type
+                ├── category: 'basic'
+                └── descriptor: 'int'
 
 @endtest
 
@@ -122,26 +81,16 @@ int main() {
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
-|
-+-> FunctionDefinition: 'main' <unspecified-parameters>
-    |
-    +-> ReturnType
-    |   |
-    |   +-> category: 'basic'
-    |   |
-    |   +-> descriptor: 'int'
-    |
-    +-> CompoundStatement
-        |
-        +-> ReturnStatement
-            |
-            +-> IntegerConstant: '7'
-                |
-                +-> Type
-                    |
-                    +-> category: 'basic'
-                    |
-                    +-> descriptor: 'int'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        └── ReturnStatement
+            └── IntegerConstant: '7'
+                └── Type
+                    ├── category: 'basic'
+                    └── descriptor: 'int'
 
 @endtest
 
@@ -153,18 +102,12 @@ int main() {
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
-|
-+-> FunctionDefinition: 'main' <unspecified-parameters>
-    |
-    +-> ReturnType
-    |   |
-    |   +-> category: 'basic'
-    |   |
-    |   +-> descriptor: 'int'
-    |
-    +-> CompoundStatement
-        |
-        +-> ReturnStatement
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        └── ReturnStatement
 
 @endtest
 
@@ -178,54 +121,30 @@ int main() {
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
-|
-+-> FunctionDefinition: 'main' <unspecified-parameters>
-    |
-    +-> ReturnType
-    |   |
-    |   +-> category: 'basic'
-    |   |
-    |   +-> descriptor: 'int'
-    |
-    +-> CompoundStatement
-        |
-        +-> VariableDeclaration: 'result'
-        |   |
-        |   +-> Type
-        |       |
-        |       +-> category: 'basic'
-        |       |
-        |       +-> descriptor: 'int'
-        |
-        +-> ExpressionStatement
-        |   |
-        |   +-> AssignmentExpression: '='
-        |       |
-        |       +-> VariableExpression: 'result'
-        |       |   |
-        |       |   +-> Type
-        |       |       |
-        |       |       +-> category: 'basic'
-        |       |       |
-        |       |       +-> descriptor: 'int'
-        |       |
-        |       +-> IntegerConstant: '1'
-        |           |
-        |           +-> Type
-        |               |
-        |               +-> category: 'basic'
-        |               |
-        |               +-> descriptor: 'int'
-        |
-        +-> ReturnStatement
-            |
-            +-> VariableExpression: 'result'
-                |
-                +-> Type
-                    |
-                    +-> category: 'basic'
-                    |
-                    +-> descriptor: 'int'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        ├── VariableDeclaration: 'result'
+        │   └── Type
+        │       ├── category: 'basic'
+        │       └── descriptor: 'int'
+        ├── ExpressionStatement
+        │   └── AssignmentExpression: '='
+        │       ├── VariableExpression: 'result'
+        │       │   └── Type
+        │       │       ├── category: 'basic'
+        │       │       └── descriptor: 'int'
+        │       └── IntegerConstant: '1'
+        │           └── Type
+        │               ├── category: 'basic'
+        │               └── descriptor: 'int'
+        └── ReturnStatement
+            └── VariableExpression: 'result'
+                └── Type
+                    ├── category: 'basic'
+                    └── descriptor: 'int'
 
 @endtest
 
@@ -241,46 +160,26 @@ int bar() {
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
-|
-+-> FunctionDefinition: 'foo' <unspecified-parameters>
-|   |
-|   +-> ReturnType
-|   |   |
-|   |   +-> category: 'basic'
-|   |   |
-|   |   +-> descriptor: 'int'
-|   |
-|   +-> CompoundStatement
-|       |
-|       +-> ReturnStatement
-|           |
-|           +-> IntegerConstant: '1'
-|               |
-|               +-> Type
-|                   |
-|                   +-> category: 'basic'
-|                   |
-|                   +-> descriptor: 'int'
-|
-+-> FunctionDefinition: 'bar' <unspecified-parameters>
-    |
-    +-> ReturnType
-    |   |
-    |   +-> category: 'basic'
-    |   |
-    |   +-> descriptor: 'int'
-    |
-    +-> CompoundStatement
-        |
-        +-> ReturnStatement
-            |
-            +-> IntegerConstant: '2'
-                |
-                +-> Type
-                    |
-                    +-> category: 'basic'
-                    |
-                    +-> descriptor: 'int'
+├── FunctionDefinition: 'foo' <unspecified-parameters>
+│   ├── ReturnType
+│   │   ├── category: 'basic'
+│   │   └── descriptor: 'int'
+│   └── CompoundStatement
+│       └── ReturnStatement
+│           └── IntegerConstant: '1'
+│               └── Type
+│                   ├── category: 'basic'
+│                   └── descriptor: 'int'
+└── FunctionDefinition: 'bar' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        └── ReturnStatement
+            └── IntegerConstant: '2'
+                └── Type
+                    ├── category: 'basic'
+                    └── descriptor: 'int'
 
 @endtest
 
@@ -298,62 +197,34 @@ int bar() {
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
-|
-+-> FunctionDefinition: 'foo' <unspecified-parameters>
-|   |
-|   +-> ReturnType
-|   |   |
-|   |   +-> category: 'basic'
-|   |   |
-|   |   +-> descriptor: 'int'
-|   |
-|   +-> CompoundStatement
-|       |
-|       +-> VariableDeclaration: 'x'
-|       |   |
-|       |   +-> Type
-|       |       |
-|       |       +-> category: 'basic'
-|       |       |
-|       |       +-> descriptor: 'int'
-|       |
-|       +-> ReturnStatement
-|           |
-|           +-> VariableExpression: 'x'
-|               |
-|               +-> Type
-|                   |
-|                   +-> category: 'basic'
-|                   |
-|                   +-> descriptor: 'int'
-|
-+-> FunctionDefinition: 'bar' <unspecified-parameters>
-    |
-    +-> ReturnType
-    |   |
-    |   +-> category: 'basic'
-    |   |
-    |   +-> descriptor: 'int'
-    |
-    +-> CompoundStatement
-        |
-        +-> VariableDeclaration: 'x'
-        |   |
-        |   +-> Type
-        |       |
-        |       +-> category: 'basic'
-        |       |
-        |       +-> descriptor: 'int'
-        |
-        +-> ReturnStatement
-            |
-            +-> VariableExpression: 'x'
-                |
-                +-> Type
-                    |
-                    +-> category: 'basic'
-                    |
-                    +-> descriptor: 'int'
+├── FunctionDefinition: 'foo' <unspecified-parameters>
+│   ├── ReturnType
+│   │   ├── category: 'basic'
+│   │   └── descriptor: 'int'
+│   └── CompoundStatement
+│       ├── VariableDeclaration: 'x'
+│       │   └── Type
+│       │       ├── category: 'basic'
+│       │       └── descriptor: 'int'
+│       └── ReturnStatement
+│           └── VariableExpression: 'x'
+│               └── Type
+│                   ├── category: 'basic'
+│                   └── descriptor: 'int'
+└── FunctionDefinition: 'bar' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        ├── VariableDeclaration: 'x'
+        │   └── Type
+        │       ├── category: 'basic'
+        │       └── descriptor: 'int'
+        └── ReturnStatement
+            └── VariableExpression: 'x'
+                └── Type
+                    ├── category: 'basic'
+                    └── descriptor: 'int'
 
 @endtest
 
@@ -365,36 +236,21 @@ int identity(int a) {
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
-|
-+-> FunctionDefinition: 'identity' <1-parameter>
-    |
-    +-> ReturnType
-    |   |
-    |   +-> category: 'basic'
-    |   |
-    |   +-> descriptor: 'int'
-    |
-    +-> ParameterList
-    |   |
-    |   +-> Parameter: 'a'
-    |       |
-    |       +-> Type
-    |           |
-    |           +-> category: 'basic'
-    |           |
-    |           +-> descriptor: 'int'
-    |
-    +-> CompoundStatement
-        |
-        +-> ReturnStatement
-            |
-            +-> VariableExpression: 'a'
-                |
-                +-> Type
-                    |
-                    +-> category: 'basic'
-                    |
-                    +-> descriptor: 'int'
+└── FunctionDefinition: 'identity' <1-parameter>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    ├── ParameterList
+    │   └── Parameter: 'a'
+    │       └── Type
+    │           ├── category: 'basic'
+    │           └── descriptor: 'int'
+    └── CompoundStatement
+        └── ReturnStatement
+            └── VariableExpression: 'a'
+                └── Type
+                    ├── category: 'basic'
+                    └── descriptor: 'int'
 
 @endtest
 
@@ -406,60 +262,33 @@ int add(int a, int b) {
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
-|
-+-> FunctionDefinition: 'add' <2-parameters>
-    |
-    +-> ReturnType
-    |   |
-    |   +-> category: 'basic'
-    |   |
-    |   +-> descriptor: 'int'
-    |
-    +-> ParameterList
-    |   |
-    |   +-> Parameter: 'a'
-    |   |   |
-    |   |   +-> Type
-    |   |       |
-    |   |       +-> category: 'basic'
-    |   |       |
-    |   |       +-> descriptor: 'int'
-    |   |
-    |   +-> Parameter: 'b'
-    |       |
-    |       +-> Type
-    |           |
-    |           +-> category: 'basic'
-    |           |
-    |           +-> descriptor: 'int'
-    |
-    +-> CompoundStatement
-        |
-        +-> ReturnStatement
-            |
-            +-> AdditiveExpression: '+'
-                |
-                +-> Type
-                |   |
-                |   +-> category: 'basic'
-                |   |
-                |   +-> descriptor: 'int'
-                |
-                +-> VariableExpression: 'a'
-                |   |
-                |   +-> Type
-                |       |
-                |       +-> category: 'basic'
-                |       |
-                |       +-> descriptor: 'int'
-                |
-                +-> VariableExpression: 'b'
-                    |
-                    +-> Type
-                        |
-                        +-> category: 'basic'
-                        |
-                        +-> descriptor: 'int'
+└── FunctionDefinition: 'add' <2-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    ├── ParameterList
+    │   ├── Parameter: 'a'
+    │   │   └── Type
+    │   │       ├── category: 'basic'
+    │   │       └── descriptor: 'int'
+    │   └── Parameter: 'b'
+    │       └── Type
+    │           ├── category: 'basic'
+    │           └── descriptor: 'int'
+    └── CompoundStatement
+        └── ReturnStatement
+            └── AdditiveExpression: '+'
+                ├── Type
+                │   ├── category: 'basic'
+                │   └── descriptor: 'int'
+                ├── VariableExpression: 'a'
+                │   └── Type
+                │       ├── category: 'basic'
+                │       └── descriptor: 'int'
+                └── VariableExpression: 'b'
+                    └── Type
+                        ├── category: 'basic'
+                        └── descriptor: 'int'
 
 @endtest
 
@@ -471,84 +300,45 @@ int foo(int a, int b, int c) {
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
-|
-+-> FunctionDefinition: 'foo' <3-parameters>
-    |
-    +-> ReturnType
-    |   |
-    |   +-> category: 'basic'
-    |   |
-    |   +-> descriptor: 'int'
-    |
-    +-> ParameterList
-    |   |
-    |   +-> Parameter: 'a'
-    |   |   |
-    |   |   +-> Type
-    |   |       |
-    |   |       +-> category: 'basic'
-    |   |       |
-    |   |       +-> descriptor: 'int'
-    |   |
-    |   +-> Parameter: 'b'
-    |   |   |
-    |   |   +-> Type
-    |   |       |
-    |   |       +-> category: 'basic'
-    |   |       |
-    |   |       +-> descriptor: 'int'
-    |   |
-    |   +-> Parameter: 'c'
-    |       |
-    |       +-> Type
-    |           |
-    |           +-> category: 'basic'
-    |           |
-    |           +-> descriptor: 'int'
-    |
-    +-> CompoundStatement
-        |
-        +-> ReturnStatement
-            |
-            +-> AdditiveExpression: '+'
-                |
-                +-> Type
-                |   |
-                |   +-> category: 'basic'
-                |   |
-                |   +-> descriptor: 'int'
-                |
-                +-> VariableExpression: 'a'
-                |   |
-                |   +-> Type
-                |       |
-                |       +-> category: 'basic'
-                |       |
-                |       +-> descriptor: 'int'
-                |
-                +-> MultiplicativeExpression: '*'
-                    |
-                    +-> Type
-                    |   |
-                    |   +-> category: 'basic'
-                    |   |
-                    |   +-> descriptor: 'int'
-                    |
-                    +-> VariableExpression: 'b'
-                    |   |
-                    |   +-> Type
-                    |       |
-                    |       +-> category: 'basic'
-                    |       |
-                    |       +-> descriptor: 'int'
-                    |
-                    +-> VariableExpression: 'c'
-                        |
-                        +-> Type
-                            |
-                            +-> category: 'basic'
-                            |
-                            +-> descriptor: 'int'
+└── FunctionDefinition: 'foo' <3-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    ├── ParameterList
+    │   ├── Parameter: 'a'
+    │   │   └── Type
+    │   │       ├── category: 'basic'
+    │   │       └── descriptor: 'int'
+    │   ├── Parameter: 'b'
+    │   │   └── Type
+    │   │       ├── category: 'basic'
+    │   │       └── descriptor: 'int'
+    │   └── Parameter: 'c'
+    │       └── Type
+    │           ├── category: 'basic'
+    │           └── descriptor: 'int'
+    └── CompoundStatement
+        └── ReturnStatement
+            └── AdditiveExpression: '+'
+                ├── Type
+                │   ├── category: 'basic'
+                │   └── descriptor: 'int'
+                ├── VariableExpression: 'a'
+                │   └── Type
+                │       ├── category: 'basic'
+                │       └── descriptor: 'int'
+                └── MultiplicativeExpression: '*'
+                    ├── Type
+                    │   ├── category: 'basic'
+                    │   └── descriptor: 'int'
+                    ├── VariableExpression: 'b'
+                    │   └── Type
+                    │       ├── category: 'basic'
+                    │       └── descriptor: 'int'
+                    └── VariableExpression: 'c'
+                        └── Type
+                            ├── category: 'basic'
+                            └── descriptor: 'int'
 
 @endtest
 
@@ -560,26 +350,16 @@ unsigned int foo() {
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
-|
-+-> FunctionDefinition: 'foo' <unspecified-parameters>
-    |
-    +-> ReturnType
-    |   |
-    |   +-> category: 'basic'
-    |   |
-    |   +-> descriptor: 'unsigned int'
-    |
-    +-> CompoundStatement
-        |
-        +-> ReturnStatement
-            |
-            +-> IntegerConstant: '42'
-                |
-                +-> Type
-                    |
-                    +-> category: 'basic'
-                    |
-                    +-> descriptor: 'int'
+└── FunctionDefinition: 'foo' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'unsigned int'
+    └── CompoundStatement
+        └── ReturnStatement
+            └── IntegerConstant: '42'
+                └── Type
+                    ├── category: 'basic'
+                    └── descriptor: 'int'
 
 @endtest
 
@@ -591,26 +371,16 @@ unsigned foo() {
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
-|
-+-> FunctionDefinition: 'foo' <unspecified-parameters>
-    |
-    +-> ReturnType
-    |   |
-    |   +-> category: 'basic'
-    |   |
-    |   +-> descriptor: 'unsigned int'
-    |
-    +-> CompoundStatement
-        |
-        +-> ReturnStatement
-            |
-            +-> IntegerConstant: '42'
-                |
-                +-> Type
-                    |
-                    +-> category: 'basic'
-                    |
-                    +-> descriptor: 'int'
+└── FunctionDefinition: 'foo' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'unsigned int'
+    └── CompoundStatement
+        └── ReturnStatement
+            └── IntegerConstant: '42'
+                └── Type
+                    ├── category: 'basic'
+                    └── descriptor: 'int'
 
 @endtest
 
@@ -622,36 +392,21 @@ int foo(unsigned int a) {
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
-|
-+-> FunctionDefinition: 'foo' <1-parameter>
-    |
-    +-> ReturnType
-    |   |
-    |   +-> category: 'basic'
-    |   |
-    |   +-> descriptor: 'int'
-    |
-    +-> ParameterList
-    |   |
-    |   +-> Parameter: 'a'
-    |       |
-    |       +-> Type
-    |           |
-    |           +-> category: 'basic'
-    |           |
-    |           +-> descriptor: 'unsigned int'
-    |
-    +-> CompoundStatement
-        |
-        +-> ReturnStatement
-            |
-            +-> VariableExpression: 'a'
-                |
-                +-> Type
-                    |
-                    +-> category: 'basic'
-                    |
-                    +-> descriptor: 'unsigned int'
+└── FunctionDefinition: 'foo' <1-parameter>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    ├── ParameterList
+    │   └── Parameter: 'a'
+    │       └── Type
+    │           ├── category: 'basic'
+    │           └── descriptor: 'unsigned int'
+    └── CompoundStatement
+        └── ReturnStatement
+            └── VariableExpression: 'a'
+                └── Type
+                    ├── category: 'basic'
+                    └── descriptor: 'unsigned int'
 
 @endtest
 

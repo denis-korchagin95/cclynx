@@ -16,19 +16,17 @@
 static void do_print_ast(const struct ast_node * ast, FILE * file, int depth, unsigned int * ancestors_info, const char * node_label);
 static int do_print_ast_dot(const struct ast_node * ast, FILE * file, int next_id);
 
-static void print_tree_line(FILE * file, int depth, unsigned int * ancestors_info)
+static void print_tree_indent(FILE * file, int depth, unsigned int * ancestors_info)
 {
     for (int i = 0; i < depth; ++i) {
-        fprintf(file, "%s   ", (ancestors_info[i] & 2) > 0 ? "|" : " ");
+        fprintf(file, "%s", (ancestors_info[i] & 2) > 0 ? "│   " : "    ");
     }
 }
 
 static void print_tree_connector(FILE * file, int depth, unsigned int * ancestors_info)
 {
-    print_tree_line(file, depth, ancestors_info);
-    fprintf(file, "|\n");
-    print_tree_line(file, depth, ancestors_info);
-    fprintf(file, "+-> ");
+    print_tree_indent(file, depth, ancestors_info);
+    fprintf(file, "%s", (ancestors_info[depth] & 2) > 0 ? "├── " : "└── ");
 }
 
 static void print_type_child_labeled(FILE * file, int depth, unsigned int * ancestors_info, const struct type * type, int has_next_sibling, const char * label)
@@ -108,22 +106,17 @@ void do_print_ast(const struct ast_node * ast, FILE * file, int depth, unsigned 
 
     const unsigned int is_top = (ancestors_info[depth] & 1) > 0;
 
-    if (is_top == 0) {
-        for (int i = 0; i < depth - 1; ++i) {
-            const unsigned int has_siblings = (ancestors_info[i] & 2) > 0;
-
-            fprintf(file, "%s   ", has_siblings == 1 ? "|" : " ");
-        }
-        fprintf(file, "|\n");
-        for (int i = 0; i < depth - 1; ++i) {
-            const unsigned int has_siblings = (ancestors_info[i] & 2) > 0;
-
-            fprintf(file, "%s   ", has_siblings == 1 ? "|" : " ");
-        }
+    if (depth > 0 && is_top == 0) {
+        const unsigned int has_siblings = (ancestors_info[depth - 1] & 2) > 0;
+        print_tree_indent(file, depth - 1, ancestors_info);
+        fprintf(file, "%s", has_siblings ? "├── " : "└── ");
+    } else if (depth > 0) {
+        print_tree_indent(file, depth - 1, ancestors_info);
+        fprintf(file, "└── ");
     }
 
-    if (depth > 0) {
-        fprintf(file, "+-> %s", node_label == NULL ? "" : node_label);
+    if (depth > 0 && node_label != NULL) {
+        fprintf(file, "%s", node_label);
     }
 
     switch (ast->kind) {
@@ -277,14 +270,9 @@ void do_print_ast(const struct ast_node * ast, FILE * file, int depth, unsigned 
                 if (ast->content.function_definition.parameter_count > 0) {
                     ancestors_info[depth] = ast->content.function_definition.body != NULL ? 2 : 0;
 
-                    for (int i = 0; i < depth; ++i) {
-                        fprintf(file, "%s   ", (ancestors_info[i] & 2) > 0 ? "|" : " ");
-                    }
-                    fprintf(file, "|\n");
-                    for (int i = 0; i < depth; ++i) {
-                        fprintf(file, "%s   ", (ancestors_info[i] & 2) > 0 ? "|" : " ");
-                    }
-                    fprintf(file, "+-> ParameterList\n");
+                    print_tree_indent(file, depth, ancestors_info);
+                    fprintf(file, "%s", (ancestors_info[depth] & 2) > 0 ? "├── " : "└── ");
+                    fprintf(file, "ParameterList\n");
 
                     for (unsigned int i = 0; i < ast->content.function_definition.parameter_count; i++) {
                         ancestors_info[depth + 1] = i < ast->content.function_definition.parameter_count - 1 ? 2 : 0;
