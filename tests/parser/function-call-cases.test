@@ -35,7 +35,7 @@ TranslationUnit: '{{any}}'
                 │       ├── category: 'basic'
                 │       └── descriptor: 'int'
                 └── FunctionCallExpression: 'foo' <no-arguments>
-                    └── Type
+                    └── ReturnType
                         ├── category: 'basic'
                         └── descriptor: 'int'
 
@@ -78,7 +78,7 @@ TranslationUnit: '{{any}}'
                 │       ├── category: 'basic'
                 │       └── descriptor: 'int'
                 └── FunctionCallExpression: 'foo' <no-arguments>
-                    └── Type
+                    └── ReturnType
                         ├── category: 'basic'
                         └── descriptor: 'int'
 
@@ -114,7 +114,7 @@ TranslationUnit: '{{any}}'
     └── CompoundStatement
         └── ReturnStatement
             └── FunctionCallExpression: 'foo' <1-argument>
-                ├── Type
+                ├── ReturnType
                 │   ├── category: 'basic'
                 │   └── descriptor: 'int'
                 └── IntegerConstant: '42'
@@ -158,7 +158,7 @@ TranslationUnit: '{{any}}'
     └── CompoundStatement
         └── ReturnStatement
             └── FunctionCallExpression: 'identity' <1-argument>
-                ├── Type
+                ├── ReturnType
                 │   ├── category: 'basic'
                 │   └── descriptor: 'int'
                 └── IntegerConstant: '42'
@@ -214,7 +214,7 @@ TranslationUnit: '{{any}}'
     └── CompoundStatement
         └── ReturnStatement
             └── FunctionCallExpression: 'add' <2-arguments>
-                ├── Type
+                ├── ReturnType
                 │   ├── category: 'basic'
                 │   └── descriptor: 'int'
                 ├── IntegerConstant: '19'
@@ -286,7 +286,7 @@ TranslationUnit: '{{any}}'
     └── CompoundStatement
         └── ReturnStatement
             └── FunctionCallExpression: 'foo' <3-arguments>
-                ├── Type
+                ├── ReturnType
                 │   ├── category: 'basic'
                 │   └── descriptor: 'int'
                 ├── IntegerConstant: '1'
@@ -350,7 +350,7 @@ TranslationUnit: '{{any}}'
     └── CompoundStatement
         └── ReturnStatement
             └── FunctionCallExpression: 'add' <2-arguments>
-                ├── Type
+                ├── ReturnType
                 │   ├── category: 'basic'
                 │   └── descriptor: 'int'
                 ├── AdditiveExpression: '+'

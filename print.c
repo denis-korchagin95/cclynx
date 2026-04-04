@@ -295,7 +295,7 @@ void do_print_ast(const struct ast_node * ast, FILE * file, int depth, unsigned 
                         ast->content.function_call.argument_count,
                         ast->content.function_call.argument_count == 1 ? "" : "s");
                 }
-                print_type_child(file, depth, ancestors_info, ast->type, ast->content.function_call.argument_count > 0);
+                print_type_child_labeled(file, depth, ancestors_info, ast->type, ast->content.function_call.argument_count > 0, "ReturnType");
                 for (unsigned int i = 0; i < ast->content.function_call.argument_count; i++) {
                     ancestors_info[depth] = i < ast->content.function_call.argument_count - 1 ? 2 : 0;
                     do_print_ast(ast->content.function_call.arguments[i], file, depth + 1, ancestors_info, NULL);
