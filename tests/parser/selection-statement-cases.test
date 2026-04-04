@@ -10,35 +10,89 @@ int main() {
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
 |
-+-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
++-> FunctionDefinition: 'main' <unspecified-parameters>
+    |
+    +-> ReturnType
+    |   |
+    |   +-> category: 'basic'
+    |   |
+    |   +-> descriptor: 'int'
     |
     +-> CompoundStatement
         |
-        +-> VariableDeclaration: 'x' {type: 'int'}
+        +-> VariableDeclaration: 'x'
+        |   |
+        |   +-> Type
+        |       |
+        |       +-> category: 'basic'
+        |       |
+        |       +-> descriptor: 'int'
         |
         +-> ExpressionStatement
         |   |
         |   +-> AssignmentExpression: '='
         |       |
-        |       +-> VariableExpression: 'x' {type: 'int'}
+        |       +-> VariableExpression: 'x'
+        |       |   |
+        |       |   +-> Type
+        |       |       |
+        |       |       +-> category: 'basic'
+        |       |       |
+        |       |       +-> descriptor: 'int'
         |       |
-        |       +-> IntegerConstant: '10' {type: 'int'}
+        |       +-> IntegerConstant: '10'
+        |           |
+        |           +-> Type
+        |               |
+        |               +-> category: 'basic'
+        |               |
+        |               +-> descriptor: 'int'
         |
         +-> IfStatement
             |
-            +-> (condition) RelationalExpression: '<' {type: 'int'}
+            +-> (condition) RelationalExpression: '<'
             |   |
-            |   +-> VariableExpression: 'x' {type: 'int'}
+            |   +-> Type
+            |   |   |
+            |   |   +-> category: 'basic'
+            |   |   |
+            |   |   +-> descriptor: 'int'
             |   |
-            |   +-> IntegerConstant: '5' {type: 'int'}
+            |   +-> VariableExpression: 'x'
+            |   |   |
+            |   |   +-> Type
+            |   |       |
+            |   |       +-> category: 'basic'
+            |   |       |
+            |   |       +-> descriptor: 'int'
+            |   |
+            |   +-> IntegerConstant: '5'
+            |       |
+            |       +-> Type
+            |           |
+            |           +-> category: 'basic'
+            |           |
+            |           +-> descriptor: 'int'
             |
             +-> (true branch) ExpressionStatement
                 |
                 +-> AssignmentExpression: '='
                     |
-                    +-> VariableExpression: 'x' {type: 'int'}
+                    +-> VariableExpression: 'x'
+                    |   |
+                    |   +-> Type
+                    |       |
+                    |       +-> category: 'basic'
+                    |       |
+                    |       +-> descriptor: 'int'
                     |
-                    +-> IntegerConstant: '10' {type: 'int'}
+                    +-> IntegerConstant: '10'
+                        |
+                        +-> Type
+                            |
+                            +-> category: 'basic'
+                            |
+                            +-> descriptor: 'int'
 
 @endtest
 
@@ -53,27 +107,69 @@ int main() {
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
 |
-+-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
++-> FunctionDefinition: 'main' <unspecified-parameters>
+    |
+    +-> ReturnType
+    |   |
+    |   +-> category: 'basic'
+    |   |
+    |   +-> descriptor: 'int'
     |
     +-> CompoundStatement
         |
-        +-> VariableDeclaration: 'x' {type: 'int'}
+        +-> VariableDeclaration: 'x'
+        |   |
+        |   +-> Type
+        |       |
+        |       +-> category: 'basic'
+        |       |
+        |       +-> descriptor: 'int'
         |
         +-> ExpressionStatement
         |   |
         |   +-> AssignmentExpression: '='
         |       |
-        |       +-> VariableExpression: 'x' {type: 'int'}
+        |       +-> VariableExpression: 'x'
+        |       |   |
+        |       |   +-> Type
+        |       |       |
+        |       |       +-> category: 'basic'
+        |       |       |
+        |       |       +-> descriptor: 'int'
         |       |
-        |       +-> IntegerConstant: '10' {type: 'int'}
+        |       +-> IntegerConstant: '10'
+        |           |
+        |           +-> Type
+        |               |
+        |               +-> category: 'basic'
+        |               |
+        |               +-> descriptor: 'int'
         |
         +-> IfStatement
             |
-            +-> (condition) RelationalExpression: '<' {type: 'int'}
+            +-> (condition) RelationalExpression: '<'
             |   |
-            |   +-> VariableExpression: 'x' {type: 'int'}
+            |   +-> Type
+            |   |   |
+            |   |   +-> category: 'basic'
+            |   |   |
+            |   |   +-> descriptor: 'int'
             |   |
-            |   +-> IntegerConstant: '5' {type: 'int'}
+            |   +-> VariableExpression: 'x'
+            |   |   |
+            |   |   +-> Type
+            |   |       |
+            |   |       +-> category: 'basic'
+            |   |       |
+            |   |       +-> descriptor: 'int'
+            |   |
+            |   +-> IntegerConstant: '5'
+            |       |
+            |       +-> Type
+            |           |
+            |           +-> category: 'basic'
+            |           |
+            |           +-> descriptor: 'int'
             |
             +-> (true branch) ExpressionStatement: {empty expression}
 
@@ -93,27 +189,69 @@ int main() {
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
 |
-+-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
++-> FunctionDefinition: 'main' <unspecified-parameters>
+    |
+    +-> ReturnType
+    |   |
+    |   +-> category: 'basic'
+    |   |
+    |   +-> descriptor: 'int'
     |
     +-> CompoundStatement
         |
-        +-> VariableDeclaration: 'x' {type: 'int'}
+        +-> VariableDeclaration: 'x'
+        |   |
+        |   +-> Type
+        |       |
+        |       +-> category: 'basic'
+        |       |
+        |       +-> descriptor: 'int'
         |
         +-> ExpressionStatement
         |   |
         |   +-> AssignmentExpression: '='
         |       |
-        |       +-> VariableExpression: 'x' {type: 'int'}
+        |       +-> VariableExpression: 'x'
+        |       |   |
+        |       |   +-> Type
+        |       |       |
+        |       |       +-> category: 'basic'
+        |       |       |
+        |       |       +-> descriptor: 'int'
         |       |
-        |       +-> IntegerConstant: '10' {type: 'int'}
+        |       +-> IntegerConstant: '10'
+        |           |
+        |           +-> Type
+        |               |
+        |               +-> category: 'basic'
+        |               |
+        |               +-> descriptor: 'int'
         |
         +-> IfStatement
             |
-            +-> (condition) RelationalExpression: '<' {type: 'int'}
+            +-> (condition) RelationalExpression: '<'
             |   |
-            |   +-> VariableExpression: 'x' {type: 'int'}
+            |   +-> Type
+            |   |   |
+            |   |   +-> category: 'basic'
+            |   |   |
+            |   |   +-> descriptor: 'int'
             |   |
-            |   +-> IntegerConstant: '5' {type: 'int'}
+            |   +-> VariableExpression: 'x'
+            |   |   |
+            |   |   +-> Type
+            |   |       |
+            |   |       +-> category: 'basic'
+            |   |       |
+            |   |       +-> descriptor: 'int'
+            |   |
+            |   +-> IntegerConstant: '5'
+            |       |
+            |       +-> Type
+            |           |
+            |           +-> category: 'basic'
+            |           |
+            |           +-> descriptor: 'int'
             |
             +-> (true branch) CompoundStatement
                 |
@@ -121,21 +259,57 @@ TranslationUnit: '{{any}}'
                 |   |
                 |   +-> AssignmentExpression: '='
                 |       |
-                |       +-> VariableExpression: 'x' {type: 'int'}
+                |       +-> VariableExpression: 'x'
+                |       |   |
+                |       |   +-> Type
+                |       |       |
+                |       |       +-> category: 'basic'
+                |       |       |
+                |       |       +-> descriptor: 'int'
                 |       |
-                |       +-> IntegerConstant: '10' {type: 'int'}
+                |       +-> IntegerConstant: '10'
+                |           |
+                |           +-> Type
+                |               |
+                |               +-> category: 'basic'
+                |               |
+                |               +-> descriptor: 'int'
                 |
                 +-> ExpressionStatement
                     |
                     +-> AssignmentExpression: '='
                         |
-                        +-> VariableExpression: 'x' {type: 'int'}
+                        +-> VariableExpression: 'x'
+                        |   |
+                        |   +-> Type
+                        |       |
+                        |       +-> category: 'basic'
+                        |       |
+                        |       +-> descriptor: 'int'
                         |
-                        +-> AdditiveExpression: '+' {type: 'int'}
+                        +-> AdditiveExpression: '+'
                             |
-                            +-> VariableExpression: 'x' {type: 'int'}
+                            +-> Type
+                            |   |
+                            |   +-> category: 'basic'
+                            |   |
+                            |   +-> descriptor: 'int'
                             |
-                            +-> IntegerConstant: '15' {type: 'int'}
+                            +-> VariableExpression: 'x'
+                            |   |
+                            |   +-> Type
+                            |       |
+                            |       +-> category: 'basic'
+                            |       |
+                            |       +-> descriptor: 'int'
+                            |
+                            +-> IntegerConstant: '15'
+                                |
+                                +-> Type
+                                    |
+                                    +-> category: 'basic'
+                                    |
+                                    +-> descriptor: 'int'
 
 @endtest
 
@@ -153,43 +327,109 @@ int main() {
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
 |
-+-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
++-> FunctionDefinition: 'main' <unspecified-parameters>
+    |
+    +-> ReturnType
+    |   |
+    |   +-> category: 'basic'
+    |   |
+    |   +-> descriptor: 'int'
     |
     +-> CompoundStatement
         |
-        +-> VariableDeclaration: 'x' {type: 'int'}
+        +-> VariableDeclaration: 'x'
+        |   |
+        |   +-> Type
+        |       |
+        |       +-> category: 'basic'
+        |       |
+        |       +-> descriptor: 'int'
         |
         +-> ExpressionStatement
         |   |
         |   +-> AssignmentExpression: '='
         |       |
-        |       +-> VariableExpression: 'x' {type: 'int'}
+        |       +-> VariableExpression: 'x'
+        |       |   |
+        |       |   +-> Type
+        |       |       |
+        |       |       +-> category: 'basic'
+        |       |       |
+        |       |       +-> descriptor: 'int'
         |       |
-        |       +-> IntegerConstant: '10' {type: 'int'}
+        |       +-> IntegerConstant: '10'
+        |           |
+        |           +-> Type
+        |               |
+        |               +-> category: 'basic'
+        |               |
+        |               +-> descriptor: 'int'
         |
         +-> IfStatement
             |
-            +-> (condition) RelationalExpression: '<' {type: 'int'}
+            +-> (condition) RelationalExpression: '<'
             |   |
-            |   +-> VariableExpression: 'x' {type: 'int'}
+            |   +-> Type
+            |   |   |
+            |   |   +-> category: 'basic'
+            |   |   |
+            |   |   +-> descriptor: 'int'
             |   |
-            |   +-> IntegerConstant: '5' {type: 'int'}
+            |   +-> VariableExpression: 'x'
+            |   |   |
+            |   |   +-> Type
+            |   |       |
+            |   |       +-> category: 'basic'
+            |   |       |
+            |   |       +-> descriptor: 'int'
+            |   |
+            |   +-> IntegerConstant: '5'
+            |       |
+            |       +-> Type
+            |           |
+            |           +-> category: 'basic'
+            |           |
+            |           +-> descriptor: 'int'
             |
             +-> (true branch) ExpressionStatement
             |   |
             |   +-> AssignmentExpression: '='
             |       |
-            |       +-> VariableExpression: 'x' {type: 'int'}
+            |       +-> VariableExpression: 'x'
+            |       |   |
+            |       |   +-> Type
+            |       |       |
+            |       |       +-> category: 'basic'
+            |       |       |
+            |       |       +-> descriptor: 'int'
             |       |
-            |       +-> IntegerConstant: '10' {type: 'int'}
+            |       +-> IntegerConstant: '10'
+            |           |
+            |           +-> Type
+            |               |
+            |               +-> category: 'basic'
+            |               |
+            |               +-> descriptor: 'int'
             |
             +-> (false branch) ExpressionStatement
                 |
                 +-> AssignmentExpression: '='
                     |
-                    +-> VariableExpression: 'x' {type: 'int'}
+                    +-> VariableExpression: 'x'
+                    |   |
+                    |   +-> Type
+                    |       |
+                    |       +-> category: 'basic'
+                    |       |
+                    |       +-> descriptor: 'int'
                     |
-                    +-> IntegerConstant: '77' {type: 'int'}
+                    +-> IntegerConstant: '77'
+                        |
+                        +-> Type
+                            |
+                            +-> category: 'basic'
+                            |
+                            +-> descriptor: 'int'
 
 @endtest
 
@@ -206,35 +446,89 @@ int main() {
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
 |
-+-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
++-> FunctionDefinition: 'main' <unspecified-parameters>
+    |
+    +-> ReturnType
+    |   |
+    |   +-> category: 'basic'
+    |   |
+    |   +-> descriptor: 'int'
     |
     +-> CompoundStatement
         |
-        +-> VariableDeclaration: 'x' {type: 'int'}
+        +-> VariableDeclaration: 'x'
+        |   |
+        |   +-> Type
+        |       |
+        |       +-> category: 'basic'
+        |       |
+        |       +-> descriptor: 'int'
         |
         +-> ExpressionStatement
         |   |
         |   +-> AssignmentExpression: '='
         |       |
-        |       +-> VariableExpression: 'x' {type: 'int'}
+        |       +-> VariableExpression: 'x'
+        |       |   |
+        |       |   +-> Type
+        |       |       |
+        |       |       +-> category: 'basic'
+        |       |       |
+        |       |       +-> descriptor: 'int'
         |       |
-        |       +-> IntegerConstant: '10' {type: 'int'}
+        |       +-> IntegerConstant: '10'
+        |           |
+        |           +-> Type
+        |               |
+        |               +-> category: 'basic'
+        |               |
+        |               +-> descriptor: 'int'
         |
         +-> IfStatement
             |
-            +-> (condition) RelationalExpression: '<' {type: 'int'}
+            +-> (condition) RelationalExpression: '<'
             |   |
-            |   +-> VariableExpression: 'x' {type: 'int'}
+            |   +-> Type
+            |   |   |
+            |   |   +-> category: 'basic'
+            |   |   |
+            |   |   +-> descriptor: 'int'
             |   |
-            |   +-> IntegerConstant: '5' {type: 'int'}
+            |   +-> VariableExpression: 'x'
+            |   |   |
+            |   |   +-> Type
+            |   |       |
+            |   |       +-> category: 'basic'
+            |   |       |
+            |   |       +-> descriptor: 'int'
+            |   |
+            |   +-> IntegerConstant: '5'
+            |       |
+            |       +-> Type
+            |           |
+            |           +-> category: 'basic'
+            |           |
+            |           +-> descriptor: 'int'
             |
             +-> (true branch) ExpressionStatement
             |   |
             |   +-> AssignmentExpression: '='
             |       |
-            |       +-> VariableExpression: 'x' {type: 'int'}
+            |       +-> VariableExpression: 'x'
+            |       |   |
+            |       |   +-> Type
+            |       |       |
+            |       |       +-> category: 'basic'
+            |       |       |
+            |       |       +-> descriptor: 'int'
             |       |
-            |       +-> IntegerConstant: '10' {type: 'int'}
+            |       +-> IntegerConstant: '10'
+            |           |
+            |           +-> Type
+            |               |
+            |               +-> category: 'basic'
+            |               |
+            |               +-> descriptor: 'int'
             |
             +-> (false branch) ExpressionStatement: {empty expression}
 
@@ -256,35 +550,89 @@ int main() {
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
 |
-+-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
++-> FunctionDefinition: 'main' <unspecified-parameters>
+    |
+    +-> ReturnType
+    |   |
+    |   +-> category: 'basic'
+    |   |
+    |   +-> descriptor: 'int'
     |
     +-> CompoundStatement
         |
-        +-> VariableDeclaration: 'x' {type: 'int'}
+        +-> VariableDeclaration: 'x'
+        |   |
+        |   +-> Type
+        |       |
+        |       +-> category: 'basic'
+        |       |
+        |       +-> descriptor: 'int'
         |
         +-> ExpressionStatement
         |   |
         |   +-> AssignmentExpression: '='
         |       |
-        |       +-> VariableExpression: 'x' {type: 'int'}
+        |       +-> VariableExpression: 'x'
+        |       |   |
+        |       |   +-> Type
+        |       |       |
+        |       |       +-> category: 'basic'
+        |       |       |
+        |       |       +-> descriptor: 'int'
         |       |
-        |       +-> IntegerConstant: '10' {type: 'int'}
+        |       +-> IntegerConstant: '10'
+        |           |
+        |           +-> Type
+        |               |
+        |               +-> category: 'basic'
+        |               |
+        |               +-> descriptor: 'int'
         |
         +-> IfStatement
             |
-            +-> (condition) RelationalExpression: '<' {type: 'int'}
+            +-> (condition) RelationalExpression: '<'
             |   |
-            |   +-> VariableExpression: 'x' {type: 'int'}
+            |   +-> Type
+            |   |   |
+            |   |   +-> category: 'basic'
+            |   |   |
+            |   |   +-> descriptor: 'int'
             |   |
-            |   +-> IntegerConstant: '5' {type: 'int'}
+            |   +-> VariableExpression: 'x'
+            |   |   |
+            |   |   +-> Type
+            |   |       |
+            |   |       +-> category: 'basic'
+            |   |       |
+            |   |       +-> descriptor: 'int'
+            |   |
+            |   +-> IntegerConstant: '5'
+            |       |
+            |       +-> Type
+            |           |
+            |           +-> category: 'basic'
+            |           |
+            |           +-> descriptor: 'int'
             |
             +-> (true branch) ExpressionStatement
             |   |
             |   +-> AssignmentExpression: '='
             |       |
-            |       +-> VariableExpression: 'x' {type: 'int'}
+            |       +-> VariableExpression: 'x'
+            |       |   |
+            |       |   +-> Type
+            |       |       |
+            |       |       +-> category: 'basic'
+            |       |       |
+            |       |       +-> descriptor: 'int'
             |       |
-            |       +-> IntegerConstant: '10' {type: 'int'}
+            |       +-> IntegerConstant: '10'
+            |           |
+            |           +-> Type
+            |               |
+            |               +-> category: 'basic'
+            |               |
+            |               +-> descriptor: 'int'
             |
             +-> (false branch) CompoundStatement
                 |
@@ -292,20 +640,56 @@ TranslationUnit: '{{any}}'
                 |   |
                 |   +-> AssignmentExpression: '='
                 |       |
-                |       +-> VariableExpression: 'x' {type: 'int'}
+                |       +-> VariableExpression: 'x'
+                |       |   |
+                |       |   +-> Type
+                |       |       |
+                |       |       +-> category: 'basic'
+                |       |       |
+                |       |       +-> descriptor: 'int'
                 |       |
-                |       +-> IntegerConstant: '77' {type: 'int'}
+                |       +-> IntegerConstant: '77'
+                |           |
+                |           +-> Type
+                |               |
+                |               +-> category: 'basic'
+                |               |
+                |               +-> descriptor: 'int'
                 |
                 +-> ExpressionStatement
                     |
                     +-> AssignmentExpression: '='
                         |
-                        +-> VariableExpression: 'x' {type: 'int'}
+                        +-> VariableExpression: 'x'
+                        |   |
+                        |   +-> Type
+                        |       |
+                        |       +-> category: 'basic'
+                        |       |
+                        |       +-> descriptor: 'int'
                         |
-                        +-> AdditiveExpression: '-' {type: 'int'}
+                        +-> AdditiveExpression: '-'
                             |
-                            +-> VariableExpression: 'x' {type: 'int'}
+                            +-> Type
+                            |   |
+                            |   +-> category: 'basic'
+                            |   |
+                            |   +-> descriptor: 'int'
                             |
-                            +-> IntegerConstant: '1' {type: 'int'}
+                            +-> VariableExpression: 'x'
+                            |   |
+                            |   +-> Type
+                            |       |
+                            |       +-> category: 'basic'
+                            |       |
+                            |       +-> descriptor: 'int'
+                            |
+                            +-> IntegerConstant: '1'
+                                |
+                                +-> Type
+                                    |
+                                    +-> category: 'basic'
+                                    |
+                                    +-> descriptor: 'int'
 
 @endtest

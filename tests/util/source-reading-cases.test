@@ -7,13 +7,25 @@ int main() {
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
 |
-+-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
++-> FunctionDefinition: 'main' <unspecified-parameters>
+    |
+    +-> ReturnType
+    |   |
+    |   +-> category: 'basic'
+    |   |
+    |   +-> descriptor: 'int'
     |
     +-> CompoundStatement
         |
         +-> ReturnStatement
             |
-            +-> IntegerConstant: '42' {type: 'int'}
+            +-> IntegerConstant: '42'
+                |
+                +-> Type
+                    |
+                    +-> category: 'basic'
+                    |
+                    +-> descriptor: 'int'
 
 @endtest
 
@@ -26,13 +38,25 @@ int main() {
 @expectOutput("stdout")
 TranslationUnit: 'stdin'
 |
-+-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
++-> FunctionDefinition: 'main' <unspecified-parameters>
+    |
+    +-> ReturnType
+    |   |
+    |   +-> category: 'basic'
+    |   |
+    |   +-> descriptor: 'int'
     |
     +-> CompoundStatement
         |
         +-> ReturnStatement
             |
-            +-> IntegerConstant: '42' {type: 'int'}
+            +-> IntegerConstant: '42'
+                |
+                +-> Type
+                    |
+                    +-> category: 'basic'
+                    |
+                    +-> descriptor: 'int'
 
 @endtest
 

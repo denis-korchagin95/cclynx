@@ -11,25 +11,61 @@ int main() {
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
 |
-+-> FunctionDefinition: 'foo' {type: 'int'} <no-parameters>
++-> FunctionDefinition: 'foo' <no-parameters>
+|   |
+|   +-> ReturnType
+|   |   |
+|   |   +-> category: 'basic'
+|   |   |
+|   |   +-> descriptor: 'int'
 |   |
 |   +-> CompoundStatement
 |       |
 |       +-> ReturnStatement
 |           |
-|           +-> IntegerConstant: '7' {type: 'int'}
+|           +-> IntegerConstant: '7'
+|               |
+|               +-> Type
+|                   |
+|                   +-> category: 'basic'
+|                   |
+|                   +-> descriptor: 'int'
 |
-+-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
++-> FunctionDefinition: 'main' <unspecified-parameters>
+    |
+    +-> ReturnType
+    |   |
+    |   +-> category: 'basic'
+    |   |
+    |   +-> descriptor: 'int'
     |
     +-> CompoundStatement
         |
         +-> ReturnStatement
             |
-            +-> MultiplicativeExpression: '*' {type: 'int'}
+            +-> MultiplicativeExpression: '*'
                 |
-                +-> IntegerConstant: '42' {type: 'int'}
+                +-> Type
+                |   |
+                |   +-> category: 'basic'
+                |   |
+                |   +-> descriptor: 'int'
                 |
-                +-> FunctionCallExpression: 'foo' {type: 'int'} <no-arguments>
+                +-> IntegerConstant: '42'
+                |   |
+                |   +-> Type
+                |       |
+                |       +-> category: 'basic'
+                |       |
+                |       +-> descriptor: 'int'
+                |
+                +-> FunctionCallExpression: 'foo' <no-arguments>
+                    |
+                    +-> Type
+                        |
+                        +-> category: 'basic'
+                        |
+                        +-> descriptor: 'int'
 
 @endtest
 
@@ -46,25 +82,61 @@ int main() {
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
 |
-+-> FunctionDefinition: 'foo' {type: 'int'} <unspecified-parameters>
++-> FunctionDefinition: 'foo' <unspecified-parameters>
+|   |
+|   +-> ReturnType
+|   |   |
+|   |   +-> category: 'basic'
+|   |   |
+|   |   +-> descriptor: 'int'
 |   |
 |   +-> CompoundStatement
 |       |
 |       +-> ReturnStatement
 |           |
-|           +-> IntegerConstant: '7' {type: 'int'}
+|           +-> IntegerConstant: '7'
+|               |
+|               +-> Type
+|                   |
+|                   +-> category: 'basic'
+|                   |
+|                   +-> descriptor: 'int'
 |
-+-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
++-> FunctionDefinition: 'main' <unspecified-parameters>
+    |
+    +-> ReturnType
+    |   |
+    |   +-> category: 'basic'
+    |   |
+    |   +-> descriptor: 'int'
     |
     +-> CompoundStatement
         |
         +-> ReturnStatement
             |
-            +-> MultiplicativeExpression: '*' {type: 'int'}
+            +-> MultiplicativeExpression: '*'
                 |
-                +-> IntegerConstant: '42' {type: 'int'}
+                +-> Type
+                |   |
+                |   +-> category: 'basic'
+                |   |
+                |   +-> descriptor: 'int'
                 |
-                +-> FunctionCallExpression: 'foo' {type: 'int'} <no-arguments>
+                +-> IntegerConstant: '42'
+                |   |
+                |   +-> Type
+                |       |
+                |       +-> category: 'basic'
+                |       |
+                |       +-> descriptor: 'int'
+                |
+                +-> FunctionCallExpression: 'foo' <no-arguments>
+                    |
+                    +-> Type
+                        |
+                        +-> category: 'basic'
+                        |
+                        +-> descriptor: 'int'
 
 @endtest
 
@@ -82,23 +154,53 @@ int main() {
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
 |
-+-> FunctionDefinition: 'foo' {type: 'int'} <unspecified-parameters>
++-> FunctionDefinition: 'foo' <unspecified-parameters>
+|   |
+|   +-> ReturnType
+|   |   |
+|   |   +-> category: 'basic'
+|   |   |
+|   |   +-> descriptor: 'int'
 |   |
 |   +-> CompoundStatement
 |       |
 |       +-> ReturnStatement
 |           |
-|           +-> IntegerConstant: '7' {type: 'int'}
+|           +-> IntegerConstant: '7'
+|               |
+|               +-> Type
+|                   |
+|                   +-> category: 'basic'
+|                   |
+|                   +-> descriptor: 'int'
 |
-+-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
++-> FunctionDefinition: 'main' <unspecified-parameters>
+    |
+    +-> ReturnType
+    |   |
+    |   +-> category: 'basic'
+    |   |
+    |   +-> descriptor: 'int'
     |
     +-> CompoundStatement
         |
         +-> ReturnStatement
             |
-            +-> FunctionCallExpression: 'foo' {type: 'int'} <1-argument>
+            +-> FunctionCallExpression: 'foo' <1-argument>
                 |
-                +-> IntegerConstant: '42' {type: 'int'}
+                +-> Type
+                |   |
+                |   +-> category: 'basic'
+                |   |
+                |   +-> descriptor: 'int'
+                |
+                +-> IntegerConstant: '42'
+                    |
+                    +-> Type
+                        |
+                        +-> category: 'basic'
+                        |
+                        +-> descriptor: 'int'
 
 @endtest
 
@@ -115,27 +217,63 @@ int main() {
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
 |
-+-> FunctionDefinition: 'identity' {type: 'int'} <1-parameter>
++-> FunctionDefinition: 'identity' <1-parameter>
+|   |
+|   +-> ReturnType
+|   |   |
+|   |   +-> category: 'basic'
+|   |   |
+|   |   +-> descriptor: 'int'
 |   |
 |   +-> ParameterList
 |   |   |
-|   |   +-> Parameter: 'a' {type: 'int'}
+|   |   +-> Parameter: 'a'
+|   |       |
+|   |       +-> Type
+|   |           |
+|   |           +-> category: 'basic'
+|   |           |
+|   |           +-> descriptor: 'int'
 |   |
 |   +-> CompoundStatement
 |       |
 |       +-> ReturnStatement
 |           |
-|           +-> VariableExpression: 'a' {type: 'int'}
+|           +-> VariableExpression: 'a'
+|               |
+|               +-> Type
+|                   |
+|                   +-> category: 'basic'
+|                   |
+|                   +-> descriptor: 'int'
 |
-+-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
++-> FunctionDefinition: 'main' <unspecified-parameters>
+    |
+    +-> ReturnType
+    |   |
+    |   +-> category: 'basic'
+    |   |
+    |   +-> descriptor: 'int'
     |
     +-> CompoundStatement
         |
         +-> ReturnStatement
             |
-            +-> FunctionCallExpression: 'identity' {type: 'int'} <1-argument>
+            +-> FunctionCallExpression: 'identity' <1-argument>
                 |
-                +-> IntegerConstant: '42' {type: 'int'}
+                +-> Type
+                |   |
+                |   +-> category: 'basic'
+                |   |
+                |   +-> descriptor: 'int'
+                |
+                +-> IntegerConstant: '42'
+                    |
+                    +-> Type
+                        |
+                        +-> category: 'basic'
+                        |
+                        +-> descriptor: 'int'
 
 @endtest
 
@@ -152,35 +290,95 @@ int main() {
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
 |
-+-> FunctionDefinition: 'add' {type: 'int'} <2-parameters>
++-> FunctionDefinition: 'add' <2-parameters>
+|   |
+|   +-> ReturnType
+|   |   |
+|   |   +-> category: 'basic'
+|   |   |
+|   |   +-> descriptor: 'int'
 |   |
 |   +-> ParameterList
 |   |   |
-|   |   +-> Parameter: 'a' {type: 'int'}
+|   |   +-> Parameter: 'a'
+|   |   |   |
+|   |   |   +-> Type
+|   |   |       |
+|   |   |       +-> category: 'basic'
+|   |   |       |
+|   |   |       +-> descriptor: 'int'
 |   |   |
-|   |   +-> Parameter: 'b' {type: 'int'}
+|   |   +-> Parameter: 'b'
+|   |       |
+|   |       +-> Type
+|   |           |
+|   |           +-> category: 'basic'
+|   |           |
+|   |           +-> descriptor: 'int'
 |   |
 |   +-> CompoundStatement
 |       |
 |       +-> ReturnStatement
 |           |
-|           +-> AdditiveExpression: '+' {type: 'int'}
+|           +-> AdditiveExpression: '+'
 |               |
-|               +-> VariableExpression: 'a' {type: 'int'}
+|               +-> Type
+|               |   |
+|               |   +-> category: 'basic'
+|               |   |
+|               |   +-> descriptor: 'int'
 |               |
-|               +-> VariableExpression: 'b' {type: 'int'}
+|               +-> VariableExpression: 'a'
+|               |   |
+|               |   +-> Type
+|               |       |
+|               |       +-> category: 'basic'
+|               |       |
+|               |       +-> descriptor: 'int'
+|               |
+|               +-> VariableExpression: 'b'
+|                   |
+|                   +-> Type
+|                       |
+|                       +-> category: 'basic'
+|                       |
+|                       +-> descriptor: 'int'
 |
-+-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
++-> FunctionDefinition: 'main' <unspecified-parameters>
+    |
+    +-> ReturnType
+    |   |
+    |   +-> category: 'basic'
+    |   |
+    |   +-> descriptor: 'int'
     |
     +-> CompoundStatement
         |
         +-> ReturnStatement
             |
-            +-> FunctionCallExpression: 'add' {type: 'int'} <2-arguments>
+            +-> FunctionCallExpression: 'add' <2-arguments>
                 |
-                +-> IntegerConstant: '19' {type: 'int'}
+                +-> Type
+                |   |
+                |   +-> category: 'basic'
+                |   |
+                |   +-> descriptor: 'int'
                 |
-                +-> IntegerConstant: '23' {type: 'int'}
+                +-> IntegerConstant: '19'
+                |   |
+                |   +-> Type
+                |       |
+                |       +-> category: 'basic'
+                |       |
+                |       +-> descriptor: 'int'
+                |
+                +-> IntegerConstant: '23'
+                    |
+                    +-> Type
+                        |
+                        +-> category: 'basic'
+                        |
+                        +-> descriptor: 'int'
 
 @endtest
 
@@ -197,43 +395,127 @@ int main() {
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
 |
-+-> FunctionDefinition: 'foo' {type: 'int'} <3-parameters>
++-> FunctionDefinition: 'foo' <3-parameters>
+|   |
+|   +-> ReturnType
+|   |   |
+|   |   +-> category: 'basic'
+|   |   |
+|   |   +-> descriptor: 'int'
 |   |
 |   +-> ParameterList
 |   |   |
-|   |   +-> Parameter: 'a' {type: 'int'}
+|   |   +-> Parameter: 'a'
+|   |   |   |
+|   |   |   +-> Type
+|   |   |       |
+|   |   |       +-> category: 'basic'
+|   |   |       |
+|   |   |       +-> descriptor: 'int'
 |   |   |
-|   |   +-> Parameter: 'b' {type: 'int'}
+|   |   +-> Parameter: 'b'
+|   |   |   |
+|   |   |   +-> Type
+|   |   |       |
+|   |   |       +-> category: 'basic'
+|   |   |       |
+|   |   |       +-> descriptor: 'int'
 |   |   |
-|   |   +-> Parameter: 'c' {type: 'int'}
+|   |   +-> Parameter: 'c'
+|   |       |
+|   |       +-> Type
+|   |           |
+|   |           +-> category: 'basic'
+|   |           |
+|   |           +-> descriptor: 'int'
 |   |
 |   +-> CompoundStatement
 |       |
 |       +-> ReturnStatement
 |           |
-|           +-> AdditiveExpression: '+' {type: 'int'}
+|           +-> AdditiveExpression: '+'
 |               |
-|               +-> VariableExpression: 'a' {type: 'int'}
+|               +-> Type
+|               |   |
+|               |   +-> category: 'basic'
+|               |   |
+|               |   +-> descriptor: 'int'
 |               |
-|               +-> MultiplicativeExpression: '*' {type: 'int'}
+|               +-> VariableExpression: 'a'
+|               |   |
+|               |   +-> Type
+|               |       |
+|               |       +-> category: 'basic'
+|               |       |
+|               |       +-> descriptor: 'int'
+|               |
+|               +-> MultiplicativeExpression: '*'
 |                   |
-|                   +-> VariableExpression: 'b' {type: 'int'}
+|                   +-> Type
+|                   |   |
+|                   |   +-> category: 'basic'
+|                   |   |
+|                   |   +-> descriptor: 'int'
 |                   |
-|                   +-> VariableExpression: 'c' {type: 'int'}
+|                   +-> VariableExpression: 'b'
+|                   |   |
+|                   |   +-> Type
+|                   |       |
+|                   |       +-> category: 'basic'
+|                   |       |
+|                   |       +-> descriptor: 'int'
+|                   |
+|                   +-> VariableExpression: 'c'
+|                       |
+|                       +-> Type
+|                           |
+|                           +-> category: 'basic'
+|                           |
+|                           +-> descriptor: 'int'
 |
-+-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
++-> FunctionDefinition: 'main' <unspecified-parameters>
+    |
+    +-> ReturnType
+    |   |
+    |   +-> category: 'basic'
+    |   |
+    |   +-> descriptor: 'int'
     |
     +-> CompoundStatement
         |
         +-> ReturnStatement
             |
-            +-> FunctionCallExpression: 'foo' {type: 'int'} <3-arguments>
+            +-> FunctionCallExpression: 'foo' <3-arguments>
                 |
-                +-> IntegerConstant: '1' {type: 'int'}
+                +-> Type
+                |   |
+                |   +-> category: 'basic'
+                |   |
+                |   +-> descriptor: 'int'
                 |
-                +-> IntegerConstant: '2' {type: 'int'}
+                +-> IntegerConstant: '1'
+                |   |
+                |   +-> Type
+                |       |
+                |       +-> category: 'basic'
+                |       |
+                |       +-> descriptor: 'int'
                 |
-                +-> IntegerConstant: '3' {type: 'int'}
+                +-> IntegerConstant: '2'
+                |   |
+                |   +-> Type
+                |       |
+                |       +-> category: 'basic'
+                |       |
+                |       +-> descriptor: 'int'
+                |
+                +-> IntegerConstant: '3'
+                    |
+                    +-> Type
+                        |
+                        +-> category: 'basic'
+                        |
+                        +-> descriptor: 'int'
 
 @endtest
 
@@ -250,43 +532,127 @@ int main() {
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
 |
-+-> FunctionDefinition: 'add' {type: 'int'} <2-parameters>
++-> FunctionDefinition: 'add' <2-parameters>
+|   |
+|   +-> ReturnType
+|   |   |
+|   |   +-> category: 'basic'
+|   |   |
+|   |   +-> descriptor: 'int'
 |   |
 |   +-> ParameterList
 |   |   |
-|   |   +-> Parameter: 'a' {type: 'int'}
+|   |   +-> Parameter: 'a'
+|   |   |   |
+|   |   |   +-> Type
+|   |   |       |
+|   |   |       +-> category: 'basic'
+|   |   |       |
+|   |   |       +-> descriptor: 'int'
 |   |   |
-|   |   +-> Parameter: 'b' {type: 'int'}
+|   |   +-> Parameter: 'b'
+|   |       |
+|   |       +-> Type
+|   |           |
+|   |           +-> category: 'basic'
+|   |           |
+|   |           +-> descriptor: 'int'
 |   |
 |   +-> CompoundStatement
 |       |
 |       +-> ReturnStatement
 |           |
-|           +-> AdditiveExpression: '+' {type: 'int'}
+|           +-> AdditiveExpression: '+'
 |               |
-|               +-> VariableExpression: 'a' {type: 'int'}
+|               +-> Type
+|               |   |
+|               |   +-> category: 'basic'
+|               |   |
+|               |   +-> descriptor: 'int'
 |               |
-|               +-> VariableExpression: 'b' {type: 'int'}
+|               +-> VariableExpression: 'a'
+|               |   |
+|               |   +-> Type
+|               |       |
+|               |       +-> category: 'basic'
+|               |       |
+|               |       +-> descriptor: 'int'
+|               |
+|               +-> VariableExpression: 'b'
+|                   |
+|                   +-> Type
+|                       |
+|                       +-> category: 'basic'
+|                       |
+|                       +-> descriptor: 'int'
 |
-+-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
++-> FunctionDefinition: 'main' <unspecified-parameters>
+    |
+    +-> ReturnType
+    |   |
+    |   +-> category: 'basic'
+    |   |
+    |   +-> descriptor: 'int'
     |
     +-> CompoundStatement
         |
         +-> ReturnStatement
             |
-            +-> FunctionCallExpression: 'add' {type: 'int'} <2-arguments>
+            +-> FunctionCallExpression: 'add' <2-arguments>
                 |
-                +-> AdditiveExpression: '+' {type: 'int'}
+                +-> Type
                 |   |
-                |   +-> IntegerConstant: '1' {type: 'int'}
+                |   +-> category: 'basic'
                 |   |
-                |   +-> IntegerConstant: '2' {type: 'int'}
+                |   +-> descriptor: 'int'
                 |
-                +-> MultiplicativeExpression: '*' {type: 'int'}
+                +-> AdditiveExpression: '+'
+                |   |
+                |   +-> Type
+                |   |   |
+                |   |   +-> category: 'basic'
+                |   |   |
+                |   |   +-> descriptor: 'int'
+                |   |
+                |   +-> IntegerConstant: '1'
+                |   |   |
+                |   |   +-> Type
+                |   |       |
+                |   |       +-> category: 'basic'
+                |   |       |
+                |   |       +-> descriptor: 'int'
+                |   |
+                |   +-> IntegerConstant: '2'
+                |       |
+                |       +-> Type
+                |           |
+                |           +-> category: 'basic'
+                |           |
+                |           +-> descriptor: 'int'
+                |
+                +-> MultiplicativeExpression: '*'
                     |
-                    +-> IntegerConstant: '3' {type: 'int'}
+                    +-> Type
+                    |   |
+                    |   +-> category: 'basic'
+                    |   |
+                    |   +-> descriptor: 'int'
                     |
-                    +-> IntegerConstant: '4' {type: 'int'}
+                    +-> IntegerConstant: '3'
+                    |   |
+                    |   +-> Type
+                    |       |
+                    |       +-> category: 'basic'
+                    |       |
+                    |       +-> descriptor: 'int'
+                    |
+                    +-> IntegerConstant: '4'
+                        |
+                        +-> Type
+                            |
+                            +-> category: 'basic'
+                            |
+                            +-> descriptor: 'int'
 
 @endtest
 

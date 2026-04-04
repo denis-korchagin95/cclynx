@@ -12,23 +12,19 @@ const char * type_stringify(const struct type * type)
 {
     assert(type != NULL);
 
-    if (type == &type_void) {
-        return "void";
+    switch (type->kind) {
+        case TYPE_KIND_VOID:
+            return "void";
+        case TYPE_KIND_FLOAT:
+            return "float";
+        case TYPE_KIND_INTEGER:
+            if (type->modifiers & TYPE_MODIFIER_UNSIGNED) {
+                return "unsigned int";
+            }
+            return "int";
+        default:
+            return "<unknown type>";
     }
-
-    if (type == &type_float) {
-        return "float";
-    }
-
-    if (type == &type_sint32) {
-        return "int";
-    }
-
-    if (type == &type_uint32) {
-        return "unsigned int";
-    }
-
-    return "<unknown type>";
 }
 
 struct type * type_resolve(struct type * lhs, const struct type * rhs)

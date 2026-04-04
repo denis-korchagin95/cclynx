@@ -11,35 +11,89 @@ int main() {
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
 |
-+-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
++-> FunctionDefinition: 'main' <unspecified-parameters>
+    |
+    +-> ReturnType
+    |   |
+    |   +-> category: 'basic'
+    |   |
+    |   +-> descriptor: 'int'
     |
     +-> CompoundStatement
         |
-        +-> VariableDeclaration: 'y' {type: 'float'}
+        +-> VariableDeclaration: 'y'
+        |   |
+        |   +-> Type
+        |       |
+        |       +-> category: 'basic'
+        |       |
+        |       +-> descriptor: 'float'
         |
         +-> ExpressionStatement
         |   |
         |   +-> AssignmentExpression: '='
         |       |
-        |       +-> VariableExpression: 'y' {type: 'float'}
+        |       +-> VariableExpression: 'y'
+        |       |   |
+        |       |   +-> Type
+        |       |       |
+        |       |       +-> category: 'basic'
+        |       |       |
+        |       |       +-> descriptor: 'float'
         |       |
-        |       +-> FloatConstant: '1.450000' {type: 'float'}
-        |
-        +-> VariableDeclaration: 'x' {type: 'int'}
-        |
-        +-> ExpressionStatement
-        |   |
-        |   +-> AssignmentExpression: '='
-        |       |
-        |       +-> VariableExpression: 'x' {type: 'int'}
-        |       |
-        |       +-> CastExpression {type: 'int'}
+        |       +-> FloatConstant: '1.450000'
         |           |
-        |           +-> VariableExpression: 'y' {type: 'float'}
+        |           +-> Type
+        |               |
+        |               +-> category: 'basic'
+        |               |
+        |               +-> descriptor: 'float'
+        |
+        +-> VariableDeclaration: 'x'
+        |   |
+        |   +-> Type
+        |       |
+        |       +-> category: 'basic'
+        |       |
+        |       +-> descriptor: 'int'
+        |
+        +-> ExpressionStatement
+        |   |
+        |   +-> AssignmentExpression: '='
+        |       |
+        |       +-> VariableExpression: 'x'
+        |       |   |
+        |       |   +-> Type
+        |       |       |
+        |       |       +-> category: 'basic'
+        |       |       |
+        |       |       +-> descriptor: 'int'
+        |       |
+        |       +-> CastExpression
+        |           |
+        |           +-> Type
+        |           |   |
+        |           |   +-> category: 'basic'
+        |           |   |
+        |           |   +-> descriptor: 'int'
+        |           |
+        |           +-> VariableExpression: 'y'
+        |               |
+        |               +-> Type
+        |                   |
+        |                   +-> category: 'basic'
+        |                   |
+        |                   +-> descriptor: 'float'
         |
         +-> ReturnStatement
             |
-            +-> VariableExpression: 'x' {type: 'int'}
+            +-> VariableExpression: 'x'
+                |
+                +-> Type
+                    |
+                    +-> category: 'basic'
+                    |
+                    +-> descriptor: 'int'
 
 @endtest
 
@@ -56,35 +110,89 @@ float test() {
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
 |
-+-> FunctionDefinition: 'test' {type: 'float'} <unspecified-parameters>
++-> FunctionDefinition: 'test' <unspecified-parameters>
+    |
+    +-> ReturnType
+    |   |
+    |   +-> category: 'basic'
+    |   |
+    |   +-> descriptor: 'float'
     |
     +-> CompoundStatement
         |
-        +-> VariableDeclaration: 'y' {type: 'int'}
+        +-> VariableDeclaration: 'y'
+        |   |
+        |   +-> Type
+        |       |
+        |       +-> category: 'basic'
+        |       |
+        |       +-> descriptor: 'int'
         |
         +-> ExpressionStatement
         |   |
         |   +-> AssignmentExpression: '='
         |       |
-        |       +-> VariableExpression: 'y' {type: 'int'}
+        |       +-> VariableExpression: 'y'
+        |       |   |
+        |       |   +-> Type
+        |       |       |
+        |       |       +-> category: 'basic'
+        |       |       |
+        |       |       +-> descriptor: 'int'
         |       |
-        |       +-> IntegerConstant: '777' {type: 'int'}
-        |
-        +-> VariableDeclaration: 'x' {type: 'float'}
-        |
-        +-> ExpressionStatement
-        |   |
-        |   +-> AssignmentExpression: '='
-        |       |
-        |       +-> VariableExpression: 'x' {type: 'float'}
-        |       |
-        |       +-> CastExpression {type: 'float'}
+        |       +-> IntegerConstant: '777'
         |           |
-        |           +-> VariableExpression: 'y' {type: 'int'}
+        |           +-> Type
+        |               |
+        |               +-> category: 'basic'
+        |               |
+        |               +-> descriptor: 'int'
+        |
+        +-> VariableDeclaration: 'x'
+        |   |
+        |   +-> Type
+        |       |
+        |       +-> category: 'basic'
+        |       |
+        |       +-> descriptor: 'float'
+        |
+        +-> ExpressionStatement
+        |   |
+        |   +-> AssignmentExpression: '='
+        |       |
+        |       +-> VariableExpression: 'x'
+        |       |   |
+        |       |   +-> Type
+        |       |       |
+        |       |       +-> category: 'basic'
+        |       |       |
+        |       |       +-> descriptor: 'float'
+        |       |
+        |       +-> CastExpression
+        |           |
+        |           +-> Type
+        |           |   |
+        |           |   +-> category: 'basic'
+        |           |   |
+        |           |   +-> descriptor: 'float'
+        |           |
+        |           +-> VariableExpression: 'y'
+        |               |
+        |               +-> Type
+        |                   |
+        |                   +-> category: 'basic'
+        |                   |
+        |                   +-> descriptor: 'int'
         |
         +-> ReturnStatement
             |
-            +-> VariableExpression: 'x' {type: 'float'}
+            +-> VariableExpression: 'x'
+                |
+                +-> Type
+                    |
+                    +-> category: 'basic'
+                    |
+                    +-> descriptor: 'float'
 
 @endtest
 
@@ -101,35 +209,89 @@ int main() {
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
 |
-+-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
++-> FunctionDefinition: 'main' <unspecified-parameters>
+    |
+    +-> ReturnType
+    |   |
+    |   +-> category: 'basic'
+    |   |
+    |   +-> descriptor: 'int'
     |
     +-> CompoundStatement
         |
-        +-> VariableDeclaration: 'y' {type: 'int'}
+        +-> VariableDeclaration: 'y'
+        |   |
+        |   +-> Type
+        |       |
+        |       +-> category: 'basic'
+        |       |
+        |       +-> descriptor: 'int'
         |
         +-> ExpressionStatement
         |   |
         |   +-> AssignmentExpression: '='
         |       |
-        |       +-> VariableExpression: 'y' {type: 'int'}
+        |       +-> VariableExpression: 'y'
+        |       |   |
+        |       |   +-> Type
+        |       |       |
+        |       |       +-> category: 'basic'
+        |       |       |
+        |       |       +-> descriptor: 'int'
         |       |
-        |       +-> IntegerConstant: '42' {type: 'int'}
-        |
-        +-> VariableDeclaration: 'x' {type: 'unsigned int'}
-        |
-        +-> ExpressionStatement
-        |   |
-        |   +-> AssignmentExpression: '='
-        |       |
-        |       +-> VariableExpression: 'x' {type: 'unsigned int'}
-        |       |
-        |       +-> CastExpression {type: 'unsigned int'}
+        |       +-> IntegerConstant: '42'
         |           |
-        |           +-> VariableExpression: 'y' {type: 'int'}
+        |           +-> Type
+        |               |
+        |               +-> category: 'basic'
+        |               |
+        |               +-> descriptor: 'int'
+        |
+        +-> VariableDeclaration: 'x'
+        |   |
+        |   +-> Type
+        |       |
+        |       +-> category: 'basic'
+        |       |
+        |       +-> descriptor: 'unsigned int'
+        |
+        +-> ExpressionStatement
+        |   |
+        |   +-> AssignmentExpression: '='
+        |       |
+        |       +-> VariableExpression: 'x'
+        |       |   |
+        |       |   +-> Type
+        |       |       |
+        |       |       +-> category: 'basic'
+        |       |       |
+        |       |       +-> descriptor: 'unsigned int'
+        |       |
+        |       +-> CastExpression
+        |           |
+        |           +-> Type
+        |           |   |
+        |           |   +-> category: 'basic'
+        |           |   |
+        |           |   +-> descriptor: 'unsigned int'
+        |           |
+        |           +-> VariableExpression: 'y'
+        |               |
+        |               +-> Type
+        |                   |
+        |                   +-> category: 'basic'
+        |                   |
+        |                   +-> descriptor: 'int'
         |
         +-> ReturnStatement
             |
-            +-> VariableExpression: 'x' {type: 'unsigned int'}
+            +-> VariableExpression: 'x'
+                |
+                +-> Type
+                    |
+                    +-> category: 'basic'
+                    |
+                    +-> descriptor: 'unsigned int'
 
 @endtest
 
@@ -146,34 +308,88 @@ int main() {
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
 |
-+-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
++-> FunctionDefinition: 'main' <unspecified-parameters>
+    |
+    +-> ReturnType
+    |   |
+    |   +-> category: 'basic'
+    |   |
+    |   +-> descriptor: 'int'
     |
     +-> CompoundStatement
         |
-        +-> VariableDeclaration: 'y' {type: 'int'}
+        +-> VariableDeclaration: 'y'
+        |   |
+        |   +-> Type
+        |       |
+        |       +-> category: 'basic'
+        |       |
+        |       +-> descriptor: 'int'
         |
         +-> ExpressionStatement
         |   |
         |   +-> AssignmentExpression: '='
         |       |
-        |       +-> VariableExpression: 'y' {type: 'int'}
+        |       +-> VariableExpression: 'y'
+        |       |   |
+        |       |   +-> Type
+        |       |       |
+        |       |       +-> category: 'basic'
+        |       |       |
+        |       |       +-> descriptor: 'int'
         |       |
-        |       +-> IntegerConstant: '42' {type: 'int'}
-        |
-        +-> VariableDeclaration: 'x' {type: 'unsigned int'}
-        |
-        +-> ExpressionStatement
-        |   |
-        |   +-> AssignmentExpression: '='
-        |       |
-        |       +-> VariableExpression: 'x' {type: 'unsigned int'}
-        |       |
-        |       +-> CastExpression {type: 'unsigned int'}
+        |       +-> IntegerConstant: '42'
         |           |
-        |           +-> VariableExpression: 'y' {type: 'int'}
+        |           +-> Type
+        |               |
+        |               +-> category: 'basic'
+        |               |
+        |               +-> descriptor: 'int'
+        |
+        +-> VariableDeclaration: 'x'
+        |   |
+        |   +-> Type
+        |       |
+        |       +-> category: 'basic'
+        |       |
+        |       +-> descriptor: 'unsigned int'
+        |
+        +-> ExpressionStatement
+        |   |
+        |   +-> AssignmentExpression: '='
+        |       |
+        |       +-> VariableExpression: 'x'
+        |       |   |
+        |       |   +-> Type
+        |       |       |
+        |       |       +-> category: 'basic'
+        |       |       |
+        |       |       +-> descriptor: 'unsigned int'
+        |       |
+        |       +-> CastExpression
+        |           |
+        |           +-> Type
+        |           |   |
+        |           |   +-> category: 'basic'
+        |           |   |
+        |           |   +-> descriptor: 'unsigned int'
+        |           |
+        |           +-> VariableExpression: 'y'
+        |               |
+        |               +-> Type
+        |                   |
+        |                   +-> category: 'basic'
+        |                   |
+        |                   +-> descriptor: 'int'
         |
         +-> ReturnStatement
             |
-            +-> VariableExpression: 'x' {type: 'unsigned int'}
+            +-> VariableExpression: 'x'
+                |
+                +-> Type
+                    |
+                    +-> category: 'basic'
+                    |
+                    +-> descriptor: 'unsigned int'
 
 @endtest

@@ -5,15 +5,27 @@ int main() {
 }
 @whenRun("./bin/cclynx", args="--emit-ast")
 @expectOutput("stdout")
-TranslationUnit: 'expr_1.c'
+TranslationUnit: '{{any}}'
 |
-+-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
++-> FunctionDefinition: 'main' <unspecified-parameters>
+    |
+    +-> ReturnType
+    |   |
+    |   +-> category: 'basic'
+    |   |
+    |   +-> descriptor: 'int'
     |
     +-> CompoundStatement
         |
         +-> ExpressionStatement
             |
-            +-> IntegerConstant: '777' {type: 'int'}
+            +-> IntegerConstant: '777'
+                |
+                +-> Type
+                    |
+                    +-> category: 'basic'
+                    |
+                    +-> descriptor: 'int'
 
 @endtest
 
@@ -26,13 +38,25 @@ int main() {
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
 |
-+-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
++-> FunctionDefinition: 'main' <unspecified-parameters>
+    |
+    +-> ReturnType
+    |   |
+    |   +-> category: 'basic'
+    |   |
+    |   +-> descriptor: 'int'
     |
     +-> CompoundStatement
         |
         +-> ExpressionStatement
             |
-            +-> FloatConstant: '12.512000' {type: 'float'}
+            +-> FloatConstant: '12.512000'
+                |
+                +-> Type
+                    |
+                    +-> category: 'basic'
+                    |
+                    +-> descriptor: 'float'
 
 @endtest
 
@@ -45,17 +69,41 @@ int main() {
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
 |
-+-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
++-> FunctionDefinition: 'main' <unspecified-parameters>
+    |
+    +-> ReturnType
+    |   |
+    |   +-> category: 'basic'
+    |   |
+    |   +-> descriptor: 'int'
     |
     +-> CompoundStatement
         |
         +-> ExpressionStatement
             |
-            +-> MultiplicativeExpression: '*' {type: 'int'}
+            +-> MultiplicativeExpression: '*'
                 |
-                +-> IntegerConstant: '7' {type: 'int'}
+                +-> Type
+                |   |
+                |   +-> category: 'basic'
+                |   |
+                |   +-> descriptor: 'int'
                 |
-                +-> IntegerConstant: '8' {type: 'int'}
+                +-> IntegerConstant: '7'
+                |   |
+                |   +-> Type
+                |       |
+                |       +-> category: 'basic'
+                |       |
+                |       +-> descriptor: 'int'
+                |
+                +-> IntegerConstant: '8'
+                    |
+                    +-> Type
+                        |
+                        +-> category: 'basic'
+                        |
+                        +-> descriptor: 'int'
 
 @endtest
 
@@ -68,21 +116,57 @@ int main() {
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
 |
-+-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
++-> FunctionDefinition: 'main' <unspecified-parameters>
+    |
+    +-> ReturnType
+    |   |
+    |   +-> category: 'basic'
+    |   |
+    |   +-> descriptor: 'int'
     |
     +-> CompoundStatement
         |
         +-> ExpressionStatement
             |
-            +-> MultiplicativeExpression: '*' {type: 'int'}
+            +-> MultiplicativeExpression: '*'
                 |
-                +-> MultiplicativeExpression: '*' {type: 'int'}
+                +-> Type
                 |   |
-                |   +-> IntegerConstant: '7' {type: 'int'}
+                |   +-> category: 'basic'
                 |   |
-                |   +-> IntegerConstant: '6' {type: 'int'}
+                |   +-> descriptor: 'int'
                 |
-                +-> IntegerConstant: '8' {type: 'int'}
+                +-> MultiplicativeExpression: '*'
+                |   |
+                |   +-> Type
+                |   |   |
+                |   |   +-> category: 'basic'
+                |   |   |
+                |   |   +-> descriptor: 'int'
+                |   |
+                |   +-> IntegerConstant: '7'
+                |   |   |
+                |   |   +-> Type
+                |   |       |
+                |   |       +-> category: 'basic'
+                |   |       |
+                |   |       +-> descriptor: 'int'
+                |   |
+                |   +-> IntegerConstant: '6'
+                |       |
+                |       +-> Type
+                |           |
+                |           +-> category: 'basic'
+                |           |
+                |           +-> descriptor: 'int'
+                |
+                +-> IntegerConstant: '8'
+                    |
+                    +-> Type
+                        |
+                        +-> category: 'basic'
+                        |
+                        +-> descriptor: 'int'
 
 @endtest
 
@@ -95,29 +179,89 @@ int main() {
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
 |
-+-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
++-> FunctionDefinition: 'main' <unspecified-parameters>
+    |
+    +-> ReturnType
+    |   |
+    |   +-> category: 'basic'
+    |   |
+    |   +-> descriptor: 'int'
     |
     +-> CompoundStatement
         |
         +-> ExpressionStatement
             |
-            +-> MultiplicativeExpression: '*' {type: 'int'}
+            +-> MultiplicativeExpression: '*'
                 |
-                +-> MultiplicativeExpression: '*' {type: 'int'}
+                +-> Type
                 |   |
-                |   +-> MultiplicativeExpression: '*' {type: 'int'}
-                |   |   |
-                |   |   +-> MultiplicativeExpression: '*' {type: 'int'}
-                |   |   |   |
-                |   |   |   +-> IntegerConstant: '7' {type: 'int'}
-                |   |   |   |
-                |   |   |   +-> IntegerConstant: '6' {type: 'int'}
-                |   |   |
-                |   |   +-> IntegerConstant: '8' {type: 'int'}
+                |   +-> category: 'basic'
                 |   |
-                |   +-> IntegerConstant: '10' {type: 'int'}
+                |   +-> descriptor: 'int'
                 |
-                +-> IntegerConstant: '15' {type: 'int'}
+                +-> MultiplicativeExpression: '*'
+                |   |
+                |   +-> Type
+                |   |   |
+                |   |   +-> category: 'basic'
+                |   |   |
+                |   |   +-> descriptor: 'int'
+                |   |
+                |   +-> MultiplicativeExpression: '*'
+                |   |   |
+                |   |   +-> Type
+                |   |   |   |
+                |   |   |   +-> category: 'basic'
+                |   |   |   |
+                |   |   |   +-> descriptor: 'int'
+                |   |   |
+                |   |   +-> MultiplicativeExpression: '*'
+                |   |   |   |
+                |   |   |   +-> Type
+                |   |   |   |   |
+                |   |   |   |   +-> category: 'basic'
+                |   |   |   |   |
+                |   |   |   |   +-> descriptor: 'int'
+                |   |   |   |
+                |   |   |   +-> IntegerConstant: '7'
+                |   |   |   |   |
+                |   |   |   |   +-> Type
+                |   |   |   |       |
+                |   |   |   |       +-> category: 'basic'
+                |   |   |   |       |
+                |   |   |   |       +-> descriptor: 'int'
+                |   |   |   |
+                |   |   |   +-> IntegerConstant: '6'
+                |   |   |       |
+                |   |   |       +-> Type
+                |   |   |           |
+                |   |   |           +-> category: 'basic'
+                |   |   |           |
+                |   |   |           +-> descriptor: 'int'
+                |   |   |
+                |   |   +-> IntegerConstant: '8'
+                |   |       |
+                |   |       +-> Type
+                |   |           |
+                |   |           +-> category: 'basic'
+                |   |           |
+                |   |           +-> descriptor: 'int'
+                |   |
+                |   +-> IntegerConstant: '10'
+                |       |
+                |       +-> Type
+                |           |
+                |           +-> category: 'basic'
+                |           |
+                |           +-> descriptor: 'int'
+                |
+                +-> IntegerConstant: '15'
+                    |
+                    +-> Type
+                        |
+                        +-> category: 'basic'
+                        |
+                        +-> descriptor: 'int'
 
 @endtest
 
@@ -130,21 +274,57 @@ int main() {
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
 |
-+-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
++-> FunctionDefinition: 'main' <unspecified-parameters>
+    |
+    +-> ReturnType
+    |   |
+    |   +-> category: 'basic'
+    |   |
+    |   +-> descriptor: 'int'
     |
     +-> CompoundStatement
         |
         +-> ExpressionStatement
             |
-            +-> MultiplicativeExpression: '*' {type: 'int'}
+            +-> MultiplicativeExpression: '*'
                 |
-                +-> MultiplicativeExpression: '/' {type: 'int'}
+                +-> Type
                 |   |
-                |   +-> IntegerConstant: '15' {type: 'int'}
+                |   +-> category: 'basic'
                 |   |
-                |   +-> IntegerConstant: '3' {type: 'int'}
+                |   +-> descriptor: 'int'
                 |
-                +-> IntegerConstant: '101' {type: 'int'}
+                +-> MultiplicativeExpression: '/'
+                |   |
+                |   +-> Type
+                |   |   |
+                |   |   +-> category: 'basic'
+                |   |   |
+                |   |   +-> descriptor: 'int'
+                |   |
+                |   +-> IntegerConstant: '15'
+                |   |   |
+                |   |   +-> Type
+                |   |       |
+                |   |       +-> category: 'basic'
+                |   |       |
+                |   |       +-> descriptor: 'int'
+                |   |
+                |   +-> IntegerConstant: '3'
+                |       |
+                |       +-> Type
+                |           |
+                |           +-> category: 'basic'
+                |           |
+                |           +-> descriptor: 'int'
+                |
+                +-> IntegerConstant: '101'
+                    |
+                    +-> Type
+                        |
+                        +-> category: 'basic'
+                        |
+                        +-> descriptor: 'int'
 
 @endtest
 
@@ -157,17 +337,41 @@ int main() {
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
 |
-+-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
++-> FunctionDefinition: 'main' <unspecified-parameters>
+    |
+    +-> ReturnType
+    |   |
+    |   +-> category: 'basic'
+    |   |
+    |   +-> descriptor: 'int'
     |
     +-> CompoundStatement
         |
         +-> ExpressionStatement
             |
-            +-> AdditiveExpression: '+' {type: 'int'}
+            +-> AdditiveExpression: '+'
                 |
-                +-> IntegerConstant: '7' {type: 'int'}
+                +-> Type
+                |   |
+                |   +-> category: 'basic'
+                |   |
+                |   +-> descriptor: 'int'
                 |
-                +-> IntegerConstant: '8' {type: 'int'}
+                +-> IntegerConstant: '7'
+                |   |
+                |   +-> Type
+                |       |
+                |       +-> category: 'basic'
+                |       |
+                |       +-> descriptor: 'int'
+                |
+                +-> IntegerConstant: '8'
+                    |
+                    +-> Type
+                        |
+                        +-> category: 'basic'
+                        |
+                        +-> descriptor: 'int'
 
 @endtest
 
@@ -180,21 +384,57 @@ int main() {
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
 |
-+-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
++-> FunctionDefinition: 'main' <unspecified-parameters>
+    |
+    +-> ReturnType
+    |   |
+    |   +-> category: 'basic'
+    |   |
+    |   +-> descriptor: 'int'
     |
     +-> CompoundStatement
         |
         +-> ExpressionStatement
             |
-            +-> AdditiveExpression: '+' {type: 'int'}
+            +-> AdditiveExpression: '+'
                 |
-                +-> AdditiveExpression: '+' {type: 'int'}
+                +-> Type
                 |   |
-                |   +-> IntegerConstant: '7' {type: 'int'}
+                |   +-> category: 'basic'
                 |   |
-                |   +-> IntegerConstant: '6' {type: 'int'}
+                |   +-> descriptor: 'int'
                 |
-                +-> IntegerConstant: '8' {type: 'int'}
+                +-> AdditiveExpression: '+'
+                |   |
+                |   +-> Type
+                |   |   |
+                |   |   +-> category: 'basic'
+                |   |   |
+                |   |   +-> descriptor: 'int'
+                |   |
+                |   +-> IntegerConstant: '7'
+                |   |   |
+                |   |   +-> Type
+                |   |       |
+                |   |       +-> category: 'basic'
+                |   |       |
+                |   |       +-> descriptor: 'int'
+                |   |
+                |   +-> IntegerConstant: '6'
+                |       |
+                |       +-> Type
+                |           |
+                |           +-> category: 'basic'
+                |           |
+                |           +-> descriptor: 'int'
+                |
+                +-> IntegerConstant: '8'
+                    |
+                    +-> Type
+                        |
+                        +-> category: 'basic'
+                        |
+                        +-> descriptor: 'int'
 
 @endtest
 
@@ -207,29 +447,89 @@ int main() {
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
 |
-+-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
++-> FunctionDefinition: 'main' <unspecified-parameters>
+    |
+    +-> ReturnType
+    |   |
+    |   +-> category: 'basic'
+    |   |
+    |   +-> descriptor: 'int'
     |
     +-> CompoundStatement
         |
         +-> ExpressionStatement
             |
-            +-> AdditiveExpression: '+' {type: 'int'}
+            +-> AdditiveExpression: '+'
                 |
-                +-> AdditiveExpression: '+' {type: 'int'}
+                +-> Type
                 |   |
-                |   +-> AdditiveExpression: '+' {type: 'int'}
-                |   |   |
-                |   |   +-> AdditiveExpression: '+' {type: 'int'}
-                |   |   |   |
-                |   |   |   +-> IntegerConstant: '7' {type: 'int'}
-                |   |   |   |
-                |   |   |   +-> IntegerConstant: '6' {type: 'int'}
-                |   |   |
-                |   |   +-> IntegerConstant: '8' {type: 'int'}
+                |   +-> category: 'basic'
                 |   |
-                |   +-> IntegerConstant: '10' {type: 'int'}
+                |   +-> descriptor: 'int'
                 |
-                +-> IntegerConstant: '15' {type: 'int'}
+                +-> AdditiveExpression: '+'
+                |   |
+                |   +-> Type
+                |   |   |
+                |   |   +-> category: 'basic'
+                |   |   |
+                |   |   +-> descriptor: 'int'
+                |   |
+                |   +-> AdditiveExpression: '+'
+                |   |   |
+                |   |   +-> Type
+                |   |   |   |
+                |   |   |   +-> category: 'basic'
+                |   |   |   |
+                |   |   |   +-> descriptor: 'int'
+                |   |   |
+                |   |   +-> AdditiveExpression: '+'
+                |   |   |   |
+                |   |   |   +-> Type
+                |   |   |   |   |
+                |   |   |   |   +-> category: 'basic'
+                |   |   |   |   |
+                |   |   |   |   +-> descriptor: 'int'
+                |   |   |   |
+                |   |   |   +-> IntegerConstant: '7'
+                |   |   |   |   |
+                |   |   |   |   +-> Type
+                |   |   |   |       |
+                |   |   |   |       +-> category: 'basic'
+                |   |   |   |       |
+                |   |   |   |       +-> descriptor: 'int'
+                |   |   |   |
+                |   |   |   +-> IntegerConstant: '6'
+                |   |   |       |
+                |   |   |       +-> Type
+                |   |   |           |
+                |   |   |           +-> category: 'basic'
+                |   |   |           |
+                |   |   |           +-> descriptor: 'int'
+                |   |   |
+                |   |   +-> IntegerConstant: '8'
+                |   |       |
+                |   |       +-> Type
+                |   |           |
+                |   |           +-> category: 'basic'
+                |   |           |
+                |   |           +-> descriptor: 'int'
+                |   |
+                |   +-> IntegerConstant: '10'
+                |       |
+                |       +-> Type
+                |           |
+                |           +-> category: 'basic'
+                |           |
+                |           +-> descriptor: 'int'
+                |
+                +-> IntegerConstant: '15'
+                    |
+                    +-> Type
+                        |
+                        +-> category: 'basic'
+                        |
+                        +-> descriptor: 'int'
 
 @endtest
 
@@ -242,21 +542,57 @@ int main() {
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
 |
-+-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
++-> FunctionDefinition: 'main' <unspecified-parameters>
+    |
+    +-> ReturnType
+    |   |
+    |   +-> category: 'basic'
+    |   |
+    |   +-> descriptor: 'int'
     |
     +-> CompoundStatement
         |
         +-> ExpressionStatement
             |
-            +-> AdditiveExpression: '-' {type: 'int'}
+            +-> AdditiveExpression: '-'
                 |
-                +-> AdditiveExpression: '+' {type: 'int'}
+                +-> Type
                 |   |
-                |   +-> IntegerConstant: '15' {type: 'int'}
+                |   +-> category: 'basic'
                 |   |
-                |   +-> IntegerConstant: '3' {type: 'int'}
+                |   +-> descriptor: 'int'
                 |
-                +-> IntegerConstant: '101' {type: 'int'}
+                +-> AdditiveExpression: '+'
+                |   |
+                |   +-> Type
+                |   |   |
+                |   |   +-> category: 'basic'
+                |   |   |
+                |   |   +-> descriptor: 'int'
+                |   |
+                |   +-> IntegerConstant: '15'
+                |   |   |
+                |   |   +-> Type
+                |   |       |
+                |   |       +-> category: 'basic'
+                |   |       |
+                |   |       +-> descriptor: 'int'
+                |   |
+                |   +-> IntegerConstant: '3'
+                |       |
+                |       +-> Type
+                |           |
+                |           +-> category: 'basic'
+                |           |
+                |           +-> descriptor: 'int'
+                |
+                +-> IntegerConstant: '101'
+                    |
+                    +-> Type
+                        |
+                        +-> category: 'basic'
+                        |
+                        +-> descriptor: 'int'
 
 @endtest
 
@@ -269,25 +605,73 @@ int main() {
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
 |
-+-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
++-> FunctionDefinition: 'main' <unspecified-parameters>
+    |
+    +-> ReturnType
+    |   |
+    |   +-> category: 'basic'
+    |   |
+    |   +-> descriptor: 'int'
     |
     +-> CompoundStatement
         |
         +-> ExpressionStatement
             |
-            +-> AdditiveExpression: '-' {type: 'int'}
+            +-> AdditiveExpression: '-'
                 |
-                +-> AdditiveExpression: '+' {type: 'int'}
+                +-> Type
                 |   |
-                |   +-> IntegerConstant: '1' {type: 'int'}
+                |   +-> category: 'basic'
                 |   |
-                |   +-> MultiplicativeExpression: '*' {type: 'int'}
-                |       |
-                |       +-> IntegerConstant: '7' {type: 'int'}
-                |       |
-                |       +-> IntegerConstant: '6' {type: 'int'}
+                |   +-> descriptor: 'int'
                 |
-                +-> IntegerConstant: '4' {type: 'int'}
+                +-> AdditiveExpression: '+'
+                |   |
+                |   +-> Type
+                |   |   |
+                |   |   +-> category: 'basic'
+                |   |   |
+                |   |   +-> descriptor: 'int'
+                |   |
+                |   +-> IntegerConstant: '1'
+                |   |   |
+                |   |   +-> Type
+                |   |       |
+                |   |       +-> category: 'basic'
+                |   |       |
+                |   |       +-> descriptor: 'int'
+                |   |
+                |   +-> MultiplicativeExpression: '*'
+                |       |
+                |       +-> Type
+                |       |   |
+                |       |   +-> category: 'basic'
+                |       |   |
+                |       |   +-> descriptor: 'int'
+                |       |
+                |       +-> IntegerConstant: '7'
+                |       |   |
+                |       |   +-> Type
+                |       |       |
+                |       |       +-> category: 'basic'
+                |       |       |
+                |       |       +-> descriptor: 'int'
+                |       |
+                |       +-> IntegerConstant: '6'
+                |           |
+                |           +-> Type
+                |               |
+                |               +-> category: 'basic'
+                |               |
+                |               +-> descriptor: 'int'
+                |
+                +-> IntegerConstant: '4'
+                    |
+                    +-> Type
+                        |
+                        +-> category: 'basic'
+                        |
+                        +-> descriptor: 'int'
 
 @endtest
 
@@ -300,17 +684,41 @@ int main() {
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
 |
-+-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
++-> FunctionDefinition: 'main' <unspecified-parameters>
+    |
+    +-> ReturnType
+    |   |
+    |   +-> category: 'basic'
+    |   |
+    |   +-> descriptor: 'int'
     |
     +-> CompoundStatement
         |
         +-> ExpressionStatement
             |
-            +-> RelationalExpression: '<' {type: 'int'}
+            +-> RelationalExpression: '<'
                 |
-                +-> IntegerConstant: '7' {type: 'int'}
+                +-> Type
+                |   |
+                |   +-> category: 'basic'
+                |   |
+                |   +-> descriptor: 'int'
                 |
-                +-> IntegerConstant: '8' {type: 'int'}
+                +-> IntegerConstant: '7'
+                |   |
+                |   +-> Type
+                |       |
+                |       +-> category: 'basic'
+                |       |
+                |       +-> descriptor: 'int'
+                |
+                +-> IntegerConstant: '8'
+                    |
+                    +-> Type
+                        |
+                        +-> category: 'basic'
+                        |
+                        +-> descriptor: 'int'
 
 @endtest
 
@@ -323,21 +731,57 @@ int main() {
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
 |
-+-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
++-> FunctionDefinition: 'main' <unspecified-parameters>
+    |
+    +-> ReturnType
+    |   |
+    |   +-> category: 'basic'
+    |   |
+    |   +-> descriptor: 'int'
     |
     +-> CompoundStatement
         |
         +-> ExpressionStatement
             |
-            +-> RelationalExpression: '<' {type: 'int'}
+            +-> RelationalExpression: '<'
                 |
-                +-> RelationalExpression: '<' {type: 'int'}
+                +-> Type
                 |   |
-                |   +-> IntegerConstant: '7' {type: 'int'}
+                |   +-> category: 'basic'
                 |   |
-                |   +-> IntegerConstant: '6' {type: 'int'}
+                |   +-> descriptor: 'int'
                 |
-                +-> IntegerConstant: '8' {type: 'int'}
+                +-> RelationalExpression: '<'
+                |   |
+                |   +-> Type
+                |   |   |
+                |   |   +-> category: 'basic'
+                |   |   |
+                |   |   +-> descriptor: 'int'
+                |   |
+                |   +-> IntegerConstant: '7'
+                |   |   |
+                |   |   +-> Type
+                |   |       |
+                |   |       +-> category: 'basic'
+                |   |       |
+                |   |       +-> descriptor: 'int'
+                |   |
+                |   +-> IntegerConstant: '6'
+                |       |
+                |       +-> Type
+                |           |
+                |           +-> category: 'basic'
+                |           |
+                |           +-> descriptor: 'int'
+                |
+                +-> IntegerConstant: '8'
+                    |
+                    +-> Type
+                        |
+                        +-> category: 'basic'
+                        |
+                        +-> descriptor: 'int'
 
 @endtest
 
@@ -350,29 +794,89 @@ int main() {
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
 |
-+-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
++-> FunctionDefinition: 'main' <unspecified-parameters>
+    |
+    +-> ReturnType
+    |   |
+    |   +-> category: 'basic'
+    |   |
+    |   +-> descriptor: 'int'
     |
     +-> CompoundStatement
         |
         +-> ExpressionStatement
             |
-            +-> RelationalExpression: '<' {type: 'int'}
+            +-> RelationalExpression: '<'
                 |
-                +-> RelationalExpression: '<' {type: 'int'}
+                +-> Type
                 |   |
-                |   +-> RelationalExpression: '<' {type: 'int'}
-                |   |   |
-                |   |   +-> RelationalExpression: '<' {type: 'int'}
-                |   |   |   |
-                |   |   |   +-> IntegerConstant: '7' {type: 'int'}
-                |   |   |   |
-                |   |   |   +-> IntegerConstant: '6' {type: 'int'}
-                |   |   |
-                |   |   +-> IntegerConstant: '8' {type: 'int'}
+                |   +-> category: 'basic'
                 |   |
-                |   +-> IntegerConstant: '10' {type: 'int'}
+                |   +-> descriptor: 'int'
                 |
-                +-> IntegerConstant: '15' {type: 'int'}
+                +-> RelationalExpression: '<'
+                |   |
+                |   +-> Type
+                |   |   |
+                |   |   +-> category: 'basic'
+                |   |   |
+                |   |   +-> descriptor: 'int'
+                |   |
+                |   +-> RelationalExpression: '<'
+                |   |   |
+                |   |   +-> Type
+                |   |   |   |
+                |   |   |   +-> category: 'basic'
+                |   |   |   |
+                |   |   |   +-> descriptor: 'int'
+                |   |   |
+                |   |   +-> RelationalExpression: '<'
+                |   |   |   |
+                |   |   |   +-> Type
+                |   |   |   |   |
+                |   |   |   |   +-> category: 'basic'
+                |   |   |   |   |
+                |   |   |   |   +-> descriptor: 'int'
+                |   |   |   |
+                |   |   |   +-> IntegerConstant: '7'
+                |   |   |   |   |
+                |   |   |   |   +-> Type
+                |   |   |   |       |
+                |   |   |   |       +-> category: 'basic'
+                |   |   |   |       |
+                |   |   |   |       +-> descriptor: 'int'
+                |   |   |   |
+                |   |   |   +-> IntegerConstant: '6'
+                |   |   |       |
+                |   |   |       +-> Type
+                |   |   |           |
+                |   |   |           +-> category: 'basic'
+                |   |   |           |
+                |   |   |           +-> descriptor: 'int'
+                |   |   |
+                |   |   +-> IntegerConstant: '8'
+                |   |       |
+                |   |       +-> Type
+                |   |           |
+                |   |           +-> category: 'basic'
+                |   |           |
+                |   |           +-> descriptor: 'int'
+                |   |
+                |   +-> IntegerConstant: '10'
+                |       |
+                |       +-> Type
+                |           |
+                |           +-> category: 'basic'
+                |           |
+                |           +-> descriptor: 'int'
+                |
+                +-> IntegerConstant: '15'
+                    |
+                    +-> Type
+                        |
+                        +-> category: 'basic'
+                        |
+                        +-> descriptor: 'int'
 
 @endtest
 
@@ -385,21 +889,57 @@ int main() {
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
 |
-+-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
++-> FunctionDefinition: 'main' <unspecified-parameters>
+    |
+    +-> ReturnType
+    |   |
+    |   +-> category: 'basic'
+    |   |
+    |   +-> descriptor: 'int'
     |
     +-> CompoundStatement
         |
         +-> ExpressionStatement
             |
-            +-> RelationalExpression: '>' {type: 'int'}
+            +-> RelationalExpression: '>'
                 |
-                +-> RelationalExpression: '<' {type: 'int'}
+                +-> Type
                 |   |
-                |   +-> IntegerConstant: '15' {type: 'int'}
+                |   +-> category: 'basic'
                 |   |
-                |   +-> IntegerConstant: '3' {type: 'int'}
+                |   +-> descriptor: 'int'
                 |
-                +-> IntegerConstant: '101' {type: 'int'}
+                +-> RelationalExpression: '<'
+                |   |
+                |   +-> Type
+                |   |   |
+                |   |   +-> category: 'basic'
+                |   |   |
+                |   |   +-> descriptor: 'int'
+                |   |
+                |   +-> IntegerConstant: '15'
+                |   |   |
+                |   |   +-> Type
+                |   |       |
+                |   |       +-> category: 'basic'
+                |   |       |
+                |   |       +-> descriptor: 'int'
+                |   |
+                |   +-> IntegerConstant: '3'
+                |       |
+                |       +-> Type
+                |           |
+                |           +-> category: 'basic'
+                |           |
+                |           +-> descriptor: 'int'
+                |
+                +-> IntegerConstant: '101'
+                    |
+                    +-> Type
+                        |
+                        +-> category: 'basic'
+                        |
+                        +-> descriptor: 'int'
 
 @endtest
 
@@ -412,17 +952,41 @@ int main() {
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
 |
-+-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
++-> FunctionDefinition: 'main' <unspecified-parameters>
+    |
+    +-> ReturnType
+    |   |
+    |   +-> category: 'basic'
+    |   |
+    |   +-> descriptor: 'int'
     |
     +-> CompoundStatement
         |
         +-> ExpressionStatement
             |
-            +-> EqualityExpression: '==' {type: 'int'}
+            +-> EqualityExpression: '=='
                 |
-                +-> IntegerConstant: '7' {type: 'int'}
+                +-> Type
+                |   |
+                |   +-> category: 'basic'
+                |   |
+                |   +-> descriptor: 'int'
                 |
-                +-> IntegerConstant: '8' {type: 'int'}
+                +-> IntegerConstant: '7'
+                |   |
+                |   +-> Type
+                |       |
+                |       +-> category: 'basic'
+                |       |
+                |       +-> descriptor: 'int'
+                |
+                +-> IntegerConstant: '8'
+                    |
+                    +-> Type
+                        |
+                        +-> category: 'basic'
+                        |
+                        +-> descriptor: 'int'
 
 @endtest
 
@@ -435,21 +999,57 @@ int main() {
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
 |
-+-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
++-> FunctionDefinition: 'main' <unspecified-parameters>
+    |
+    +-> ReturnType
+    |   |
+    |   +-> category: 'basic'
+    |   |
+    |   +-> descriptor: 'int'
     |
     +-> CompoundStatement
         |
         +-> ExpressionStatement
             |
-            +-> EqualityExpression: '==' {type: 'int'}
+            +-> EqualityExpression: '=='
                 |
-                +-> EqualityExpression: '==' {type: 'int'}
+                +-> Type
                 |   |
-                |   +-> IntegerConstant: '7' {type: 'int'}
+                |   +-> category: 'basic'
                 |   |
-                |   +-> IntegerConstant: '6' {type: 'int'}
+                |   +-> descriptor: 'int'
                 |
-                +-> IntegerConstant: '8' {type: 'int'}
+                +-> EqualityExpression: '=='
+                |   |
+                |   +-> Type
+                |   |   |
+                |   |   +-> category: 'basic'
+                |   |   |
+                |   |   +-> descriptor: 'int'
+                |   |
+                |   +-> IntegerConstant: '7'
+                |   |   |
+                |   |   +-> Type
+                |   |       |
+                |   |       +-> category: 'basic'
+                |   |       |
+                |   |       +-> descriptor: 'int'
+                |   |
+                |   +-> IntegerConstant: '6'
+                |       |
+                |       +-> Type
+                |           |
+                |           +-> category: 'basic'
+                |           |
+                |           +-> descriptor: 'int'
+                |
+                +-> IntegerConstant: '8'
+                    |
+                    +-> Type
+                        |
+                        +-> category: 'basic'
+                        |
+                        +-> descriptor: 'int'
 
 @endtest
 
@@ -462,29 +1062,89 @@ int main() {
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
 |
-+-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
++-> FunctionDefinition: 'main' <unspecified-parameters>
+    |
+    +-> ReturnType
+    |   |
+    |   +-> category: 'basic'
+    |   |
+    |   +-> descriptor: 'int'
     |
     +-> CompoundStatement
         |
         +-> ExpressionStatement
             |
-            +-> EqualityExpression: '==' {type: 'int'}
+            +-> EqualityExpression: '=='
                 |
-                +-> EqualityExpression: '==' {type: 'int'}
+                +-> Type
                 |   |
-                |   +-> EqualityExpression: '==' {type: 'int'}
-                |   |   |
-                |   |   +-> EqualityExpression: '==' {type: 'int'}
-                |   |   |   |
-                |   |   |   +-> IntegerConstant: '7' {type: 'int'}
-                |   |   |   |
-                |   |   |   +-> IntegerConstant: '6' {type: 'int'}
-                |   |   |
-                |   |   +-> IntegerConstant: '8' {type: 'int'}
+                |   +-> category: 'basic'
                 |   |
-                |   +-> IntegerConstant: '10' {type: 'int'}
+                |   +-> descriptor: 'int'
                 |
-                +-> IntegerConstant: '15' {type: 'int'}
+                +-> EqualityExpression: '=='
+                |   |
+                |   +-> Type
+                |   |   |
+                |   |   +-> category: 'basic'
+                |   |   |
+                |   |   +-> descriptor: 'int'
+                |   |
+                |   +-> EqualityExpression: '=='
+                |   |   |
+                |   |   +-> Type
+                |   |   |   |
+                |   |   |   +-> category: 'basic'
+                |   |   |   |
+                |   |   |   +-> descriptor: 'int'
+                |   |   |
+                |   |   +-> EqualityExpression: '=='
+                |   |   |   |
+                |   |   |   +-> Type
+                |   |   |   |   |
+                |   |   |   |   +-> category: 'basic'
+                |   |   |   |   |
+                |   |   |   |   +-> descriptor: 'int'
+                |   |   |   |
+                |   |   |   +-> IntegerConstant: '7'
+                |   |   |   |   |
+                |   |   |   |   +-> Type
+                |   |   |   |       |
+                |   |   |   |       +-> category: 'basic'
+                |   |   |   |       |
+                |   |   |   |       +-> descriptor: 'int'
+                |   |   |   |
+                |   |   |   +-> IntegerConstant: '6'
+                |   |   |       |
+                |   |   |       +-> Type
+                |   |   |           |
+                |   |   |           +-> category: 'basic'
+                |   |   |           |
+                |   |   |           +-> descriptor: 'int'
+                |   |   |
+                |   |   +-> IntegerConstant: '8'
+                |   |       |
+                |   |       +-> Type
+                |   |           |
+                |   |           +-> category: 'basic'
+                |   |           |
+                |   |           +-> descriptor: 'int'
+                |   |
+                |   +-> IntegerConstant: '10'
+                |       |
+                |       +-> Type
+                |           |
+                |           +-> category: 'basic'
+                |           |
+                |           +-> descriptor: 'int'
+                |
+                +-> IntegerConstant: '15'
+                    |
+                    +-> Type
+                        |
+                        +-> category: 'basic'
+                        |
+                        +-> descriptor: 'int'
 
 @endtest
 
@@ -497,21 +1157,57 @@ int main() {
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
 |
-+-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
++-> FunctionDefinition: 'main' <unspecified-parameters>
+    |
+    +-> ReturnType
+    |   |
+    |   +-> category: 'basic'
+    |   |
+    |   +-> descriptor: 'int'
     |
     +-> CompoundStatement
         |
         +-> ExpressionStatement
             |
-            +-> EqualityExpression: '!=' {type: 'int'}
+            +-> EqualityExpression: '!='
                 |
-                +-> EqualityExpression: '==' {type: 'int'}
+                +-> Type
                 |   |
-                |   +-> IntegerConstant: '15' {type: 'int'}
+                |   +-> category: 'basic'
                 |   |
-                |   +-> IntegerConstant: '3' {type: 'int'}
+                |   +-> descriptor: 'int'
                 |
-                +-> IntegerConstant: '101' {type: 'int'}
+                +-> EqualityExpression: '=='
+                |   |
+                |   +-> Type
+                |   |   |
+                |   |   +-> category: 'basic'
+                |   |   |
+                |   |   +-> descriptor: 'int'
+                |   |
+                |   +-> IntegerConstant: '15'
+                |   |   |
+                |   |   +-> Type
+                |   |       |
+                |   |       +-> category: 'basic'
+                |   |       |
+                |   |       +-> descriptor: 'int'
+                |   |
+                |   +-> IntegerConstant: '3'
+                |       |
+                |       +-> Type
+                |           |
+                |           +-> category: 'basic'
+                |           |
+                |           +-> descriptor: 'int'
+                |
+                +-> IntegerConstant: '101'
+                    |
+                    +-> Type
+                        |
+                        +-> category: 'basic'
+                        |
+                        +-> descriptor: 'int'
 
 @endtest
 
@@ -524,21 +1220,57 @@ int main() {
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
 |
-+-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
++-> FunctionDefinition: 'main' <unspecified-parameters>
+    |
+    +-> ReturnType
+    |   |
+    |   +-> category: 'basic'
+    |   |
+    |   +-> descriptor: 'int'
     |
     +-> CompoundStatement
         |
         +-> ExpressionStatement
             |
-            +-> EqualityExpression: '==' {type: 'int'}
+            +-> EqualityExpression: '=='
                 |
-                +-> IntegerConstant: '1' {type: 'int'}
+                +-> Type
+                |   |
+                |   +-> category: 'basic'
+                |   |
+                |   +-> descriptor: 'int'
                 |
-                +-> AdditiveExpression: '+' {type: 'int'}
+                +-> IntegerConstant: '1'
+                |   |
+                |   +-> Type
+                |       |
+                |       +-> category: 'basic'
+                |       |
+                |       +-> descriptor: 'int'
+                |
+                +-> AdditiveExpression: '+'
                     |
-                    +-> IntegerConstant: '2' {type: 'int'}
+                    +-> Type
+                    |   |
+                    |   +-> category: 'basic'
+                    |   |
+                    |   +-> descriptor: 'int'
                     |
-                    +-> IntegerConstant: '3' {type: 'int'}
+                    +-> IntegerConstant: '2'
+                    |   |
+                    |   +-> Type
+                    |       |
+                    |       +-> category: 'basic'
+                    |       |
+                    |       +-> descriptor: 'int'
+                    |
+                    +-> IntegerConstant: '3'
+                        |
+                        +-> Type
+                            |
+                            +-> category: 'basic'
+                            |
+                            +-> descriptor: 'int'
 
 @endtest
 
@@ -551,21 +1283,57 @@ int main() {
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
 |
-+-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
++-> FunctionDefinition: 'main' <unspecified-parameters>
+    |
+    +-> ReturnType
+    |   |
+    |   +-> category: 'basic'
+    |   |
+    |   +-> descriptor: 'int'
     |
     +-> CompoundStatement
         |
         +-> ExpressionStatement
             |
-            +-> RelationalExpression: '<' {type: 'int'}
+            +-> RelationalExpression: '<'
                 |
-                +-> IntegerConstant: '1' {type: 'int'}
+                +-> Type
+                |   |
+                |   +-> category: 'basic'
+                |   |
+                |   +-> descriptor: 'int'
                 |
-                +-> AdditiveExpression: '+' {type: 'int'}
+                +-> IntegerConstant: '1'
+                |   |
+                |   +-> Type
+                |       |
+                |       +-> category: 'basic'
+                |       |
+                |       +-> descriptor: 'int'
+                |
+                +-> AdditiveExpression: '+'
                     |
-                    +-> IntegerConstant: '2' {type: 'int'}
+                    +-> Type
+                    |   |
+                    |   +-> category: 'basic'
+                    |   |
+                    |   +-> descriptor: 'int'
                     |
-                    +-> IntegerConstant: '3' {type: 'int'}
+                    +-> IntegerConstant: '2'
+                    |   |
+                    |   +-> Type
+                    |       |
+                    |       +-> category: 'basic'
+                    |       |
+                    |       +-> descriptor: 'int'
+                    |
+                    +-> IntegerConstant: '3'
+                        |
+                        +-> Type
+                            |
+                            +-> category: 'basic'
+                            |
+                            +-> descriptor: 'int'
 
 @endtest
 
@@ -579,19 +1347,43 @@ int main() {
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
 |
-+-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
++-> FunctionDefinition: 'main' <unspecified-parameters>
+    |
+    +-> ReturnType
+    |   |
+    |   +-> category: 'basic'
+    |   |
+    |   +-> descriptor: 'int'
     |
     +-> CompoundStatement
         |
-        +-> VariableDeclaration: 'x' {type: 'int'}
+        +-> VariableDeclaration: 'x'
+        |   |
+        |   +-> Type
+        |       |
+        |       +-> category: 'basic'
+        |       |
+        |       +-> descriptor: 'int'
         |
         +-> ExpressionStatement
             |
             +-> AssignmentExpression: '='
                 |
-                +-> VariableExpression: 'x' {type: 'int'}
+                +-> VariableExpression: 'x'
+                |   |
+                |   +-> Type
+                |       |
+                |       +-> category: 'basic'
+                |       |
+                |       +-> descriptor: 'int'
                 |
-                +-> IntegerConstant: '3' {type: 'int'}
+                +-> IntegerConstant: '3'
+                    |
+                    +-> Type
+                        |
+                        +-> category: 'basic'
+                        |
+                        +-> descriptor: 'int'
 
 @endtest
 
@@ -604,21 +1396,57 @@ int main() {
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
 |
-+-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
++-> FunctionDefinition: 'main' <unspecified-parameters>
+    |
+    +-> ReturnType
+    |   |
+    |   +-> category: 'basic'
+    |   |
+    |   +-> descriptor: 'int'
     |
     +-> CompoundStatement
         |
         +-> ExpressionStatement
             |
-            +-> MultiplicativeExpression: '*' {type: 'int'}
+            +-> MultiplicativeExpression: '*'
                 |
-                +-> IntegerConstant: '77' {type: 'int'}
+                +-> Type
+                |   |
+                |   +-> category: 'basic'
+                |   |
+                |   +-> descriptor: 'int'
                 |
-                +-> AdditiveExpression: '+' {type: 'int'}
+                +-> IntegerConstant: '77'
+                |   |
+                |   +-> Type
+                |       |
+                |       +-> category: 'basic'
+                |       |
+                |       +-> descriptor: 'int'
+                |
+                +-> AdditiveExpression: '+'
                     |
-                    +-> IntegerConstant: '1' {type: 'int'}
+                    +-> Type
+                    |   |
+                    |   +-> category: 'basic'
+                    |   |
+                    |   +-> descriptor: 'int'
                     |
-                    +-> IntegerConstant: '23' {type: 'int'}
+                    +-> IntegerConstant: '1'
+                    |   |
+                    |   +-> Type
+                    |       |
+                    |       +-> category: 'basic'
+                    |       |
+                    |       +-> descriptor: 'int'
+                    |
+                    +-> IntegerConstant: '23'
+                        |
+                        +-> Type
+                            |
+                            +-> category: 'basic'
+                            |
+                            +-> descriptor: 'int'
 
 @endtest
 
@@ -636,51 +1464,147 @@ int main() {
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
 |
-+-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
++-> FunctionDefinition: 'main' <unspecified-parameters>
+    |
+    +-> ReturnType
+    |   |
+    |   +-> category: 'basic'
+    |   |
+    |   +-> descriptor: 'int'
     |
     +-> CompoundStatement
         |
-        +-> VariableDeclaration: 'x' {type: 'float'}
+        +-> VariableDeclaration: 'x'
+        |   |
+        |   +-> Type
+        |       |
+        |       +-> category: 'basic'
+        |       |
+        |       +-> descriptor: 'float'
         |
         +-> ExpressionStatement
         |   |
         |   +-> AssignmentExpression: '='
         |       |
-        |       +-> VariableExpression: 'x' {type: 'float'}
+        |       +-> VariableExpression: 'x'
+        |       |   |
+        |       |   +-> Type
+        |       |       |
+        |       |       +-> category: 'basic'
+        |       |       |
+        |       |       +-> descriptor: 'float'
         |       |
-        |       +-> FloatConstant: '4.500000' {type: 'float'}
+        |       +-> FloatConstant: '4.500000'
+        |           |
+        |           +-> Type
+        |               |
+        |               +-> category: 'basic'
+        |               |
+        |               +-> descriptor: 'float'
         |
         +-> ExpressionStatement
         |   |
-        |   +-> AdditiveExpression: '+' {type: 'float'}
+        |   +-> AdditiveExpression: '+'
         |       |
-        |       +-> FloatConstant: '12.300000' {type: 'float'}
+        |       +-> Type
+        |       |   |
+        |       |   +-> category: 'basic'
+        |       |   |
+        |       |   +-> descriptor: 'float'
         |       |
-        |       +-> FloatConstant: '0.200000' {type: 'float'}
+        |       +-> FloatConstant: '12.300000'
+        |       |   |
+        |       |   +-> Type
+        |       |       |
+        |       |       +-> category: 'basic'
+        |       |       |
+        |       |       +-> descriptor: 'float'
+        |       |
+        |       +-> FloatConstant: '0.200000'
+        |           |
+        |           +-> Type
+        |               |
+        |               +-> category: 'basic'
+        |               |
+        |               +-> descriptor: 'float'
         |
         +-> ExpressionStatement
         |   |
-        |   +-> AdditiveExpression: '-' {type: 'float'}
+        |   +-> AdditiveExpression: '-'
         |       |
-        |       +-> FloatConstant: '12.700000' {type: 'float'}
+        |       +-> Type
+        |       |   |
+        |       |   +-> category: 'basic'
+        |       |   |
+        |       |   +-> descriptor: 'float'
         |       |
-        |       +-> FloatConstant: '12.200000' {type: 'float'}
+        |       +-> FloatConstant: '12.700000'
+        |       |   |
+        |       |   +-> Type
+        |       |       |
+        |       |       +-> category: 'basic'
+        |       |       |
+        |       |       +-> descriptor: 'float'
+        |       |
+        |       +-> FloatConstant: '12.200000'
+        |           |
+        |           +-> Type
+        |               |
+        |               +-> category: 'basic'
+        |               |
+        |               +-> descriptor: 'float'
         |
         +-> ExpressionStatement
         |   |
-        |   +-> AdditiveExpression: '+' {type: 'float'}
+        |   +-> AdditiveExpression: '+'
         |       |
-        |       +-> FloatConstant: '0.500000' {type: 'float'}
+        |       +-> Type
+        |       |   |
+        |       |   +-> category: 'basic'
+        |       |   |
+        |       |   +-> descriptor: 'float'
         |       |
-        |       +-> VariableExpression: 'x' {type: 'float'}
+        |       +-> FloatConstant: '0.500000'
+        |       |   |
+        |       |   +-> Type
+        |       |       |
+        |       |       +-> category: 'basic'
+        |       |       |
+        |       |       +-> descriptor: 'float'
+        |       |
+        |       +-> VariableExpression: 'x'
+        |           |
+        |           +-> Type
+        |               |
+        |               +-> category: 'basic'
+        |               |
+        |               +-> descriptor: 'float'
         |
         +-> ExpressionStatement
             |
-            +-> AdditiveExpression: '-' {type: 'float'}
+            +-> AdditiveExpression: '-'
                 |
-                +-> VariableExpression: 'x' {type: 'float'}
+                +-> Type
+                |   |
+                |   +-> category: 'basic'
+                |   |
+                |   +-> descriptor: 'float'
                 |
-                +-> FloatConstant: '0.500000' {type: 'float'}
+                +-> VariableExpression: 'x'
+                |   |
+                |   +-> Type
+                |       |
+                |       +-> category: 'basic'
+                |       |
+                |       +-> descriptor: 'float'
+                |
+                +-> FloatConstant: '0.500000'
+                    |
+                    +-> Type
+                        |
+                        +-> category: 'basic'
+                        |
+                        +-> descriptor: 'float'
 
 @endtest
 
@@ -698,51 +1622,147 @@ int main() {
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
 |
-+-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
++-> FunctionDefinition: 'main' <unspecified-parameters>
+    |
+    +-> ReturnType
+    |   |
+    |   +-> category: 'basic'
+    |   |
+    |   +-> descriptor: 'int'
     |
     +-> CompoundStatement
         |
-        +-> VariableDeclaration: 'x' {type: 'float'}
+        +-> VariableDeclaration: 'x'
+        |   |
+        |   +-> Type
+        |       |
+        |       +-> category: 'basic'
+        |       |
+        |       +-> descriptor: 'float'
         |
         +-> ExpressionStatement
         |   |
         |   +-> AssignmentExpression: '='
         |       |
-        |       +-> VariableExpression: 'x' {type: 'float'}
+        |       +-> VariableExpression: 'x'
+        |       |   |
+        |       |   +-> Type
+        |       |       |
+        |       |       +-> category: 'basic'
+        |       |       |
+        |       |       +-> descriptor: 'float'
         |       |
-        |       +-> FloatConstant: '4.500000' {type: 'float'}
+        |       +-> FloatConstant: '4.500000'
+        |           |
+        |           +-> Type
+        |               |
+        |               +-> category: 'basic'
+        |               |
+        |               +-> descriptor: 'float'
         |
         +-> ExpressionStatement
         |   |
-        |   +-> MultiplicativeExpression: '*' {type: 'float'}
+        |   +-> MultiplicativeExpression: '*'
         |       |
-        |       +-> FloatConstant: '12.300000' {type: 'float'}
+        |       +-> Type
+        |       |   |
+        |       |   +-> category: 'basic'
+        |       |   |
+        |       |   +-> descriptor: 'float'
         |       |
-        |       +-> FloatConstant: '0.200000' {type: 'float'}
+        |       +-> FloatConstant: '12.300000'
+        |       |   |
+        |       |   +-> Type
+        |       |       |
+        |       |       +-> category: 'basic'
+        |       |       |
+        |       |       +-> descriptor: 'float'
+        |       |
+        |       +-> FloatConstant: '0.200000'
+        |           |
+        |           +-> Type
+        |               |
+        |               +-> category: 'basic'
+        |               |
+        |               +-> descriptor: 'float'
         |
         +-> ExpressionStatement
         |   |
-        |   +-> MultiplicativeExpression: '/' {type: 'float'}
+        |   +-> MultiplicativeExpression: '/'
         |       |
-        |       +-> FloatConstant: '12.700000' {type: 'float'}
+        |       +-> Type
+        |       |   |
+        |       |   +-> category: 'basic'
+        |       |   |
+        |       |   +-> descriptor: 'float'
         |       |
-        |       +-> FloatConstant: '12.200000' {type: 'float'}
+        |       +-> FloatConstant: '12.700000'
+        |       |   |
+        |       |   +-> Type
+        |       |       |
+        |       |       +-> category: 'basic'
+        |       |       |
+        |       |       +-> descriptor: 'float'
+        |       |
+        |       +-> FloatConstant: '12.200000'
+        |           |
+        |           +-> Type
+        |               |
+        |               +-> category: 'basic'
+        |               |
+        |               +-> descriptor: 'float'
         |
         +-> ExpressionStatement
         |   |
-        |   +-> MultiplicativeExpression: '*' {type: 'float'}
+        |   +-> MultiplicativeExpression: '*'
         |       |
-        |       +-> FloatConstant: '0.500000' {type: 'float'}
+        |       +-> Type
+        |       |   |
+        |       |   +-> category: 'basic'
+        |       |   |
+        |       |   +-> descriptor: 'float'
         |       |
-        |       +-> VariableExpression: 'x' {type: 'float'}
+        |       +-> FloatConstant: '0.500000'
+        |       |   |
+        |       |   +-> Type
+        |       |       |
+        |       |       +-> category: 'basic'
+        |       |       |
+        |       |       +-> descriptor: 'float'
+        |       |
+        |       +-> VariableExpression: 'x'
+        |           |
+        |           +-> Type
+        |               |
+        |               +-> category: 'basic'
+        |               |
+        |               +-> descriptor: 'float'
         |
         +-> ExpressionStatement
             |
-            +-> MultiplicativeExpression: '/' {type: 'float'}
+            +-> MultiplicativeExpression: '/'
                 |
-                +-> VariableExpression: 'x' {type: 'float'}
+                +-> Type
+                |   |
+                |   +-> category: 'basic'
+                |   |
+                |   +-> descriptor: 'float'
                 |
-                +-> FloatConstant: '0.500000' {type: 'float'}
+                +-> VariableExpression: 'x'
+                |   |
+                |   +-> Type
+                |       |
+                |       +-> category: 'basic'
+                |       |
+                |       +-> descriptor: 'float'
+                |
+                +-> FloatConstant: '0.500000'
+                    |
+                    +-> Type
+                        |
+                        +-> category: 'basic'
+                        |
+                        +-> descriptor: 'float'
 
 @endtest
 
@@ -760,51 +1780,147 @@ int main() {
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
 |
-+-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
++-> FunctionDefinition: 'main' <unspecified-parameters>
+    |
+    +-> ReturnType
+    |   |
+    |   +-> category: 'basic'
+    |   |
+    |   +-> descriptor: 'int'
     |
     +-> CompoundStatement
         |
-        +-> VariableDeclaration: 'x' {type: 'float'}
+        +-> VariableDeclaration: 'x'
+        |   |
+        |   +-> Type
+        |       |
+        |       +-> category: 'basic'
+        |       |
+        |       +-> descriptor: 'float'
         |
         +-> ExpressionStatement
         |   |
         |   +-> AssignmentExpression: '='
         |       |
-        |       +-> VariableExpression: 'x' {type: 'float'}
+        |       +-> VariableExpression: 'x'
+        |       |   |
+        |       |   +-> Type
+        |       |       |
+        |       |       +-> category: 'basic'
+        |       |       |
+        |       |       +-> descriptor: 'float'
         |       |
-        |       +-> FloatConstant: '4.500000' {type: 'float'}
+        |       +-> FloatConstant: '4.500000'
+        |           |
+        |           +-> Type
+        |               |
+        |               +-> category: 'basic'
+        |               |
+        |               +-> descriptor: 'float'
         |
         +-> ExpressionStatement
         |   |
-        |   +-> RelationalExpression: '<' {type: 'float'}
+        |   +-> RelationalExpression: '<'
         |       |
-        |       +-> FloatConstant: '12.300000' {type: 'float'}
+        |       +-> Type
+        |       |   |
+        |       |   +-> category: 'basic'
+        |       |   |
+        |       |   +-> descriptor: 'float'
         |       |
-        |       +-> FloatConstant: '0.200000' {type: 'float'}
+        |       +-> FloatConstant: '12.300000'
+        |       |   |
+        |       |   +-> Type
+        |       |       |
+        |       |       +-> category: 'basic'
+        |       |       |
+        |       |       +-> descriptor: 'float'
+        |       |
+        |       +-> FloatConstant: '0.200000'
+        |           |
+        |           +-> Type
+        |               |
+        |               +-> category: 'basic'
+        |               |
+        |               +-> descriptor: 'float'
         |
         +-> ExpressionStatement
         |   |
-        |   +-> RelationalExpression: '>' {type: 'float'}
+        |   +-> RelationalExpression: '>'
         |       |
-        |       +-> FloatConstant: '12.700000' {type: 'float'}
+        |       +-> Type
+        |       |   |
+        |       |   +-> category: 'basic'
+        |       |   |
+        |       |   +-> descriptor: 'float'
         |       |
-        |       +-> FloatConstant: '12.200000' {type: 'float'}
+        |       +-> FloatConstant: '12.700000'
+        |       |   |
+        |       |   +-> Type
+        |       |       |
+        |       |       +-> category: 'basic'
+        |       |       |
+        |       |       +-> descriptor: 'float'
+        |       |
+        |       +-> FloatConstant: '12.200000'
+        |           |
+        |           +-> Type
+        |               |
+        |               +-> category: 'basic'
+        |               |
+        |               +-> descriptor: 'float'
         |
         +-> ExpressionStatement
         |   |
-        |   +-> RelationalExpression: '<' {type: 'float'}
+        |   +-> RelationalExpression: '<'
         |       |
-        |       +-> FloatConstant: '0.500000' {type: 'float'}
+        |       +-> Type
+        |       |   |
+        |       |   +-> category: 'basic'
+        |       |   |
+        |       |   +-> descriptor: 'float'
         |       |
-        |       +-> VariableExpression: 'x' {type: 'float'}
+        |       +-> FloatConstant: '0.500000'
+        |       |   |
+        |       |   +-> Type
+        |       |       |
+        |       |       +-> category: 'basic'
+        |       |       |
+        |       |       +-> descriptor: 'float'
+        |       |
+        |       +-> VariableExpression: 'x'
+        |           |
+        |           +-> Type
+        |               |
+        |               +-> category: 'basic'
+        |               |
+        |               +-> descriptor: 'float'
         |
         +-> ExpressionStatement
             |
-            +-> RelationalExpression: '>' {type: 'float'}
+            +-> RelationalExpression: '>'
                 |
-                +-> VariableExpression: 'x' {type: 'float'}
+                +-> Type
+                |   |
+                |   +-> category: 'basic'
+                |   |
+                |   +-> descriptor: 'float'
                 |
-                +-> FloatConstant: '0.500000' {type: 'float'}
+                +-> VariableExpression: 'x'
+                |   |
+                |   +-> Type
+                |       |
+                |       +-> category: 'basic'
+                |       |
+                |       +-> descriptor: 'float'
+                |
+                +-> FloatConstant: '0.500000'
+                    |
+                    +-> Type
+                        |
+                        +-> category: 'basic'
+                        |
+                        +-> descriptor: 'float'
 
 @endtest
 
@@ -822,50 +1938,146 @@ int main() {
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
 |
-+-> FunctionDefinition: 'main' {type: 'int'} <unspecified-parameters>
++-> FunctionDefinition: 'main' <unspecified-parameters>
+    |
+    +-> ReturnType
+    |   |
+    |   +-> category: 'basic'
+    |   |
+    |   +-> descriptor: 'int'
     |
     +-> CompoundStatement
         |
-        +-> VariableDeclaration: 'x' {type: 'float'}
+        +-> VariableDeclaration: 'x'
+        |   |
+        |   +-> Type
+        |       |
+        |       +-> category: 'basic'
+        |       |
+        |       +-> descriptor: 'float'
         |
         +-> ExpressionStatement
         |   |
         |   +-> AssignmentExpression: '='
         |       |
-        |       +-> VariableExpression: 'x' {type: 'float'}
+        |       +-> VariableExpression: 'x'
+        |       |   |
+        |       |   +-> Type
+        |       |       |
+        |       |       +-> category: 'basic'
+        |       |       |
+        |       |       +-> descriptor: 'float'
         |       |
-        |       +-> FloatConstant: '4.500000' {type: 'float'}
+        |       +-> FloatConstant: '4.500000'
+        |           |
+        |           +-> Type
+        |               |
+        |               +-> category: 'basic'
+        |               |
+        |               +-> descriptor: 'float'
         |
         +-> ExpressionStatement
         |   |
-        |   +-> EqualityExpression: '==' {type: 'float'}
+        |   +-> EqualityExpression: '=='
         |       |
-        |       +-> FloatConstant: '12.300000' {type: 'float'}
+        |       +-> Type
+        |       |   |
+        |       |   +-> category: 'basic'
+        |       |   |
+        |       |   +-> descriptor: 'float'
         |       |
-        |       +-> FloatConstant: '0.200000' {type: 'float'}
+        |       +-> FloatConstant: '12.300000'
+        |       |   |
+        |       |   +-> Type
+        |       |       |
+        |       |       +-> category: 'basic'
+        |       |       |
+        |       |       +-> descriptor: 'float'
+        |       |
+        |       +-> FloatConstant: '0.200000'
+        |           |
+        |           +-> Type
+        |               |
+        |               +-> category: 'basic'
+        |               |
+        |               +-> descriptor: 'float'
         |
         +-> ExpressionStatement
         |   |
-        |   +-> EqualityExpression: '!=' {type: 'float'}
+        |   +-> EqualityExpression: '!='
         |       |
-        |       +-> FloatConstant: '12.700000' {type: 'float'}
+        |       +-> Type
+        |       |   |
+        |       |   +-> category: 'basic'
+        |       |   |
+        |       |   +-> descriptor: 'float'
         |       |
-        |       +-> FloatConstant: '12.200000' {type: 'float'}
+        |       +-> FloatConstant: '12.700000'
+        |       |   |
+        |       |   +-> Type
+        |       |       |
+        |       |       +-> category: 'basic'
+        |       |       |
+        |       |       +-> descriptor: 'float'
+        |       |
+        |       +-> FloatConstant: '12.200000'
+        |           |
+        |           +-> Type
+        |               |
+        |               +-> category: 'basic'
+        |               |
+        |               +-> descriptor: 'float'
         |
         +-> ExpressionStatement
         |   |
-        |   +-> EqualityExpression: '==' {type: 'float'}
+        |   +-> EqualityExpression: '=='
         |       |
-        |       +-> FloatConstant: '0.500000' {type: 'float'}
+        |       +-> Type
+        |       |   |
+        |       |   +-> category: 'basic'
+        |       |   |
+        |       |   +-> descriptor: 'float'
         |       |
-        |       +-> VariableExpression: 'x' {type: 'float'}
+        |       +-> FloatConstant: '0.500000'
+        |       |   |
+        |       |   +-> Type
+        |       |       |
+        |       |       +-> category: 'basic'
+        |       |       |
+        |       |       +-> descriptor: 'float'
+        |       |
+        |       +-> VariableExpression: 'x'
+        |           |
+        |           +-> Type
+        |               |
+        |               +-> category: 'basic'
+        |               |
+        |               +-> descriptor: 'float'
         |
         +-> ExpressionStatement
             |
-            +-> EqualityExpression: '!=' {type: 'float'}
+            +-> EqualityExpression: '!='
                 |
-                +-> VariableExpression: 'x' {type: 'float'}
+                +-> Type
+                |   |
+                |   +-> category: 'basic'
+                |   |
+                |   +-> descriptor: 'float'
                 |
-                +-> FloatConstant: '0.500000' {type: 'float'}
+                +-> VariableExpression: 'x'
+                |   |
+                |   +-> Type
+                |       |
+                |       +-> category: 'basic'
+                |       |
+                |       +-> descriptor: 'float'
+                |
+                +-> FloatConstant: '0.500000'
+                    |
+                    +-> Type
+                        |
+                        +-> category: 'basic'
+                        |
+                        +-> descriptor: 'float'
 
 @endtest

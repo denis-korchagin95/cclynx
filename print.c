@@ -16,6 +16,43 @@
 static void do_print_ast(const struct ast_node * ast, FILE * file, int depth, unsigned int * ancestors_info, const char * node_label);
 static int do_print_ast_dot(const struct ast_node * ast, FILE * file, int next_id);
 
+static void print_tree_line(FILE * file, int depth, unsigned int * ancestors_info)
+{
+    for (int i = 0; i < depth; ++i) {
+        fprintf(file, "%s   ", (ancestors_info[i] & 2) > 0 ? "|" : " ");
+    }
+}
+
+static void print_tree_connector(FILE * file, int depth, unsigned int * ancestors_info)
+{
+    print_tree_line(file, depth, ancestors_info);
+    fprintf(file, "|\n");
+    print_tree_line(file, depth, ancestors_info);
+    fprintf(file, "+-> ");
+}
+
+static void print_type_child_labeled(FILE * file, int depth, unsigned int * ancestors_info, const struct type * type, int has_next_sibling, const char * label)
+{
+    ancestors_info[depth] = has_next_sibling ? 2 : 0;
+    print_tree_connector(file, depth, ancestors_info);
+    fprintf(file, "%s\n", label);
+
+    int type_depth = depth + 1;
+
+    ancestors_info[type_depth] = 2;
+    print_tree_connector(file, type_depth, ancestors_info);
+    fprintf(file, "category: 'basic'\n");
+
+    ancestors_info[type_depth] = 0;
+    print_tree_connector(file, type_depth, ancestors_info);
+    fprintf(file, "descriptor: '%s'\n", type_stringify(type));
+}
+
+static void print_type_child(FILE * file, int depth, unsigned int * ancestors_info, const struct type * type, int has_next_sibling)
+{
+    print_type_child_labeled(file, depth, ancestors_info, type, has_next_sibling, "Type");
+}
+
 void print_token(const struct token * token, FILE * file)
 {
     assert(token != NULL);
@@ -142,7 +179,8 @@ void do_print_ast(const struct ast_node * ast, FILE * file, int depth, unsigned 
             }
             break;
         case AST_NODE_KIND_VARIABLE_EXPRESSION:
-            fprintf(file, "VariableExpression: '%s' {type: '%s'}\n", ast->content.symbol->identifier->name, type_stringify(ast->type));
+            fprintf(file, "VariableExpression: '%s'\n", ast->content.symbol->identifier->name);
+            print_type_child(file, depth, ancestors_info, ast->type, 0);
             break;
         case AST_NODE_KIND_EXPRESSION_STATEMENT:
             fprintf(file, "ExpressionStatement%s\n", ast->content.node == NULL ? ": {empty expression}" : "");
@@ -162,7 +200,8 @@ void do_print_ast(const struct ast_node * ast, FILE * file, int depth, unsigned 
             break;
         case AST_NODE_KIND_EQUALITY_EXPRESSION:
             {
-                fprintf(file, "EqualityExpression: '%s' {type: '%s'}\n", ast->content.binary_expression.operation == BINARY_OPERATION_EQUALITY ? "==" : "!=", type_stringify(ast->type));
+                fprintf(file, "EqualityExpression: '%s'\n", ast->content.binary_expression.operation == BINARY_OPERATION_EQUALITY ? "==" : "!=");
+                print_type_child(file, depth, ancestors_info, ast->type, 1);
                 ancestors_info[depth] = 2;
                 do_print_ast(ast->content.binary_expression.lhs, file, depth + 1, ancestors_info, NULL);
                 ancestors_info[depth] = 0;
@@ -171,7 +210,8 @@ void do_print_ast(const struct ast_node * ast, FILE * file, int depth, unsigned 
             break;
         case AST_NODE_KIND_RELATIONAL_EXPRESSION:
             {
-                fprintf(file, "RelationalExpression: '%c' {type: '%s'}\n", ast->content.binary_expression.operation == BINARY_OPERATION_LESS_THAN ? '<' : '>', type_stringify(ast->type));
+                fprintf(file, "RelationalExpression: '%c'\n", ast->content.binary_expression.operation == BINARY_OPERATION_LESS_THAN ? '<' : '>');
+                print_type_child(file, depth, ancestors_info, ast->type, 1);
                 ancestors_info[depth] = 2;
                 do_print_ast(ast->content.binary_expression.lhs, file, depth + 1, ancestors_info, NULL);
                 ancestors_info[depth] = 0;
@@ -180,7 +220,8 @@ void do_print_ast(const struct ast_node * ast, FILE * file, int depth, unsigned 
             break;
         case AST_NODE_KIND_ADDITIVE_EXPRESSION:
             {
-                fprintf(file, "AdditiveExpression: '%c' {type: '%s'}\n", ast->content.binary_expression.operation == BINARY_OPERATION_ADDITION ? '+' : '-', type_stringify(ast->type));
+                fprintf(file, "AdditiveExpression: '%c'\n", ast->content.binary_expression.operation == BINARY_OPERATION_ADDITION ? '+' : '-');
+                print_type_child(file, depth, ancestors_info, ast->type, 1);
                 ancestors_info[depth] = 2;
                 do_print_ast(ast->content.binary_expression.lhs, file, depth + 1, ancestors_info, NULL);
                 ancestors_info[depth] = 0;
@@ -189,7 +230,8 @@ void do_print_ast(const struct ast_node * ast, FILE * file, int depth, unsigned 
             break;
         case AST_NODE_KIND_MULTIPLICATIVE_EXPRESSION:
             {
-                fprintf(file, "MultiplicativeExpression: '%c' {type: '%s'}\n", ast->content.binary_expression.operation == BINARY_OPERATION_MULTIPLY ? '*' : '/', type_stringify(ast->type));
+                fprintf(file, "MultiplicativeExpression: '%c'\n", ast->content.binary_expression.operation == BINARY_OPERATION_MULTIPLY ? '*' : '/');
+                print_type_child(file, depth, ancestors_info, ast->type, 1);
                 ancestors_info[depth] = 2;
                 do_print_ast(ast->content.binary_expression.lhs, file, depth + 1, ancestors_info, NULL);
                 ancestors_info[depth] = 0;
@@ -198,21 +240,25 @@ void do_print_ast(const struct ast_node * ast, FILE * file, int depth, unsigned 
             break;
         case AST_NODE_KIND_INTEGER_CONSTANT_EXPRESSION:
             {
-                fprintf(file, "IntegerConstant: '%lld' {type: '%s'}\n", ast->content.constant.value.integer_constant, type_stringify(ast->type));
+                fprintf(file, "IntegerConstant: '%lld'\n", ast->content.constant.value.integer_constant);
+                print_type_child(file, depth, ancestors_info, ast->type, 0);
             }
             break;
         case AST_NODE_KIND_FLOAT_CONSTANT_EXPRESSION:
             {
-                fprintf(file, "FloatConstant: '%f' {type: '%s'}\n", ast->content.constant.value.float_constant, type_stringify(ast->type));
+                fprintf(file, "FloatConstant: '%f'\n", ast->content.constant.value.float_constant);
+                print_type_child(file, depth, ancestors_info, ast->type, 0);
             }
             break;
         case AST_NODE_KIND_VARIABLE_DECLARATION:
             {
-                fprintf(file, "VariableDeclaration: '%s' {type: '%s'}\n", ast->content.symbol->identifier->name, type_stringify(ast->type));
+                fprintf(file, "VariableDeclaration: '%s'\n", ast->content.symbol->identifier->name);
+                print_type_child(file, depth, ancestors_info, ast->type, 0);
             }
             break;
         case AST_NODE_KIND_FUNCTION_PARAMETER:
-            fprintf(file, "Parameter: '%s' {type: '%s'}\n", ast->content.symbol->identifier->name, type_stringify(ast->type));
+            fprintf(file, "Parameter: '%s'\n", ast->content.symbol->identifier->name);
+            print_type_child(file, depth, ancestors_info, ast->type, 0);
             break;
         case AST_NODE_KIND_FUNCTION_DEFINITION:
             {
@@ -225,7 +271,9 @@ void do_print_ast(const struct ast_node * ast, FILE * file, int depth, unsigned 
                     const char * suffix = ast->content.function_definition.parameter_count == 1 ? "parameter" : "parameters";
                     snprintf(args, sizeof(args), " <%d-%s>", ast->content.function_definition.parameter_count, suffix);
                 }
-                fprintf(file, "FunctionDefinition: '%s' {type: '%s'}%s\n", ast->content.function_definition.name->name, type_stringify(ast->type), args);
+                fprintf(file, "FunctionDefinition: '%s'%s\n", ast->content.function_definition.name->name, args);
+                int has_params_or_body = ast->content.function_definition.parameter_count > 0 || ast->content.function_definition.body != NULL;
+                print_type_child_labeled(file, depth, ancestors_info, ast->type, has_params_or_body, "ReturnType");
                 if (ast->content.function_definition.parameter_count > 0) {
                     ancestors_info[depth] = ast->content.function_definition.body != NULL ? 2 : 0;
 
@@ -251,16 +299,15 @@ void do_print_ast(const struct ast_node * ast, FILE * file, int depth, unsigned 
         case AST_NODE_KIND_FUNCTION_CALL_EXPRESSION:
             {
                 if (ast->content.function_call.argument_count == 0) {
-                    fprintf(file, "FunctionCallExpression: '%s' {type: '%s'} <no-arguments>\n",
-                        ast->content.function_call.function->identifier->name,
-                        type_stringify(ast->type));
+                    fprintf(file, "FunctionCallExpression: '%s' <no-arguments>\n",
+                        ast->content.function_call.function->identifier->name);
                 } else {
-                    fprintf(file, "FunctionCallExpression: '%s' {type: '%s'} <%d-argument%s>\n",
+                    fprintf(file, "FunctionCallExpression: '%s' <%d-argument%s>\n",
                         ast->content.function_call.function->identifier->name,
-                        type_stringify(ast->type),
                         ast->content.function_call.argument_count,
                         ast->content.function_call.argument_count == 1 ? "" : "s");
                 }
+                print_type_child(file, depth, ancestors_info, ast->type, ast->content.function_call.argument_count > 0);
                 for (unsigned int i = 0; i < ast->content.function_call.argument_count; i++) {
                     ancestors_info[depth] = i < ast->content.function_call.argument_count - 1 ? 2 : 0;
                     do_print_ast(ast->content.function_call.arguments[i], file, depth + 1, ancestors_info, NULL);
@@ -269,7 +316,8 @@ void do_print_ast(const struct ast_node * ast, FILE * file, int depth, unsigned 
             break;
         case AST_NODE_KIND_CAST_EXPRESSION:
             {
-                fprintf(file, "CastExpression {type: '%s'}\n", type_stringify(ast->type));
+                fprintf(file, "CastExpression\n");
+                print_type_child(file, depth, ancestors_info, ast->type, ast->content.node != NULL);
                 ancestors_info[depth] = 0;
                 if (ast->content.node != NULL)
                     do_print_ast(ast->content.node, file, depth + 1, ancestors_info, NULL);
