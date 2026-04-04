@@ -18,6 +18,9 @@ static int do_print_ast_dot(const struct ast_node * ast, FILE * file, int next_i
 
 static void print_tree_indent(FILE * file, int depth, unsigned int * ancestors_info)
 {
+    assert(file != NULL);
+    assert(ancestors_info != NULL);
+
     for (int i = 0; i < depth; ++i) {
         fprintf(file, "%s", (ancestors_info[i] & 2) > 0 ? "│   " : "    ");
     }
@@ -25,12 +28,20 @@ static void print_tree_indent(FILE * file, int depth, unsigned int * ancestors_i
 
 static void print_tree_connector(FILE * file, int depth, unsigned int * ancestors_info)
 {
+    assert(file != NULL);
+    assert(ancestors_info != NULL);
+
     print_tree_indent(file, depth, ancestors_info);
     fprintf(file, "%s", (ancestors_info[depth] & 2) > 0 ? "├── " : "└── ");
 }
 
 static void print_type_child_labeled(FILE * file, int depth, unsigned int * ancestors_info, const struct type * type, int has_next_sibling, const char * label)
 {
+    assert(file != NULL);
+    assert(ancestors_info != NULL);
+    assert(type != NULL);
+    assert(label != NULL);
+
     ancestors_info[depth] = has_next_sibling ? 2 : 0;
     print_tree_connector(file, depth, ancestors_info);
     fprintf(file, "%s\n", label);
@@ -48,6 +59,10 @@ static void print_type_child_labeled(FILE * file, int depth, unsigned int * ance
 
 static void print_type_child(FILE * file, int depth, unsigned int * ancestors_info, const struct type * type, int has_next_sibling)
 {
+    assert(file != NULL);
+    assert(ancestors_info != NULL);
+    assert(type != NULL);
+
     print_type_child_labeled(file, depth, ancestors_info, type, has_next_sibling, "Type");
 }
 
@@ -334,6 +349,9 @@ void print_ast_dot(const struct ast_node * ast, FILE * file)
 
 int do_print_ast_dot(const struct ast_node * ast, FILE * file, int next_id)
 {
+    assert(ast != NULL);
+    assert(file != NULL);
+
     int id = next_id++;
 
     switch (ast->kind) {

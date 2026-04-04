@@ -1198,3 +1198,356 @@ TranslationUnit: '{{any}}'
                         └── descriptor: 'float'
 
 @endtest
+
+@test("It should insert implicit cast on additive expression with mixed signedness")
+@given("file")
+int main() {
+    int x;
+    unsigned int y;
+    x = 1;
+    y = 2;
+    return x + y;
+}
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        ├── VariableDeclaration: 'x'
+        │   └── Type
+        │       ├── category: 'basic'
+        │       └── descriptor: 'int'
+        ├── VariableDeclaration: 'y'
+        │   └── Type
+        │       ├── category: 'basic'
+        │       └── descriptor: 'unsigned int'
+        ├── ExpressionStatement
+        │   └── AssignmentExpression: '='
+        │       ├── VariableExpression: 'x'
+        │       │   └── Type
+        │       │       ├── category: 'basic'
+        │       │       └── descriptor: 'int'
+        │       └── IntegerConstant: '1'
+        │           └── Type
+        │               ├── category: 'basic'
+        │               └── descriptor: 'int'
+        ├── ExpressionStatement
+        │   └── AssignmentExpression: '='
+        │       ├── VariableExpression: 'y'
+        │       │   └── Type
+        │       │       ├── category: 'basic'
+        │       │       └── descriptor: 'unsigned int'
+        │       └── IntegerConstant: '2'
+        │           └── Type
+        │               ├── category: 'basic'
+        │               └── descriptor: 'int'
+        └── ReturnStatement
+            └── AdditiveExpression: '+'
+                ├── Type
+                │   ├── category: 'basic'
+                │   └── descriptor: 'unsigned int'
+                ├── CastExpression
+                │   ├── Type
+                │   │   ├── category: 'basic'
+                │   │   └── descriptor: 'unsigned int'
+                │   └── VariableExpression: 'x'
+                │       └── Type
+                │           ├── category: 'basic'
+                │           └── descriptor: 'int'
+                └── VariableExpression: 'y'
+                    └── Type
+                        ├── category: 'basic'
+                        └── descriptor: 'unsigned int'
+
+@endtest
+
+@test("It should insert implicit cast on multiplicative expression with mixed signedness")
+@given("file")
+int main() {
+    int x;
+    unsigned int y;
+    x = 1;
+    y = 2;
+    return x * y;
+}
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        ├── VariableDeclaration: 'x'
+        │   └── Type
+        │       ├── category: 'basic'
+        │       └── descriptor: 'int'
+        ├── VariableDeclaration: 'y'
+        │   └── Type
+        │       ├── category: 'basic'
+        │       └── descriptor: 'unsigned int'
+        ├── ExpressionStatement
+        │   └── AssignmentExpression: '='
+        │       ├── VariableExpression: 'x'
+        │       │   └── Type
+        │       │       ├── category: 'basic'
+        │       │       └── descriptor: 'int'
+        │       └── IntegerConstant: '1'
+        │           └── Type
+        │               ├── category: 'basic'
+        │               └── descriptor: 'int'
+        ├── ExpressionStatement
+        │   └── AssignmentExpression: '='
+        │       ├── VariableExpression: 'y'
+        │       │   └── Type
+        │       │       ├── category: 'basic'
+        │       │       └── descriptor: 'unsigned int'
+        │       └── IntegerConstant: '2'
+        │           └── Type
+        │               ├── category: 'basic'
+        │               └── descriptor: 'int'
+        └── ReturnStatement
+            └── MultiplicativeExpression: '*'
+                ├── Type
+                │   ├── category: 'basic'
+                │   └── descriptor: 'unsigned int'
+                ├── CastExpression
+                │   ├── Type
+                │   │   ├── category: 'basic'
+                │   │   └── descriptor: 'unsigned int'
+                │   └── VariableExpression: 'x'
+                │       └── Type
+                │           ├── category: 'basic'
+                │           └── descriptor: 'int'
+                └── VariableExpression: 'y'
+                    └── Type
+                        ├── category: 'basic'
+                        └── descriptor: 'unsigned int'
+
+@endtest
+
+@test("It should insert implicit cast on relational expression with mixed signedness")
+@given("file")
+int main() {
+    int x;
+    unsigned int y;
+    x = 1;
+    y = 2;
+    int z;
+    z = x < y;
+    return z;
+}
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        ├── VariableDeclaration: 'x'
+        │   └── Type
+        │       ├── category: 'basic'
+        │       └── descriptor: 'int'
+        ├── VariableDeclaration: 'y'
+        │   └── Type
+        │       ├── category: 'basic'
+        │       └── descriptor: 'unsigned int'
+        ├── ExpressionStatement
+        │   └── AssignmentExpression: '='
+        │       ├── VariableExpression: 'x'
+        │       │   └── Type
+        │       │       ├── category: 'basic'
+        │       │       └── descriptor: 'int'
+        │       └── IntegerConstant: '1'
+        │           └── Type
+        │               ├── category: 'basic'
+        │               └── descriptor: 'int'
+        ├── ExpressionStatement
+        │   └── AssignmentExpression: '='
+        │       ├── VariableExpression: 'y'
+        │       │   └── Type
+        │       │       ├── category: 'basic'
+        │       │       └── descriptor: 'unsigned int'
+        │       └── IntegerConstant: '2'
+        │           └── Type
+        │               ├── category: 'basic'
+        │               └── descriptor: 'int'
+        ├── VariableDeclaration: 'z'
+        │   └── Type
+        │       ├── category: 'basic'
+        │       └── descriptor: 'int'
+        ├── ExpressionStatement
+        │   └── AssignmentExpression: '='
+        │       ├── VariableExpression: 'z'
+        │       │   └── Type
+        │       │       ├── category: 'basic'
+        │       │       └── descriptor: 'int'
+        │       └── RelationalExpression: '<'
+        │           ├── Type
+        │           │   ├── category: 'basic'
+        │           │   └── descriptor: 'unsigned int'
+        │           ├── CastExpression
+        │           │   ├── Type
+        │           │   │   ├── category: 'basic'
+        │           │   │   └── descriptor: 'unsigned int'
+        │           │   └── VariableExpression: 'x'
+        │           │       └── Type
+        │           │           ├── category: 'basic'
+        │           │           └── descriptor: 'int'
+        │           └── VariableExpression: 'y'
+        │               └── Type
+        │                   ├── category: 'basic'
+        │                   └── descriptor: 'unsigned int'
+        └── ReturnStatement
+            └── VariableExpression: 'z'
+                └── Type
+                    ├── category: 'basic'
+                    └── descriptor: 'int'
+
+@endtest
+
+@test("It should insert implicit cast on equality expression with mixed signedness")
+@given("file")
+int main() {
+    int x;
+    unsigned int y;
+    x = 1;
+    y = 2;
+    int z;
+    z = x == y;
+    return z;
+}
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        ├── VariableDeclaration: 'x'
+        │   └── Type
+        │       ├── category: 'basic'
+        │       └── descriptor: 'int'
+        ├── VariableDeclaration: 'y'
+        │   └── Type
+        │       ├── category: 'basic'
+        │       └── descriptor: 'unsigned int'
+        ├── ExpressionStatement
+        │   └── AssignmentExpression: '='
+        │       ├── VariableExpression: 'x'
+        │       │   └── Type
+        │       │       ├── category: 'basic'
+        │       │       └── descriptor: 'int'
+        │       └── IntegerConstant: '1'
+        │           └── Type
+        │               ├── category: 'basic'
+        │               └── descriptor: 'int'
+        ├── ExpressionStatement
+        │   └── AssignmentExpression: '='
+        │       ├── VariableExpression: 'y'
+        │       │   └── Type
+        │       │       ├── category: 'basic'
+        │       │       └── descriptor: 'unsigned int'
+        │       └── IntegerConstant: '2'
+        │           └── Type
+        │               ├── category: 'basic'
+        │               └── descriptor: 'int'
+        ├── VariableDeclaration: 'z'
+        │   └── Type
+        │       ├── category: 'basic'
+        │       └── descriptor: 'int'
+        ├── ExpressionStatement
+        │   └── AssignmentExpression: '='
+        │       ├── VariableExpression: 'z'
+        │       │   └── Type
+        │       │       ├── category: 'basic'
+        │       │       └── descriptor: 'int'
+        │       └── EqualityExpression: '=='
+        │           ├── Type
+        │           │   ├── category: 'basic'
+        │           │   └── descriptor: 'unsigned int'
+        │           ├── CastExpression
+        │           │   ├── Type
+        │           │   │   ├── category: 'basic'
+        │           │   │   └── descriptor: 'unsigned int'
+        │           │   └── VariableExpression: 'x'
+        │           │       └── Type
+        │           │           ├── category: 'basic'
+        │           │           └── descriptor: 'int'
+        │           └── VariableExpression: 'y'
+        │               └── Type
+        │                   ├── category: 'basic'
+        │                   └── descriptor: 'unsigned int'
+        └── ReturnStatement
+            └── VariableExpression: 'z'
+                └── Type
+                    ├── category: 'basic'
+                    └── descriptor: 'int'
+
+@endtest
+
+@test("It should allow additive expression with same unsigned type")
+@given("file")
+unsigned int foo() {
+    unsigned int x;
+    unsigned int y;
+    x = 1;
+    y = 2;
+    return x + y;
+}
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+└── FunctionDefinition: 'foo' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'unsigned int'
+    └── CompoundStatement
+        ├── VariableDeclaration: 'x'
+        │   └── Type
+        │       ├── category: 'basic'
+        │       └── descriptor: 'unsigned int'
+        ├── VariableDeclaration: 'y'
+        │   └── Type
+        │       ├── category: 'basic'
+        │       └── descriptor: 'unsigned int'
+        ├── ExpressionStatement
+        │   └── AssignmentExpression: '='
+        │       ├── VariableExpression: 'x'
+        │       │   └── Type
+        │       │       ├── category: 'basic'
+        │       │       └── descriptor: 'unsigned int'
+        │       └── IntegerConstant: '1'
+        │           └── Type
+        │               ├── category: 'basic'
+        │               └── descriptor: 'int'
+        ├── ExpressionStatement
+        │   └── AssignmentExpression: '='
+        │       ├── VariableExpression: 'y'
+        │       │   └── Type
+        │       │       ├── category: 'basic'
+        │       │       └── descriptor: 'unsigned int'
+        │       └── IntegerConstant: '2'
+        │           └── Type
+        │               ├── category: 'basic'
+        │               └── descriptor: 'int'
+        └── ReturnStatement
+            └── AdditiveExpression: '+'
+                ├── Type
+                │   ├── category: 'basic'
+                │   └── descriptor: 'unsigned int'
+                ├── VariableExpression: 'x'
+                │   └── Type
+                │       ├── category: 'basic'
+                │       └── descriptor: 'unsigned int'
+                └── VariableExpression: 'y'
+                    └── Type
+                        ├── category: 'basic'
+                        └── descriptor: 'unsigned int'
+
+@endtest

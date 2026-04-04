@@ -45,7 +45,7 @@ static void parse_function_parameter_list(struct parser_context * ctx, struct as
 void parse_declaration_specifiers(struct parser_context * ctx, struct declaration_specifiers * specifiers);
 struct type * resolve_type(struct declaration_specifiers * specifiers);
 
-
+static struct type * resolve_binary_expression_type(struct parser_context * ctx, struct ast_node ** lhs_ptr, struct ast_node ** rhs_ptr);
 
 static void parser_report_error(struct parser_context * ctx, const struct token * token, const char * fmt, ...)
 {
@@ -711,6 +711,34 @@ struct ast_node * parse_assignment_expression(struct parser_context * ctx)
     return assignment_expression;
 }
 
+struct type * resolve_binary_expression_type(struct parser_context * ctx, struct ast_node ** lhs_ptr, struct ast_node ** rhs_ptr)
+{
+    assert(ctx != NULL);
+    assert(lhs_ptr != NULL);
+    assert(rhs_ptr != NULL);
+
+    struct type * lhs_type = (*lhs_ptr)->type;
+    struct type * rhs_type = (*rhs_ptr)->type;
+
+    if (lhs_type->kind == rhs_type->kind && type_signedness_differs(lhs_type, rhs_type)) {
+        struct type * target_type = (lhs_type->modifiers & TYPE_MODIFIER_UNSIGNED) ? lhs_type : rhs_type;
+
+        if (!(lhs_type->modifiers & TYPE_MODIFIER_UNSIGNED)) {
+            struct ast_node * cast = ast_create_node(ctx->pool, AST_NODE_KIND_CAST_EXPRESSION, target_type);
+            cast->content.node = *lhs_ptr;
+            *lhs_ptr = cast;
+        } else {
+            struct ast_node * cast = ast_create_node(ctx->pool, AST_NODE_KIND_CAST_EXPRESSION, target_type);
+            cast->content.node = *rhs_ptr;
+            *rhs_ptr = cast;
+        }
+
+        return target_type;
+    }
+
+    return type_resolve(lhs_type, rhs_type);
+}
+
 struct ast_node * parse_equality_expression(struct parser_context * ctx)
 {
     assert(ctx != NULL);
@@ -736,7 +764,7 @@ struct ast_node * parse_equality_expression(struct parser_context * ctx)
             return NULL;
         }
 
-        struct ast_node * binary_expression = ast_create_node(ctx->pool, AST_NODE_KIND_EQUALITY_EXPRESSION, type_resolve(lhs->type, rhs->type));
+        struct ast_node * binary_expression = ast_create_node(ctx->pool, AST_NODE_KIND_EQUALITY_EXPRESSION, resolve_binary_expression_type(ctx, &lhs, &rhs));
         binary_expression->content.binary_expression.operation = operation;
         binary_expression->content.binary_expression.lhs = lhs;
         binary_expression->content.binary_expression.rhs = rhs;
@@ -777,7 +805,7 @@ struct ast_node * parse_relational_expression(struct parser_context * ctx) {
             return NULL;
         }
 
-        struct ast_node * binary_expression = ast_create_node(ctx->pool, AST_NODE_KIND_RELATIONAL_EXPRESSION, type_resolve(lhs->type, rhs->type));
+        struct ast_node * binary_expression = ast_create_node(ctx->pool, AST_NODE_KIND_RELATIONAL_EXPRESSION, resolve_binary_expression_type(ctx, &lhs, &rhs));
         binary_expression->content.binary_expression.operation = operation;
         binary_expression->content.binary_expression.lhs = lhs;
         binary_expression->content.binary_expression.rhs = rhs;
@@ -820,7 +848,7 @@ struct ast_node * parse_additive_expression(struct parser_context * ctx)
             return NULL;
         }
 
-        struct ast_node * binary_expression = ast_create_node(ctx->pool, AST_NODE_KIND_ADDITIVE_EXPRESSION, type_resolve(lhs->type, rhs->type));
+        struct ast_node * binary_expression = ast_create_node(ctx->pool, AST_NODE_KIND_ADDITIVE_EXPRESSION, resolve_binary_expression_type(ctx, &lhs, &rhs));
         binary_expression->content.binary_expression.operation = operation;
         binary_expression->content.binary_expression.lhs = lhs;
         binary_expression->content.binary_expression.rhs = rhs;
@@ -862,7 +890,7 @@ struct ast_node * parse_multiplicative_expression(struct parser_context * ctx)
             return NULL;
         }
 
-        struct ast_node * binary_expression = ast_create_node(ctx->pool, AST_NODE_KIND_MULTIPLICATIVE_EXPRESSION, type_resolve(lhs->type, rhs->type));
+        struct ast_node * binary_expression = ast_create_node(ctx->pool, AST_NODE_KIND_MULTIPLICATIVE_EXPRESSION, resolve_binary_expression_type(ctx, &lhs, &rhs));
         binary_expression->content.binary_expression.operation = operation;
         binary_expression->content.binary_expression.lhs = lhs;
         binary_expression->content.binary_expression.rhs = rhs;

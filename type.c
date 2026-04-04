@@ -35,6 +35,5 @@ struct type * type_resolve(struct type * lhs, const struct type * rhs)
     if (lhs->kind != rhs->kind) {
         cclynx_fatal_error("ERROR: type mismatch between '%s' and '%s'\n", type_stringify(lhs), type_stringify(rhs));
     }
-
     return lhs;
 }
