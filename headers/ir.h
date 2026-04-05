@@ -3,7 +3,7 @@
 
 #include <stddef.h>
 
-#define INITIAL_INSTRUCTION_COUNT (1024)
+#define INITIAL_INSTRUCTION_COUNT (100000)
 
 struct type;
 struct ast_node;
