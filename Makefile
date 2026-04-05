@@ -4,7 +4,7 @@ BIN=bin/
 BIN_TESTERS=bin/testers/
 OBJ=obj/
 PROGRAM=cclynx
-CFLAGS=-std=c11 -g2 -Wall -Wextra -pedantic -O0
+CFLAGS=-std=c11 -g2 -Wall -Wextra -pedantic -O2
 HEADERS=headers/
 TESTERS=testers/
 

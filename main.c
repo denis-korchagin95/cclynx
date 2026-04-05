@@ -72,6 +72,8 @@ int main(const int argc, const char * argv[])
 
     struct token * tokens = tokenizer_tokenize_file(&tokenizer_ctx, &source);
 
+    int exit_code = 0;
+
     struct parser_context parser_ctx;
     parser_init_context(&parser_ctx, tokens, &ctx.pool, &ctx.global_scope, source_filename);
     parser_ctx.warning_flags = warning_flags;
@@ -87,8 +89,6 @@ int main(const int argc, const char * argv[])
     }
 
     struct ast_node * ast = parser_parse(&parser_ctx);
-
-    int exit_code = 0;
 
     if (parser_ctx.errors.count > 0) {
         error_list_print(&parser_ctx.errors);
