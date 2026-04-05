@@ -180,7 +180,6 @@ struct ast_node * parse_translation_unit(struct parser_context * ctx)
 
         if (function_def != NULL) {
             struct ast_node_list * element = memory_blob_pool_alloc(ctx->pool, sizeof(struct ast_node_list));
-            memset(element, 0, sizeof(struct ast_node_list));
             element->node = function_def;
             *tail = element;
             tail = &element->next;
@@ -273,7 +272,6 @@ struct ast_node * parse_compound_statement(struct parser_context * ctx)
 
         if (statement != NULL) {
             struct ast_node_list * list = memory_blob_pool_alloc(ctx->pool, sizeof(struct ast_node_list));
-            memset(list, 0, sizeof(struct ast_node_list));
             list->node = statement;
             list->next = NULL;
 
@@ -549,7 +547,6 @@ struct ast_node * parse_function_definition(struct parser_context * ctx)
     }
 
     function_symbol = memory_blob_pool_alloc(ctx->pool, sizeof(struct symbol));
-    memset(function_symbol, 0, sizeof(struct symbol));
     function_symbol->identifier = identifier;
     function_symbol->type = type;
     function_symbol->kind = SYMBOL_KIND_FUNCTION;
@@ -694,7 +691,6 @@ struct ast_node * parse_declaration(struct parser_context * ctx)
     }
 
     struct symbol * variable = memory_blob_pool_alloc(ctx->pool, sizeof(struct symbol));
-    memset(variable, 0, sizeof(struct symbol));
     variable->kind = SYMBOL_KIND_VARIABLE;
     variable->identifier = identifier;
     variable->type = type;
@@ -1089,7 +1085,6 @@ struct ast_node * parse_function_parameter(struct parser_context * ctx)
     }
 
     struct symbol * parameter_symbol = memory_blob_pool_alloc(ctx->pool, sizeof(struct symbol));
-    memset(parameter_symbol, 0, sizeof(struct symbol));
     parameter_symbol->kind = SYMBOL_KIND_VARIABLE;
     parameter_symbol->flags = SYMBOL_FLAG_FUNCTION_PARAMETER;
     parameter_symbol->type = parameter_type;

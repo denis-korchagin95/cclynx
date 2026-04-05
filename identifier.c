@@ -52,7 +52,6 @@ struct identifier * identifier_insert(struct hashmap * identifier_table, struct 
     assert(pool != NULL);
     assert(name != NULL);
     struct identifier * identifier = memory_blob_pool_alloc(pool, sizeof(struct identifier));
-    memset(identifier, 0, sizeof(struct identifier));
 
     identifier->name = memory_blob_pool_alloc(pool, len + 1);
     memcpy(identifier->name, name, len);

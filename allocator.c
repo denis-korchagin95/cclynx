@@ -14,7 +14,7 @@ struct memory_blob * alloc_new_blob(size_t size)
         cclynx_fatal_error("ERROR: failed to allocate memory blob\n");
     }
     memset(blob, 0, sizeof(struct memory_blob));
-    blob->memory = malloc(size);
+    blob->memory = calloc(1, size);
     if (blob->memory == NULL) {
         cclynx_fatal_error("ERROR: failed to allocate memory blob data (%zu bytes)\n", size);
     }

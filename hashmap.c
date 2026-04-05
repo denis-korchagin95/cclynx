@@ -22,7 +22,6 @@ void hashmap_init(struct hashmap * map, size_t capacity, struct memory_blob_pool
     map->capacity = capacity;
     map->pool = pool;
     map->buckets = memory_blob_pool_alloc(pool, sizeof(struct hashmap_entry *) * capacity);
-    memset(map->buckets, 0, sizeof(struct hashmap_entry *) * capacity);
 }
 
 void * hashmap_find(struct hashmap * map, const char * key, size_t len)
@@ -47,7 +46,6 @@ void hashmap_insert(struct hashmap * map, const char * key, void * value)
     unsigned int index = hashmap_hash(key, strlen(key)) % map->capacity;
 
     struct hashmap_entry * entry = memory_blob_pool_alloc(map->pool, sizeof(struct hashmap_entry));
-    memset(entry, 0, sizeof(struct hashmap_entry));
     entry->key = key;
     entry->value = value;
     entry->next = map->buckets[index];

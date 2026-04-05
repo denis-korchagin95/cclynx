@@ -11,7 +11,6 @@ struct scope * scope_push(struct scope * scope, struct memory_blob_pool * pool)
     assert(scope != NULL);
     assert(pool != NULL);
     struct scope * new_scope = memory_blob_pool_alloc(pool, sizeof(struct scope));
-    memset(new_scope, 0, sizeof(struct scope));
     new_scope->enclosing = scope;
     new_scope->symbols = NULL;
     return new_scope;
@@ -39,7 +38,6 @@ void scope_add_symbol(struct scope * scope, struct symbol * symbol, struct memor
     assert(pool != NULL);
 
     struct symbol_list * new_element = memory_blob_pool_alloc(pool, sizeof(struct symbol_list));
-    memset(new_element, 0, sizeof(struct symbol_list));
     new_element->symbol = symbol;
     new_element->next = scope->symbols;
     scope->symbols = new_element;

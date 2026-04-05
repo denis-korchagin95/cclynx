@@ -33,7 +33,6 @@ void ir_program_init(struct ir_program * program, struct memory_blob_pool * pool
     program->capacity = INITIAL_INSTRUCTION_COUNT;
     program->position = 0;
     program->instructions = memory_blob_pool_alloc(pool, program->capacity * sizeof(struct ir_instruction *));
-    memset(program->instructions, 0, program->capacity * sizeof(struct ir_instruction *));
 }
 
 void ir_program_generate(struct ir_context * ctx, struct ir_program * program, const struct ast_node * ast)
@@ -406,7 +405,6 @@ struct ir_instruction * ir_create_instruction(struct ir_context * ctx, enum opco
 {
     assert(ctx != NULL);
     struct ir_instruction * instruction = memory_blob_pool_alloc(ctx->pool, sizeof(struct ir_instruction));
-    memset(instruction, 0, sizeof(struct ir_instruction));
     instruction->code = code;
     return instruction;
 }
@@ -415,7 +413,6 @@ struct ir_operand * ir_create_operand(struct ir_context * ctx, enum operand_kind
 {
     assert(ctx != NULL);
     struct ir_operand * operand = memory_blob_pool_alloc(ctx->pool, sizeof(struct ir_operand));
-    memset(operand, 0, sizeof(struct ir_operand));
     operand->kind = kind;
     return operand;
 }
