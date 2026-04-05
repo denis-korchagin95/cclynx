@@ -11,7 +11,6 @@
 static struct ir_instruction * ir_create_instruction(struct ir_context * ctx, enum opcode code);
 static struct ir_operand * ir_create_operand(struct ir_context * ctx, enum operand_kind kind);
 static struct ir_operand * alloc_operand(struct ir_context * ctx);
-static struct ir_operand * find_variable_operand_by_symbol(struct ir_context * ctx, struct symbol * symbol);
 static void do_generate_ir(struct ir_context * ctx, struct ir_program * program, const struct ast_node * node);
 static void ir_emit(struct ir_program * program, struct ir_instruction * instruction);
 static struct ir_operand * new_temporary_operand(struct ir_context * ctx);
@@ -67,6 +66,7 @@ void ir_program_generate(struct ir_context * ctx, struct ir_program * program, c
         variable->content.variable.symbol = param_symbol;
         variable->content.variable.offset = ctx->current_func->result->content.function.local_vars_size;
         variable->type = param_symbol->type;
+        param_symbol->ir_operand = variable;
         ctx->current_func->result->content.function.local_vars_size += param_symbol->type->size;
 
         struct ir_instruction * store_param = ir_create_instruction(ctx, OP_STORE_PARAM);
@@ -205,7 +205,7 @@ void do_generate_ir(struct ir_context * ctx, struct ir_program * program, const 
             break;
         case AST_NODE_KIND_VARIABLE_EXPRESSION:
             {
-                struct ir_operand * variable = find_variable_operand_by_symbol(ctx, node->content.symbol);
+                struct ir_operand * variable = node->content.symbol->ir_operand;
 
                 if (variable == NULL) {
                     variable = alloc_operand(ctx);
@@ -213,6 +213,7 @@ void do_generate_ir(struct ir_context * ctx, struct ir_program * program, const 
                     variable->content.variable.symbol = node->content.symbol;
                     variable->content.variable.offset = ctx->current_func->result->content.function.local_vars_size;
                     variable->type = node->content.symbol->type;
+                    node->content.symbol->ir_operand = variable;
                     ctx->current_func->result->content.function.local_vars_size += node->content.symbol->type->size;
                 }
 
@@ -436,25 +437,6 @@ struct ir_operand * alloc_operand(struct ir_context * ctx)
     return operand;
 }
 
-struct ir_operand * find_variable_operand_by_symbol(struct ir_context * ctx, struct symbol * symbol)
-{
-    assert(ctx != NULL);
-    assert(symbol != NULL);
-
-    for (size_t i = 0; i < ctx->operand_pos; ++i) {
-        struct ir_operand * operand = &ctx->operands[i];
-
-        if (operand->kind != OPERAND_KIND_VARIABLE)
-            continue;
-
-        if (operand->content.variable.symbol != symbol)
-            continue;
-
-        return operand;
-    }
-
-    return NULL;
-}
 
 void ir_generate_condition(struct ir_context * ctx, struct ir_program * program, struct ast_node * condition, struct ir_operand * jump_label)
 {

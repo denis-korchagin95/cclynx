@@ -9,6 +9,7 @@
 struct hashmap;
 struct memory_blob_pool;
 struct type;
+struct ir_operand;
 
 enum symbol_kind
 {
@@ -31,6 +32,7 @@ struct symbol
     unsigned int parameter_index; /* SYMBOL_FLAG_FUNCTION_PARAMETER only */
     int parameter_presence; /* SYMBOL_KIND_FUNCTION only */
     struct symbol * parameters[MAX_SYMBOL_FUNCTION_PARAMETER_COUNT]; /* SYMBOL_KIND_FUNCTION only */
+    struct ir_operand * ir_operand; /* set during IR generation */
 };
 
 struct symbol_list
