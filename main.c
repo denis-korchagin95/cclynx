@@ -3,13 +3,14 @@
 #include <stdlib.h>
 
 #include "cclynx.h"
-#include "errors.h"
+#include "error.h"
 #include "identifier.h"
 #include "symbol.h"
 #include "source.h"
 #include "tokenizer.h"
 #include "print.h"
 #include "parser.h"
+#include "warning.h"
 #include "ir.h"
 #include "target-arm64.h"
 
@@ -30,7 +31,7 @@ const char * source_filename = NULL;
 enum output_stage output_stage = STAGE_ASM;
 enum output_format output_format = FORMAT_TREE;
 bool output_format_explicit = false;
-bool suppress_warnings = false;
+struct warning_flags warning_flags;
 
 static void parse_options(int argc, const char * argv[]);
 static void show_usage(const char * program_name, FILE * output);
@@ -38,6 +39,7 @@ static void show_usage(const char * program_name, FILE * output);
 
 int main(const int argc, const char * argv[])
 {
+    warning_init_default(&warning_flags);
     parse_options(argc, argv);
 
     if (output_format_explicit && output_stage != STAGE_AST) {
@@ -45,7 +47,7 @@ int main(const int argc, const char * argv[])
     }
 
     for (int i = 1; i < argc; ++i) {
-        if (strncmp(argv[i], "--", sizeof("--") - 1) == 0) {
+        if (strncmp(argv[i], "--", sizeof("--") - 1) == 0 || strncmp(argv[i], "-W", sizeof("-W") - 1) == 0) {
             continue;
         }
 
@@ -72,7 +74,7 @@ int main(const int argc, const char * argv[])
 
     struct parser_context parser_ctx;
     parser_init_context(&parser_ctx, tokens, &ctx.pool, &ctx.global_scope, source_filename);
-    parser_ctx.suppress_warnings = suppress_warnings;
+    parser_ctx.warning_flags = warning_flags;
 
     if (output_stage == STAGE_TOKENS) {
         struct token * it = tokens;
@@ -142,50 +144,75 @@ void parse_options(const int argc, const char * argv[])
     for(int i = 1; i < argc; ++i) {
         const char * arg = argv[i];
 
-        if (strncmp(arg, "--emit-tokens", sizeof("--emit-tokens") - 1) == 0) {
+        if (strcmp(arg, "--emit-tokens") == 0) {
             output_stage = STAGE_TOKENS;
             continue;
         }
 
-        if (strncmp(arg, "--emit-ast", sizeof("--emit-ast") - 1) == 0) {
+        if (strcmp(arg, "--emit-ast") == 0) {
             output_stage = STAGE_AST;
             continue;
         }
 
-        if (strncmp(arg, "--format=dot", sizeof("--format=dot") - 1) == 0) {
+        if (strcmp(arg, "--format=dot") == 0) {
             output_format = FORMAT_DOT;
             output_format_explicit = true;
             continue;
         }
 
-        if (strncmp(arg, "--format=tree", sizeof("--format=tree") - 1) == 0) {
+        if (strcmp(arg, "--format=tree") == 0) {
             output_format = FORMAT_TREE;
             output_format_explicit = true;
             continue;
         }
 
-        if (strncmp(arg, "--emit-ir", sizeof("--emit-ir") - 1) == 0) {
+        if (strcmp(arg, "--emit-ir") == 0) {
             output_stage = STAGE_IR;
             continue;
         }
 
-        if (strncmp(arg, "--emit-asm", sizeof("--emit-asm") - 1) == 0) {
+        if (strcmp(arg, "--emit-asm") == 0) {
             output_stage = STAGE_ASM;
             continue;
         }
 
-        if (strncmp(arg, "--no-warnings", sizeof("--no-warnings") - 1) == 0) {
-            suppress_warnings = true;
+        if (strcmp(arg, "--no-warnings") == 0) {
+            warning_disable_all(&warning_flags);
             continue;
         }
 
-        if (strncmp(arg, "--help", sizeof("--help") - 1) == 0) {
+        if (strcmp(arg, "--help") == 0) {
             show_usage(argv[0], stdout);
             exit(0);
         }
 
+        if (strcmp(arg, "-Wall") == 0) {
+            warning_enable_all(&warning_flags);
+            continue;
+        }
+
+        if (strncmp(arg, "-Wno-", sizeof("-Wno-") - 1) == 0) {
+            const char * name = arg + sizeof("-Wno-") - 1;
+            if (*name == '\0') {
+                cclynx_fatal_error("ERROR: missing warning name after -Wno-\n");
+            }
+            if (!warning_disable_by_name(&warning_flags, name)) {
+                cclynx_fatal_error("ERROR: unknown warning \"%s\"\n", name);
+            }
+            continue;
+        }
+
+        if (strcmp(arg, "-Wtolerant") == 0) {
+            warning_apply_tolerant(&warning_flags);
+            continue;
+        }
+
         if (strncmp(arg, "--", sizeof("--") - 1) == 0) {
             cclynx_fatal_error("ERROR: unknown option \"%s\"\n", arg);
+        }
+
+        if (strncmp(arg, "-W", sizeof("-W") - 1) == 0) {
+            cclynx_fatal_error("ERROR: unknown warning option \"%s\"\n", arg);
         }
     }
 }
@@ -200,5 +227,8 @@ void show_usage(const char * program_name, FILE * output)
     fprintf(output, "\t--format=tree|dot\n\t    Output format (default: tree).\n\n");
     fprintf(output, "\t--emit-ir\n\t    Produces intermediate representation.\n\n");
     fprintf(output, "\t--emit-asm\n\t    Produces assembly (default).\n\n");
-    fprintf(output, "\t--no-warnings\n\t    Suppress warning messages.\n\n");
+    fprintf(output, "\t--no-warnings\n\t    Suppress all warning messages.\n\n");
+    fprintf(output, "\t-Wall\n\t    Enable all warnings.\n\n");
+    fprintf(output, "\t-Wno-<name>\n\t    Disable a specific warning or category.\n\n");
+    fprintf(output, "\t-Wtolerant\n\t    Suppress noisy warnings (signedness).\n\n");
 }

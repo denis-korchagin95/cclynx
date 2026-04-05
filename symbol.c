@@ -5,7 +5,7 @@
 #include "symbol.h"
 #include "identifier.h"
 #include "allocator.h"
-#include "errors.h"
+#include "error.h"
 #include "type.h"
 
 

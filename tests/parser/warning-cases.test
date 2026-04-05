@@ -191,3 +191,225 @@ void foo(int x) {
 @expectOutput("stderr")
 
 @endtest
+
+@test("It should warn about sign-conversion with -Wall")
+@given("file")
+unsigned int foo(int x) {
+    return x;
+}
+@whenRun("./bin/cclynx", args="--emit-ast -Wall")
+@expectOutput("stderr")
+{{any}}: WARNING: implicit conversion changes signedness from 'int' to 'unsigned int', use an explicit cast
+
+@endtest
+
+@test("It should not warn about sign-conversion by default")
+@given("file")
+unsigned int foo(int x) {
+    return x;
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stderr")
+
+@endtest
+
+@test("It should suppress all warnings with --no-warnings")
+@given("file")
+int foo(int x) {
+    int y;
+    if (x) {}
+}
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings")
+@expectOutput("stderr")
+
+@endtest
+
+@test("It should suppress unused warnings with -Wno-unused")
+@given("file")
+int foo(int x) {
+    int y;
+    return 0;
+}
+@whenRun("./bin/cclynx", args="--emit-ast -Wno-unused")
+@expectOutput("stderr")
+
+@endtest
+
+@test("It should suppress only unused-variable with -Wno-unused-variable")
+@given("file")
+int foo(int x) {
+    int y;
+    return 0;
+}
+@whenRun("./bin/cclynx", args="--emit-ast -Wno-unused-variable")
+@expectOutput("stderr")
+{{any}}: WARNING: unused parameter 'x'
+
+@endtest
+
+@test("It should suppress empty-body category with -Wno-empty-body")
+@given("file")
+void foo(int x) {
+    if (x) {}
+    while (x) {}
+}
+@whenRun("./bin/cclynx", args="--emit-ast -Wno-empty-body")
+@expectOutput("stderr")
+
+@endtest
+
+@test("It should suppress missing category with -Wno-missing")
+@given("file")
+int foo(int x) {
+    if (x) {
+        return 1;
+    }
+}
+@whenRun("./bin/cclynx", args="--emit-ast -Wno-missing")
+@expectOutput("stderr")
+
+@endtest
+
+@test("It should enable all then suppress signedness with -Wall -Wno-signedness")
+@given("file")
+unsigned int foo(int x) {
+    return x;
+}
+@whenRun("./bin/cclynx", args="--emit-ast -Wall -Wno-signedness")
+@expectOutput("stderr")
+
+@endtest
+
+@test("It should re-suppress signedness with -Wall -Wtolerant")
+@given("file")
+unsigned int foo(int x) {
+    return x;
+}
+@whenRun("./bin/cclynx", args="--emit-ast -Wall -Wtolerant")
+@expectOutput("stderr")
+
+@endtest
+
+@test("It should warn about sign-conversion in assignment with -Wall")
+@given("file")
+void foo(int x) {
+    unsigned int y;
+    y = x;
+}
+@whenRun("./bin/cclynx", args="--emit-ast -Wall")
+@expectOutput("stderr")
+{{any}}: WARNING: implicit conversion changes signedness from 'int' to 'unsigned int', use an explicit cast
+
+@endtest
+
+@test("It should warn about sign-conversion in function argument with -Wall")
+@given("file")
+void bar(unsigned int x) {
+    x = x;
+}
+
+void foo(void) {
+    int x;
+    x = 1;
+    bar(x);
+}
+@whenRun("./bin/cclynx", args="--emit-ast -Wall")
+@expectOutput("stderr")
+{{any}}: WARNING: implicit conversion changes signedness from 'int' to 'unsigned int', use an explicit cast
+
+@endtest
+
+@test("It should suppress all when --no-warnings follows -Wall")
+@given("file")
+int foo(int x) {
+    int y;
+    if (x) {}
+}
+@whenRun("./bin/cclynx", args="--emit-ast -Wall --no-warnings")
+@expectOutput("stderr")
+
+@endtest
+
+@test("It should enable all when -Wall follows --no-warnings")
+@given("file")
+int foo(int x) {
+    int y;
+    if (x) {}
+}
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings -Wall")
+@expectOutput("stderr")
+{{any}}: WARNING: empty if body
+{{any}}: WARNING: unused variable 'y'
+{{any}}: WARNING: function 'foo' missing return statement
+
+@endtest
+
+@test("It should suppress individual sign-conversion with -Wall -Wno-sign-conversion")
+@given("file")
+unsigned int foo(int x) {
+    return x;
+}
+@whenRun("./bin/cclynx", args="--emit-ast -Wall -Wno-sign-conversion")
+@expectOutput("stderr")
+
+@endtest
+
+@test("It should suppress unspecified-parameters with -Wno-unspecified-parameters")
+@given("file")
+int foo() {
+    return 7;
+}
+
+int main() {
+    return foo(42);
+}
+@whenRun("./bin/cclynx", args="--emit-ast -Wno-unspecified-parameters")
+@expectOutput("stderr")
+
+@endtest
+
+@test("It should suppress multiple categories with combined -Wno- flags")
+@given("file")
+int foo(int x) {
+    int y;
+    if (x) {}
+}
+@whenRun("./bin/cclynx", args="--emit-ast -Wno-unused -Wno-empty-body")
+@expectOutput("stderr")
+{{any}}: WARNING: function 'foo' missing return statement
+
+@endtest
+
+@test("It should warn about empty compound statement")
+@given("file")
+void foo(void) {
+    { }
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stderr")
+{{any}}: WARNING: empty compound statement
+
+@endtest
+
+@test("It should suppress only empty-if-body with -Wno-empty-if-body")
+@given("file")
+void foo(int x) {
+    if (x) {}
+    while (x) {}
+}
+@whenRun("./bin/cclynx", args="--emit-ast -Wno-empty-if-body")
+@expectOutput("stderr")
+{{any}}: WARNING: empty while body
+
+@endtest
+
+@test("It should warn about sign-conversion in binary expression with -Wall")
+@given("file")
+unsigned int foo(unsigned int x, int y) {
+    return x + y;
+}
+@whenRun("./bin/cclynx", args="--emit-ast -Wall")
+@expectOutput("stderr")
+{{any}}: WARNING: implicit conversion changes signedness from 'int' to 'unsigned int', use an explicit cast
+
+@endtest

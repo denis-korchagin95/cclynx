@@ -3,6 +3,7 @@
 
 #include "binary_expression_parser.h"
 #include "parser.h"
+#include "warning.h"
 #include "tokenizer.h"
 #include "type.h"
 
@@ -44,9 +45,10 @@ static const struct binary_op_rule equality_rule = {
     equality_ops, 2, AST_NODE_KIND_EQUALITY_EXPRESSION, parse_relational_expression
 };
 
-struct type * cast_binary_operands(struct parser_context * ctx, struct ast_node ** lhs_ptr, struct ast_node ** rhs_ptr)
+struct type * cast_binary_operands(struct parser_context * ctx, const struct token * op_token, struct ast_node ** lhs_ptr, struct ast_node ** rhs_ptr)
 {
     assert(ctx != NULL);
+    assert(op_token != NULL);
     assert(lhs_ptr != NULL);
     assert(rhs_ptr != NULL);
 
@@ -54,7 +56,10 @@ struct type * cast_binary_operands(struct parser_context * ctx, struct ast_node 
     struct type * rhs_type = (*rhs_ptr)->type;
 
     if (lhs_type->kind == rhs_type->kind && type_signedness_differs(lhs_type, rhs_type)) {
-        /* TODO: emit sign-conversion warning */
+        parser_report_warning(ctx, WARNING_SIGN_CONVERSION, op_token,
+            "implicit conversion changes signedness from '%s' to '%s', use an explicit cast",
+            type_stringify(type_is_unsigned(lhs_type) ? rhs_type : lhs_type),
+            type_stringify(type_is_unsigned(lhs_type) ? lhs_type : rhs_type));
         struct type * target_type = type_is_unsigned(lhs_type) ? lhs_type : rhs_type;
 
         if (!type_is_unsigned(lhs_type)) {
@@ -108,7 +113,7 @@ struct ast_node * parse_binary_expression(struct parser_context * ctx, const str
             return NULL;
         }
 
-        struct ast_node * binary_expression = ast_create_node(ctx->pool, rule->node_kind, cast_binary_operands(ctx, &lhs, &rhs));
+        struct ast_node * binary_expression = ast_create_node(ctx->pool, rule->node_kind, cast_binary_operands(ctx, current_token, &lhs, &rhs));
         binary_expression->content.binary_expression.operation = entry->operation;
         binary_expression->content.binary_expression.lhs = lhs;
         binary_expression->content.binary_expression.rhs = rhs;

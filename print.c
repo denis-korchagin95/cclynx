@@ -11,7 +11,7 @@
 #include "symbol.h"
 #include "ir.h"
 #include "type.h"
-#include "errors.h"
+#include "error.h"
 
 static void do_print_ast(const struct ast_node * ast, FILE * file, int depth, unsigned int * ancestors_info, const char * node_label);
 static int do_print_ast_dot(const struct ast_node * ast, FILE * file, int next_id);

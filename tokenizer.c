@@ -7,7 +7,7 @@
 #include "allocator.h"
 #include "hashmap.h"
 #include "identifier.h"
-#include "errors.h"
+#include "error.h"
 #include "source.h"
 
 

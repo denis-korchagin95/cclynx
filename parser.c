@@ -6,6 +6,7 @@
 #include <string.h>
 
 #include "parser.h"
+#include "warning.h"
 #include "binary_expression_parser.h"
 #include "tokenizer.h"
 #include "allocator.h"
@@ -13,7 +14,7 @@
 #include "scope.h"
 #include "symbol.h"
 #include "type.h"
-#include "errors.h"
+#include "error.h"
 
 
 struct declaration_specifiers
@@ -64,27 +65,46 @@ static void parser_report_error(struct parser_context * ctx, const struct token 
         message);
 }
 
-static void parser_report_warning(struct parser_context * ctx, const struct token * token, const char * fmt, ...)
+static void parser_report_warning_v(struct parser_context * ctx, enum warning_code code, struct source_position position, const char * fmt, va_list args)
+{
+    assert(ctx != NULL);
+    assert(fmt != NULL);
+
+    if (!warning_is_enabled(&ctx->warning_flags, code)) {
+        return;
+    }
+
+    char message[512];
+    vsnprintf(message, sizeof(message), fmt, args);
+
+    error_list_add(&ctx->errors, "%s:%u:%u: WARNING: %s\n",
+        ctx->source_filename,
+        position.line,
+        position.column,
+        message);
+}
+
+void parser_report_warning(struct parser_context * ctx, enum warning_code code, const struct token * token, const char * fmt, ...)
 {
     assert(ctx != NULL);
     assert(token != NULL);
     assert(fmt != NULL);
 
-    if (ctx->suppress_warnings) {
-        return;
-    }
-
-    char message[512];
     va_list args;
     va_start(args, fmt);
-    vsnprintf(message, sizeof(message), fmt, args);
+    parser_report_warning_v(ctx, code, token->span.position, fmt, args);
     va_end(args);
+}
 
-    error_list_add(&ctx->errors, "%s:%u:%u: WARNING: %s\n",
-        ctx->source_filename,
-        token->span.position.line,
-        token->span.position.column,
-        message);
+static void parser_report_warning_at(struct parser_context * ctx, enum warning_code code, struct source_position position, const char * fmt, ...)
+{
+    assert(ctx != NULL);
+    assert(fmt != NULL);
+
+    va_list args;
+    va_start(args, fmt);
+    parser_report_warning_v(ctx, code, position, fmt, args);
+    va_end(args);
 }
 
 static void parser_synchronize_statement(struct parser_context * ctx)
@@ -122,20 +142,13 @@ static void report_unused_variables(struct parser_context * ctx)
 {
     assert(ctx != NULL);
 
-    if (ctx->suppress_warnings) {
-        return;
-    }
-
     const struct symbol_list * it = ctx->current_scope->symbols;
     while (it != NULL) {
         if (it->symbol->kind == SYMBOL_KIND_VARIABLE && !(it->symbol->flags & SYMBOL_FLAG_USED)) {
-            const char * kind = (it->symbol->flags & SYMBOL_FLAG_FUNCTION_PARAMETER) ? "parameter" : "variable";
-            error_list_add(&ctx->errors, "%s:%u:%u: WARNING: unused %s '%s'\n",
-                ctx->source_filename,
-                it->symbol->declaration_position.line,
-                it->symbol->declaration_position.column,
-                kind,
-                it->symbol->identifier->name);
+            bool is_parameter = (it->symbol->flags & SYMBOL_FLAG_FUNCTION_PARAMETER) != 0;
+            enum warning_code code = is_parameter ? WARNING_UNUSED_PARAMETER : WARNING_UNUSED_VARIABLE;
+            const char * kind = is_parameter ? "parameter" : "variable";
+            parser_report_warning_at(ctx, code, it->symbol->declaration_position, "unused %s '%s'", kind, it->symbol->identifier->name);
         }
         it = it->next;
     }
@@ -255,7 +268,7 @@ struct ast_node * parse_compound_statement(struct parser_context * ctx)
         struct ast_node * statement = parse_statement(ctx);
 
         if (ast_is_empty_compound_statement(statement)) {
-            parser_report_warning(ctx, stmt_token, "empty compound statement");
+            parser_report_warning(ctx, WARNING_EMPTY_COMPOUND_STATEMENT, stmt_token, "empty compound statement");
         }
 
         if (statement != NULL) {
@@ -314,7 +327,7 @@ struct ast_node * parse_if_statement(struct parser_context * ctx, struct token *
     struct ast_node * true_branch = parse_statement(ctx);
 
     if (ast_is_empty_compound_statement(true_branch)) {
-        parser_report_warning(ctx, keyword_token, "empty if body");
+        parser_report_warning(ctx, WARNING_EMPTY_IF_BODY, keyword_token, "empty if body");
     }
 
     struct ast_node * false_branch = NULL;
@@ -329,7 +342,7 @@ struct ast_node * parse_if_statement(struct parser_context * ctx, struct token *
         false_branch = parse_statement(ctx);
 
         if (ast_is_empty_compound_statement(false_branch)) {
-            parser_report_warning(ctx, else_token, "empty else body");
+            parser_report_warning(ctx, WARNING_EMPTY_ELSE_BODY, else_token, "empty else body");
         }
     } else {
         parser_putback_token(current_token, ctx);
@@ -382,7 +395,9 @@ struct ast_node * parse_return_statement(struct parser_context * ctx)
         && expression->type->kind == ctx->current_function->type->kind
         && type_signedness_differs(expression->type, ctx->current_function->type)
     ) {
-        /* TODO: emit sign-conversion warning */
+        parser_report_warning(ctx, WARNING_SIGN_CONVERSION, current_token,
+            "implicit conversion changes signedness from '%s' to '%s', use an explicit cast",
+            type_stringify(expression->type), type_stringify(ctx->current_function->type));
         struct ast_node * cast = ast_create_node(ctx->pool, AST_NODE_KIND_CAST_EXPRESSION, ctx->current_function->type);
         cast->content.node = expression;
         expression = cast;
@@ -426,7 +441,7 @@ struct ast_node * parse_while_statement(struct parser_context * ctx, struct toke
     struct ast_node * statement = parse_statement(ctx);
 
     if (ast_is_empty_compound_statement(statement)) {
-        parser_report_warning(ctx, keyword_token, "empty while body");
+        parser_report_warning(ctx, WARNING_EMPTY_WHILE_BODY, keyword_token, "empty while body");
     }
 
     if (expression == NULL || statement == NULL) {
@@ -596,9 +611,9 @@ struct ast_node * parse_function_definition(struct parser_context * ctx)
     }
 
     if (compound_statement != NULL && ast_is_empty_compound_statement(compound_statement)) {
-        parser_report_warning(ctx, name_token, "function '%s' has empty body", identifier->name);
+        parser_report_warning(ctx, WARNING_EMPTY_FUNCTION_BODY, name_token, "function '%s' has empty body", identifier->name);
     } else if (type != &type_void && compound_statement != NULL && !ast_statement_always_returns(compound_statement)) {
-        parser_report_warning(ctx, name_token, "function '%s' missing return statement", identifier->name);
+        parser_report_warning(ctx, WARNING_MISSING_RETURN, name_token, "function '%s' missing return statement", identifier->name);
     }
 
     struct ast_node * function_definition = ast_create_node(ctx->pool, AST_NODE_KIND_FUNCTION_DEFINITION, type);
@@ -730,7 +745,9 @@ struct ast_node * parse_assignment_expression(struct parser_context * ctx)
         lhs->type->kind == initializer->type->kind
         && type_signedness_differs(lhs->type, initializer->type)
     ) {
-        /* TODO: emit sign-conversion warning */
+        parser_report_warning(ctx, WARNING_SIGN_CONVERSION, current_token,
+            "implicit conversion changes signedness from '%s' to '%s', use an explicit cast",
+            type_stringify(initializer->type), type_stringify(lhs->type));
         struct ast_node * cast = ast_create_node(ctx->pool, AST_NODE_KIND_CAST_EXPRESSION, lhs->type);
         cast->content.node = initializer;
         initializer = cast;
@@ -845,7 +862,7 @@ struct ast_node * parse_postfix_expression(struct parser_context * ctx)
             }
 
             if (function_symbol->parameter_presence == PARAMETER_PRESENCE_UNSPECIFIED && argument_count > 0) {
-                parser_report_warning(ctx, current_token,
+                parser_report_warning(ctx, WARNING_UNSPECIFIED_PARAMETERS, current_token,
                     "function '%s' has unspecified parameters, consider using '%s(void)' or adding parameter types",
                     function_symbol->identifier->name, function_symbol->identifier->name);
             }
@@ -870,7 +887,9 @@ struct ast_node * parse_postfix_expression(struct parser_context * ctx)
                         arg_type->kind == param_type->kind
                         && type_signedness_differs(arg_type, param_type)
                     ) {
-                        /* TODO: emit sign-conversion warning */
+                        parser_report_warning(ctx, WARNING_SIGN_CONVERSION, current_token,
+                            "implicit conversion changes signedness from '%s' to '%s', use an explicit cast",
+                            type_stringify(arg_type), type_stringify(param_type));
                         struct ast_node * cast = ast_create_node(ctx->pool, AST_NODE_KIND_CAST_EXPRESSION, param_type);
                         cast->content.node = arguments[i];
                         arguments[i] = cast;

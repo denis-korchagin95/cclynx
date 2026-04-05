@@ -1,5 +1,5 @@
-#ifndef CCLYNX_ERRORS_H
-#define CCLYNX_ERRORS_H 1
+#ifndef CCLYNX_ERROR_H
+#define CCLYNX_ERROR_H 1
 
 #include <stdint.h>
 
@@ -27,4 +27,4 @@ void error_list_print(const struct error_list * list);
 
 _Noreturn void cclynx_fatal_error(const char * fmt, ...);
 
-#endif /* CCLYNX_ERRORS_H */
+#endif /* CCLYNX_ERROR_H */

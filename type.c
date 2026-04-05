@@ -1,7 +1,7 @@
 #include <assert.h>
 
 #include "type.h"
-#include "errors.h"
+#include "error.h"
 
 struct type type_void = {TYPE_KIND_VOID, 0, 0, 0};
 struct type type_sint32 = {TYPE_KIND_INTEGER, 4, 4, TYPE_MODIFIER_SIGNED};

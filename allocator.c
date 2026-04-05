@@ -3,7 +3,7 @@
 #include <stdlib.h>
 
 #include "allocator.h"
-#include "errors.h"
+#include "error.h"
 #include "util.h"
 
 

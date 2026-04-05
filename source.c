@@ -4,7 +4,7 @@
 #include <string.h>
 
 #include "source.h"
-#include "errors.h"
+#include "error.h"
 
 #define SOURCE_LOAD_CHUNK_SIZE 4096
 

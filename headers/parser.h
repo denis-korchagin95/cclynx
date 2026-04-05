@@ -4,7 +4,8 @@
 #include <stdbool.h>
 
 #include "ast.h"
-#include "errors.h"
+#include "error.h"
+#include "warning.h"
 
 #define MAX_TOKEN_BUFFER_SIZE (4)
 
@@ -22,7 +23,7 @@ struct parser_context
     struct error_list errors;
     struct symbol * current_function;
     bool has_error;
-    bool suppress_warnings;
+    struct warning_flags warning_flags;
 };
 
 void parser_init_context(struct parser_context * ctx, struct token * tokens, struct memory_blob_pool * pool, struct scope * file_scope, const char * source_filename);
@@ -30,5 +31,6 @@ struct ast_node * parser_parse(struct parser_context * ctx);
 
 struct token * parser_get_token(struct parser_context * ctx);
 void parser_putback_token(struct token * token, struct parser_context * ctx);
+void parser_report_warning(struct parser_context * ctx, enum warning_code code, const struct token * token, const char * fmt, ...);
 
 #endif /* CCLYNX_PARSER_H */

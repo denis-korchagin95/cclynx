@@ -6,7 +6,7 @@
 #include "ast.h"
 #include "type.h"
 #include "symbol.h"
-#include "errors.h"
+#include "error.h"
 
 static struct ir_instruction * ir_create_instruction(struct ir_context * ctx, enum opcode code);
 static struct ir_operand * ir_create_operand(struct ir_context * ctx, enum operand_kind kind);

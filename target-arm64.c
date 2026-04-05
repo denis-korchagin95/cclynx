@@ -7,7 +7,7 @@
 #include "identifier.h"
 #include "util.h"
 #include "type.h"
-#include "errors.h"
+#include "error.h"
 
 static const struct codegen_reg initial_regs[CODEGEN_REG_COUNT] = {
     { "w9",  CODEGEN_REG_KIND_INTEGER,   0, },

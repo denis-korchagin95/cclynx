@@ -4,7 +4,7 @@
 #include "ast.h"
 #include "allocator.h"
 #include "type.h"
-#include "errors.h"
+#include "error.h"
 
 struct ast_node * ast_create_node(struct memory_blob_pool * pool, enum ast_node_kind kind, struct type * type)
 {
