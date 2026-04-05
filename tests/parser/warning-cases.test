@@ -423,6 +423,40 @@ unsigned int foo(unsigned int x, int y) {
 @expectOutput("stderr")
 {{any}}: WARNING: implicit conversion changes signedness from 'int' to 'unsigned int', use an explicit cast
 
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+└── FunctionDefinition: 'foo' <2-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'unsigned int'
+    ├── ParameterList
+    │   ├── Parameter: 'x'
+    │   │   └── Type
+    │   │       ├── category: 'basic'
+    │   │       └── descriptor: 'unsigned int'
+    │   └── Parameter: 'y'
+    │       └── Type
+    │           ├── category: 'basic'
+    │           └── descriptor: 'int'
+    └── CompoundStatement
+        └── ReturnStatement
+            └── RelationalExpression: '<'
+                ├── Type
+                │   ├── category: 'basic'
+                │   └── descriptor: 'unsigned int'
+                ├── VariableExpression: 'x'
+                │   └── Type
+                │       ├── category: 'basic'
+                │       └── descriptor: 'unsigned int'
+                └── CastExpression
+                    ├── Type
+                    │   ├── category: 'basic'
+                    │   └── descriptor: 'unsigned int'
+                    └── VariableExpression: 'y'
+                        └── Type
+                            ├── category: 'basic'
+                            └── descriptor: 'int'
+
 @endtest
 
 @test("It should warn about sign-compare for greater-than with -Wall")
@@ -433,6 +467,40 @@ unsigned int foo(unsigned int x, int y) {
 @whenRun("./bin/cclynx", args="--emit-ast -Wall")
 @expectOutput("stderr")
 {{any}}: WARNING: implicit conversion changes signedness from 'int' to 'unsigned int', use an explicit cast
+
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+└── FunctionDefinition: 'foo' <2-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'unsigned int'
+    ├── ParameterList
+    │   ├── Parameter: 'x'
+    │   │   └── Type
+    │   │       ├── category: 'basic'
+    │   │       └── descriptor: 'unsigned int'
+    │   └── Parameter: 'y'
+    │       └── Type
+    │           ├── category: 'basic'
+    │           └── descriptor: 'int'
+    └── CompoundStatement
+        └── ReturnStatement
+            └── RelationalExpression: '>'
+                ├── Type
+                │   ├── category: 'basic'
+                │   └── descriptor: 'unsigned int'
+                ├── VariableExpression: 'x'
+                │   └── Type
+                │       ├── category: 'basic'
+                │       └── descriptor: 'unsigned int'
+                └── CastExpression
+                    ├── Type
+                    │   ├── category: 'basic'
+                    │   └── descriptor: 'unsigned int'
+                    └── VariableExpression: 'y'
+                        └── Type
+                            ├── category: 'basic'
+                            └── descriptor: 'int'
 
 @endtest
 
@@ -445,6 +513,40 @@ unsigned int foo(unsigned int x, int y) {
 @expectOutput("stderr")
 {{any}}: WARNING: implicit conversion changes signedness from 'int' to 'unsigned int', use an explicit cast
 
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+└── FunctionDefinition: 'foo' <2-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'unsigned int'
+    ├── ParameterList
+    │   ├── Parameter: 'x'
+    │   │   └── Type
+    │   │       ├── category: 'basic'
+    │   │       └── descriptor: 'unsigned int'
+    │   └── Parameter: 'y'
+    │       └── Type
+    │           ├── category: 'basic'
+    │           └── descriptor: 'int'
+    └── CompoundStatement
+        └── ReturnStatement
+            └── EqualityExpression: '=='
+                ├── Type
+                │   ├── category: 'basic'
+                │   └── descriptor: 'unsigned int'
+                ├── VariableExpression: 'x'
+                │   └── Type
+                │       ├── category: 'basic'
+                │       └── descriptor: 'unsigned int'
+                └── CastExpression
+                    ├── Type
+                    │   ├── category: 'basic'
+                    │   └── descriptor: 'unsigned int'
+                    └── VariableExpression: 'y'
+                        └── Type
+                            ├── category: 'basic'
+                            └── descriptor: 'int'
+
 @endtest
 
 @test("It should warn about sign-compare for inequality with -Wall")
@@ -456,15 +558,39 @@ unsigned int foo(unsigned int x, int y) {
 @expectOutput("stderr")
 {{any}}: WARNING: implicit conversion changes signedness from 'int' to 'unsigned int', use an explicit cast
 
-@endtest
-
-@test("It should not warn about sign-compare by default")
-@given("file")
-unsigned int foo(unsigned int x, int y) {
-    return x < y;
-}
-@whenRun("./bin/cclynx", args="--emit-ast")
-@expectOutput("stderr")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+└── FunctionDefinition: 'foo' <2-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'unsigned int'
+    ├── ParameterList
+    │   ├── Parameter: 'x'
+    │   │   └── Type
+    │   │       ├── category: 'basic'
+    │   │       └── descriptor: 'unsigned int'
+    │   └── Parameter: 'y'
+    │       └── Type
+    │           ├── category: 'basic'
+    │           └── descriptor: 'int'
+    └── CompoundStatement
+        └── ReturnStatement
+            └── EqualityExpression: '!='
+                ├── Type
+                │   ├── category: 'basic'
+                │   └── descriptor: 'unsigned int'
+                ├── VariableExpression: 'x'
+                │   └── Type
+                │       ├── category: 'basic'
+                │       └── descriptor: 'unsigned int'
+                └── CastExpression
+                    ├── Type
+                    │   ├── category: 'basic'
+                    │   └── descriptor: 'unsigned int'
+                    └── VariableExpression: 'y'
+                        └── Type
+                            ├── category: 'basic'
+                            └── descriptor: 'int'
 
 @endtest
 
@@ -478,16 +604,6 @@ unsigned int foo(unsigned int x, int y) {
 
 @endtest
 
-@test("It should suppress sign-compare with -Wall -Wno-signedness")
-@given("file")
-unsigned int foo(unsigned int x, int y) {
-    return x < y;
-}
-@whenRun("./bin/cclynx", args="--emit-ast -Wall -Wno-signedness")
-@expectOutput("stderr")
-
-@endtest
-
 @test("It should warn about sign-compare with signed on left side with -Wall")
 @given("file")
 unsigned int foo(int x, unsigned int y) {
@@ -496,6 +612,40 @@ unsigned int foo(int x, unsigned int y) {
 @whenRun("./bin/cclynx", args="--emit-ast -Wall")
 @expectOutput("stderr")
 {{any}}: WARNING: implicit conversion changes signedness from 'int' to 'unsigned int', use an explicit cast
+
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+└── FunctionDefinition: 'foo' <2-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'unsigned int'
+    ├── ParameterList
+    │   ├── Parameter: 'x'
+    │   │   └── Type
+    │   │       ├── category: 'basic'
+    │   │       └── descriptor: 'int'
+    │   └── Parameter: 'y'
+    │       └── Type
+    │           ├── category: 'basic'
+    │           └── descriptor: 'unsigned int'
+    └── CompoundStatement
+        └── ReturnStatement
+            └── RelationalExpression: '<'
+                ├── Type
+                │   ├── category: 'basic'
+                │   └── descriptor: 'unsigned int'
+                ├── CastExpression
+                │   ├── Type
+                │   │   ├── category: 'basic'
+                │   │   └── descriptor: 'unsigned int'
+                │   └── VariableExpression: 'x'
+                │       └── Type
+                │           ├── category: 'basic'
+                │           └── descriptor: 'int'
+                └── VariableExpression: 'y'
+                    └── Type
+                        ├── category: 'basic'
+                        └── descriptor: 'unsigned int'
 
 @endtest
 

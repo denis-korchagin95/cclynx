@@ -20,11 +20,11 @@ TranslationUnit: '{{any}}'
 @endtest
 
 @test("It should parse source from stdin via /dev/stdin")
-@given("file")
+@given("stdin")
 int main() {
     return 42;
 }
-@whenRun("./scripts/cclynx-stdin-runner.sh", args="--emit-ast")
+@whenRun("./bin/cclynx", args="--emit-ast /dev/stdin")
 @expectOutput("stdout")
 TranslationUnit: 'stdin'
 └── FunctionDefinition: 'main' <unspecified-parameters>
