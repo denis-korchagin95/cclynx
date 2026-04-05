@@ -19,6 +19,7 @@ static const struct warning_entry warning_table[WARNING_COUNT] = {
     [WARNING_MISSING_RETURN]           = { "missing-return",           WARNING_CATEGORY_MISSING },
     [WARNING_UNSPECIFIED_PARAMETERS]   = { "unspecified-parameters",   WARNING_CATEGORY_NONE },
     [WARNING_SIGN_CONVERSION]          = { "sign-conversion",          WARNING_CATEGORY_SIGNEDNESS },
+    [WARNING_SIGN_COMPARE]             = { "sign-compare",             WARNING_CATEGORY_SIGNEDNESS },
 };
 
 static const char * category_names[WARNING_CATEGORY_COUNT] = {

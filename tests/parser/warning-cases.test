@@ -413,3 +413,119 @@ unsigned int foo(unsigned int x, int y) {
 {{any}}: WARNING: implicit conversion changes signedness from 'int' to 'unsigned int', use an explicit cast
 
 @endtest
+
+@test("It should warn about sign-compare for less-than with -Wall")
+@given("file")
+unsigned int foo(unsigned int x, int y) {
+    return x < y;
+}
+@whenRun("./bin/cclynx", args="--emit-ast -Wall")
+@expectOutput("stderr")
+{{any}}: WARNING: implicit conversion changes signedness from 'int' to 'unsigned int', use an explicit cast
+
+@endtest
+
+@test("It should warn about sign-compare for greater-than with -Wall")
+@given("file")
+unsigned int foo(unsigned int x, int y) {
+    return x > y;
+}
+@whenRun("./bin/cclynx", args="--emit-ast -Wall")
+@expectOutput("stderr")
+{{any}}: WARNING: implicit conversion changes signedness from 'int' to 'unsigned int', use an explicit cast
+
+@endtest
+
+@test("It should warn about sign-compare for equality with -Wall")
+@given("file")
+unsigned int foo(unsigned int x, int y) {
+    return x == y;
+}
+@whenRun("./bin/cclynx", args="--emit-ast -Wall")
+@expectOutput("stderr")
+{{any}}: WARNING: implicit conversion changes signedness from 'int' to 'unsigned int', use an explicit cast
+
+@endtest
+
+@test("It should warn about sign-compare for inequality with -Wall")
+@given("file")
+unsigned int foo(unsigned int x, int y) {
+    return x != y;
+}
+@whenRun("./bin/cclynx", args="--emit-ast -Wall")
+@expectOutput("stderr")
+{{any}}: WARNING: implicit conversion changes signedness from 'int' to 'unsigned int', use an explicit cast
+
+@endtest
+
+@test("It should not warn about sign-compare by default")
+@given("file")
+unsigned int foo(unsigned int x, int y) {
+    return x < y;
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stderr")
+
+@endtest
+
+@test("It should suppress sign-compare with -Wall -Wno-sign-compare")
+@given("file")
+unsigned int foo(unsigned int x, int y) {
+    return x < y;
+}
+@whenRun("./bin/cclynx", args="--emit-ast -Wall -Wno-sign-compare")
+@expectOutput("stderr")
+
+@endtest
+
+@test("It should suppress sign-compare with -Wall -Wno-signedness")
+@given("file")
+unsigned int foo(unsigned int x, int y) {
+    return x < y;
+}
+@whenRun("./bin/cclynx", args="--emit-ast -Wall -Wno-signedness")
+@expectOutput("stderr")
+
+@endtest
+
+@test("It should warn about sign-compare with signed on left side with -Wall")
+@given("file")
+unsigned int foo(int x, unsigned int y) {
+    return x < y;
+}
+@whenRun("./bin/cclynx", args="--emit-ast -Wall")
+@expectOutput("stderr")
+{{any}}: WARNING: implicit conversion changes signedness from 'int' to 'unsigned int', use an explicit cast
+
+@endtest
+
+@test("It should not warn about sign-compare when both are signed")
+@given("file")
+int foo(int x, int y) {
+    return x < y;
+}
+@whenRun("./bin/cclynx", args="--emit-ast -Wall")
+@expectOutput("stderr")
+
+@endtest
+
+@test("It should not warn about sign-compare when both are unsigned")
+@given("file")
+unsigned int foo(unsigned int x, unsigned int y) {
+    return x < y;
+}
+@whenRun("./bin/cclynx", args="--emit-ast -Wall")
+@expectOutput("stderr")
+
+@endtest
+
+@test("It should suppress sign-compare but not sign-conversion with -Wno-sign-compare")
+@given("file")
+unsigned int foo(unsigned int x, int y) {
+    return x < y + x;
+}
+@whenRun("./bin/cclynx", args="--emit-ast -Wall -Wno-sign-compare")
+@expectOutput("stderr")
+{{any}}: WARNING: implicit conversion changes signedness from 'int' to 'unsigned int', use an explicit cast
+
+@endtest

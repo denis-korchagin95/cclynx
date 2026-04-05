@@ -30,22 +30,22 @@ static const struct op_entry equality_ops[] = {
 };
 
 static const struct binary_op_rule multiplicative_rule = {
-    multiplicative_ops, 2, AST_NODE_KIND_MULTIPLICATIVE_EXPRESSION, parse_cast_expression
+    multiplicative_ops, 2, AST_NODE_KIND_MULTIPLICATIVE_EXPRESSION, parse_cast_expression, WARNING_SIGN_CONVERSION
 };
 
 static const struct binary_op_rule additive_rule = {
-    additive_ops, 2, AST_NODE_KIND_ADDITIVE_EXPRESSION, parse_multiplicative_expression
+    additive_ops, 2, AST_NODE_KIND_ADDITIVE_EXPRESSION, parse_multiplicative_expression, WARNING_SIGN_CONVERSION
 };
 
 static const struct binary_op_rule relational_rule = {
-    relational_ops, 2, AST_NODE_KIND_RELATIONAL_EXPRESSION, parse_additive_expression
+    relational_ops, 2, AST_NODE_KIND_RELATIONAL_EXPRESSION, parse_additive_expression, WARNING_SIGN_COMPARE
 };
 
 static const struct binary_op_rule equality_rule = {
-    equality_ops, 2, AST_NODE_KIND_EQUALITY_EXPRESSION, parse_relational_expression
+    equality_ops, 2, AST_NODE_KIND_EQUALITY_EXPRESSION, parse_relational_expression, WARNING_SIGN_COMPARE
 };
 
-struct type * cast_binary_operands(struct parser_context * ctx, const struct token * op_token, struct ast_node ** lhs_ptr, struct ast_node ** rhs_ptr)
+struct type * cast_binary_operands(struct parser_context * ctx, enum warning_code sign_warning, const struct token * op_token, struct ast_node ** lhs_ptr, struct ast_node ** rhs_ptr)
 {
     assert(ctx != NULL);
     assert(op_token != NULL);
@@ -56,7 +56,7 @@ struct type * cast_binary_operands(struct parser_context * ctx, const struct tok
     struct type * rhs_type = (*rhs_ptr)->type;
 
     if (lhs_type->kind == rhs_type->kind && type_signedness_differs(lhs_type, rhs_type)) {
-        parser_report_warning(ctx, WARNING_SIGN_CONVERSION, op_token,
+        parser_report_warning(ctx, sign_warning, op_token,
             "implicit conversion changes signedness from '%s' to '%s', use an explicit cast",
             type_stringify(type_is_unsigned(lhs_type) ? rhs_type : lhs_type),
             type_stringify(type_is_unsigned(lhs_type) ? lhs_type : rhs_type));
@@ -113,7 +113,7 @@ struct ast_node * parse_binary_expression(struct parser_context * ctx, const str
             return NULL;
         }
 
-        struct ast_node * binary_expression = ast_create_node(ctx->pool, rule->node_kind, cast_binary_operands(ctx, current_token, &lhs, &rhs));
+        struct ast_node * binary_expression = ast_create_node(ctx->pool, rule->node_kind, cast_binary_operands(ctx, rule->sign_warning, current_token, &lhs, &rhs));
         binary_expression->content.binary_expression.operation = entry->operation;
         binary_expression->content.binary_expression.lhs = lhs;
         binary_expression->content.binary_expression.rhs = rhs;

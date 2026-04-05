@@ -2,6 +2,7 @@
 #define CCLYNX_BINARY_EXPRESSION_PARSER_H 1
 
 #include "ast.h"
+#include "warning.h"
 
 struct parser_context;
 struct token;
@@ -19,6 +20,7 @@ struct binary_op_rule {
     int num_operators;
     enum ast_node_kind node_kind;
     parse_fn operand_parser;
+    enum warning_code sign_warning;
 };
 
 struct ast_node * parse_binary_expression(struct parser_context * ctx, const struct binary_op_rule * rule);
