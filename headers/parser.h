@@ -30,6 +30,7 @@ void parser_init_context(struct parser_context * ctx, struct token * tokens, str
 struct ast_node * parser_parse(struct parser_context * ctx);
 
 struct token * parser_get_token(struct parser_context * ctx);
+struct token * parser_peek_token(struct parser_context * ctx);
 void parser_putback_token(struct token * token, struct parser_context * ctx);
 void parser_report_warning(struct parser_context * ctx, enum warning_code code, const struct token * token, const char * fmt, ...);
 

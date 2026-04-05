@@ -103,10 +103,10 @@ struct ast_node * parse_binary_expression(struct parser_context * ctx, const str
         return NULL;
     }
 
-    struct token * current_token = parser_get_token(ctx);
     const struct op_entry * entry;
 
-    while ((entry = match_operator(current_token, rule)) != NULL) {
+    while ((entry = match_operator(parser_peek_token(ctx), rule)) != NULL) {
+        struct token * current_token = parser_get_token(ctx);
         struct ast_node * rhs = rule->operand_parser(ctx);
 
         if (rhs == NULL) {
@@ -118,11 +118,7 @@ struct ast_node * parse_binary_expression(struct parser_context * ctx, const str
         binary_expression->content.binary_expression.lhs = lhs;
         binary_expression->content.binary_expression.rhs = rhs;
         lhs = binary_expression;
-
-        current_token = parser_get_token(ctx);
     }
-
-    parser_putback_token(current_token, ctx);
 
     return lhs;
 }

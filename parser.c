@@ -171,11 +171,7 @@ struct ast_node * parse_translation_unit(struct parser_context * ctx)
 
     ctx->current_scope = scope_push(ctx->current_scope, ctx->pool);
 
-    struct token * current_token = parser_get_token(ctx);
-
-    while (current_token != &eos_token) {
-        parser_putback_token(current_token, ctx);
-
+    while (parser_peek_token(ctx) != &eos_token) {
         struct ast_node * function_def = parse_function_definition(ctx);
 
         if (function_def != NULL) {
@@ -184,8 +180,6 @@ struct ast_node * parse_translation_unit(struct parser_context * ctx)
             *tail = element;
             tail = &element->next;
         }
-
-        current_token = parser_get_token(ctx);
     }
 
     ctx->current_scope = scope_pop(ctx->current_scope);
@@ -201,26 +195,26 @@ struct ast_node * parse_statement(struct parser_context * ctx)
 {
     assert(ctx != NULL);
 
-    struct token * current_token = parser_get_token(ctx);
+    struct token * current_token = parser_peek_token(ctx);
 
     struct ast_node * statement = NULL;
 
     if (token_is_keyword(current_token)) {
         if (current_token->identifier->keyword_code == KEYWORD_WHILE) {
+            parser_get_token(ctx);
             statement = parse_while_statement(ctx, current_token);
         } else if (current_token->identifier->keyword_code == KEYWORD_RETURN) {
+            parser_get_token(ctx);
             statement = parse_return_statement(ctx);
         } else if (current_token->identifier->keyword_code == KEYWORD_IF) {
+            parser_get_token(ctx);
             statement = parse_if_statement(ctx, current_token);
         } else {
-            parser_putback_token(current_token, ctx);
             statement = parse_declaration(ctx);
         }
     } else if (token_is_punctuator(current_token, '{')) {
-        parser_putback_token(current_token, ctx);
         statement = parse_compound_statement(ctx);
     } else {
-        parser_putback_token(current_token, ctx);
         statement = parse_expression_statement(ctx);
     }
 
@@ -241,9 +235,8 @@ struct ast_node * parse_compound_statement(struct parser_context * ctx)
         return NULL;
     }
 
-    current_token = parser_get_token(ctx);
-
-    if (token_is_punctuator(current_token, '}')) {
+    if (token_is_punctuator(parser_peek_token(ctx), '}')) {
+        parser_get_token(ctx);
         struct ast_node * compound_statement = ast_create_node(ctx->pool, AST_NODE_KIND_COMPOUND_STATEMENT, &type_void);
         compound_statement->content.list = NULL;
         return compound_statement;
@@ -251,18 +244,16 @@ struct ast_node * parse_compound_statement(struct parser_context * ctx)
 
     ctx->current_scope = scope_push(ctx->current_scope, ctx->pool);
 
-    parser_putback_token(current_token, ctx);
-
     struct ast_node_list * statement_list = NULL;
     struct ast_node_list ** statement_list_end = &statement_list;
 
     for (;;) {
-        current_token = parser_get_token(ctx);
+        current_token = parser_peek_token(ctx);
         if (token_is_punctuator(current_token, '}') || current_token == &eos_token) {
+            parser_get_token(ctx);
             break;
         }
         struct token * stmt_token = current_token;
-        parser_putback_token(current_token, ctx);
 
         struct ast_node * statement = parse_statement(ctx);
 
@@ -330,20 +321,19 @@ struct ast_node * parse_if_statement(struct parser_context * ctx, struct token *
 
     struct ast_node * false_branch = NULL;
 
-    current_token = parser_get_token(ctx);
+    current_token = parser_peek_token(ctx);
 
     if (
         token_is_keyword(current_token)
         && strcmp("else", current_token->identifier->name) == 0
     ) {
+        parser_get_token(ctx);
         struct token * else_token = current_token;
         false_branch = parse_statement(ctx);
 
         if (ast_is_empty_compound_statement(false_branch)) {
             parser_report_warning(ctx, WARNING_EMPTY_ELSE_BODY, else_token, "empty else body");
         }
-    } else {
-        parser_putback_token(current_token, ctx);
     }
 
     if (condition == NULL || true_branch == NULL) {
@@ -362,21 +352,20 @@ struct ast_node * parse_return_statement(struct parser_context * ctx)
 {
     assert(ctx != NULL);
 
-    struct token * current_token = parser_get_token(ctx);
+    struct token * current_token;
 
     struct ast_node * expression = NULL;
 
-    if (!token_is_punctuator(current_token, ';')) {
-        parser_putback_token(current_token, ctx);
+    if (!token_is_punctuator(parser_peek_token(ctx), ';')) {
         expression = parse_expression(ctx);
 
         if (expression == NULL) {
             parser_synchronize_statement(ctx);
             return NULL;
         }
-
-        current_token = parser_get_token(ctx);
     }
+
+    current_token = parser_get_token(ctx);
 
     if (!token_is_punctuator(current_token, ';')) {
         parser_report_error(ctx, current_token, "expected ';' but got %s", token_stringify(current_token));
@@ -457,21 +446,18 @@ struct ast_node * parse_expression_statement(struct parser_context * ctx)
 {
     assert(ctx != NULL);
 
-    struct token * current_token = parser_get_token(ctx);
-
     struct ast_node * expression = NULL;
 
-    if (!token_is_punctuator(current_token, ';')) {
-        parser_putback_token(current_token, ctx);
+    if (!token_is_punctuator(parser_peek_token(ctx), ';')) {
         expression = parse_expression(ctx);
 
         if (expression == NULL) {
             parser_synchronize_statement(ctx);
             return NULL;
         }
-
-        current_token = parser_get_token(ctx);
     }
+
+    struct token * current_token = parser_get_token(ctx);
 
     if (!token_is_punctuator(current_token, ';')) {
         parser_report_error(ctx, current_token, "expected ';' but got %s", token_stringify(current_token));
@@ -723,18 +709,15 @@ struct ast_node * parse_assignment_expression(struct parser_context * ctx)
         return lhs;
     }
 
+    if (!token_is_punctuator(parser_peek_token(ctx), '=')) {
+        return lhs;
+    }
+
     struct token * current_token = parser_get_token(ctx);
 
-    struct ast_node * initializer = NULL;
-
-    if (token_is_punctuator(current_token, '=')) {
-        initializer = parse_equality_expression(ctx);
-        if (initializer == NULL) {
-            return NULL;
-        }
-    } else {
-        parser_putback_token(current_token, ctx);
-        return lhs;
+    struct ast_node * initializer = parse_equality_expression(ctx);
+    if (initializer == NULL) {
+        return NULL;
     }
 
     if (
@@ -761,13 +744,11 @@ struct ast_node * parse_cast_expression(struct parser_context * ctx)
 {
     assert(ctx != NULL);
 
-    struct token * current_token = parser_get_token(ctx);
-
-    if (!token_is_punctuator(current_token, '(')) {
-        parser_putback_token(current_token, ctx);
+    if (!token_is_punctuator(parser_peek_token(ctx), '(')) {
         return parse_postfix_expression(ctx);
     }
 
+    struct token * current_token = parser_get_token(ctx);
     struct token * previous_token = current_token;
 
     struct declaration_specifiers specifiers;
@@ -808,12 +789,14 @@ struct ast_node * parse_postfix_expression(struct parser_context * ctx)
 {
     assert(ctx != NULL);
 
-    struct token * current_token = parser_get_token(ctx);
+    struct token * current_token = parser_peek_token(ctx);
 
     if (token_is_identifier(current_token)) {
-        struct token * next_token = parser_get_token(ctx);
+        parser_get_token(ctx);
+        struct token * next_token = parser_peek_token(ctx);
 
         if (token_is_punctuator(next_token, '(')) {
+            parser_get_token(ctx);
             struct symbol * function_symbol = symbol_lookup(current_token->identifier, SYMBOL_KIND_FUNCTION);
 
             if (function_symbol == NULL) {
@@ -829,11 +812,9 @@ struct ast_node * parse_postfix_expression(struct parser_context * ctx)
             struct ast_node * arguments[MAX_AST_FUNCTION_ARGUMENT_COUNT] = {0};
             unsigned int argument_count = 0;
 
-            next_token = parser_get_token(ctx);
-
-            if (!token_is_punctuator(next_token, ')')) {
-                parser_putback_token(next_token, ctx);
-
+            if (token_is_punctuator(parser_peek_token(ctx), ')')) {
+                parser_get_token(ctx);
+            } else {
                 do {
                     struct ast_node * argument = parse_assignment_expression(ctx);
                     arguments[argument_count++] = argument;
@@ -905,12 +886,9 @@ struct ast_node * parse_postfix_expression(struct parser_context * ctx)
             return function_call;
         }
 
-        parser_putback_token(next_token, ctx);
         parser_putback_token(current_token, ctx);
 
         goto fallback;
-    } else {
-        parser_putback_token(current_token, ctx);
     }
 
 fallback:
@@ -1007,6 +985,16 @@ struct token * parser_get_token(struct parser_context * ctx)
     ctx->iterator = ctx->iterator->next;
 
     return current_token;
+}
+
+struct token * parser_peek_token(struct parser_context * ctx)
+{
+    assert(ctx != NULL);
+
+    if (ctx->token_buffer_pos > 0)
+        return ctx->token_buffer[ctx->token_buffer_pos - 1];
+
+    return ctx->iterator;
 }
 
 void parser_putback_token(struct token * token, struct parser_context * ctx)
