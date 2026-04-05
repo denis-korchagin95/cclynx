@@ -1,5 +1,5 @@
 @test("It should generate IR code for if statement with constant false expression")
-@given("file")
+@given("stdin")
 int main() {
     int i;
     i = 4;
@@ -8,7 +8,7 @@ int main() {
     }
     return i;
 }
-@whenRun("./bin/cclynx", args="--emit-ir")
+@whenRun("./bin/cclynx", args="--emit-ir /dev/stdin")
 @expectOutput("stdout")
 OP_FUNC "main"
 OP_CONST 4, t1
@@ -25,7 +25,7 @@ OP_FUNC_END
 @endtest
 
 @test("It should generate IR code for if statement with constant true expression")
-@given("file")
+@given("stdin")
 int main() {
     int i;
     i = 4;
@@ -34,7 +34,7 @@ int main() {
     }
     return i;
 }
-@whenRun("./bin/cclynx", args="--emit-ir")
+@whenRun("./bin/cclynx", args="--emit-ir /dev/stdin")
 @expectOutput("stdout")
 OP_FUNC "main"
 OP_CONST 4, t1
@@ -51,12 +51,12 @@ OP_FUNC_END
 @endtest
 
 @test("It should generate IR code for if statement with empty expression statement")
-@given("file")
+@given("stdin")
 int main() {
     if (0);
     return 0;
 }
-@whenRun("./bin/cclynx", args="--emit-ir")
+@whenRun("./bin/cclynx", args="--emit-ir /dev/stdin")
 @expectOutput("stdout")
 OP_FUNC "main"
 OP_CONST 0, t1
@@ -70,13 +70,13 @@ OP_FUNC_END
 @endtest
 
 @test("It should generate IR code for if statement with empty compound statement")
-@given("file")
+@given("stdin")
 int main() {
     if (0) {
     }
     return 0;
 }
-@whenRun("./bin/cclynx", args="--emit-ir")
+@whenRun("./bin/cclynx", args="--emit-ir /dev/stdin")
 @expectOutput("stdout")
 OP_FUNC "main"
 OP_CONST 0, t1
@@ -90,7 +90,7 @@ OP_FUNC_END
 @endtest
 
 @test("It should generate IR code for if statement with relational expression <")
-@given("file")
+@given("stdin")
 int main() {
     int i;
     i = 0;
@@ -99,7 +99,7 @@ int main() {
     }
     return i;
 }
-@whenRun("./bin/cclynx", args="--emit-ir")
+@whenRun("./bin/cclynx", args="--emit-ir /dev/stdin")
 @expectOutput("stdout")
 OP_FUNC "main"
 OP_CONST 0, t1
@@ -119,7 +119,7 @@ OP_FUNC_END
 @endtest
 
 @test("It should generate IR code for if statement with relational expression >")
-@given("file")
+@given("stdin")
 int main() {
     int i;
     i = 3;
@@ -128,7 +128,7 @@ int main() {
     }
     return i;
 }
-@whenRun("./bin/cclynx", args="--emit-ir")
+@whenRun("./bin/cclynx", args="--emit-ir /dev/stdin")
 @expectOutput("stdout")
 OP_FUNC "main"
 OP_CONST 3, t1
@@ -148,7 +148,7 @@ OP_FUNC_END
 @endtest
 
 @test("It should generate IR code for if statement with equality expression ==")
-@given("file")
+@given("stdin")
 int main() {
     int i;
     i = 0;
@@ -157,7 +157,7 @@ int main() {
     }
     return i;
 }
-@whenRun("./bin/cclynx", args="--emit-ir")
+@whenRun("./bin/cclynx", args="--emit-ir /dev/stdin")
 @expectOutput("stdout")
 OP_FUNC "main"
 OP_CONST 0, t1
@@ -177,7 +177,7 @@ OP_FUNC_END
 @endtest
 
 @test("It should generate IR code for if statement with equality expression !=")
-@given("file")
+@given("stdin")
 int main() {
     int i;
     i = 10;
@@ -186,7 +186,7 @@ int main() {
     }
     return i;
 }
-@whenRun("./bin/cclynx", args="--emit-ir")
+@whenRun("./bin/cclynx", args="--emit-ir /dev/stdin")
 @expectOutput("stdout")
 OP_FUNC "main"
 OP_CONST 10, t1
@@ -206,7 +206,7 @@ OP_FUNC_END
 @endtest
 
 @test("It should generate IR code for if statement with else statement")
-@given("file")
+@given("stdin")
 int main() {
     int i;
     i = 10;
@@ -217,7 +217,7 @@ int main() {
     }
     return i;
 }
-@whenRun("./bin/cclynx", args="--emit-ir")
+@whenRun("./bin/cclynx", args="--emit-ir /dev/stdin")
 @expectOutput("stdout")
 OP_FUNC "main"
 OP_CONST 10, t1
@@ -242,7 +242,7 @@ OP_FUNC_END
 @endtest
 
 @test("It should generate IR code for if statement with empty compound statement for else")
-@given("file")
+@given("stdin")
 int main() {
     int i;
     i = 10;
@@ -252,7 +252,7 @@ int main() {
     }
     return i;
 }
-@whenRun("./bin/cclynx", args="--emit-ir")
+@whenRun("./bin/cclynx", args="--emit-ir /dev/stdin")
 @expectOutput("stdout")
 OP_FUNC "main"
 OP_CONST 10, t1
@@ -274,7 +274,7 @@ OP_FUNC_END
 @endtest
 
 @test("It should generate IR code for if statement with empty expression statement for else")
-@given("file")
+@given("stdin")
 int main() {
     int i;
     i = 10;
@@ -284,7 +284,7 @@ int main() {
         ;
     return i;
 }
-@whenRun("./bin/cclynx", args="--emit-ir")
+@whenRun("./bin/cclynx", args="--emit-ir /dev/stdin")
 @expectOutput("stdout")
 OP_FUNC "main"
 OP_CONST 10, t1

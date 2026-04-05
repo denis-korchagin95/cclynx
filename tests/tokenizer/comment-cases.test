@@ -1,9 +1,9 @@
 @test("It should skip a single-line comment")
-@given("file")
+@given("stdin")
 int main() { // this is a comment
 return 42;
 }
-@whenRun("./bin/cclynx", args="--emit-tokens")
+@whenRun("./bin/cclynx", args="--emit-tokens /dev/stdin")
 @expectOutput("stdout")
 <TOKEN_KEYWORD 'int'>
 <TOKEN_IDENTIFIER 'main'>
@@ -19,11 +19,11 @@ return 42;
 @endtest
 
 @test("It should skip a multi-line comment")
-@given("file")
+@given("stdin")
 int main() { /* this is
 a multi-line
 comment */ return 42; }
-@whenRun("./bin/cclynx", args="--emit-tokens")
+@whenRun("./bin/cclynx", args="--emit-tokens /dev/stdin")
 @expectOutput("stdout")
 <TOKEN_KEYWORD 'int'>
 <TOKEN_IDENTIFIER 'main'>
@@ -39,9 +39,9 @@ comment */ return 42; }
 @endtest
 
 @test("It should not support nested multi-line comments")
-@given("file")
+@given("stdin")
 int main() { /* /* */ * / return 42; }
-@whenRun("./bin/cclynx", args="--emit-tokens")
+@whenRun("./bin/cclynx", args="--emit-tokens /dev/stdin")
 @expectOutput("stdout")
 <TOKEN_KEYWORD 'int'>
 <TOKEN_IDENTIFIER 'main'>
@@ -59,18 +59,18 @@ int main() { /* /* */ * / return 42; }
 @endtest
 
 @test("It should raise an error on unterminated multi-line comment")
-@given("file")
+@given("stdin")
 int main() { /* unterminated
-@whenRun("./bin/cclynx", args="--emit-tokens")
+@whenRun("./bin/cclynx", args="--emit-tokens /dev/stdin")
 @expectOutput("stderr")
 ERROR: unterminated comment
 
 @endtest
 
 @test("It should tokenize division operator when slash is not followed by slash or star")
-@given("file")
+@given("stdin")
 int main() { return 10 / 2; }
-@whenRun("./bin/cclynx", args="--emit-tokens")
+@whenRun("./bin/cclynx", args="--emit-tokens /dev/stdin")
 @expectOutput("stdout")
 <TOKEN_KEYWORD 'int'>
 <TOKEN_IDENTIFIER 'main'>

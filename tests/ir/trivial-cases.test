@@ -1,9 +1,9 @@
 @test("It should generate IR code on bare return statement")
-@given("file")
+@given("stdin")
 int main() {
     return;
 }
-@whenRun("./bin/cclynx", args="--emit-ir")
+@whenRun("./bin/cclynx", args="--emit-ir /dev/stdin")
 @expectOutput("stdout")
 OP_FUNC "main"
 OP_RETURN
@@ -12,11 +12,11 @@ OP_FUNC_END
 @endtest
 
 @test("It should generate IR code on return large integer constant")
-@given("file")
+@given("stdin")
 int main() {
     return 100000;
 }
-@whenRun("./bin/cclynx", args="--emit-ir")
+@whenRun("./bin/cclynx", args="--emit-ir /dev/stdin")
 @expectOutput("stdout")
 OP_FUNC "main"
 OP_CONST 100000, t1
@@ -26,11 +26,11 @@ OP_FUNC_END
 @endtest
 
 @test("It should generate IR code on return integer constant")
-@given("file")
+@given("stdin")
 int main() {
     return 7;
 }
-@whenRun("./bin/cclynx", args="--emit-ir")
+@whenRun("./bin/cclynx", args="--emit-ir /dev/stdin")
 @expectOutput("stdout")
 OP_FUNC "main"
 OP_CONST 7, t1
@@ -40,11 +40,11 @@ OP_FUNC_END
 @endtest
 
 @test("It should generate IR code on return trivial expression (without variables +, *)")
-@given("file")
+@given("stdin")
 int main() {
     return 2 * 3 + 1;
 }
-@whenRun("./bin/cclynx", args="--emit-ir")
+@whenRun("./bin/cclynx", args="--emit-ir /dev/stdin")
 @expectOutput("stdout")
 OP_FUNC "main"
 OP_CONST 2, t1
@@ -58,11 +58,11 @@ OP_FUNC_END
 @endtest
 
 @test("It should generate IR code on return trivial expression with nested sub-expressions")
-@given("file")
+@given("stdin")
 int main() {
     return 2 * ((3 * 4 + 20) + 1) * 15;
 }
-@whenRun("./bin/cclynx", args="--emit-ir")
+@whenRun("./bin/cclynx", args="--emit-ir /dev/stdin")
 @expectOutput("stdout")
 OP_FUNC "main"
 OP_CONST 2, t1
@@ -82,11 +82,11 @@ OP_FUNC_END
 @endtest
 
 @test("It should generate IR code on return trivial expression (without variables, -, /)")
-@given("file")
+@given("stdin")
 int main() {
     return 12 / 3 - 1;
 }
-@whenRun("./bin/cclynx", args="--emit-ir")
+@whenRun("./bin/cclynx", args="--emit-ir /dev/stdin")
 @expectOutput("stdout")
 OP_FUNC "main"
 OP_CONST 12, t1
@@ -100,11 +100,11 @@ OP_FUNC_END
 @endtest
 
 @test("It should generate IR code on return trivial expression (without variables, >)")
-@given("file")
+@given("stdin")
 int main() {
     return 12 > 3;
 }
-@whenRun("./bin/cclynx", args="--emit-ir")
+@whenRun("./bin/cclynx", args="--emit-ir /dev/stdin")
 @expectOutput("stdout")
 OP_FUNC "main"
 OP_CONST 12, t1
@@ -116,11 +116,11 @@ OP_FUNC_END
 @endtest
 
 @test("It should generate IR code on return trivial expression (without variables, <)")
-@given("file")
+@given("stdin")
 int main() {
     return 12 < 3;
 }
-@whenRun("./bin/cclynx", args="--emit-ir")
+@whenRun("./bin/cclynx", args="--emit-ir /dev/stdin")
 @expectOutput("stdout")
 OP_FUNC "main"
 OP_CONST 12, t1
@@ -132,11 +132,11 @@ OP_FUNC_END
 @endtest
 
 @test("It should generate IR code on return trivial expression (without variables, ==)")
-@given("file")
+@given("stdin")
 int main() {
     return 12 == 3;
 }
-@whenRun("./bin/cclynx", args="--emit-ir")
+@whenRun("./bin/cclynx", args="--emit-ir /dev/stdin")
 @expectOutput("stdout")
 OP_FUNC "main"
 OP_CONST 12, t1
@@ -148,11 +148,11 @@ OP_FUNC_END
 @endtest
 
 @test("It should generate IR code on return trivial expression (without variables, !=)")
-@given("file")
+@given("stdin")
 int main() {
     return 12 != 3;
 }
-@whenRun("./bin/cclynx", args="--emit-ir")
+@whenRun("./bin/cclynx", args="--emit-ir /dev/stdin")
 @expectOutput("stdout")
 OP_FUNC "main"
 OP_CONST 12, t1
@@ -164,13 +164,13 @@ OP_FUNC_END
 @endtest
 
 @test("It should generate OP_UNSIGNED_DIV for unsigned int division")
-@given("file")
+@given("stdin")
 unsigned int main() {
     unsigned int x;
     x = 10u;
     return x / 3u;
 }
-@whenRun("./bin/cclynx", args="--emit-ir --no-warnings")
+@whenRun("./bin/cclynx", args="--emit-ir --no-warnings /dev/stdin")
 @expectOutput("stdout")
 OP_FUNC "main"
 OP_CONST 10, t1
@@ -184,13 +184,13 @@ OP_FUNC_END
 @endtest
 
 @test("It should generate OP_DIV for signed int division")
-@given("file")
+@given("stdin")
 int main() {
     int x;
     x = 10;
     return x / 3;
 }
-@whenRun("./bin/cclynx", args="--emit-ir --no-warnings")
+@whenRun("./bin/cclynx", args="--emit-ir --no-warnings /dev/stdin")
 @expectOutput("stdout")
 OP_FUNC "main"
 OP_CONST 10, t1
@@ -204,7 +204,7 @@ OP_FUNC_END
 @endtest
 
 @test("It should generate OP_UNSIGNED_LT for unsigned less than")
-@given("file")
+@given("stdin")
 int main() {
     unsigned int a;
     a = 3u;
@@ -214,7 +214,7 @@ int main() {
     r = a < b;
     return r;
 }
-@whenRun("./bin/cclynx", args="--emit-ir --no-warnings")
+@whenRun("./bin/cclynx", args="--emit-ir --no-warnings /dev/stdin")
 @expectOutput("stdout")
 OP_FUNC "main"
 OP_CONST 3, t1
@@ -232,7 +232,7 @@ OP_FUNC_END
 @endtest
 
 @test("It should generate OP_UNSIGNED_GT for unsigned greater than")
-@given("file")
+@given("stdin")
 int main() {
     unsigned int a;
     a = 5u;
@@ -242,7 +242,7 @@ int main() {
     r = a > b;
     return r;
 }
-@whenRun("./bin/cclynx", args="--emit-ir --no-warnings")
+@whenRun("./bin/cclynx", args="--emit-ir --no-warnings /dev/stdin")
 @expectOutput("stdout")
 OP_FUNC "main"
 OP_CONST 5, t1

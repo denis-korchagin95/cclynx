@@ -1,5 +1,5 @@
 @test("It should generate target arm64 code with while loop statement with expression <")
-@given("file")
+@given("stdin")
 int main() {
     int i;
     i = 0;
@@ -8,7 +8,7 @@ int main() {
     }
     return i * 7 + 7;
 }
-@whenRun("./bin/cclynx", args="--emit-asm")
+@whenRun("./bin/cclynx", args="--emit-asm /dev/stdin")
 @expectOutput("stdout")
 .text
 .align 2
@@ -44,7 +44,7 @@ _main:
 @endtest
 
 @test("It should generate target arm64 code with while loop statement with expression >")
-@given("file")
+@given("stdin")
 int main() {
     int i;
     i = 20;
@@ -53,7 +53,7 @@ int main() {
     }
     return i * 7 + 7;
 }
-@whenRun("./bin/cclynx", args="--emit-asm")
+@whenRun("./bin/cclynx", args="--emit-asm /dev/stdin")
 @expectOutput("stdout")
 .text
 .align 2
@@ -89,7 +89,7 @@ _main:
 @endtest
 
 @test("It should generate target arm64 code with while loop statement with expression ==")
-@given("file")
+@given("stdin")
 int main() {
     int i;
     i = 0;
@@ -98,7 +98,7 @@ int main() {
     }
     return i;
 }
-@whenRun("./bin/cclynx", args="--emit-asm")
+@whenRun("./bin/cclynx", args="--emit-asm /dev/stdin")
 @expectOutput("stdout")
 .text
 .align 2
@@ -130,7 +130,7 @@ _main:
 @endtest
 
 @test("It should generate target arm64 code with while loop statement with expression !=")
-@given("file")
+@given("stdin")
 int main() {
     int i;
     i = 10;
@@ -139,7 +139,7 @@ int main() {
     }
     return i;
 }
-@whenRun("./bin/cclynx", args="--emit-asm")
+@whenRun("./bin/cclynx", args="--emit-asm /dev/stdin")
 @expectOutput("stdout")
 .text
 .align 2
@@ -171,7 +171,7 @@ _main:
 @endtest
 
 @test("It should generate target arm64 code with while loop statement with constant false condition")
-@given("file")
+@given("stdin")
 int main() {
     int i;
     i = 1;
@@ -180,7 +180,7 @@ int main() {
     }
     return i;
 }
-@whenRun("./bin/cclynx", args="--emit-asm")
+@whenRun("./bin/cclynx", args="--emit-asm /dev/stdin")
 @expectOutput("stdout")
 .text
 .align 2
@@ -210,7 +210,7 @@ _main:
 @endtest
 
 @test("It should generate target arm64 code with while loop statement with constant true condition")
-@given("file")
+@given("stdin")
 int main() {
     int i;
     i = 1;
@@ -219,7 +219,7 @@ int main() {
     }
     return i;
 }
-@whenRun("./bin/cclynx", args="--emit-asm")
+@whenRun("./bin/cclynx", args="--emit-asm /dev/stdin")
 @expectOutput("stdout")
 .text
 .align 2
@@ -249,12 +249,12 @@ _main:
 @endtest
 
 @test("It should generate target arm64 code with while loop with empty expression statement")
-@given("file")
+@given("stdin")
 int main() {
     while (0);
     return 0;
 }
-@whenRun("./bin/cclynx", args="--emit-asm")
+@whenRun("./bin/cclynx", args="--emit-asm /dev/stdin")
 @expectOutput("stdout")
 .text
 .align 2
@@ -277,13 +277,13 @@ _main:
 @endtest
 
 @test("It should generate target arm64 code with while loop with empty compound statement")
-@given("file")
+@given("stdin")
 int main() {
     while (0) {
     }
     return 0;
 }
-@whenRun("./bin/cclynx", args="--emit-asm")
+@whenRun("./bin/cclynx", args="--emit-asm /dev/stdin")
 @expectOutput("stdout")
 .text
 .align 2
@@ -307,7 +307,7 @@ _main:
 
 
 @test("It should generate b.hs for unsigned less than in while condition")
-@given("file")
+@given("stdin")
 int main() {
     unsigned int x;
     x = 0u;
@@ -316,7 +316,7 @@ int main() {
     }
     return x;
 }
-@whenRun("./bin/cclynx", args="--emit-asm --no-warnings")
+@whenRun("./bin/cclynx", args="--emit-asm --no-warnings /dev/stdin")
 @expectOutput("stdout")
 .text
 .align 2
@@ -348,7 +348,7 @@ _main:
 @endtest
 
 @test("It should generate b.ls for unsigned greater than in while condition")
-@given("file")
+@given("stdin")
 int main() {
     unsigned int x;
     x = 3u;
@@ -357,7 +357,7 @@ int main() {
     }
     return x;
 }
-@whenRun("./bin/cclynx", args="--emit-asm --no-warnings")
+@whenRun("./bin/cclynx", args="--emit-asm --no-warnings /dev/stdin")
 @expectOutput("stdout")
 .text
 .align 2

@@ -1,52 +1,52 @@
 @test("It should raise an error on variable redeclaration")
-@given("file")
+@given("stdin")
 int main() {
     int result;
     int result;
 }
-@whenRun("./bin/cclynx", args="--emit-ast --no-warnings")
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings /dev/stdin")
 @expectOutput("stderr")
 {{any}}:3:9: ERROR: variable 'result' already declared
 
 @endtest
 
 @test("It should raise an error when name of the variable is keyword")
-@given("file")
+@given("stdin")
 int main() {
     int while;
 }
-@whenRun("./bin/cclynx", args="--emit-ast --no-warnings")
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings /dev/stdin")
 @expectOutput("stderr")
 {{any}}:2:9: ERROR: expected identifier but got keyword 'while'
 
 @endtest
 
 @test("It should raise an error when trying to use undeclared variable")
-@given("file")
+@given("stdin")
 int main() {
     int result;
     result = x + 1;
 }
-@whenRun("./bin/cclynx", args="--emit-ast --no-warnings")
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings /dev/stdin")
 @expectOutput("stderr")
 {{any}}:3:14: ERROR: undeclared variable 'x'
 
 @endtest
 
 @test("It should raise an error when trying to use keyword as variable")
-@given("file")
+@given("stdin")
 int main() {
     int result;
     result = int + 1;
 }
-@whenRun("./bin/cclynx", args="--emit-ast --no-warnings")
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings /dev/stdin")
 @expectOutput("stderr")
 {{any}}:3:14: ERROR: expected identifier but got keyword 'int'
 
 @endtest
 
 @test("It should allow the same variable name in two different function bodies")
-@given("file")
+@given("stdin")
 int foo() {
     int x;
     x = 1;
@@ -58,7 +58,7 @@ int bar() {
     x = 2;
     return x;
 }
-@whenRun("./bin/cclynx", args="--emit-ast")
+@whenRun("./bin/cclynx", args="--emit-ast /dev/stdin")
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
 ├── FunctionDefinition: 'foo' <unspecified-parameters>
@@ -113,7 +113,7 @@ TranslationUnit: '{{any}}'
 @endtest
 
 @test("It should raise an error when variable is not visible outside its block")
-@given("file")
+@given("stdin")
 int main() {
     int x;
     x = 1;
@@ -124,14 +124,14 @@ int main() {
     x = y;
     return x;
 }
-@whenRun("./bin/cclynx", args="--emit-ast")
+@whenRun("./bin/cclynx", args="--emit-ast /dev/stdin")
 @expectOutput("stderr")
 {{any}}:8:9: ERROR: undeclared variable 'y'
 
 @endtest
 
 @test("It should allow outer variable to be visible inside nested block")
-@given("file")
+@given("stdin")
 int main() {
     int x;
     x = 1;
@@ -140,7 +140,7 @@ int main() {
     }
     return x;
 }
-@whenRun("./bin/cclynx", args="--emit-ast")
+@whenRun("./bin/cclynx", args="--emit-ast /dev/stdin")
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
 └── FunctionDefinition: 'main' <unspecified-parameters>
@@ -182,7 +182,7 @@ TranslationUnit: '{{any}}'
 @endtest
 
 @test("It should raise an error on variable redeclaration in nested block")
-@given("file")
+@given("stdin")
 int main() {
     {
         int y;
@@ -190,14 +190,14 @@ int main() {
     }
     return 0;
 }
-@whenRun("./bin/cclynx", args="--emit-ast --no-warnings")
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings /dev/stdin")
 @expectOutput("stderr")
 {{any}}:4:13: ERROR: variable 'y' already declared
 
 @endtest
 
 @test("It should raise an error when variable from sibling block is not visible")
-@given("file")
+@given("stdin")
 int main() {
     {
         int y;
@@ -208,14 +208,14 @@ int main() {
     }
     return 0;
 }
-@whenRun("./bin/cclynx", args="--emit-ast --no-warnings")
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings /dev/stdin")
 @expectOutput("stderr")
 {{any}}:7:9: ERROR: undeclared variable 'y'
 
 @endtest
 
 @test("It should allow variable shadowing in nested block")
-@given("file")
+@given("stdin")
 int main() {
     int x;
     x = 1;
@@ -225,7 +225,7 @@ int main() {
     }
     return x;
 }
-@whenRun("./bin/cclynx", args="--emit-ast")
+@whenRun("./bin/cclynx", args="--emit-ast /dev/stdin")
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
 └── FunctionDefinition: 'main' <unspecified-parameters>
@@ -271,12 +271,12 @@ TranslationUnit: '{{any}}'
 @endtest
 
 @test("It should parse an implicitly signed integer variable")
-@given("file")
+@given("stdin")
 int main() {
     int x;
     return 0;
 }
-@whenRun("./bin/cclynx", args="--emit-ast")
+@whenRun("./bin/cclynx", args="--emit-ast /dev/stdin")
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
 └── FunctionDefinition: 'main' <unspecified-parameters>
@@ -297,12 +297,12 @@ TranslationUnit: '{{any}}'
 @endtest
 
 @test("It should parse an explicitly unsigned integer variable")
-@given("file")
+@given("stdin")
 int main() {
     unsigned int x;
     return 0;
 }
-@whenRun("./bin/cclynx", args="--emit-ast")
+@whenRun("./bin/cclynx", args="--emit-ast /dev/stdin")
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
 └── FunctionDefinition: 'main' <unspecified-parameters>
@@ -323,12 +323,12 @@ TranslationUnit: '{{any}}'
 @endtest
 
 @test("It should parse unsigned as an integer variable by default")
-@given("file")
+@given("stdin")
 int main() {
     unsigned x;
     return 0;
 }
-@whenRun("./bin/cclynx", args="--emit-ast")
+@whenRun("./bin/cclynx", args="--emit-ast /dev/stdin")
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
 └── FunctionDefinition: 'main' <unspecified-parameters>
@@ -349,48 +349,48 @@ TranslationUnit: '{{any}}'
 @endtest
 
 @test("It should show an error if unsigned duplicates more than one time")
-@given("file")
+@given("stdin")
 int main() {
     unsigned unsigned int x;
     return 0;
 }
-@whenRun("./bin/cclynx", args="--emit-ast --no-warnings")
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings /dev/stdin")
 @expectOutput("stderr")
 {{any}}:2:14: ERROR: duplicate 'unsigned' keyword
 
 @endtest
 
 @test("It should raise an error when unsigned is applied to void")
-@given("file")
+@given("stdin")
 unsigned void foo() {
     return;
 }
-@whenRun("./bin/cclynx", args="--emit-ast --no-warnings")
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings /dev/stdin")
 @expectOutput("stderr")
 {{any}}:1:10: ERROR: 'unsigned' cannot be applied to 'void'
 
 @endtest
 
 @test("It should raise an error on void variable declaration")
-@given("file")
+@given("stdin")
 int main() {
     void x;
     return 0;
 }
-@whenRun("./bin/cclynx", args="--emit-ast --no-warnings")
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings /dev/stdin")
 @expectOutput("stderr")
 {{any}}:2:10: ERROR: variable cannot have 'void' type
 
 @endtest
 
 @test("It should insert implicit cast on assignment from unsigned to signed")
-@given("file")
+@given("stdin")
 int main() {
     int x;
     x = 42u;
     return x;
 }
-@whenRun("./bin/cclynx", args="--emit-ast --no-warnings")
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings /dev/stdin")
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
 └── FunctionDefinition: 'main' <unspecified-parameters>
@@ -425,7 +425,7 @@ TranslationUnit: '{{any}}'
 @endtest
 
 @test("It should insert implicit cast on assignment from signed to unsigned")
-@given("file")
+@given("stdin")
 unsigned int main() {
     unsigned int x;
     int y;
@@ -433,7 +433,7 @@ unsigned int main() {
     x = y;
     return x;
 }
-@whenRun("./bin/cclynx", args="--emit-ast --no-warnings")
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings /dev/stdin")
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
 └── FunctionDefinition: 'main' <unspecified-parameters>

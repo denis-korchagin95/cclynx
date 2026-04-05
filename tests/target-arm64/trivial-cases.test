@@ -1,9 +1,9 @@
 @test("It should generate target arm64 code on return integer constant")
-@given("file")
+@given("stdin")
 int main() {
     return 7;
 }
-@whenRun("./bin/cclynx", args="--emit-asm")
+@whenRun("./bin/cclynx", args="--emit-asm /dev/stdin")
 @expectOutput("stdout")
 .text
 .align 2
@@ -20,11 +20,11 @@ _main:
 @endtest
 
 @test("It should generate target arm64 code on return trivial expression (without variables +, *)")
-@given("file")
+@given("stdin")
 int main() {
     return 2 * 3 + 1;
 }
-@whenRun("./bin/cclynx", args="--emit-asm")
+@whenRun("./bin/cclynx", args="--emit-asm /dev/stdin")
 @expectOutput("stdout")
 .text
 .align 2
@@ -45,11 +45,11 @@ _main:
 @endtest
 
 @test("It should generate target arm64 code on return trivial expression (without variables, -, /)")
-@given("file")
+@given("stdin")
 int main() {
     return 12 / 3 - 1;
 }
-@whenRun("./bin/cclynx", args="--emit-asm")
+@whenRun("./bin/cclynx", args="--emit-asm /dev/stdin")
 @expectOutput("stdout")
 .text
 .align 2
@@ -70,11 +70,11 @@ _main:
 @endtest
 
 @test("It should generate target arm64 code on return trivial expression with nested sub-expressions")
-@given("file")
+@given("stdin")
 int main() {
     return 2 * ((3 * 4 + 20) + 1) * 15;
 }
-@whenRun("./bin/cclynx", args="--emit-asm")
+@whenRun("./bin/cclynx", args="--emit-asm /dev/stdin")
 @expectOutput("stdout")
 .text
 .align 2
@@ -101,11 +101,11 @@ _main:
 @endtest
 
 @test("It should generate target arm64 code on return trivial expression (without variables, >)")
-@given("file")
+@given("stdin")
 int main() {
     return 12 > 3;
 }
-@whenRun("./bin/cclynx", args="--emit-asm")
+@whenRun("./bin/cclynx", args="--emit-asm /dev/stdin")
 @expectOutput("stdout")
 .text
 .align 2
@@ -125,11 +125,11 @@ _main:
 @endtest
 
 @test("It should generate target arm64 code on return trivial expression (without variables, <)")
-@given("file")
+@given("stdin")
 int main() {
     return 12 < 3;
 }
-@whenRun("./bin/cclynx", args="--emit-asm")
+@whenRun("./bin/cclynx", args="--emit-asm /dev/stdin")
 @expectOutput("stdout")
 .text
 .align 2
@@ -149,11 +149,11 @@ _main:
 @endtest
 
 @test("It should generate target arm64 code on return trivial expression (without variables, ==)")
-@given("file")
+@given("stdin")
 int main() {
     return 12 == 3;
 }
-@whenRun("./bin/cclynx", args="--emit-asm")
+@whenRun("./bin/cclynx", args="--emit-asm /dev/stdin")
 @expectOutput("stdout")
 .text
 .align 2
@@ -173,11 +173,11 @@ _main:
 @endtest
 
 @test("It should generate target arm64 code on return trivial expression (without variables, !=)")
-@given("file")
+@given("stdin")
 int main() {
     return 12 != 3;
 }
-@whenRun("./bin/cclynx", args="--emit-asm")
+@whenRun("./bin/cclynx", args="--emit-asm /dev/stdin")
 @expectOutput("stdout")
 .text
 .align 2
@@ -197,7 +197,7 @@ _main:
 @endtest
 
 @test("It should generate target arm64 code with early return inside if statement")
-@given("file")
+@given("stdin")
 int main() {
     int x;
     x = 42;
@@ -206,7 +206,7 @@ int main() {
     }
     return x;
 }
-@whenRun("./bin/cclynx", args="--emit-asm")
+@whenRun("./bin/cclynx", args="--emit-asm /dev/stdin")
 @expectOutput("stdout")
 .text
 .align 2
@@ -237,11 +237,11 @@ _main:
 @endtest
 
 @test("It should generate target arm64 code on return 32-bit integer constant")
-@given("file")
+@given("stdin")
 int main() {
     return 100000;
 }
-@whenRun("./bin/cclynx", args="--emit-asm")
+@whenRun("./bin/cclynx", args="--emit-asm /dev/stdin")
 @expectOutput("stdout")
 .text
 .align 2

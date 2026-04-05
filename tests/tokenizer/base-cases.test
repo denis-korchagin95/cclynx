@@ -1,13 +1,13 @@
 @test("It should tokenize an 'EOS' token on empty file")
-@given("file")
-@whenRun("./bin/cclynx", args="--emit-tokens")
+@given("stdin")
+@whenRun("./bin/cclynx", args="--emit-tokens /dev/stdin")
 @expectOutput("stdout")
 <TOKEN_EOS>
 
 @endtest
 
 @test("It should tokenize one char punctuators")
-@given("file")
+@given("stdin")
 ,
 +
 -
@@ -24,7 +24,7 @@
 !
 !=
 ==
-@whenRun("./bin/cclynx", args="--emit-tokens")
+@whenRun("./bin/cclynx", args="--emit-tokens /dev/stdin")
 @expectOutput("stdout")
 <TOKEN_PUNCTUATOR ','>
 <TOKEN_PUNCTUATOR '+'>
@@ -47,14 +47,14 @@
 @endtest
 
 @test("It should tokenize keywords")
-@given("file")
+@given("stdin")
 int
 return
 while
 if
 else
 unsigned
-@whenRun("./bin/cclynx", args="--emit-tokens")
+@whenRun("./bin/cclynx", args="--emit-tokens /dev/stdin")
 @expectOutput("stdout")
 <TOKEN_KEYWORD 'int'>
 <TOKEN_KEYWORD 'return'>
@@ -67,13 +67,13 @@ unsigned
 @endtest
 
 @test("It should tokenize identifiers")
-@given("file")
+@given("stdin")
 a
 name
 super_cool_name
 superVar1
 superVar_2
-@whenRun("./bin/cclynx", args="--emit-tokens")
+@whenRun("./bin/cclynx", args="--emit-tokens /dev/stdin")
 @expectOutput("stdout")
 <TOKEN_IDENTIFIER 'a'>
 <TOKEN_IDENTIFIER 'name'>
@@ -85,14 +85,14 @@ superVar_2
 @endtest
 
 @test("It should tokenize int numbers")
-@given("file")
+@given("stdin")
 0
 1
 2
 10
 777
 10000780
-@whenRun("./bin/cclynx", args="--emit-tokens")
+@whenRun("./bin/cclynx", args="--emit-tokens /dev/stdin")
 @expectOutput("stdout")
 <TOKEN_NUMBER '0'>
 <TOKEN_NUMBER '1'>
@@ -105,12 +105,12 @@ superVar_2
 @endtest
 
 @test("It should tokenize unsigned int numbers")
-@given("file")
+@given("stdin")
 0u
 1U
 42u
 10000780U
-@whenRun("./bin/cclynx", args="--emit-tokens")
+@whenRun("./bin/cclynx", args="--emit-tokens /dev/stdin")
 @expectOutput("stdout")
 <TOKEN_NUMBER '0u'>
 <TOKEN_NUMBER '1U'>

@@ -1,5 +1,5 @@
 @test("An integer can be cast to unsigned int")
-@given("file")
+@given("stdin")
 int main() {
     int y;
     y = 42;
@@ -7,7 +7,7 @@ int main() {
     x = (unsigned int)y;
     return x;
 }
-@whenRun("./bin/cclynx", args="--emit-ast --no-warnings")
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings /dev/stdin")
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
 └── FunctionDefinition: 'main' <unspecified-parameters>
@@ -60,7 +60,7 @@ TranslationUnit: '{{any}}'
 @endtest
 
 @test("An integer can be cast to unsigned (implicit int)")
-@given("file")
+@given("stdin")
 int main() {
     int y;
     y = 42;
@@ -68,7 +68,7 @@ int main() {
     x = (unsigned)y;
     return x;
 }
-@whenRun("./bin/cclynx", args="--emit-ast --no-warnings")
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings /dev/stdin")
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
 └── FunctionDefinition: 'main' <unspecified-parameters>

@@ -1,5 +1,5 @@
 @test("It should generate target arm64 code for if statement with constant false expression")
-@given("file")
+@given("stdin")
 int main() {
     int i;
     i = 4;
@@ -8,7 +8,7 @@ int main() {
     }
     return i;
 }
-@whenRun("./bin/cclynx", args="--emit-asm")
+@whenRun("./bin/cclynx", args="--emit-asm /dev/stdin")
 @expectOutput("stdout")
 .text
 .align 2
@@ -34,7 +34,7 @@ _main:
 @endtest
 
 @test("It should generate target arm64 code for if statement with constant true expression")
-@given("file")
+@given("stdin")
 int main() {
     int i;
     i = 4;
@@ -43,7 +43,7 @@ int main() {
     }
     return i;
 }
-@whenRun("./bin/cclynx", args="--emit-asm")
+@whenRun("./bin/cclynx", args="--emit-asm /dev/stdin")
 @expectOutput("stdout")
 .text
 .align 2
@@ -69,12 +69,12 @@ _main:
 @endtest
 
 @test("It should generate target arm64 code for if statement with empty expression statement")
-@given("file")
+@given("stdin")
 int main() {
     if (0);
     return 0;
 }
-@whenRun("./bin/cclynx", args="--emit-asm")
+@whenRun("./bin/cclynx", args="--emit-asm /dev/stdin")
 @expectOutput("stdout")
 .text
 .align 2
@@ -95,13 +95,13 @@ _main:
 @endtest
 
 @test("It should generate target arm64 code for if statement with empty compound statement")
-@given("file")
+@given("stdin")
 int main() {
     if (0) {
     }
     return 0;
 }
-@whenRun("./bin/cclynx", args="--emit-asm")
+@whenRun("./bin/cclynx", args="--emit-asm /dev/stdin")
 @expectOutput("stdout")
 .text
 .align 2
@@ -122,7 +122,7 @@ _main:
 @endtest
 
 @test("It should generate target arm64 code for if statement with relational expression <")
-@given("file")
+@given("stdin")
 int main() {
     int i;
     i = 0;
@@ -131,7 +131,7 @@ int main() {
     }
     return i;
 }
-@whenRun("./bin/cclynx", args="--emit-asm")
+@whenRun("./bin/cclynx", args="--emit-asm /dev/stdin")
 @expectOutput("stdout")
 .text
 .align 2
@@ -161,7 +161,7 @@ _main:
 @endtest
 
 @test("It should generate target arm64 code for if statement with relational expression >")
-@given("file")
+@given("stdin")
 int main() {
     int i;
     i = 3;
@@ -170,7 +170,7 @@ int main() {
     }
     return i;
 }
-@whenRun("./bin/cclynx", args="--emit-asm")
+@whenRun("./bin/cclynx", args="--emit-asm /dev/stdin")
 @expectOutput("stdout")
 .text
 .align 2
@@ -200,7 +200,7 @@ _main:
 @endtest
 
 @test("It should generate target arm64 code for if statement with equality expression ==")
-@given("file")
+@given("stdin")
 int main() {
     int i;
     i = 0;
@@ -209,7 +209,7 @@ int main() {
     }
     return i;
 }
-@whenRun("./bin/cclynx", args="--emit-asm")
+@whenRun("./bin/cclynx", args="--emit-asm /dev/stdin")
 @expectOutput("stdout")
 .text
 .align 2
@@ -239,7 +239,7 @@ _main:
 @endtest
 
 @test("It should generate target arm64 code for if statement with equality expression !=")
-@given("file")
+@given("stdin")
 int main() {
     int i;
     i = 10;
@@ -248,7 +248,7 @@ int main() {
     }
     return i;
 }
-@whenRun("./bin/cclynx", args="--emit-asm")
+@whenRun("./bin/cclynx", args="--emit-asm /dev/stdin")
 @expectOutput("stdout")
 .text
 .align 2
@@ -278,7 +278,7 @@ _main:
 @endtest
 
 @test("It should generate target arm64 code for if statement with else statement")
-@given("file")
+@given("stdin")
 int main() {
     int i;
     i = 10;
@@ -289,7 +289,7 @@ int main() {
     }
     return i;
 }
-@whenRun("./bin/cclynx", args="--emit-asm")
+@whenRun("./bin/cclynx", args="--emit-asm /dev/stdin")
 @expectOutput("stdout")
 .text
 .align 2
@@ -323,7 +323,7 @@ _main:
 @endtest
 
 @test("It should generate target arm64 code for if statement with empty compound statement for else")
-@given("file")
+@given("stdin")
 int main() {
     int i;
     i = 10;
@@ -333,7 +333,7 @@ int main() {
     }
     return i;
 }
-@whenRun("./bin/cclynx", args="--emit-asm")
+@whenRun("./bin/cclynx", args="--emit-asm /dev/stdin")
 @expectOutput("stdout")
 .text
 .align 2
@@ -364,7 +364,7 @@ _main:
 @endtest
 
 @test("It should generate target arm64 code for if statement with empty expression statement for else")
-@given("file")
+@given("stdin")
 int main() {
     int i;
     i = 10;
@@ -374,7 +374,7 @@ int main() {
         ;
     return i;
 }
-@whenRun("./bin/cclynx", args="--emit-asm")
+@whenRun("./bin/cclynx", args="--emit-asm /dev/stdin")
 @expectOutput("stdout")
 .text
 .align 2
@@ -406,7 +406,7 @@ _main:
 
 
 @test("It should generate cset lo for unsigned less than in if condition")
-@given("file")
+@given("stdin")
 int main() {
     unsigned int x;
     x = 1u;
@@ -417,7 +417,7 @@ int main() {
     }
     return 0;
 }
-@whenRun("./bin/cclynx", args="--emit-asm --no-warnings")
+@whenRun("./bin/cclynx", args="--emit-asm --no-warnings /dev/stdin")
 @expectOutput("stdout")
 .text
 .align 2
@@ -450,7 +450,7 @@ _main:
 @endtest
 
 @test("It should generate cset hi for unsigned greater than in if condition")
-@given("file")
+@given("stdin")
 int main() {
     unsigned int x;
     x = 2u;
@@ -461,7 +461,7 @@ int main() {
     }
     return 0;
 }
-@whenRun("./bin/cclynx", args="--emit-asm --no-warnings")
+@whenRun("./bin/cclynx", args="--emit-asm --no-warnings /dev/stdin")
 @expectOutput("stdout")
 .text
 .align 2

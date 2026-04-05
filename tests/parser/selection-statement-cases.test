@@ -1,12 +1,12 @@
 @test("It should parse if statement (single statement)")
-@given("file")
+@given("stdin")
 int main() {
     int x;
     x = 10;
     if (x < 5)
         x = 10;
 }
-@whenRun("./bin/cclynx", args="--emit-ast")
+@whenRun("./bin/cclynx", args="--emit-ast /dev/stdin")
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
 └── FunctionDefinition: 'main' <unspecified-parameters>
@@ -55,13 +55,13 @@ TranslationUnit: '{{any}}'
 @endtest
 
 @test("It should parse if statement (empty expression)")
-@given("file")
+@given("stdin")
 int main() {
     int x;
     x = 10;
     if (x < 5);
 }
-@whenRun("./bin/cclynx", args="--emit-ast")
+@whenRun("./bin/cclynx", args="--emit-ast /dev/stdin")
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
 └── FunctionDefinition: 'main' <unspecified-parameters>
@@ -101,7 +101,7 @@ TranslationUnit: '{{any}}'
 @endtest
 
 @test("It should parse if statement (compound statement)")
-@given("file")
+@given("stdin")
 int main() {
     int x;
     x = 10;
@@ -110,7 +110,7 @@ int main() {
         x = x + 15;
     }
 }
-@whenRun("./bin/cclynx", args="--emit-ast")
+@whenRun("./bin/cclynx", args="--emit-ast /dev/stdin")
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
 └── FunctionDefinition: 'main' <unspecified-parameters>
@@ -178,7 +178,7 @@ TranslationUnit: '{{any}}'
 @endtest
 
 @test("It should parse if statement with else (single statement)")
-@given("file")
+@given("stdin")
 int main() {
     int x;
     x = 10;
@@ -187,7 +187,7 @@ int main() {
     else
         x = 77;
 }
-@whenRun("./bin/cclynx", args="--emit-ast")
+@whenRun("./bin/cclynx", args="--emit-ast /dev/stdin")
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
 └── FunctionDefinition: 'main' <unspecified-parameters>
@@ -246,7 +246,7 @@ TranslationUnit: '{{any}}'
 @endtest
 
 @test("It should parse if statement with else (empty expression)")
-@given("file")
+@given("stdin")
 int main() {
     int x;
     x = 10;
@@ -254,7 +254,7 @@ int main() {
         x = 10;
     else;
 }
-@whenRun("./bin/cclynx", args="--emit-ast")
+@whenRun("./bin/cclynx", args="--emit-ast /dev/stdin")
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
 └── FunctionDefinition: 'main' <unspecified-parameters>
@@ -304,7 +304,7 @@ TranslationUnit: '{{any}}'
 @endtest
 
 @test("It should parse if statement with else (compound statement)")
-@given("file")
+@given("stdin")
 int main() {
     int x;
     x = 10;
@@ -315,7 +315,7 @@ int main() {
         x = x - 1;
     }
 }
-@whenRun("./bin/cclynx", args="--emit-ast")
+@whenRun("./bin/cclynx", args="--emit-ast /dev/stdin")
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
 └── FunctionDefinition: 'main' <unspecified-parameters>

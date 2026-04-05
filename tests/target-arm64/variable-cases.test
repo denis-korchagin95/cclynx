@@ -1,11 +1,11 @@
 @test("It should generate target arm64 code when returning variable with a constant")
-@given("file")
+@given("stdin")
 int main() {
     int x;
     x = 10;
     return x;
 }
-@whenRun("./bin/cclynx", args="--emit-asm")
+@whenRun("./bin/cclynx", args="--emit-asm /dev/stdin")
 @expectOutput("stdout")
 .text
 .align 2
@@ -26,13 +26,13 @@ _main:
 @endtest
 
 @test("It should generate target arm64 code when returning a variable with an expression")
-@given("file")
+@given("stdin")
 int main() {
     int x;
     x = 7 * 8;
     return x / 2;
 }
-@whenRun("./bin/cclynx", args="--emit-asm")
+@whenRun("./bin/cclynx", args="--emit-asm /dev/stdin")
 @expectOutput("stdout")
 .text
 .align 2
@@ -57,7 +57,7 @@ _main:
 @endtest
 
 @test("It should correctly restore the stack pointer with more than 4 local variables")
-@given("file")
+@given("stdin")
 int main() {
     int a;
     int b;
@@ -71,7 +71,7 @@ int main() {
     e = 5;
     return a + b + c + d + e;
 }
-@whenRun("./bin/cclynx", args="--emit-asm")
+@whenRun("./bin/cclynx", args="--emit-asm /dev/stdin")
 @expectOutput("stdout")
 .text
 .align 2

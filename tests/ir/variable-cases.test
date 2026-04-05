@@ -1,11 +1,11 @@
 @test("It should generate IR code when returning variable with a constant")
-@given("file")
+@given("stdin")
 int main() {
     int x;
     x = 10;
     return x;
 }
-@whenRun("./bin/cclynx", args="--emit-ir")
+@whenRun("./bin/cclynx", args="--emit-ir /dev/stdin")
 @expectOutput("stdout")
 OP_FUNC "main"
 OP_CONST 10, t1
@@ -17,13 +17,13 @@ OP_FUNC_END
 @endtest
 
 @test("It should generate IR code when returning a variable with an expression")
-@given("file")
+@given("stdin")
 int main() {
     int x;
     x = 7 * 8;
     return x / 2;
 }
-@whenRun("./bin/cclynx", args="--emit-ir")
+@whenRun("./bin/cclynx", args="--emit-ir /dev/stdin")
 @expectOutput("stdout")
 OP_FUNC "main"
 OP_CONST 7, t1

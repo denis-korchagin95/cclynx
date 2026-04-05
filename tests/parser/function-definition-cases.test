@@ -1,9 +1,9 @@
 @test("It should parse main function with void argument list")
-@given("file")
+@given("stdin")
 int main(void) {
     return 42;
 }
-@whenRun("./bin/cclynx", args="--emit-ast")
+@whenRun("./bin/cclynx", args="--emit-ast /dev/stdin")
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
 └── FunctionDefinition: 'main' <no-parameters>
@@ -20,11 +20,11 @@ TranslationUnit: '{{any}}'
 @endtest
 
 @test("It should parse main function (with basic expression)")
-@given("file")
+@given("stdin")
 int main() {
     7 * 8;
 }
-@whenRun("./bin/cclynx", args="--emit-ast")
+@whenRun("./bin/cclynx", args="--emit-ast /dev/stdin")
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
 └── FunctionDefinition: 'main' <unspecified-parameters>
@@ -49,12 +49,12 @@ TranslationUnit: '{{any}}'
 @endtest
 
 @test("It should parse main function (with two variable declarations x and y)")
-@given("file")
+@given("stdin")
 int main() {
     int x;
     int y;
 }
-@whenRun("./bin/cclynx", args="--emit-ast")
+@whenRun("./bin/cclynx", args="--emit-ast /dev/stdin")
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
 └── FunctionDefinition: 'main' <unspecified-parameters>
@@ -74,11 +74,11 @@ TranslationUnit: '{{any}}'
 @endtest
 
 @test("It should parse main function with return expression")
-@given("file")
+@given("stdin")
 int main() {
     return 7;
 }
-@whenRun("./bin/cclynx", args="--emit-ast")
+@whenRun("./bin/cclynx", args="--emit-ast /dev/stdin")
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
 └── FunctionDefinition: 'main' <unspecified-parameters>
@@ -95,11 +95,11 @@ TranslationUnit: '{{any}}'
 @endtest
 
 @test("It should parse main function with return (empty expression)")
-@given("file")
+@given("stdin")
 int main() {
     return;
 }
-@whenRun("./bin/cclynx", args="--emit-ast")
+@whenRun("./bin/cclynx", args="--emit-ast /dev/stdin")
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
 └── FunctionDefinition: 'main' <unspecified-parameters>
@@ -112,13 +112,13 @@ TranslationUnit: '{{any}}'
 @endtest
 
 @test("It should parse main function with return variable")
-@given("file")
+@given("stdin")
 int main() {
     int result;
     result = 1;
     return result;
 }
-@whenRun("./bin/cclynx", args="--emit-ast")
+@whenRun("./bin/cclynx", args="--emit-ast /dev/stdin")
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
 └── FunctionDefinition: 'main' <unspecified-parameters>
@@ -149,7 +149,7 @@ TranslationUnit: '{{any}}'
 @endtest
 
 @test("It should parse multiple function definitions")
-@given("file")
+@given("stdin")
 int foo() {
     return 1;
 }
@@ -157,7 +157,7 @@ int foo() {
 int bar() {
     return 2;
 }
-@whenRun("./bin/cclynx", args="--emit-ast")
+@whenRun("./bin/cclynx", args="--emit-ast /dev/stdin")
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
 ├── FunctionDefinition: 'foo' <unspecified-parameters>
@@ -184,7 +184,7 @@ TranslationUnit: '{{any}}'
 @endtest
 
 @test("It should parse multiple functions with same variable names in different scopes")
-@given("file")
+@given("stdin")
 int foo() {
     int x;
     return x;
@@ -194,7 +194,7 @@ int bar() {
     int x;
     return x;
 }
-@whenRun("./bin/cclynx", args="--emit-ast")
+@whenRun("./bin/cclynx", args="--emit-ast /dev/stdin")
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
 ├── FunctionDefinition: 'foo' <unspecified-parameters>
@@ -229,11 +229,11 @@ TranslationUnit: '{{any}}'
 @endtest
 
 @test("It should parse function with 1 parameter")
-@given("file")
+@given("stdin")
 int identity(int a) {
     return a;
 }
-@whenRun("./bin/cclynx", args="--emit-ast")
+@whenRun("./bin/cclynx", args="--emit-ast /dev/stdin")
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
 └── FunctionDefinition: 'identity' <1-parameter>
@@ -255,11 +255,11 @@ TranslationUnit: '{{any}}'
 @endtest
 
 @test("It should parse function with 2 parameters")
-@given("file")
+@given("stdin")
 int add(int a, int b) {
     return a + b;
 }
-@whenRun("./bin/cclynx", args="--emit-ast")
+@whenRun("./bin/cclynx", args="--emit-ast /dev/stdin")
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
 └── FunctionDefinition: 'add' <2-parameters>
@@ -293,11 +293,11 @@ TranslationUnit: '{{any}}'
 @endtest
 
 @test("It should parse function with 3 parameters")
-@given("file")
+@given("stdin")
 int foo(int a, int b, int c) {
     return a + b * c;
 }
-@whenRun("./bin/cclynx", args="--emit-ast")
+@whenRun("./bin/cclynx", args="--emit-ast /dev/stdin")
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
 └── FunctionDefinition: 'foo' <3-parameters>
@@ -343,11 +343,11 @@ TranslationUnit: '{{any}}'
 @endtest
 
 @test("It should parse function with unsigned int return type")
-@given("file")
+@given("stdin")
 unsigned int foo() {
     return 42;
 }
-@whenRun("./bin/cclynx", args="--emit-ast")
+@whenRun("./bin/cclynx", args="--emit-ast /dev/stdin")
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
 └── FunctionDefinition: 'foo' <unspecified-parameters>
@@ -368,11 +368,11 @@ TranslationUnit: '{{any}}'
 @endtest
 
 @test("It should parse function with unsigned return type (implicit int)")
-@given("file")
+@given("stdin")
 unsigned foo() {
     return 42;
 }
-@whenRun("./bin/cclynx", args="--emit-ast")
+@whenRun("./bin/cclynx", args="--emit-ast /dev/stdin")
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
 └── FunctionDefinition: 'foo' <unspecified-parameters>
@@ -393,11 +393,11 @@ TranslationUnit: '{{any}}'
 @endtest
 
 @test("It should parse function with unsigned int parameter")
-@given("file")
+@given("stdin")
 int foo(unsigned int a) {
     return a;
 }
-@whenRun("./bin/cclynx", args="--emit-ast")
+@whenRun("./bin/cclynx", args="--emit-ast /dev/stdin")
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
 └── FunctionDefinition: 'foo' <1-parameter>
@@ -423,7 +423,7 @@ TranslationUnit: '{{any}}'
 @endtest
 
 @test("It should raise an error on function redefinition")
-@given("file")
+@given("stdin")
 int foo() {
     return 1;
 }
@@ -431,29 +431,29 @@ int foo() {
 int foo() {
     return 2;
 }
-@whenRun("./bin/cclynx", args="--emit-ast")
+@whenRun("./bin/cclynx", args="--emit-ast /dev/stdin")
 @expectOutput("stderr")
 {{any}}:5:5: ERROR: function 'foo' already defined
 
 @endtest
 
 @test("It should raise an error when function name is a keyword")
-@given("file")
+@given("stdin")
 int while() {
     return 1;
 }
-@whenRun("./bin/cclynx", args="--emit-ast")
+@whenRun("./bin/cclynx", args="--emit-ast /dev/stdin")
 @expectOutput("stderr")
 {{any}}:1:5: ERROR: expected identifier but got keyword 'while'
 
 @endtest
 
 @test("It should raise an error when parameter type is not a type specifier")
-@given("file")
+@given("stdin")
 int foo(bar a) {
     return a;
 }
-@whenRun("./bin/cclynx", args="--emit-ast")
+@whenRun("./bin/cclynx", args="--emit-ast /dev/stdin")
 @expectOutput("stderr")
 {{any}}:1:9: ERROR: expected type specifier but got identifier 'bar'
 {{any}}:1:9: ERROR: expected ')' but got identifier 'bar'
@@ -461,46 +461,46 @@ int foo(bar a) {
 @endtest
 
 @test("It should raise an error when parameter name is missing after type")
-@given("file")
+@given("stdin")
 int foo(int) {
     return 0;
 }
-@whenRun("./bin/cclynx", args="--emit-ast")
+@whenRun("./bin/cclynx", args="--emit-ast /dev/stdin")
 @expectOutput("stderr")
 {{any}}:1:12: ERROR: expected identifier but got ')'
 
 @endtest
 
 @test("It should raise an error when parameter name is a keyword")
-@given("file")
+@given("stdin")
 int foo(int return) {
     return 0;
 }
-@whenRun("./bin/cclynx", args="--emit-ast")
+@whenRun("./bin/cclynx", args="--emit-ast /dev/stdin")
 @expectOutput("stderr")
 {{any}}:1:13: ERROR: expected identifier but got keyword 'return'
 
 @endtest
 
 @test("It should raise an error when too many parameters")
-@given("file")
+@given("stdin")
 int foo(int a, int b, int c, int d) {
     return 0;
 }
-@whenRun("./bin/cclynx", args="--emit-ast --no-warnings")
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings /dev/stdin")
 @expectOutput("stderr")
 {{any}}:1:28: ERROR: too many parameters, maximum is 3
 
 @endtest
 
 @test("It should insert implicit cast on return when signedness differs")
-@given("file")
+@given("stdin")
 unsigned int foo() {
     int x;
     x = 1;
     return x;
 }
-@whenRun("./bin/cclynx", args="--emit-ast --no-warnings")
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings /dev/stdin")
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
 └── FunctionDefinition: 'foo' <unspecified-parameters>

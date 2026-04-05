@@ -1,36 +1,36 @@
 @test("It should not warn when function has a return statement")
-@given("file")
+@given("stdin")
 int foo(void) {
     return 1;
 }
-@whenRun("./bin/cclynx", args="--emit-ast")
+@whenRun("./bin/cclynx", args="--emit-ast /dev/stdin")
 @expectOutput("stderr")
 
 @endtest
 
 @test("It should warn when non-void function is missing return statement")
-@given("file")
+@given("stdin")
 int foo(void) {
     int x;
     x = 1;
 }
-@whenRun("./bin/cclynx", args="--emit-ast")
+@whenRun("./bin/cclynx", args="--emit-ast /dev/stdin")
 @expectOutput("stderr")
 {{any}}:1:5: WARNING: function 'foo' missing return statement
 
 @endtest
 
 @test("It should warn when non-void function has empty body")
-@given("file")
+@given("stdin")
 int foo(void) { }
-@whenRun("./bin/cclynx", args="--emit-ast")
+@whenRun("./bin/cclynx", args="--emit-ast /dev/stdin")
 @expectOutput("stderr")
 {{any}}:1:5: WARNING: function 'foo' has empty body
 
 @endtest
 
 @test("It should not warn when if-else both branches return")
-@given("file")
+@given("stdin")
 int foo(int x) {
     if (x) {
         return 1;
@@ -38,101 +38,101 @@ int foo(int x) {
         return 0;
     }
 }
-@whenRun("./bin/cclynx", args="--emit-ast")
+@whenRun("./bin/cclynx", args="--emit-ast /dev/stdin")
 @expectOutput("stderr")
 
 @endtest
 
 @test("It should warn when if without else has return")
-@given("file")
+@given("stdin")
 int foo(int x) {
     if (x) {
         return 1;
     }
 }
-@whenRun("./bin/cclynx", args="--emit-ast")
+@whenRun("./bin/cclynx", args="--emit-ast /dev/stdin")
 @expectOutput("stderr")
 {{any}}:1:5: WARNING: function 'foo' missing return statement
 
 @endtest
 
 @test("It should not warn when return is in nested compound statement")
-@given("file")
+@given("stdin")
 int foo(void) {
     { return 1; }
 }
-@whenRun("./bin/cclynx", args="--emit-ast")
+@whenRun("./bin/cclynx", args="--emit-ast /dev/stdin")
 @expectOutput("stderr")
 
 @endtest
 
 @test("It should not warn when if-else returns with dead code after")
-@given("file")
+@given("stdin")
 int foo(int x) {
     if (x) { return 1; } else { return 0; }
     x = 1;
 }
-@whenRun("./bin/cclynx", args="--emit-ast")
+@whenRun("./bin/cclynx", args="--emit-ast /dev/stdin")
 @expectOutput("stderr")
 
 @endtest
 
 @test("It should warn when void function has empty body")
-@given("file")
+@given("stdin")
 void foo(void) { }
-@whenRun("./bin/cclynx", args="--emit-ast")
+@whenRun("./bin/cclynx", args="--emit-ast /dev/stdin")
 @expectOutput("stderr")
 {{any}}:1:6: WARNING: function 'foo' has empty body
 
 @endtest
 
 @test("It should warn about unused variable")
-@given("file")
+@given("stdin")
 int foo(void) {
     int x;
     return 0;
 }
-@whenRun("./bin/cclynx", args="--emit-ast")
+@whenRun("./bin/cclynx", args="--emit-ast /dev/stdin")
 @expectOutput("stderr")
 {{any}}:2:10: WARNING: unused variable 'x'
 
 @endtest
 
 @test("It should warn about unused parameter")
-@given("file")
+@given("stdin")
 int foo(int a) {
     return 0;
 }
-@whenRun("./bin/cclynx", args="--emit-ast")
+@whenRun("./bin/cclynx", args="--emit-ast /dev/stdin")
 @expectOutput("stderr")
 {{any}}:1:13: WARNING: unused parameter 'a'
 
 @endtest
 
 @test("It should not warn about used variable")
-@given("file")
+@given("stdin")
 int foo(void) {
     int x;
     x = 1;
     return x;
 }
-@whenRun("./bin/cclynx", args="--emit-ast")
+@whenRun("./bin/cclynx", args="--emit-ast /dev/stdin")
 @expectOutput("stderr")
 
 @endtest
 
 @test("It should not warn about used parameter")
-@given("file")
+@given("stdin")
 int foo(int a) {
     return a;
 }
-@whenRun("./bin/cclynx", args="--emit-ast")
+@whenRun("./bin/cclynx", args="--emit-ast /dev/stdin")
 @expectOutput("stderr")
 
 @endtest
 
 @test("It should warn when calling function with unspecified parameters with arguments")
-@given("file")
+@given("stdin")
 int foo() {
     return 7;
 }
@@ -140,170 +140,170 @@ int foo() {
 int main() {
     return foo(42);
 }
-@whenRun("./bin/cclynx", args="--emit-ast")
+@whenRun("./bin/cclynx", args="--emit-ast /dev/stdin")
 @expectOutput("stderr")
 {{any}}:6:12: WARNING: function 'foo' has unspecified parameters, consider using 'foo(void)' or adding parameter types
 
 @endtest
 
 @test("It should warn about empty if body")
-@given("file")
+@given("stdin")
 void foo(int x) {
     if (x) { }
 }
-@whenRun("./bin/cclynx", args="--emit-ast")
+@whenRun("./bin/cclynx", args="--emit-ast /dev/stdin")
 @expectOutput("stderr")
 {{any}}:2:5: WARNING: empty if body
 
 @endtest
 
 @test("It should warn about empty else body")
-@given("file")
+@given("stdin")
 void foo(int x) {
     if (x) {
         x = 1;
     } else { }
 }
-@whenRun("./bin/cclynx", args="--emit-ast")
+@whenRun("./bin/cclynx", args="--emit-ast /dev/stdin")
 @expectOutput("stderr")
 {{any}}:4:7: WARNING: empty else body
 
 @endtest
 
 @test("It should warn about empty while body")
-@given("file")
+@given("stdin")
 void foo(int x) {
     while (x) { }
 }
-@whenRun("./bin/cclynx", args="--emit-ast")
+@whenRun("./bin/cclynx", args="--emit-ast /dev/stdin")
 @expectOutput("stderr")
 {{any}}:2:5: WARNING: empty while body
 
 @endtest
 
 @test("It should not warn about non-empty if-else and while")
-@given("file")
+@given("stdin")
 void foo(int x) {
     if (x) { x = 1; } else { x = 0; }
     while (x) { x = x - 1; }
 }
-@whenRun("./bin/cclynx", args="--emit-ast")
+@whenRun("./bin/cclynx", args="--emit-ast /dev/stdin")
 @expectOutput("stderr")
 
 @endtest
 
 @test("It should warn about sign-conversion with -Wall")
-@given("file")
+@given("stdin")
 unsigned int foo(int x) {
     return x;
 }
-@whenRun("./bin/cclynx", args="--emit-ast -Wall")
+@whenRun("./bin/cclynx", args="--emit-ast -Wall /dev/stdin")
 @expectOutput("stderr")
 {{any}}: WARNING: implicit conversion changes signedness from 'int' to 'unsigned int', use an explicit cast
 
 @endtest
 
 @test("It should not warn about sign-conversion by default")
-@given("file")
+@given("stdin")
 unsigned int foo(int x) {
     return x;
 }
-@whenRun("./bin/cclynx", args="--emit-ast")
+@whenRun("./bin/cclynx", args="--emit-ast /dev/stdin")
 @expectOutput("stderr")
 
 @endtest
 
 @test("It should suppress all warnings with --no-warnings")
-@given("file")
+@given("stdin")
 int foo(int x) {
     int y;
     if (x) {}
 }
-@whenRun("./bin/cclynx", args="--emit-ast --no-warnings")
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings /dev/stdin")
 @expectOutput("stderr")
 
 @endtest
 
 @test("It should suppress unused warnings with -Wno-unused")
-@given("file")
+@given("stdin")
 int foo(int x) {
     int y;
     return 0;
 }
-@whenRun("./bin/cclynx", args="--emit-ast -Wno-unused")
+@whenRun("./bin/cclynx", args="--emit-ast -Wno-unused /dev/stdin")
 @expectOutput("stderr")
 
 @endtest
 
 @test("It should suppress only unused-variable with -Wno-unused-variable")
-@given("file")
+@given("stdin")
 int foo(int x) {
     int y;
     return 0;
 }
-@whenRun("./bin/cclynx", args="--emit-ast -Wno-unused-variable")
+@whenRun("./bin/cclynx", args="--emit-ast -Wno-unused-variable /dev/stdin")
 @expectOutput("stderr")
 {{any}}: WARNING: unused parameter 'x'
 
 @endtest
 
 @test("It should suppress empty-body category with -Wno-empty-body")
-@given("file")
+@given("stdin")
 void foo(int x) {
     if (x) {}
     while (x) {}
 }
-@whenRun("./bin/cclynx", args="--emit-ast -Wno-empty-body")
+@whenRun("./bin/cclynx", args="--emit-ast -Wno-empty-body /dev/stdin")
 @expectOutput("stderr")
 
 @endtest
 
 @test("It should suppress missing category with -Wno-missing")
-@given("file")
+@given("stdin")
 int foo(int x) {
     if (x) {
         return 1;
     }
 }
-@whenRun("./bin/cclynx", args="--emit-ast -Wno-missing")
+@whenRun("./bin/cclynx", args="--emit-ast -Wno-missing /dev/stdin")
 @expectOutput("stderr")
 
 @endtest
 
 @test("It should enable all then suppress signedness with -Wall -Wno-signedness")
-@given("file")
+@given("stdin")
 unsigned int foo(int x) {
     return x;
 }
-@whenRun("./bin/cclynx", args="--emit-ast -Wall -Wno-signedness")
+@whenRun("./bin/cclynx", args="--emit-ast -Wall -Wno-signedness /dev/stdin")
 @expectOutput("stderr")
 
 @endtest
 
 @test("It should re-suppress signedness with -Wall -Wtolerant")
-@given("file")
+@given("stdin")
 unsigned int foo(int x) {
     return x;
 }
-@whenRun("./bin/cclynx", args="--emit-ast -Wall -Wtolerant")
+@whenRun("./bin/cclynx", args="--emit-ast -Wall -Wtolerant /dev/stdin")
 @expectOutput("stderr")
 
 @endtest
 
 @test("It should warn about sign-conversion in assignment with -Wall")
-@given("file")
+@given("stdin")
 void foo(int x) {
     unsigned int y;
     y = x;
 }
-@whenRun("./bin/cclynx", args="--emit-ast -Wall")
+@whenRun("./bin/cclynx", args="--emit-ast -Wall /dev/stdin")
 @expectOutput("stderr")
 {{any}}: WARNING: implicit conversion changes signedness from 'int' to 'unsigned int', use an explicit cast
 
 @endtest
 
 @test("It should warn about sign-conversion in function argument with -Wall")
-@given("file")
+@given("stdin")
 void bar(unsigned int x) {
     x = x;
 }
@@ -313,30 +313,30 @@ void foo(void) {
     x = 1;
     bar(x);
 }
-@whenRun("./bin/cclynx", args="--emit-ast -Wall")
+@whenRun("./bin/cclynx", args="--emit-ast -Wall /dev/stdin")
 @expectOutput("stderr")
 {{any}}: WARNING: implicit conversion changes signedness from 'int' to 'unsigned int', use an explicit cast
 
 @endtest
 
 @test("It should suppress all when --no-warnings follows -Wall")
-@given("file")
+@given("stdin")
 int foo(int x) {
     int y;
     if (x) {}
 }
-@whenRun("./bin/cclynx", args="--emit-ast -Wall --no-warnings")
+@whenRun("./bin/cclynx", args="--emit-ast -Wall --no-warnings /dev/stdin")
 @expectOutput("stderr")
 
 @endtest
 
 @test("It should enable all when -Wall follows --no-warnings")
-@given("file")
+@given("stdin")
 int foo(int x) {
     int y;
     if (x) {}
 }
-@whenRun("./bin/cclynx", args="--emit-ast --no-warnings -Wall")
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings -Wall /dev/stdin")
 @expectOutput("stderr")
 {{any}}: WARNING: empty if body
 {{any}}: WARNING: unused variable 'y'
@@ -345,17 +345,17 @@ int foo(int x) {
 @endtest
 
 @test("It should suppress individual sign-conversion with -Wall -Wno-sign-conversion")
-@given("file")
+@given("stdin")
 unsigned int foo(int x) {
     return x;
 }
-@whenRun("./bin/cclynx", args="--emit-ast -Wall -Wno-sign-conversion")
+@whenRun("./bin/cclynx", args="--emit-ast -Wall -Wno-sign-conversion /dev/stdin")
 @expectOutput("stderr")
 
 @endtest
 
 @test("It should suppress unspecified-parameters with -Wno-unspecified-parameters")
-@given("file")
+@given("stdin")
 int foo() {
     return 7;
 }
@@ -363,63 +363,63 @@ int foo() {
 int main() {
     return foo(42);
 }
-@whenRun("./bin/cclynx", args="--emit-ast -Wno-unspecified-parameters")
+@whenRun("./bin/cclynx", args="--emit-ast -Wno-unspecified-parameters /dev/stdin")
 @expectOutput("stderr")
 
 @endtest
 
 @test("It should suppress multiple categories with combined -Wno- flags")
-@given("file")
+@given("stdin")
 int foo(int x) {
     int y;
     if (x) {}
 }
-@whenRun("./bin/cclynx", args="--emit-ast -Wno-unused -Wno-empty-body")
+@whenRun("./bin/cclynx", args="--emit-ast -Wno-unused -Wno-empty-body /dev/stdin")
 @expectOutput("stderr")
 {{any}}: WARNING: function 'foo' missing return statement
 
 @endtest
 
 @test("It should warn about empty compound statement")
-@given("file")
+@given("stdin")
 void foo(void) {
     { }
 }
-@whenRun("./bin/cclynx", args="--emit-ast")
+@whenRun("./bin/cclynx", args="--emit-ast /dev/stdin")
 @expectOutput("stderr")
 {{any}}: WARNING: empty compound statement
 
 @endtest
 
 @test("It should suppress only empty-if-body with -Wno-empty-if-body")
-@given("file")
+@given("stdin")
 void foo(int x) {
     if (x) {}
     while (x) {}
 }
-@whenRun("./bin/cclynx", args="--emit-ast -Wno-empty-if-body")
+@whenRun("./bin/cclynx", args="--emit-ast -Wno-empty-if-body /dev/stdin")
 @expectOutput("stderr")
 {{any}}: WARNING: empty while body
 
 @endtest
 
 @test("It should warn about sign-conversion in binary expression with -Wall")
-@given("file")
+@given("stdin")
 unsigned int foo(unsigned int x, int y) {
     return x + y;
 }
-@whenRun("./bin/cclynx", args="--emit-ast -Wall")
+@whenRun("./bin/cclynx", args="--emit-ast -Wall /dev/stdin")
 @expectOutput("stderr")
 {{any}}: WARNING: implicit conversion changes signedness from 'int' to 'unsigned int', use an explicit cast
 
 @endtest
 
 @test("It should warn about sign-compare for less-than with -Wall")
-@given("file")
+@given("stdin")
 unsigned int foo(unsigned int x, int y) {
     return x < y;
 }
-@whenRun("./bin/cclynx", args="--emit-ast -Wall")
+@whenRun("./bin/cclynx", args="--emit-ast -Wall /dev/stdin")
 @expectOutput("stderr")
 {{any}}: WARNING: implicit conversion changes signedness from 'int' to 'unsigned int', use an explicit cast
 
@@ -460,11 +460,11 @@ TranslationUnit: '{{any}}'
 @endtest
 
 @test("It should warn about sign-compare for greater-than with -Wall")
-@given("file")
+@given("stdin")
 unsigned int foo(unsigned int x, int y) {
     return x > y;
 }
-@whenRun("./bin/cclynx", args="--emit-ast -Wall")
+@whenRun("./bin/cclynx", args="--emit-ast -Wall /dev/stdin")
 @expectOutput("stderr")
 {{any}}: WARNING: implicit conversion changes signedness from 'int' to 'unsigned int', use an explicit cast
 
@@ -505,11 +505,11 @@ TranslationUnit: '{{any}}'
 @endtest
 
 @test("It should warn about sign-compare for equality with -Wall")
-@given("file")
+@given("stdin")
 unsigned int foo(unsigned int x, int y) {
     return x == y;
 }
-@whenRun("./bin/cclynx", args="--emit-ast -Wall")
+@whenRun("./bin/cclynx", args="--emit-ast -Wall /dev/stdin")
 @expectOutput("stderr")
 {{any}}: WARNING: implicit conversion changes signedness from 'int' to 'unsigned int', use an explicit cast
 
@@ -550,11 +550,11 @@ TranslationUnit: '{{any}}'
 @endtest
 
 @test("It should warn about sign-compare for inequality with -Wall")
-@given("file")
+@given("stdin")
 unsigned int foo(unsigned int x, int y) {
     return x != y;
 }
-@whenRun("./bin/cclynx", args="--emit-ast -Wall")
+@whenRun("./bin/cclynx", args="--emit-ast -Wall /dev/stdin")
 @expectOutput("stderr")
 {{any}}: WARNING: implicit conversion changes signedness from 'int' to 'unsigned int', use an explicit cast
 
@@ -595,21 +595,21 @@ TranslationUnit: '{{any}}'
 @endtest
 
 @test("It should suppress sign-compare with -Wall -Wno-sign-compare")
-@given("file")
+@given("stdin")
 unsigned int foo(unsigned int x, int y) {
     return x < y;
 }
-@whenRun("./bin/cclynx", args="--emit-ast -Wall -Wno-sign-compare")
+@whenRun("./bin/cclynx", args="--emit-ast -Wall -Wno-sign-compare /dev/stdin")
 @expectOutput("stderr")
 
 @endtest
 
 @test("It should warn about sign-compare with signed on left side with -Wall")
-@given("file")
+@given("stdin")
 unsigned int foo(int x, unsigned int y) {
     return x < y;
 }
-@whenRun("./bin/cclynx", args="--emit-ast -Wall")
+@whenRun("./bin/cclynx", args="--emit-ast -Wall /dev/stdin")
 @expectOutput("stderr")
 {{any}}: WARNING: implicit conversion changes signedness from 'int' to 'unsigned int', use an explicit cast
 
@@ -650,31 +650,31 @@ TranslationUnit: '{{any}}'
 @endtest
 
 @test("It should not warn about sign-compare when both are signed")
-@given("file")
+@given("stdin")
 int foo(int x, int y) {
     return x < y;
 }
-@whenRun("./bin/cclynx", args="--emit-ast -Wall")
+@whenRun("./bin/cclynx", args="--emit-ast -Wall /dev/stdin")
 @expectOutput("stderr")
 
 @endtest
 
 @test("It should not warn about sign-compare when both are unsigned")
-@given("file")
+@given("stdin")
 unsigned int foo(unsigned int x, unsigned int y) {
     return x < y;
 }
-@whenRun("./bin/cclynx", args="--emit-ast -Wall")
+@whenRun("./bin/cclynx", args="--emit-ast -Wall /dev/stdin")
 @expectOutput("stderr")
 
 @endtest
 
 @test("It should suppress sign-compare but not sign-conversion with -Wno-sign-compare")
-@given("file")
+@given("stdin")
 unsigned int foo(unsigned int x, int y) {
     return x < y + x;
 }
-@whenRun("./bin/cclynx", args="--emit-ast -Wall -Wno-sign-compare")
+@whenRun("./bin/cclynx", args="--emit-ast -Wall -Wno-sign-compare /dev/stdin")
 @expectOutput("stderr")
 {{any}}: WARNING: implicit conversion changes signedness from 'int' to 'unsigned int', use an explicit cast
 

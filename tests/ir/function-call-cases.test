@@ -1,5 +1,5 @@
 @test("It should generate IR for function call without parameters")
-@given("file")
+@given("stdin")
 int foo(void) {
    return 7;
 }
@@ -7,7 +7,7 @@ int foo(void) {
 int main() {
     return 42 * foo();
 }
-@whenRun("./bin/cclynx", args="--emit-ir")
+@whenRun("./bin/cclynx", args="--emit-ir /dev/stdin")
 @expectOutput("stdout")
 OP_FUNC "foo"
 OP_CONST 7, t1
@@ -23,7 +23,7 @@ OP_FUNC_END
 @endtest
 
 @test("It should generate IR for function call with 1 argument")
-@given("file")
+@given("stdin")
 int identity(int a) {
     return a;
 }
@@ -31,7 +31,7 @@ int identity(int a) {
 int main() {
     return identity(42);
 }
-@whenRun("./bin/cclynx", args="--emit-ir")
+@whenRun("./bin/cclynx", args="--emit-ir /dev/stdin")
 @expectOutput("stdout")
 OP_FUNC "identity"
 OP_STORE_PARAM "a", 0
@@ -48,7 +48,7 @@ OP_FUNC_END
 @endtest
 
 @test("It should generate IR for function call with 2 arguments")
-@given("file")
+@given("stdin")
 int add(int a, int b) {
     return a + b;
 }
@@ -56,7 +56,7 @@ int add(int a, int b) {
 int main() {
     return add(19, 23);
 }
-@whenRun("./bin/cclynx", args="--emit-ir")
+@whenRun("./bin/cclynx", args="--emit-ir /dev/stdin")
 @expectOutput("stdout")
 OP_FUNC "add"
 OP_STORE_PARAM "a", 0
@@ -78,7 +78,7 @@ OP_FUNC_END
 @endtest
 
 @test("It should generate IR for function call with 3 arguments")
-@given("file")
+@given("stdin")
 int foo(int a, int b, int c) {
     return a + b + c;
 }
@@ -86,7 +86,7 @@ int foo(int a, int b, int c) {
 int main() {
     return foo(1, 2, 3);
 }
-@whenRun("./bin/cclynx", args="--emit-ir")
+@whenRun("./bin/cclynx", args="--emit-ir /dev/stdin")
 @expectOutput("stdout")
 OP_FUNC "foo"
 OP_STORE_PARAM "a", 0
@@ -113,7 +113,7 @@ OP_FUNC_END
 @endtest
 
 @test("It should generate IR for function call with unspecified parameters")
-@given("file")
+@given("stdin")
 int foo() {
    return 7;
 }
@@ -121,7 +121,7 @@ int foo() {
 int main() {
     return 42 * foo();
 }
-@whenRun("./bin/cclynx", args="--emit-ir")
+@whenRun("./bin/cclynx", args="--emit-ir /dev/stdin")
 @expectOutput("stdout")
 OP_FUNC "foo"
 OP_CONST 7, t1

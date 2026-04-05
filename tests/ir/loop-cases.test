@@ -1,5 +1,5 @@
 @test("It should generate IR code on while loop statement with expression <")
-@given("file")
+@given("stdin")
 int main() {
     int i;
     i = 0;
@@ -8,7 +8,7 @@ int main() {
     }
     return i * 7 + 7;
 }
-@whenRun("./bin/cclynx", args="--emit-ir")
+@whenRun("./bin/cclynx", args="--emit-ir /dev/stdin")
 @expectOutput("stdout")
 OP_FUNC "main"
 OP_CONST 0, t1
@@ -34,7 +34,7 @@ OP_FUNC_END
 @endtest
 
 @test("It should generate IR code on while loop statement with expression >")
-@given("file")
+@given("stdin")
 int main() {
     int i;
     i = 20;
@@ -43,7 +43,7 @@ int main() {
     }
     return i * 7 + 7;
 }
-@whenRun("./bin/cclynx", args="--emit-ir")
+@whenRun("./bin/cclynx", args="--emit-ir /dev/stdin")
 @expectOutput("stdout")
 OP_FUNC "main"
 OP_CONST 20, t1
@@ -69,7 +69,7 @@ OP_FUNC_END
 @endtest
 
 @test("It should generate IR code on while loop statement with expression ==")
-@given("file")
+@given("stdin")
 int main() {
     int i;
     i = 0;
@@ -78,7 +78,7 @@ int main() {
     }
     return i;
 }
-@whenRun("./bin/cclynx", args="--emit-ir")
+@whenRun("./bin/cclynx", args="--emit-ir /dev/stdin")
 @expectOutput("stdout")
 OP_FUNC "main"
 OP_CONST 0, t1
@@ -100,7 +100,7 @@ OP_FUNC_END
 @endtest
 
 @test("It should generate IR code on while loop statement with expression !=")
-@given("file")
+@given("stdin")
 int main() {
     int i;
     i = 10;
@@ -109,7 +109,7 @@ int main() {
     }
     return i;
 }
-@whenRun("./bin/cclynx", args="--emit-ir")
+@whenRun("./bin/cclynx", args="--emit-ir /dev/stdin")
 @expectOutput("stdout")
 OP_FUNC "main"
 OP_CONST 10, t1
@@ -131,7 +131,7 @@ OP_FUNC_END
 @endtest
 
 @test("It should generate IR code on while loop statement with constant false condition")
-@given("file")
+@given("stdin")
 int main() {
     int i;
     i = 1;
@@ -140,7 +140,7 @@ int main() {
     }
     return i;
 }
-@whenRun("./bin/cclynx", args="--emit-ir")
+@whenRun("./bin/cclynx", args="--emit-ir /dev/stdin")
 @expectOutput("stdout")
 OP_FUNC "main"
 OP_CONST 1, t1
@@ -161,7 +161,7 @@ OP_FUNC_END
 @endtest
 
 @test("It should generate IR code on while loop statement with constant true condition")
-@given("file")
+@given("stdin")
 int main() {
     int i;
     i = 1;
@@ -170,7 +170,7 @@ int main() {
     }
     return i;
 }
-@whenRun("./bin/cclynx", args="--emit-ir")
+@whenRun("./bin/cclynx", args="--emit-ir /dev/stdin")
 @expectOutput("stdout")
 OP_FUNC "main"
 OP_CONST 1, t1
@@ -191,12 +191,12 @@ OP_FUNC_END
 @endtest
 
 @test("It should generate IR code on while loop with empty expression statement")
-@given("file")
+@given("stdin")
 int main() {
     while (0);
     return 0;
 }
-@whenRun("./bin/cclynx", args="--emit-ir")
+@whenRun("./bin/cclynx", args="--emit-ir /dev/stdin")
 @expectOutput("stdout")
 OP_FUNC "main"
 OP_LABEL ".L1"
@@ -212,13 +212,13 @@ OP_FUNC_END
 @endtest
 
 @test("It should generate IR code on while loop with empty compound statement")
-@given("file")
+@given("stdin")
 int main() {
     while (0) {
     }
     return 0;
 }
-@whenRun("./bin/cclynx", args="--emit-ir")
+@whenRun("./bin/cclynx", args="--emit-ir /dev/stdin")
 @expectOutput("stdout")
 OP_FUNC "main"
 OP_LABEL ".L1"
@@ -235,7 +235,7 @@ OP_FUNC_END
 
 
 @test("It should generate OP_JUMP_IF_UNSIGNED_GTE for unsigned less than in while")
-@given("file")
+@given("stdin")
 int main() {
     unsigned int x;
     x = 0u;
@@ -244,7 +244,7 @@ int main() {
     }
     return x;
 }
-@whenRun("./bin/cclynx", args="--emit-ir --no-warnings")
+@whenRun("./bin/cclynx", args="--emit-ir --no-warnings /dev/stdin")
 @expectOutput("stdout")
 OP_FUNC "main"
 OP_CONST 0, t1
@@ -266,7 +266,7 @@ OP_FUNC_END
 @endtest
 
 @test("It should generate OP_JUMP_IF_UNSIGNED_LTE for unsigned greater than in while")
-@given("file")
+@given("stdin")
 int main() {
     unsigned int x;
     x = 3u;
@@ -275,7 +275,7 @@ int main() {
     }
     return x;
 }
-@whenRun("./bin/cclynx", args="--emit-ir --no-warnings")
+@whenRun("./bin/cclynx", args="--emit-ir --no-warnings /dev/stdin")
 @expectOutput("stdout")
 OP_FUNC "main"
 OP_CONST 3, t1

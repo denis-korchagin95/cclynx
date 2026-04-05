@@ -1,9 +1,9 @@
 @test("DOT: integer constant")
-@given("file")
+@given("stdin")
 int main() {
     42;
 }
-@whenRun("./bin/cclynx", args="--emit-ast --format=dot")
+@whenRun("./bin/cclynx", args="--emit-ast --format=dot /dev/stdin")
 @expectOutput("stdout")
 digraph AST {
     node [shape=box, fontname="monospace"];
@@ -21,13 +21,13 @@ digraph AST {
 @endtest
 
 @test("DOT: variable declaration, assignment, and reference")
-@given("file")
+@given("stdin")
 int main() {
     int x;
     x = 5;
     return x;
 }
-@whenRun("./bin/cclynx", args="--emit-ast --format=dot")
+@whenRun("./bin/cclynx", args="--emit-ast --format=dot /dev/stdin")
 @expectOutput("stdout")
 digraph AST {
     node [shape=box, fontname="monospace"];
@@ -55,11 +55,11 @@ digraph AST {
 @endtest
 
 @test("DOT: additive expression")
-@given("file")
+@given("stdin")
 int main() {
     return 2 + 3;
 }
-@whenRun("./bin/cclynx", args="--emit-ast --format=dot")
+@whenRun("./bin/cclynx", args="--emit-ast --format=dot /dev/stdin")
 @expectOutput("stdout")
 digraph AST {
     node [shape=box, fontname="monospace"];
@@ -81,11 +81,11 @@ digraph AST {
 @endtest
 
 @test("DOT: multiplicative expression")
-@given("file")
+@given("stdin")
 int main() {
     return 2 * 3;
 }
-@whenRun("./bin/cclynx", args="--emit-ast --format=dot")
+@whenRun("./bin/cclynx", args="--emit-ast --format=dot /dev/stdin")
 @expectOutput("stdout")
 digraph AST {
     node [shape=box, fontname="monospace"];
@@ -107,11 +107,11 @@ digraph AST {
 @endtest
 
 @test("DOT: relational expression")
-@given("file")
+@given("stdin")
 int main() {
     return 2 < 3;
 }
-@whenRun("./bin/cclynx", args="--emit-ast --format=dot")
+@whenRun("./bin/cclynx", args="--emit-ast --format=dot /dev/stdin")
 @expectOutput("stdout")
 digraph AST {
     node [shape=box, fontname="monospace"];
@@ -133,11 +133,11 @@ digraph AST {
 @endtest
 
 @test("DOT: equality expression")
-@given("file")
+@given("stdin")
 int main() {
     return 2 == 3;
 }
-@whenRun("./bin/cclynx", args="--emit-ast --format=dot")
+@whenRun("./bin/cclynx", args="--emit-ast --format=dot /dev/stdin")
 @expectOutput("stdout")
 digraph AST {
     node [shape=box, fontname="monospace"];
@@ -159,7 +159,7 @@ digraph AST {
 @endtest
 
 @test("DOT: if-else statement")
-@given("file")
+@given("stdin")
 int main() {
     int x;
     x = 1;
@@ -170,7 +170,7 @@ int main() {
     }
     return x;
 }
-@whenRun("./bin/cclynx", args="--emit-ast --format=dot")
+@whenRun("./bin/cclynx", args="--emit-ast --format=dot /dev/stdin")
 @expectOutput("stdout")
 digraph AST {
     node [shape=box, fontname="monospace"];
@@ -226,7 +226,7 @@ digraph AST {
 @endtest
 
 @test("DOT: while statement")
-@given("file")
+@given("stdin")
 int main() {
     int i;
     i = 0;
@@ -235,7 +235,7 @@ int main() {
     }
     return i;
 }
-@whenRun("./bin/cclynx", args="--emit-ast --format=dot")
+@whenRun("./bin/cclynx", args="--emit-ast --format=dot /dev/stdin")
 @expectOutput("stdout")
 digraph AST {
     node [shape=box, fontname="monospace"];
@@ -285,11 +285,11 @@ digraph AST {
 @endtest
 
 @test("DOT: function with 1 parameter")
-@given("file")
+@given("stdin")
 int sum(int a) {
     return a;
 }
-@whenRun("./bin/cclynx", args="--emit-ast --format=dot")
+@whenRun("./bin/cclynx", args="--emit-ast --format=dot /dev/stdin")
 @expectOutput("stdout")
 digraph AST {
     node [shape=box, fontname="monospace"];
@@ -309,11 +309,11 @@ digraph AST {
 @endtest
 
 @test("DOT: function with 2 parameters")
-@given("file")
+@given("stdin")
 int add(int a, int b) {
     return a + b;
 }
-@whenRun("./bin/cclynx", args="--emit-ast --format=dot")
+@whenRun("./bin/cclynx", args="--emit-ast --format=dot /dev/stdin")
 @expectOutput("stdout")
 digraph AST {
     node [shape=box, fontname="monospace"];
@@ -339,11 +339,11 @@ digraph AST {
 @endtest
 
 @test("DOT: function with 3 parameters")
-@given("file")
+@given("stdin")
 int foo(int a, int b, int c) {
     return a + b * c;
 }
-@whenRun("./bin/cclynx", args="--emit-ast --format=dot")
+@whenRun("./bin/cclynx", args="--emit-ast --format=dot /dev/stdin")
 @expectOutput("stdout")
 digraph AST {
     node [shape=box, fontname="monospace"];
@@ -375,11 +375,11 @@ digraph AST {
 @endtest
 
 @test("DOT: bare return statement")
-@given("file")
+@given("stdin")
 int main() {
     return;
 }
-@whenRun("./bin/cclynx", args="--emit-ast --format=dot")
+@whenRun("./bin/cclynx", args="--emit-ast --format=dot /dev/stdin")
 @expectOutput("stdout")
 digraph AST {
     node [shape=box, fontname="monospace"];
@@ -395,7 +395,7 @@ digraph AST {
 @endtest
 
 @test("DOT: function call without arguments")
-@given("file")
+@given("stdin")
 int foo(void) {
    return 7;
 }
@@ -403,7 +403,7 @@ int foo(void) {
 int main() {
     return 42 * foo();
 }
-@whenRun("./bin/cclynx", args="--emit-ast --format=dot")
+@whenRun("./bin/cclynx", args="--emit-ast --format=dot /dev/stdin")
 @expectOutput("stdout")
 digraph AST {
     node [shape=box, fontname="monospace"];

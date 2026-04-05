@@ -1,12 +1,12 @@
 @test("It should generate target arm64 code for simple function call without parameters")
-@given("file")
+@given("stdin")
 int foo(void) {
     return 7;
 }
 int main() {
     return foo();
 }
-@whenRun("./bin/cclynx", args="--emit-asm")
+@whenRun("./bin/cclynx", args="--emit-asm /dev/stdin")
 @expectOutput("stdout")
 .text
 .align 2
@@ -32,14 +32,14 @@ _main:
 @endtest
 
 @test("It should generate target arm64 code for function call with 1 argument")
-@given("file")
+@given("stdin")
 int identity(int a) {
     return a;
 }
 int main() {
     return identity(42);
 }
-@whenRun("./bin/cclynx", args="--emit-asm")
+@whenRun("./bin/cclynx", args="--emit-asm /dev/stdin")
 @expectOutput("stdout")
 .text
 .align 2
@@ -70,14 +70,14 @@ _main:
 @endtest
 
 @test("It should generate target arm64 code for function call with 2 arguments")
-@given("file")
+@given("stdin")
 int add(int a, int b) {
     return a + b;
 }
 int main() {
     return add(19, 23);
 }
-@whenRun("./bin/cclynx", args="--emit-asm")
+@whenRun("./bin/cclynx", args="--emit-asm /dev/stdin")
 @expectOutput("stdout")
 .text
 .align 2
@@ -113,14 +113,14 @@ _main:
 @endtest
 
 @test("It should generate target arm64 code for function call with 3 arguments")
-@given("file")
+@given("stdin")
 int foo(int a, int b, int c) {
     return a + b + c;
 }
 int main() {
     return foo(1, 2, 3);
 }
-@whenRun("./bin/cclynx", args="--emit-asm")
+@whenRun("./bin/cclynx", args="--emit-asm /dev/stdin")
 @expectOutput("stdout")
 .text
 .align 2
@@ -161,14 +161,14 @@ _main:
 @endtest
 
 @test("It should generate target arm64 code for function call in expression")
-@given("file")
+@given("stdin")
 int foo(void) {
     return 7;
 }
 int main() {
     return 42 * foo();
 }
-@whenRun("./bin/cclynx", args="--emit-asm")
+@whenRun("./bin/cclynx", args="--emit-asm /dev/stdin")
 @expectOutput("stdout")
 .text
 .align 2

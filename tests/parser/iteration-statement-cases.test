@@ -1,5 +1,5 @@
 @test("It should parse while loop")
-@given("file")
+@given("stdin")
 int main() {
     int i;
     i = 0;
@@ -7,7 +7,7 @@ int main() {
         i = i + 1;
     }
 }
-@whenRun("./bin/cclynx", args="--emit-ast")
+@whenRun("./bin/cclynx", args="--emit-ast /dev/stdin")
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
 └── FunctionDefinition: 'main' <unspecified-parameters>
@@ -65,13 +65,13 @@ TranslationUnit: '{{any}}'
 @endtest
 
 @test("It should parse while with empty statement")
-@given("file")
+@given("stdin")
 int main() {
     int i;
     i = 0;
     while(i < 10);
 }
-@whenRun("./bin/cclynx", args="--emit-ast")
+@whenRun("./bin/cclynx", args="--emit-ast /dev/stdin")
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
 └── FunctionDefinition: 'main' <unspecified-parameters>
@@ -111,14 +111,14 @@ TranslationUnit: '{{any}}'
 @endtest
 
 @test("It should parse while with simple expression")
-@given("file")
+@given("stdin")
 int main() {
     int i;
     i = 0;
     while(i < 10)
         i = i + 1;
 }
-@whenRun("./bin/cclynx", args="--emit-ast")
+@whenRun("./bin/cclynx", args="--emit-ast /dev/stdin")
 @expectOutput("stdout")
 TranslationUnit: '{{any}}'
 └── FunctionDefinition: 'main' <unspecified-parameters>

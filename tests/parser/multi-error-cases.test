@@ -1,11 +1,11 @@
 @test("It should report multiple undeclared variable errors")
-@given("file")
+@given("stdin")
 int main() {
     int result;
     result = x + 1;
     result = y + 2;
 }
-@whenRun("./bin/cclynx", args="--emit-ast --no-warnings")
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings /dev/stdin")
 @expectOutput("stderr")
 {{any}}:3:14: ERROR: undeclared variable 'x'
 {{any}}:4:14: ERROR: undeclared variable 'y'
@@ -13,13 +13,13 @@ int main() {
 @endtest
 
 @test("It should report redeclared variable and undeclared variable errors together")
-@given("file")
+@given("stdin")
 int main() {
     int x;
     int x;
     y = 1;
 }
-@whenRun("./bin/cclynx", args="--emit-ast --no-warnings")
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings /dev/stdin")
 @expectOutput("stderr")
 {{any}}:3:9: ERROR: variable 'x' already declared
 {{any}}:4:5: ERROR: undeclared variable 'y'
@@ -27,7 +27,7 @@ int main() {
 @endtest
 
 @test("It should report function redefinition and error inside duplicate body")
-@given("file")
+@given("stdin")
 int foo() {
     return 1;
 }
@@ -35,7 +35,7 @@ int foo() {
 int foo() {
     return x;
 }
-@whenRun("./bin/cclynx", args="--emit-ast --no-warnings")
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings /dev/stdin")
 @expectOutput("stderr")
 {{any}}:5:5: ERROR: function 'foo' already defined
 {{any}}:6:12: ERROR: undeclared variable 'x'
@@ -43,7 +43,7 @@ int foo() {
 @endtest
 
 @test("It should report errors in both if branches")
-@given("file")
+@given("stdin")
 int main() {
     int x;
     if (x) {
@@ -53,7 +53,7 @@ int main() {
     }
     return 0;
 }
-@whenRun("./bin/cclynx", args="--emit-ast --no-warnings")
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings /dev/stdin")
 @expectOutput("stderr")
 {{any}}:4:9: ERROR: undeclared variable 'y'
 {{any}}:6:9: ERROR: undeclared variable 'z'
@@ -61,7 +61,7 @@ int main() {
 @endtest
 
 @test("It should report errors across multiple functions")
-@given("file")
+@given("stdin")
 int foo() {
     return x;
 }
@@ -69,7 +69,7 @@ int foo() {
 int bar() {
     return y;
 }
-@whenRun("./bin/cclynx", args="--emit-ast --no-warnings")
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings /dev/stdin")
 @expectOutput("stderr")
 {{any}}:2:12: ERROR: undeclared variable 'x'
 {{any}}:6:12: ERROR: undeclared variable 'y'
@@ -77,7 +77,7 @@ int bar() {
 @endtest
 
 @test("It should recover from syntax error and report subsequent semantic error")
-@given("file")
+@given("stdin")
 int main() {
     int x;
     x = 1
@@ -85,7 +85,7 @@ int main() {
     y = z;
     return 0;
 }
-@whenRun("./bin/cclynx", args="--emit-ast")
+@whenRun("./bin/cclynx", args="--emit-ast /dev/stdin")
 @expectOutput("stderr")
 {{any}}:4:5: ERROR: expected ';' but got keyword 'int'
 {{any}}:5:5: ERROR: undeclared variable 'y'
@@ -93,14 +93,14 @@ int main() {
 @endtest
 
 @test("It should report unknown function call error and continue")
-@given("file")
+@given("stdin")
 int main() {
     int x;
     x = unknown(1, 2);
     x = y;
     return x;
 }
-@whenRun("./bin/cclynx", args="--emit-ast")
+@whenRun("./bin/cclynx", args="--emit-ast /dev/stdin")
 @expectOutput("stderr")
 {{any}}:3:9: ERROR: call to undeclared function 'unknown'
 {{any}}:4:9: ERROR: undeclared variable 'y'
@@ -108,7 +108,7 @@ int main() {
 @endtest
 
 @test("It should limit the number of reported errors")
-@given("file")
+@given("stdin")
 int main() {
     a0 = 0;
     a1 = 0;
@@ -132,7 +132,7 @@ int main() {
     b9 = 0;
     c0 = 0;
 }
-@whenRun("./bin/cclynx", args="--emit-ast")
+@whenRun("./bin/cclynx", args="--emit-ast /dev/stdin")
 @expectOutput("stderr")
 {{any}}:2:5: ERROR: undeclared variable 'a0'
 {{any}}:3:5: ERROR: undeclared variable 'a1'
