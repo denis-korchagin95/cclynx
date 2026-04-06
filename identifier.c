@@ -20,7 +20,8 @@ static struct keyword
     {"while",       KEYWORD_WHILE},
     {"if",          KEYWORD_IF},
     {"else",        KEYWORD_ELSE},
-    {"unsigned",    KEYWORD_UNSIGNED}
+    {"unsigned",    KEYWORD_UNSIGNED},
+    {"signed",      KEYWORD_SIGNED},
 };
 
 

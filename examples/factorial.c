@@ -1,7 +1,7 @@
 // expected return: 120
 int main() {
-    int n;
-    int result;
+    signed n;
+    signed result;
     n = 5;
     result = 1;
     while (n > 1) {

@@ -1159,8 +1159,36 @@ void parse_declaration_specifiers(struct parser_context * ctx, struct declaratio
                     current_token = parser_get_token(ctx);
                     continue;
                 }
-                if ((specifiers->modifiers & TYPE_MODIFIER_UNSIGNED) && current_token->identifier->keyword_code == KEYWORD_VOID) {
+                if (
+                    (specifiers->modifiers & TYPE_MODIFIER_SIGNED) > 0
+                    && current_token->identifier->keyword_code == KEYWORD_VOID
+                ) {
+                    parser_report_error(ctx, current_token, "'signed' cannot be applied to 'void'");
+                    current_token = parser_get_token(ctx);
+                    continue;
+                }
+                if (
+                    (specifiers->modifiers & TYPE_MODIFIER_UNSIGNED) > 0
+                    && current_token->identifier->keyword_code == KEYWORD_VOID
+                ) {
                     parser_report_error(ctx, current_token, "'unsigned' cannot be applied to 'void'");
+                    current_token = parser_get_token(ctx);
+                    continue;
+                }
+                break;
+            case KEYWORD_SIGNED:
+                if (specifiers->modifiers & TYPE_MODIFIER_SIGNED) {
+                    parser_report_error(ctx, current_token, "duplicate 'signed' keyword");
+                    current_token = parser_get_token(ctx);
+                    continue;
+                }
+                if (specifiers->modifiers & TYPE_MODIFIER_UNSIGNED) {
+                    parser_report_error(ctx, current_token, "'signed' cannot be mixed with 'unsigned'");
+                    current_token = parser_get_token(ctx);
+                    continue;
+                }
+                if (specifiers->type_kind == TYPE_KIND_VOID) {
+                    parser_report_error(ctx, current_token, "'signed' cannot be applied to 'void'");
                     current_token = parser_get_token(ctx);
                     continue;
                 }
@@ -1168,6 +1196,11 @@ void parse_declaration_specifiers(struct parser_context * ctx, struct declaratio
             case KEYWORD_UNSIGNED:
                 if (specifiers->modifiers & TYPE_MODIFIER_UNSIGNED) {
                     parser_report_error(ctx, current_token, "duplicate 'unsigned' keyword");
+                    current_token = parser_get_token(ctx);
+                    continue;
+                }
+                if (specifiers->modifiers & TYPE_MODIFIER_SIGNED) {
+                    parser_report_error(ctx, current_token, "'unsigned' cannot be mixed with 'signed'");
                     current_token = parser_get_token(ctx);
                     continue;
                 }
@@ -1191,6 +1224,9 @@ void parse_declaration_specifiers(struct parser_context * ctx, struct declaratio
             case KEYWORD_UNSIGNED:
                 specifiers->modifiers |= TYPE_MODIFIER_UNSIGNED;
                 break;
+            case KEYWORD_SIGNED:
+                specifiers->modifiers |= TYPE_MODIFIER_SIGNED;
+                break;
             default:
                 goto done;
         }
@@ -1207,7 +1243,7 @@ struct type * resolve_type(struct declaration_specifiers * specifiers)
     assert(specifiers != NULL);
 
     if (specifiers->type_kind == TYPE_KIND_UNDEFINED) {
-        if (specifiers->modifiers != 0) {
+        if ((specifiers->modifiers & TYPE_MODIFIER_SIGN_MASK) != 0) {
             specifiers->type_kind = TYPE_KIND_INTEGER;
         } else {
             return NULL;

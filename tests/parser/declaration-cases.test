@@ -1,0 +1,299 @@
+@test("It should parse an implicitly signed integer variable")
+@given("stdin")
+int main() {
+    int x;
+    return 0;
+}
+@whenRun("./bin/cclynx", args="--emit-ast /dev/stdin")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        ├── VariableDeclaration: 'x'
+        │   └── Type
+        │       ├── category: 'basic'
+        │       └── descriptor: 'int'
+        └── ReturnStatement
+            └── IntegerConstant: '0'
+                └── Type
+                    ├── category: 'basic'
+                    └── descriptor: 'int'
+
+@endtest
+
+@test("It should parse an explicitly unsigned integer variable")
+@given("stdin")
+int main() {
+    unsigned int x;
+    return 0;
+}
+@whenRun("./bin/cclynx", args="--emit-ast /dev/stdin")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        ├── VariableDeclaration: 'x'
+        │   └── Type
+        │       ├── category: 'basic'
+        │       └── descriptor: 'unsigned int'
+        └── ReturnStatement
+            └── IntegerConstant: '0'
+                └── Type
+                    ├── category: 'basic'
+                    └── descriptor: 'int'
+
+@endtest
+
+@test("It should parse unsigned as an integer variable by default")
+@given("stdin")
+int main() {
+    unsigned x;
+    return 0;
+}
+@whenRun("./bin/cclynx", args="--emit-ast /dev/stdin")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        ├── VariableDeclaration: 'x'
+        │   └── Type
+        │       ├── category: 'basic'
+        │       └── descriptor: 'unsigned int'
+        └── ReturnStatement
+            └── IntegerConstant: '0'
+                └── Type
+                    ├── category: 'basic'
+                    └── descriptor: 'int'
+
+@endtest
+
+@test("It should show an error if unsigned duplicates more than one time")
+@given("stdin")
+int main() {
+    unsigned unsigned int x;
+    return 0;
+}
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings /dev/stdin")
+@expectOutput("stderr")
+{{any}}:2:14: ERROR: duplicate 'unsigned' keyword
+
+@endtest
+
+@test("It should raise an error when unsigned is applied to void")
+@given("stdin")
+unsigned void foo() {
+    return;
+}
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings /dev/stdin")
+@expectOutput("stderr")
+{{any}}:1:10: ERROR: 'unsigned' cannot be applied to 'void'
+
+@endtest
+
+@test("It should raise an error on void variable declaration")
+@given("stdin")
+int main() {
+    void x;
+    return 0;
+}
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings /dev/stdin")
+@expectOutput("stderr")
+{{any}}:2:10: ERROR: variable cannot have 'void' type
+
+@endtest
+
+@test("It should parse signed as signed int by default")
+@given("stdin")
+int main() {
+    signed x;
+    return 0;
+}
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings /dev/stdin")
+@expectOutput("stdout")
+TranslationUnit: 'stdin'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        ├── VariableDeclaration: 'x'
+        │   └── Type
+        │       ├── category: 'basic'
+        │       └── descriptor: 'int'
+        └── ReturnStatement
+            └── IntegerConstant: '0'
+                └── Type
+                    ├── category: 'basic'
+                    └── descriptor: 'int'
+
+@endtest
+
+@test("It should show an error if signed duplicates more than one time")
+@given("stdin")
+int main() {
+    signed signed x;
+    return 0;
+}
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings /dev/stdin")
+@expectOutput("stderr")
+{{any}}:2:12: ERROR: duplicate 'signed' keyword
+
+@endtest
+
+@test("It should raise an error when signed is applied to void")
+@given("stdin")
+signed void foo() {
+    return;
+}
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings /dev/stdin")
+@expectOutput("stderr")
+{{any}}:1:8: ERROR: 'signed' cannot be applied to 'void'
+
+@endtest
+
+@test("It should raise an error when signed mixed with unsigned")
+@given("stdin")
+unsigned signed foo() {
+    return;
+}
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings /dev/stdin")
+@expectOutput("stderr")
+{{any}}:1:10: ERROR: 'signed' cannot be mixed with 'unsigned'
+
+@endtest
+
+@test("It should raise an error when unsigned mixed with signed")
+@given("stdin")
+signed unsigned foo() {
+    return;
+}
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings /dev/stdin")
+@expectOutput("stderr")
+{{any}}:1:8: ERROR: 'unsigned' cannot be mixed with 'signed'
+
+@endtest
+
+@test("It should parse an explicitly signed integer variable")
+@given("stdin")
+int main() {
+    signed int x;
+    return 0;
+}
+@whenRun("./bin/cclynx", args="--emit-ast /dev/stdin")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        ├── VariableDeclaration: 'x'
+        │   └── Type
+        │       ├── category: 'basic'
+        │       └── descriptor: 'int'
+        └── ReturnStatement
+            └── IntegerConstant: '0'
+                └── Type
+                    ├── category: 'basic'
+                    └── descriptor: 'int'
+
+@endtest
+
+@test("It should parse 'int unsigned' as 'unsigned int'")
+@given("stdin")
+int main() {
+    int unsigned x;
+    return 0;
+}
+@whenRun("./bin/cclynx", args="--emit-ast /dev/stdin")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        ├── VariableDeclaration: 'x'
+        │   └── Type
+        │       ├── category: 'basic'
+        │       └── descriptor: 'unsigned int'
+        └── ReturnStatement
+            └── IntegerConstant: '0'
+                └── Type
+                    ├── category: 'basic'
+                    └── descriptor: 'int'
+
+@endtest
+
+@test("It should parse 'int signed' as 'int'")
+@given("stdin")
+int main() {
+    int signed x;
+    return 0;
+}
+@whenRun("./bin/cclynx", args="--emit-ast /dev/stdin")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        ├── VariableDeclaration: 'x'
+        │   └── Type
+        │       ├── category: 'basic'
+        │       └── descriptor: 'int'
+        └── ReturnStatement
+            └── IntegerConstant: '0'
+                └── Type
+                    ├── category: 'basic'
+                    └── descriptor: 'int'
+
+@endtest
+
+@test("It should raise an error when unsigned follows void")
+@given("stdin")
+int main() {
+    void unsigned x;
+    return 0;
+}
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings /dev/stdin")
+@expectOutput("stderr")
+{{any}}:2:10: ERROR: 'unsigned' cannot be applied to 'void'
+{{any}}:2:19: ERROR: variable cannot have 'void' type
+
+@endtest
+
+@test("It should raise an error when signed follows void")
+@given("stdin")
+int main() {
+    void signed x;
+    return 0;
+}
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings /dev/stdin")
+@expectOutput("stderr")
+{{any}}:2:10: ERROR: 'signed' cannot be applied to 'void'
+{{any}}:2:17: ERROR: variable cannot have 'void' type
+
+@endtest
+
+@test("It should raise an error when 'signed' and 'unsigned' are mixed in variable declaration")
+@given("stdin")
+int main() {
+    signed unsigned x;
+    return 0;
+}
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings /dev/stdin")
+@expectOutput("stderr")
+{{any}}:2:12: ERROR: 'unsigned' cannot be mixed with 'signed'
+
+@endtest
