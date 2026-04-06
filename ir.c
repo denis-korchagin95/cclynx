@@ -316,6 +316,26 @@ void do_generate_ir(struct ir_context * ctx, struct ir_program * program, const 
                 ir_emit(program, instruction);
             }
             break;
+        case AST_NODE_KIND_UNARY_EXPRESSION:
+            {
+                struct ir_instruction * instruction = ir_create_instruction(ctx, OP_NOP);
+
+                switch (node->content.unary_expression.operation) {
+                    case UNARY_OPERATION_NEGATE:
+                        instruction->code = OP_NEG;
+                        break;
+                    default:
+                        cclynx_fatal_error("ERROR: unknown unary operation\n");
+                }
+
+                do_generate_ir(ctx, program, node->content.unary_expression.operand);
+                instruction->op1 = program->instructions[program->position - 1]->result;
+
+                instruction->result = new_temporary_operand(ctx);
+
+                ir_emit(program, instruction);
+            }
+            break;
         case AST_NODE_KIND_COMPOUND_STATEMENT:
             {
                 struct ast_node_list * it = node->content.list;

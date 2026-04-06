@@ -36,6 +36,7 @@ static struct ast_node * parse_expression_statement(struct parser_context * ctx)
 static struct ast_node * parse_function_definition(struct parser_context * ctx);
 static struct ast_node * parse_declaration(struct parser_context * ctx);
 static struct ast_node * parse_postfix_expression(struct parser_context * ctx);
+static struct ast_node * parse_unary_expression(struct parser_context * ctx);
 static struct ast_node * parse_primary_expression(struct parser_context * ctx);
 
 static void parse_function_parameter_list(struct parser_context * ctx, struct ast_node ** parameters, unsigned int * parameter_count);
@@ -892,7 +893,7 @@ struct ast_node * parse_postfix_expression(struct parser_context * ctx)
     }
 
 fallback:
-    return parse_primary_expression(ctx);
+    return parse_unary_expression(ctx);
 }
 
 struct ast_node * parse_number(struct parser_context * ctx, const struct token * token)
@@ -917,6 +918,24 @@ struct ast_node * parse_number(struct parser_context * ctx, const struct token *
     number->content.constant.value = value;
 
     return number;
+}
+
+struct ast_node * parse_unary_expression(struct parser_context * ctx)
+{
+    assert(ctx != NULL);
+
+    if (token_is_punctuator(parser_peek_token(ctx), '-')) {
+        (void)parser_get_token(ctx);
+
+        struct ast_node * primary = parse_primary_expression(ctx);
+
+        struct ast_node * negate = ast_create_node(ctx->pool, AST_NODE_KIND_UNARY_EXPRESSION, primary->type);
+        negate->content.unary_expression.operation = UNARY_OPERATION_NEGATE;
+        negate->content.unary_expression.operand = primary;
+        return negate;
+    }
+
+    return parse_primary_expression(ctx);
 }
 
 struct ast_node * parse_primary_expression(struct parser_context * ctx)

@@ -23,6 +23,8 @@ enum ast_node_kind
     AST_NODE_KIND_RETURN_STATEMENT,
     AST_NODE_KIND_IF_STATEMENT,
 
+    AST_NODE_KIND_UNARY_EXPRESSION,
+
     AST_NODE_KIND_INTEGER_CONSTANT_EXPRESSION,
     AST_NODE_KIND_VARIABLE_EXPRESSION,
     AST_NODE_KIND_FUNCTION_CALL_EXPRESSION,
@@ -32,6 +34,11 @@ enum ast_node_kind
     AST_NODE_KIND_ADDITIVE_EXPRESSION,
     AST_NODE_KIND_RELATIONAL_EXPRESSION,
     AST_NODE_KIND_EQUALITY_EXPRESSION,
+};
+
+enum unary_operation
+{
+    UNARY_OPERATION_NEGATE = 1,
 };
 
 enum binary_operation
@@ -76,6 +83,11 @@ struct ast_node
             struct ast_node * lhs;
             struct ast_node * rhs;
         } binary_expression;
+        struct unary_expression
+        {
+            enum unary_operation operation;
+            struct ast_node * operand;
+        } unary_expression;
         struct function_definition
         {
             struct identifier * name;

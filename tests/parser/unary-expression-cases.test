@@ -1,0 +1,99 @@
+@test("It should parse an unary minus for signed numbers")
+@given("stdin")
+int main(void)
+{
+    -10;
+}
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings /dev/stdin")
+@expectOutput("stdout")
+TranslationUnit: 'stdin'
+└── FunctionDefinition: 'main' <no-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        └── ExpressionStatement
+            └── UnaryExpression
+                ├── Operation: '-'
+                ├── Type
+                │   ├── category: 'basic'
+                │   └── descriptor: 'int'
+                └── Operand
+                    └── IntegerConstant: '10'
+                        └── Type
+                            ├── category: 'basic'
+                            └── descriptor: 'int'
+
+@endtest
+
+@test("It should parse an unary minus for signed numbers on assignment")
+@given("stdin")
+int main(void)
+{
+    int x;
+    x = -50;
+    return x;
+}
+@whenRun("./bin/cclynx", args="--emit-ast /dev/stdin")
+@expectOutput("stdout")
+TranslationUnit: 'stdin'
+└── FunctionDefinition: 'main' <no-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        ├── VariableDeclaration: 'x'
+        │   └── Type
+        │       ├── category: 'basic'
+        │       └── descriptor: 'int'
+        ├── ExpressionStatement
+        │   └── AssignmentExpression: '='
+        │       ├── VariableExpression: 'x'
+        │       │   └── Type
+        │       │       ├── category: 'basic'
+        │       │       └── descriptor: 'int'
+        │       └── UnaryExpression
+        │           ├── Operation: '-'
+        │           ├── Type
+        │           │   ├── category: 'basic'
+        │           │   └── descriptor: 'int'
+        │           └── Operand
+        │               └── IntegerConstant: '50'
+        │                   └── Type
+        │                       ├── category: 'basic'
+        │                       └── descriptor: 'int'
+        └── ReturnStatement
+            └── VariableExpression: 'x'
+                └── Type
+                    ├── category: 'basic'
+                    └── descriptor: 'int'
+
+@endtest
+
+@test("It should parse an unary minus for unsigned numbers")
+@given("stdin")
+unsigned int main(void)
+{
+    return -1u;
+}
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings /dev/stdin")
+@expectOutput("stdout")
+TranslationUnit: 'stdin'
+└── FunctionDefinition: 'main' <no-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'unsigned int'
+    └── CompoundStatement
+        └── ReturnStatement
+            └── UnaryExpression
+                ├── Operation: '-'
+                ├── Type
+                │   ├── category: 'basic'
+                │   └── descriptor: 'unsigned int'
+                └── Operand
+                    └── IntegerConstant: '1'
+                        └── Type
+                            ├── category: 'basic'
+                            └── descriptor: 'unsigned int'
+
+@endtest

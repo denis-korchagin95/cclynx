@@ -1,0 +1,86 @@
+@test("It should parse an integer constant")
+@given("file", filename="expr_1.c")
+int main() {
+    777;
+}
+@whenRun("./bin/cclynx", args="--emit-ast")
+@expectOutput("stdout")
+TranslationUnit: 'expr_1.c'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        └── ExpressionStatement
+            └── IntegerConstant: '777'
+                └── Type
+                    ├── category: 'basic'
+                    └── descriptor: 'int'
+
+@endtest
+
+@test("It should parse an unsigned integer constant with u suffix")
+@given("stdin")
+unsigned int main() {
+    return 42u;
+}
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings /dev/stdin")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'unsigned int'
+    └── CompoundStatement
+        └── ReturnStatement
+            └── IntegerConstant: '42'
+                └── Type
+                    ├── category: 'basic'
+                    └── descriptor: 'unsigned int'
+
+@endtest
+
+@test("It should parse unsigned constants in expressions without implicit cast")
+@given("stdin")
+unsigned int main() {
+    unsigned int x;
+    x = 10u;
+    return x + 5u;
+}
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings /dev/stdin")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'unsigned int'
+    └── CompoundStatement
+        ├── VariableDeclaration: 'x'
+        │   └── Type
+        │       ├── category: 'basic'
+        │       └── descriptor: 'unsigned int'
+        ├── ExpressionStatement
+        │   └── AssignmentExpression: '='
+        │       ├── VariableExpression: 'x'
+        │       │   └── Type
+        │       │       ├── category: 'basic'
+        │       │       └── descriptor: 'unsigned int'
+        │       └── IntegerConstant: '10'
+        │           └── Type
+        │               ├── category: 'basic'
+        │               └── descriptor: 'unsigned int'
+        └── ReturnStatement
+            └── AdditiveExpression: '+'
+                ├── Type
+                │   ├── category: 'basic'
+                │   └── descriptor: 'unsigned int'
+                ├── VariableExpression: 'x'
+                │   └── Type
+                │       ├── category: 'basic'
+                │       └── descriptor: 'unsigned int'
+                └── IntegerConstant: '5'
+                    └── Type
+                        ├── category: 'basic'
+                        └── descriptor: 'unsigned int'
+
+@endtest

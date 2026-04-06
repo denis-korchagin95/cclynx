@@ -206,6 +206,20 @@ void do_print_ast(const struct ast_node * ast, FILE * file, int depth, unsigned 
                 }
             }
             break;
+        case AST_NODE_KIND_UNARY_EXPRESSION:
+            {
+                fprintf(file, "UnaryExpression\n");
+                ancestors_info[depth] = 2;
+                print_tree_connector(file, depth, ancestors_info);
+                fprintf(file, "Operation: '-'\n");
+                print_type_child(file, depth, ancestors_info, ast->type, 1);
+                ancestors_info[depth] = 0;
+                print_tree_connector(file, depth, ancestors_info);
+                fprintf(file, "Operand\n");
+                ancestors_info[depth + 1] = 0;
+                do_print_ast(ast->content.unary_expression.operand, file, depth + 2, ancestors_info, NULL);
+            }
+            break;
         case AST_NODE_KIND_EQUALITY_EXPRESSION:
             {
                 fprintf(file, "EqualityExpression: '%s'\n", ast->content.binary_expression.operation == BINARY_OPERATION_EQUALITY ? "==" : "!=");
@@ -508,6 +522,24 @@ int do_print_ast_dot(const struct ast_node * ast, FILE * file, int next_id)
                 fprintf(file, "    n%d -> n%d [label=\"arg\"];\n", id, child_id);
             }
             break;
+        case AST_NODE_KIND_UNARY_EXPRESSION:
+            {
+                const char * op = "";
+                switch (ast->content.unary_expression.operation) {
+                    case UNARY_OPERATION_NEGATE:
+                        op = "-";
+                        break;
+                    default:
+                        cclynx_fatal_error("ERROR: unknown unary operation\n");
+                }
+                fprintf(file, "    n%d [label=\"UnaryExpression '%s'\\n: %s\"];\n", id, op, type_stringify(ast->type));
+            }
+            {
+                int child_id = next_id;
+                next_id = do_print_ast_dot(ast->content.unary_expression.operand, file, next_id);
+                fprintf(file, "    n%d -> n%d [label=\"operand\"];\n", id, child_id);
+            }
+            break;
         case AST_NODE_KIND_CAST_EXPRESSION:
             fprintf(file, "    n%d [label=\"CastExpression\\n: %s\"];\n", id, type_stringify(ast->type));
             if (ast->content.node != NULL) {
@@ -613,6 +645,9 @@ void print_ir_program(const struct ir_program * program, FILE * file)
             case OP_SUB:
                 snprintf(buf, sizeof(buf), "t%llu, t%llu, t%llu", instruction->op1->content.temp_id, instruction->op2->content.temp_id, instruction->result->content.temp_id);
                 fprintf(file, "OP_SUB %s\n", buf);
+                break;
+            case OP_NEG:
+                fprintf(file, "OP_NEG t%llu, t%llu\n", instruction->op1->content.temp_id, instruction->result->content.temp_id);
                 break;
             case OP_DIV:
                 snprintf(buf, sizeof(buf), "t%llu, t%llu, t%llu", instruction->op1->content.temp_id, instruction->op2->content.temp_id, instruction->result->content.temp_id);

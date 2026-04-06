@@ -258,3 +258,35 @@ OP_RETURN t6
 OP_FUNC_END
 
 @endtest
+
+@test("It should generate IR code for unary negation")
+@given("stdin")
+int main(void) {
+    return -10;
+}
+@whenRun("./bin/cclynx", args="--emit-ir /dev/stdin")
+@expectOutput("stdout")
+OP_FUNC "main"
+OP_CONST 10, t1
+OP_NEG t1, t2
+OP_RETURN t2
+OP_FUNC_END
+
+@endtest
+
+@test("It should generate IR code for unary negation in expression")
+@given("stdin")
+int main(void) {
+    return -1 + 2;
+}
+@whenRun("./bin/cclynx", args="--emit-ir /dev/stdin")
+@expectOutput("stdout")
+OP_FUNC "main"
+OP_CONST 1, t1
+OP_NEG t1, t2
+OP_CONST 2, t3
+OP_ADD t2, t3, t4
+OP_RETURN t4
+OP_FUNC_END
+
+@endtest
