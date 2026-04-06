@@ -688,6 +688,199 @@ TranslationUnit: '{{any}}'
 
 @endtest
 
+@test("It should parse additive expression as left-associative")
+@given("stdin")
+int main() {
+    1 + 2 + 3;
+}
+@whenRun("./bin/cclynx", args="--emit-ast /dev/stdin")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        └── ExpressionStatement
+            └── AdditiveExpression: '+'
+                ├── Type
+                │   ├── category: 'basic'
+                │   └── descriptor: 'int'
+                ├── AdditiveExpression: '+'
+                │   ├── Type
+                │   │   ├── category: 'basic'
+                │   │   └── descriptor: 'int'
+                │   ├── IntegerConstant: '1'
+                │   │   └── Type
+                │   │       ├── category: 'basic'
+                │   │       └── descriptor: 'int'
+                │   └── IntegerConstant: '2'
+                │       └── Type
+                │           ├── category: 'basic'
+                │           └── descriptor: 'int'
+                └── IntegerConstant: '3'
+                    └── Type
+                        ├── category: 'basic'
+                        └── descriptor: 'int'
+
+@endtest
+
+@test("It should parse multiplicative expression as left-associative")
+@given("stdin")
+int main() {
+    2 * 3 * 4;
+}
+@whenRun("./bin/cclynx", args="--emit-ast /dev/stdin")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        └── ExpressionStatement
+            └── MultiplicativeExpression: '*'
+                ├── Type
+                │   ├── category: 'basic'
+                │   └── descriptor: 'int'
+                ├── MultiplicativeExpression: '*'
+                │   ├── Type
+                │   │   ├── category: 'basic'
+                │   │   └── descriptor: 'int'
+                │   ├── IntegerConstant: '2'
+                │   │   └── Type
+                │   │       ├── category: 'basic'
+                │   │       └── descriptor: 'int'
+                │   └── IntegerConstant: '3'
+                │       └── Type
+                │           ├── category: 'basic'
+                │           └── descriptor: 'int'
+                └── IntegerConstant: '4'
+                    └── Type
+                        ├── category: 'basic'
+                        └── descriptor: 'int'
+
+@endtest
+
+@test("It should parse multiplicative with higher precedence than additive")
+@given("stdin")
+int main() {
+    1 + 2 * 3;
+}
+@whenRun("./bin/cclynx", args="--emit-ast /dev/stdin")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        └── ExpressionStatement
+            └── AdditiveExpression: '+'
+                ├── Type
+                │   ├── category: 'basic'
+                │   └── descriptor: 'int'
+                ├── IntegerConstant: '1'
+                │   └── Type
+                │       ├── category: 'basic'
+                │       └── descriptor: 'int'
+                └── MultiplicativeExpression: '*'
+                    ├── Type
+                    │   ├── category: 'basic'
+                    │   └── descriptor: 'int'
+                    ├── IntegerConstant: '2'
+                    │   └── Type
+                    │       ├── category: 'basic'
+                    │       └── descriptor: 'int'
+                    └── IntegerConstant: '3'
+                        └── Type
+                            ├── category: 'basic'
+                            └── descriptor: 'int'
+
+@endtest
+
+@test("It should parse equality expression with relational RHS (operator precedence)")
+@given("stdin")
+int main() {
+    1 == 2 < 3;
+}
+@whenRun("./bin/cclynx", args="--emit-ast /dev/stdin")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        └── ExpressionStatement
+            └── EqualityExpression: '=='
+                ├── Type
+                │   ├── category: 'basic'
+                │   └── descriptor: 'int'
+                ├── IntegerConstant: '1'
+                │   └── Type
+                │       ├── category: 'basic'
+                │       └── descriptor: 'int'
+                └── RelationalExpression: '<'
+                    ├── Type
+                    │   ├── category: 'basic'
+                    │   └── descriptor: 'int'
+                    ├── IntegerConstant: '2'
+                    │   └── Type
+                    │       ├── category: 'basic'
+                    │       └── descriptor: 'int'
+                    └── IntegerConstant: '3'
+                        └── Type
+                            ├── category: 'basic'
+                            └── descriptor: 'int'
+
+@endtest
+
+@test("It should parse equality with relational operands on both sides (operator precedence)")
+@given("stdin")
+int main() {
+    1 < 2 == 3 > 4;
+}
+@whenRun("./bin/cclynx", args="--emit-ast /dev/stdin")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        └── ExpressionStatement
+            └── EqualityExpression: '=='
+                ├── Type
+                │   ├── category: 'basic'
+                │   └── descriptor: 'int'
+                ├── RelationalExpression: '<'
+                │   ├── Type
+                │   │   ├── category: 'basic'
+                │   │   └── descriptor: 'int'
+                │   ├── IntegerConstant: '1'
+                │   │   └── Type
+                │   │       ├── category: 'basic'
+                │   │       └── descriptor: 'int'
+                │   └── IntegerConstant: '2'
+                │       └── Type
+                │           ├── category: 'basic'
+                │           └── descriptor: 'int'
+                └── RelationalExpression: '>'
+                    ├── Type
+                    │   ├── category: 'basic'
+                    │   └── descriptor: 'int'
+                    ├── IntegerConstant: '3'
+                    │   └── Type
+                    │       ├── category: 'basic'
+                    │       └── descriptor: 'int'
+                    └── IntegerConstant: '4'
+                        └── Type
+                            ├── category: 'basic'
+                            └── descriptor: 'int'
+
+@endtest
+
 @test("It should parse an equality expression with additive RHS (operator precedence)")
 @given("stdin")
 int main() {

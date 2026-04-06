@@ -703,7 +703,7 @@ struct ast_node * parse_assignment_expression(struct parser_context * ctx)
 {
     assert(ctx != NULL);
 
-    struct ast_node * lhs = parse_equality_expression(ctx);
+    struct ast_node * lhs = parse_binary_expression(ctx, BINARY_EXPRESSION_PRECEDENCE_EQUALITY);
 
     if (lhs == NULL || lhs->kind != AST_NODE_KIND_VARIABLE_EXPRESSION) {
         return lhs;
@@ -715,7 +715,7 @@ struct ast_node * parse_assignment_expression(struct parser_context * ctx)
 
     struct token * current_token = parser_get_token(ctx);
 
-    struct ast_node * initializer = parse_equality_expression(ctx);
+    struct ast_node * initializer = parse_binary_expression(ctx, BINARY_EXPRESSION_PRECEDENCE_EQUALITY);
     if (initializer == NULL) {
         return NULL;
     }
