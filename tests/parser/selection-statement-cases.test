@@ -29,18 +29,21 @@ TranslationUnit: '{{any}}'
         │               ├── category: 'basic'
         │               └── descriptor: 'int'
         └── IfStatement
-            ├── (condition) RelationalExpression: '<'
+            ├── (condition) BinaryExpression
+            │   ├── Operation: '<'
             │   ├── Type
             │   │   ├── category: 'basic'
             │   │   └── descriptor: 'int'
-            │   ├── VariableExpression: 'x'
-            │   │   └── Type
-            │   │       ├── category: 'basic'
-            │   │       └── descriptor: 'int'
-            │   └── IntegerConstant: '5'
-            │       └── Type
-            │           ├── category: 'basic'
-            │           └── descriptor: 'int'
+            │   ├── Lhs
+            │   │   └── VariableExpression: 'x'
+            │   │       └── Type
+            │   │           ├── category: 'basic'
+            │   │           └── descriptor: 'int'
+            │   └── Rhs
+            │       └── IntegerConstant: '5'
+            │           └── Type
+            │               ├── category: 'basic'
+            │               └── descriptor: 'int'
             └── (true branch) ExpressionStatement
                 └── AssignmentExpression: '='
                     ├── VariableExpression: 'x'
@@ -84,18 +87,21 @@ TranslationUnit: '{{any}}'
         │               ├── category: 'basic'
         │               └── descriptor: 'int'
         └── IfStatement
-            ├── (condition) RelationalExpression: '<'
+            ├── (condition) BinaryExpression
+            │   ├── Operation: '<'
             │   ├── Type
             │   │   ├── category: 'basic'
             │   │   └── descriptor: 'int'
-            │   ├── VariableExpression: 'x'
-            │   │   └── Type
-            │   │       ├── category: 'basic'
-            │   │       └── descriptor: 'int'
-            │   └── IntegerConstant: '5'
-            │       └── Type
-            │           ├── category: 'basic'
-            │           └── descriptor: 'int'
+            │   ├── Lhs
+            │   │   └── VariableExpression: 'x'
+            │   │       └── Type
+            │   │           ├── category: 'basic'
+            │   │           └── descriptor: 'int'
+            │   └── Rhs
+            │       └── IntegerConstant: '5'
+            │           └── Type
+            │               ├── category: 'basic'
+            │               └── descriptor: 'int'
             └── (true branch) ExpressionStatement: {empty expression}
 
 @endtest
@@ -133,18 +139,21 @@ TranslationUnit: '{{any}}'
         │               ├── category: 'basic'
         │               └── descriptor: 'int'
         └── IfStatement
-            ├── (condition) RelationalExpression: '<'
+            ├── (condition) BinaryExpression
+            │   ├── Operation: '<'
             │   ├── Type
             │   │   ├── category: 'basic'
             │   │   └── descriptor: 'int'
-            │   ├── VariableExpression: 'x'
-            │   │   └── Type
-            │   │       ├── category: 'basic'
-            │   │       └── descriptor: 'int'
-            │   └── IntegerConstant: '5'
-            │       └── Type
-            │           ├── category: 'basic'
-            │           └── descriptor: 'int'
+            │   ├── Lhs
+            │   │   └── VariableExpression: 'x'
+            │   │       └── Type
+            │   │           ├── category: 'basic'
+            │   │           └── descriptor: 'int'
+            │   └── Rhs
+            │       └── IntegerConstant: '5'
+            │           └── Type
+            │               ├── category: 'basic'
+            │               └── descriptor: 'int'
             └── (true branch) CompoundStatement
                 ├── ExpressionStatement
                 │   └── AssignmentExpression: '='
@@ -162,18 +171,21 @@ TranslationUnit: '{{any}}'
                         │   └── Type
                         │       ├── category: 'basic'
                         │       └── descriptor: 'int'
-                        └── AdditiveExpression: '+'
+                        └── BinaryExpression
+                            ├── Operation: '+'
                             ├── Type
                             │   ├── category: 'basic'
                             │   └── descriptor: 'int'
-                            ├── VariableExpression: 'x'
-                            │   └── Type
-                            │       ├── category: 'basic'
-                            │       └── descriptor: 'int'
-                            └── IntegerConstant: '15'
-                                └── Type
-                                    ├── category: 'basic'
-                                    └── descriptor: 'int'
+                            ├── Lhs
+                            │   └── VariableExpression: 'x'
+                            │       └── Type
+                            │           ├── category: 'basic'
+                            │           └── descriptor: 'int'
+                            └── Rhs
+                                └── IntegerConstant: '15'
+                                    └── Type
+                                        ├── category: 'basic'
+                                        └── descriptor: 'int'
 
 @endtest
 
@@ -210,18 +222,21 @@ TranslationUnit: '{{any}}'
         │               ├── category: 'basic'
         │               └── descriptor: 'int'
         └── IfStatement
-            ├── (condition) RelationalExpression: '<'
+            ├── (condition) BinaryExpression
+            │   ├── Operation: '<'
             │   ├── Type
             │   │   ├── category: 'basic'
             │   │   └── descriptor: 'int'
-            │   ├── VariableExpression: 'x'
-            │   │   └── Type
-            │   │       ├── category: 'basic'
-            │   │       └── descriptor: 'int'
-            │   └── IntegerConstant: '5'
-            │       └── Type
-            │           ├── category: 'basic'
-            │           └── descriptor: 'int'
+            │   ├── Lhs
+            │   │   └── VariableExpression: 'x'
+            │   │       └── Type
+            │   │           ├── category: 'basic'
+            │   │           └── descriptor: 'int'
+            │   └── Rhs
+            │       └── IntegerConstant: '5'
+            │           └── Type
+            │               ├── category: 'basic'
+            │               └── descriptor: 'int'
             ├── (true branch) ExpressionStatement
             │   └── AssignmentExpression: '='
             │       ├── VariableExpression: 'x'
@@ -277,18 +292,21 @@ TranslationUnit: '{{any}}'
         │               ├── category: 'basic'
         │               └── descriptor: 'int'
         └── IfStatement
-            ├── (condition) RelationalExpression: '<'
+            ├── (condition) BinaryExpression
+            │   ├── Operation: '<'
             │   ├── Type
             │   │   ├── category: 'basic'
             │   │   └── descriptor: 'int'
-            │   ├── VariableExpression: 'x'
-            │   │   └── Type
-            │   │       ├── category: 'basic'
-            │   │       └── descriptor: 'int'
-            │   └── IntegerConstant: '5'
-            │       └── Type
-            │           ├── category: 'basic'
-            │           └── descriptor: 'int'
+            │   ├── Lhs
+            │   │   └── VariableExpression: 'x'
+            │   │       └── Type
+            │   │           ├── category: 'basic'
+            │   │           └── descriptor: 'int'
+            │   └── Rhs
+            │       └── IntegerConstant: '5'
+            │           └── Type
+            │               ├── category: 'basic'
+            │               └── descriptor: 'int'
             ├── (true branch) ExpressionStatement
             │   └── AssignmentExpression: '='
             │       ├── VariableExpression: 'x'
@@ -338,18 +356,21 @@ TranslationUnit: '{{any}}'
         │               ├── category: 'basic'
         │               └── descriptor: 'int'
         └── IfStatement
-            ├── (condition) RelationalExpression: '<'
+            ├── (condition) BinaryExpression
+            │   ├── Operation: '<'
             │   ├── Type
             │   │   ├── category: 'basic'
             │   │   └── descriptor: 'int'
-            │   ├── VariableExpression: 'x'
-            │   │   └── Type
-            │   │       ├── category: 'basic'
-            │   │       └── descriptor: 'int'
-            │   └── IntegerConstant: '5'
-            │       └── Type
-            │           ├── category: 'basic'
-            │           └── descriptor: 'int'
+            │   ├── Lhs
+            │   │   └── VariableExpression: 'x'
+            │   │       └── Type
+            │   │           ├── category: 'basic'
+            │   │           └── descriptor: 'int'
+            │   └── Rhs
+            │       └── IntegerConstant: '5'
+            │           └── Type
+            │               ├── category: 'basic'
+            │               └── descriptor: 'int'
             ├── (true branch) ExpressionStatement
             │   └── AssignmentExpression: '='
             │       ├── VariableExpression: 'x'
@@ -377,17 +398,20 @@ TranslationUnit: '{{any}}'
                         │   └── Type
                         │       ├── category: 'basic'
                         │       └── descriptor: 'int'
-                        └── AdditiveExpression: '-'
+                        └── BinaryExpression
+                            ├── Operation: '-'
                             ├── Type
                             │   ├── category: 'basic'
                             │   └── descriptor: 'int'
-                            ├── VariableExpression: 'x'
-                            │   └── Type
-                            │       ├── category: 'basic'
-                            │       └── descriptor: 'int'
-                            └── IntegerConstant: '1'
-                                └── Type
-                                    ├── category: 'basic'
-                                    └── descriptor: 'int'
+                            ├── Lhs
+                            │   └── VariableExpression: 'x'
+                            │       └── Type
+                            │           ├── category: 'basic'
+                            │           └── descriptor: 'int'
+                            └── Rhs
+                                └── IntegerConstant: '1'
+                                    └── Type
+                                        ├── category: 'basic'
+                                        └── descriptor: 'int'
 
 @endtest

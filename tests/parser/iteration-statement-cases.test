@@ -30,18 +30,21 @@ TranslationUnit: '{{any}}'
         │               ├── category: 'basic'
         │               └── descriptor: 'int'
         └── WhileStatement
-            ├── (condition) RelationalExpression: '<'
+            ├── (condition) BinaryExpression
+            │   ├── Operation: '<'
             │   ├── Type
             │   │   ├── category: 'basic'
             │   │   └── descriptor: 'int'
-            │   ├── VariableExpression: 'i'
-            │   │   └── Type
-            │   │       ├── category: 'basic'
-            │   │       └── descriptor: 'int'
-            │   └── IntegerConstant: '10'
-            │       └── Type
-            │           ├── category: 'basic'
-            │           └── descriptor: 'int'
+            │   ├── Lhs
+            │   │   └── VariableExpression: 'i'
+            │   │       └── Type
+            │   │           ├── category: 'basic'
+            │   │           └── descriptor: 'int'
+            │   └── Rhs
+            │       └── IntegerConstant: '10'
+            │           └── Type
+            │               ├── category: 'basic'
+            │               └── descriptor: 'int'
             └── (body) CompoundStatement
                 └── ExpressionStatement
                     └── AssignmentExpression: '='
@@ -49,18 +52,21 @@ TranslationUnit: '{{any}}'
                         │   └── Type
                         │       ├── category: 'basic'
                         │       └── descriptor: 'int'
-                        └── AdditiveExpression: '+'
+                        └── BinaryExpression
+                            ├── Operation: '+'
                             ├── Type
                             │   ├── category: 'basic'
                             │   └── descriptor: 'int'
-                            ├── VariableExpression: 'i'
-                            │   └── Type
-                            │       ├── category: 'basic'
-                            │       └── descriptor: 'int'
-                            └── IntegerConstant: '1'
-                                └── Type
-                                    ├── category: 'basic'
-                                    └── descriptor: 'int'
+                            ├── Lhs
+                            │   └── VariableExpression: 'i'
+                            │       └── Type
+                            │           ├── category: 'basic'
+                            │           └── descriptor: 'int'
+                            └── Rhs
+                                └── IntegerConstant: '1'
+                                    └── Type
+                                        ├── category: 'basic'
+                                        └── descriptor: 'int'
 
 @endtest
 
@@ -94,18 +100,21 @@ TranslationUnit: '{{any}}'
         │               ├── category: 'basic'
         │               └── descriptor: 'int'
         └── WhileStatement
-            ├── (condition) RelationalExpression: '<'
+            ├── (condition) BinaryExpression
+            │   ├── Operation: '<'
             │   ├── Type
             │   │   ├── category: 'basic'
             │   │   └── descriptor: 'int'
-            │   ├── VariableExpression: 'i'
-            │   │   └── Type
-            │   │       ├── category: 'basic'
-            │   │       └── descriptor: 'int'
-            │   └── IntegerConstant: '10'
-            │       └── Type
-            │           ├── category: 'basic'
-            │           └── descriptor: 'int'
+            │   ├── Lhs
+            │   │   └── VariableExpression: 'i'
+            │   │       └── Type
+            │   │           ├── category: 'basic'
+            │   │           └── descriptor: 'int'
+            │   └── Rhs
+            │       └── IntegerConstant: '10'
+            │           └── Type
+            │               ├── category: 'basic'
+            │               └── descriptor: 'int'
             └── (body) ExpressionStatement: {empty expression}
 
 @endtest
@@ -141,35 +150,41 @@ TranslationUnit: '{{any}}'
         │               ├── category: 'basic'
         │               └── descriptor: 'int'
         └── WhileStatement
-            ├── (condition) RelationalExpression: '<'
+            ├── (condition) BinaryExpression
+            │   ├── Operation: '<'
             │   ├── Type
             │   │   ├── category: 'basic'
             │   │   └── descriptor: 'int'
-            │   ├── VariableExpression: 'i'
-            │   │   └── Type
-            │   │       ├── category: 'basic'
-            │   │       └── descriptor: 'int'
-            │   └── IntegerConstant: '10'
-            │       └── Type
-            │           ├── category: 'basic'
-            │           └── descriptor: 'int'
+            │   ├── Lhs
+            │   │   └── VariableExpression: 'i'
+            │   │       └── Type
+            │   │           ├── category: 'basic'
+            │   │           └── descriptor: 'int'
+            │   └── Rhs
+            │       └── IntegerConstant: '10'
+            │           └── Type
+            │               ├── category: 'basic'
+            │               └── descriptor: 'int'
             └── (body) ExpressionStatement
                 └── AssignmentExpression: '='
                     ├── VariableExpression: 'i'
                     │   └── Type
                     │       ├── category: 'basic'
                     │       └── descriptor: 'int'
-                    └── AdditiveExpression: '+'
+                    └── BinaryExpression
+                        ├── Operation: '+'
                         ├── Type
                         │   ├── category: 'basic'
                         │   └── descriptor: 'int'
-                        ├── VariableExpression: 'i'
-                        │   └── Type
-                        │       ├── category: 'basic'
-                        │       └── descriptor: 'int'
-                        └── IntegerConstant: '1'
-                            └── Type
-                                ├── category: 'basic'
-                                └── descriptor: 'int'
+                        ├── Lhs
+                        │   └── VariableExpression: 'i'
+                        │       └── Type
+                        │           ├── category: 'basic'
+                        │           └── descriptor: 'int'
+                        └── Rhs
+                            └── IntegerConstant: '1'
+                                └── Type
+                                    ├── category: 'basic'
+                                    └── descriptor: 'int'
 
 @endtest

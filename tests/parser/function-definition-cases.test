@@ -33,18 +33,21 @@ TranslationUnit: '{{any}}'
     │   └── descriptor: 'int'
     └── CompoundStatement
         └── ExpressionStatement
-            └── MultiplicativeExpression: '*'
+            └── BinaryExpression
+                ├── Operation: '*'
                 ├── Type
                 │   ├── category: 'basic'
                 │   └── descriptor: 'int'
-                ├── IntegerConstant: '7'
-                │   └── Type
-                │       ├── category: 'basic'
-                │       └── descriptor: 'int'
-                └── IntegerConstant: '8'
-                    └── Type
-                        ├── category: 'basic'
-                        └── descriptor: 'int'
+                ├── Lhs
+                │   └── IntegerConstant: '7'
+                │       └── Type
+                │           ├── category: 'basic'
+                │           └── descriptor: 'int'
+                └── Rhs
+                    └── IntegerConstant: '8'
+                        └── Type
+                            ├── category: 'basic'
+                            └── descriptor: 'int'
 
 @endtest
 
@@ -277,18 +280,21 @@ TranslationUnit: '{{any}}'
     │           └── descriptor: 'int'
     └── CompoundStatement
         └── ReturnStatement
-            └── AdditiveExpression: '+'
+            └── BinaryExpression
+                ├── Operation: '+'
                 ├── Type
                 │   ├── category: 'basic'
                 │   └── descriptor: 'int'
-                ├── VariableExpression: 'a'
-                │   └── Type
-                │       ├── category: 'basic'
-                │       └── descriptor: 'int'
-                └── VariableExpression: 'b'
-                    └── Type
-                        ├── category: 'basic'
-                        └── descriptor: 'int'
+                ├── Lhs
+                │   └── VariableExpression: 'a'
+                │       └── Type
+                │           ├── category: 'basic'
+                │           └── descriptor: 'int'
+                └── Rhs
+                    └── VariableExpression: 'b'
+                        └── Type
+                            ├── category: 'basic'
+                            └── descriptor: 'int'
 
 @endtest
 
@@ -319,26 +325,32 @@ TranslationUnit: '{{any}}'
     │           └── descriptor: 'int'
     └── CompoundStatement
         └── ReturnStatement
-            └── AdditiveExpression: '+'
+            └── BinaryExpression
+                ├── Operation: '+'
                 ├── Type
                 │   ├── category: 'basic'
                 │   └── descriptor: 'int'
-                ├── VariableExpression: 'a'
-                │   └── Type
-                │       ├── category: 'basic'
-                │       └── descriptor: 'int'
-                └── MultiplicativeExpression: '*'
-                    ├── Type
-                    │   ├── category: 'basic'
-                    │   └── descriptor: 'int'
-                    ├── VariableExpression: 'b'
-                    │   └── Type
-                    │       ├── category: 'basic'
-                    │       └── descriptor: 'int'
-                    └── VariableExpression: 'c'
-                        └── Type
-                            ├── category: 'basic'
-                            └── descriptor: 'int'
+                ├── Lhs
+                │   └── VariableExpression: 'a'
+                │       └── Type
+                │           ├── category: 'basic'
+                │           └── descriptor: 'int'
+                └── Rhs
+                    └── BinaryExpression
+                        ├── Operation: '*'
+                        ├── Type
+                        │   ├── category: 'basic'
+                        │   └── descriptor: 'int'
+                        ├── Lhs
+                        │   └── VariableExpression: 'b'
+                        │       └── Type
+                        │           ├── category: 'basic'
+                        │           └── descriptor: 'int'
+                        └── Rhs
+                            └── VariableExpression: 'c'
+                                └── Type
+                                    ├── category: 'basic'
+                                    └── descriptor: 'int'
 
 @endtest
 

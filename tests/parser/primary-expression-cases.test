@@ -70,17 +70,20 @@ TranslationUnit: '{{any}}'
         │               ├── category: 'basic'
         │               └── descriptor: 'unsigned int'
         └── ReturnStatement
-            └── AdditiveExpression: '+'
+            └── BinaryExpression
+                ├── Operation: '+'
                 ├── Type
                 │   ├── category: 'basic'
                 │   └── descriptor: 'unsigned int'
-                ├── VariableExpression: 'x'
-                │   └── Type
-                │       ├── category: 'basic'
-                │       └── descriptor: 'unsigned int'
-                └── IntegerConstant: '5'
-                    └── Type
-                        ├── category: 'basic'
-                        └── descriptor: 'unsigned int'
+                ├── Lhs
+                │   └── VariableExpression: 'x'
+                │       └── Type
+                │           ├── category: 'basic'
+                │           └── descriptor: 'unsigned int'
+                └── Rhs
+                    └── IntegerConstant: '5'
+                        └── Type
+                            ├── category: 'basic'
+                            └── descriptor: 'unsigned int'
 
 @endtest

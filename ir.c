@@ -269,10 +269,7 @@ void do_generate_ir(struct ir_context * ctx, struct ir_program * program, const 
             break;
         case AST_NODE_KIND_VARIABLE_DECLARATION:
             break;
-        case AST_NODE_KIND_MULTIPLICATIVE_EXPRESSION:
-        case AST_NODE_KIND_EQUALITY_EXPRESSION:
-        case AST_NODE_KIND_ADDITIVE_EXPRESSION:
-        case AST_NODE_KIND_RELATIONAL_EXPRESSION:
+        case AST_NODE_KIND_BINARY_EXPRESSION:
             {
                 struct ir_instruction * instruction = ir_create_instruction(ctx, OP_NOP);
 
@@ -467,7 +464,7 @@ void ir_generate_condition(struct ir_context * ctx, struct ir_program * program,
     struct ir_operand * op1 = NULL, * op2 = NULL;
 
     if (
-        condition->kind == AST_NODE_KIND_RELATIONAL_EXPRESSION
+        condition->kind == AST_NODE_KIND_BINARY_EXPRESSION
         && condition->content.binary_expression.operation == BINARY_OPERATION_LESS_THAN
     ) {
         do_generate_ir(ctx, program, condition->content.binary_expression.lhs);
@@ -483,7 +480,7 @@ void ir_generate_condition(struct ir_context * ctx, struct ir_program * program,
 
         ir_emit(program, instruction);
     } else if (
-        condition->kind == AST_NODE_KIND_RELATIONAL_EXPRESSION
+        condition->kind == AST_NODE_KIND_BINARY_EXPRESSION
         && condition->content.binary_expression.operation == BINARY_OPERATION_GREATER_THAN
     ) {
         do_generate_ir(ctx, program, condition->content.binary_expression.lhs);
@@ -499,7 +496,7 @@ void ir_generate_condition(struct ir_context * ctx, struct ir_program * program,
 
         ir_emit(program, instruction);
     } else if (
-        condition->kind == AST_NODE_KIND_EQUALITY_EXPRESSION
+        condition->kind == AST_NODE_KIND_BINARY_EXPRESSION
         && condition->content.binary_expression.operation == BINARY_OPERATION_EQUALITY
     ) {
         do_generate_ir(ctx, program, condition->content.binary_expression.lhs);
@@ -514,7 +511,7 @@ void ir_generate_condition(struct ir_context * ctx, struct ir_program * program,
 
         ir_emit(program, instruction);
     } else if (
-        condition->kind == AST_NODE_KIND_EQUALITY_EXPRESSION
+        condition->kind == AST_NODE_KIND_BINARY_EXPRESSION
         && condition->content.binary_expression.operation == BINARY_OPERATION_INEQUALITY
     ) {
         do_generate_ir(ctx, program, condition->content.binary_expression.lhs);

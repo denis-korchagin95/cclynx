@@ -12,18 +12,21 @@ TranslationUnit: '{{any}}'
     │   └── descriptor: 'int'
     └── CompoundStatement
         └── ExpressionStatement
-            └── MultiplicativeExpression: '*'
+            └── BinaryExpression
+                ├── Operation: '*'
                 ├── Type
                 │   ├── category: 'basic'
                 │   └── descriptor: 'int'
-                ├── IntegerConstant: '7'
-                │   └── Type
-                │       ├── category: 'basic'
-                │       └── descriptor: 'int'
-                └── IntegerConstant: '8'
-                    └── Type
-                        ├── category: 'basic'
-                        └── descriptor: 'int'
+                ├── Lhs
+                │   └── IntegerConstant: '7'
+                │       └── Type
+                │           ├── category: 'basic'
+                │           └── descriptor: 'int'
+                └── Rhs
+                    └── IntegerConstant: '8'
+                        └── Type
+                            ├── category: 'basic'
+                            └── descriptor: 'int'
 
 @endtest
 
@@ -41,26 +44,32 @@ TranslationUnit: '{{any}}'
     │   └── descriptor: 'int'
     └── CompoundStatement
         └── ExpressionStatement
-            └── MultiplicativeExpression: '*'
+            └── BinaryExpression
+                ├── Operation: '*'
                 ├── Type
                 │   ├── category: 'basic'
                 │   └── descriptor: 'int'
-                ├── MultiplicativeExpression: '*'
-                │   ├── Type
-                │   │   ├── category: 'basic'
-                │   │   └── descriptor: 'int'
-                │   ├── IntegerConstant: '7'
-                │   │   └── Type
-                │   │       ├── category: 'basic'
-                │   │       └── descriptor: 'int'
-                │   └── IntegerConstant: '6'
-                │       └── Type
-                │           ├── category: 'basic'
-                │           └── descriptor: 'int'
-                └── IntegerConstant: '8'
-                    └── Type
-                        ├── category: 'basic'
-                        └── descriptor: 'int'
+                ├── Lhs
+                │   └── BinaryExpression
+                │       ├── Operation: '*'
+                │       ├── Type
+                │       │   ├── category: 'basic'
+                │       │   └── descriptor: 'int'
+                │       ├── Lhs
+                │       │   └── IntegerConstant: '7'
+                │       │       └── Type
+                │       │           ├── category: 'basic'
+                │       │           └── descriptor: 'int'
+                │       └── Rhs
+                │           └── IntegerConstant: '6'
+                │               └── Type
+                │                   ├── category: 'basic'
+                │                   └── descriptor: 'int'
+                └── Rhs
+                    └── IntegerConstant: '8'
+                        └── Type
+                            ├── category: 'basic'
+                            └── descriptor: 'int'
 
 @endtest
 
@@ -78,42 +87,54 @@ TranslationUnit: '{{any}}'
     │   └── descriptor: 'int'
     └── CompoundStatement
         └── ExpressionStatement
-            └── MultiplicativeExpression: '*'
+            └── BinaryExpression
+                ├── Operation: '*'
                 ├── Type
                 │   ├── category: 'basic'
                 │   └── descriptor: 'int'
-                ├── MultiplicativeExpression: '*'
-                │   ├── Type
-                │   │   ├── category: 'basic'
-                │   │   └── descriptor: 'int'
-                │   ├── MultiplicativeExpression: '*'
-                │   │   ├── Type
-                │   │   │   ├── category: 'basic'
-                │   │   │   └── descriptor: 'int'
-                │   │   ├── MultiplicativeExpression: '*'
-                │   │   │   ├── Type
-                │   │   │   │   ├── category: 'basic'
-                │   │   │   │   └── descriptor: 'int'
-                │   │   │   ├── IntegerConstant: '7'
-                │   │   │   │   └── Type
-                │   │   │   │       ├── category: 'basic'
-                │   │   │   │       └── descriptor: 'int'
-                │   │   │   └── IntegerConstant: '6'
-                │   │   │       └── Type
-                │   │   │           ├── category: 'basic'
-                │   │   │           └── descriptor: 'int'
-                │   │   └── IntegerConstant: '8'
-                │   │       └── Type
-                │   │           ├── category: 'basic'
-                │   │           └── descriptor: 'int'
-                │   └── IntegerConstant: '10'
-                │       └── Type
-                │           ├── category: 'basic'
-                │           └── descriptor: 'int'
-                └── IntegerConstant: '15'
-                    └── Type
-                        ├── category: 'basic'
-                        └── descriptor: 'int'
+                ├── Lhs
+                │   └── BinaryExpression
+                │       ├── Operation: '*'
+                │       ├── Type
+                │       │   ├── category: 'basic'
+                │       │   └── descriptor: 'int'
+                │       ├── Lhs
+                │       │   └── BinaryExpression
+                │       │       ├── Operation: '*'
+                │       │       ├── Type
+                │       │       │   ├── category: 'basic'
+                │       │       │   └── descriptor: 'int'
+                │       │       ├── Lhs
+                │       │       │   └── BinaryExpression
+                │       │       │       ├── Operation: '*'
+                │       │       │       ├── Type
+                │       │       │       │   ├── category: 'basic'
+                │       │       │       │   └── descriptor: 'int'
+                │       │       │       ├── Lhs
+                │       │       │       │   └── IntegerConstant: '7'
+                │       │       │       │       └── Type
+                │       │       │       │           ├── category: 'basic'
+                │       │       │       │           └── descriptor: 'int'
+                │       │       │       └── Rhs
+                │       │       │           └── IntegerConstant: '6'
+                │       │       │               └── Type
+                │       │       │                   ├── category: 'basic'
+                │       │       │                   └── descriptor: 'int'
+                │       │       └── Rhs
+                │       │           └── IntegerConstant: '8'
+                │       │               └── Type
+                │       │                   ├── category: 'basic'
+                │       │                   └── descriptor: 'int'
+                │       └── Rhs
+                │           └── IntegerConstant: '10'
+                │               └── Type
+                │                   ├── category: 'basic'
+                │                   └── descriptor: 'int'
+                └── Rhs
+                    └── IntegerConstant: '15'
+                        └── Type
+                            ├── category: 'basic'
+                            └── descriptor: 'int'
 
 @endtest
 
@@ -131,26 +152,32 @@ TranslationUnit: '{{any}}'
     │   └── descriptor: 'int'
     └── CompoundStatement
         └── ExpressionStatement
-            └── MultiplicativeExpression: '*'
+            └── BinaryExpression
+                ├── Operation: '*'
                 ├── Type
                 │   ├── category: 'basic'
                 │   └── descriptor: 'int'
-                ├── MultiplicativeExpression: '/'
-                │   ├── Type
-                │   │   ├── category: 'basic'
-                │   │   └── descriptor: 'int'
-                │   ├── IntegerConstant: '15'
-                │   │   └── Type
-                │   │       ├── category: 'basic'
-                │   │       └── descriptor: 'int'
-                │   └── IntegerConstant: '3'
-                │       └── Type
-                │           ├── category: 'basic'
-                │           └── descriptor: 'int'
-                └── IntegerConstant: '101'
-                    └── Type
-                        ├── category: 'basic'
-                        └── descriptor: 'int'
+                ├── Lhs
+                │   └── BinaryExpression
+                │       ├── Operation: '/'
+                │       ├── Type
+                │       │   ├── category: 'basic'
+                │       │   └── descriptor: 'int'
+                │       ├── Lhs
+                │       │   └── IntegerConstant: '15'
+                │       │       └── Type
+                │       │           ├── category: 'basic'
+                │       │           └── descriptor: 'int'
+                │       └── Rhs
+                │           └── IntegerConstant: '3'
+                │               └── Type
+                │                   ├── category: 'basic'
+                │                   └── descriptor: 'int'
+                └── Rhs
+                    └── IntegerConstant: '101'
+                        └── Type
+                            ├── category: 'basic'
+                            └── descriptor: 'int'
 
 @endtest
 
@@ -168,18 +195,21 @@ TranslationUnit: '{{any}}'
     │   └── descriptor: 'int'
     └── CompoundStatement
         └── ExpressionStatement
-            └── AdditiveExpression: '+'
+            └── BinaryExpression
+                ├── Operation: '+'
                 ├── Type
                 │   ├── category: 'basic'
                 │   └── descriptor: 'int'
-                ├── IntegerConstant: '7'
-                │   └── Type
-                │       ├── category: 'basic'
-                │       └── descriptor: 'int'
-                └── IntegerConstant: '8'
-                    └── Type
-                        ├── category: 'basic'
-                        └── descriptor: 'int'
+                ├── Lhs
+                │   └── IntegerConstant: '7'
+                │       └── Type
+                │           ├── category: 'basic'
+                │           └── descriptor: 'int'
+                └── Rhs
+                    └── IntegerConstant: '8'
+                        └── Type
+                            ├── category: 'basic'
+                            └── descriptor: 'int'
 
 @endtest
 
@@ -197,26 +227,32 @@ TranslationUnit: '{{any}}'
     │   └── descriptor: 'int'
     └── CompoundStatement
         └── ExpressionStatement
-            └── AdditiveExpression: '+'
+            └── BinaryExpression
+                ├── Operation: '+'
                 ├── Type
                 │   ├── category: 'basic'
                 │   └── descriptor: 'int'
-                ├── AdditiveExpression: '+'
-                │   ├── Type
-                │   │   ├── category: 'basic'
-                │   │   └── descriptor: 'int'
-                │   ├── IntegerConstant: '7'
-                │   │   └── Type
-                │   │       ├── category: 'basic'
-                │   │       └── descriptor: 'int'
-                │   └── IntegerConstant: '6'
-                │       └── Type
-                │           ├── category: 'basic'
-                │           └── descriptor: 'int'
-                └── IntegerConstant: '8'
-                    └── Type
-                        ├── category: 'basic'
-                        └── descriptor: 'int'
+                ├── Lhs
+                │   └── BinaryExpression
+                │       ├── Operation: '+'
+                │       ├── Type
+                │       │   ├── category: 'basic'
+                │       │   └── descriptor: 'int'
+                │       ├── Lhs
+                │       │   └── IntegerConstant: '7'
+                │       │       └── Type
+                │       │           ├── category: 'basic'
+                │       │           └── descriptor: 'int'
+                │       └── Rhs
+                │           └── IntegerConstant: '6'
+                │               └── Type
+                │                   ├── category: 'basic'
+                │                   └── descriptor: 'int'
+                └── Rhs
+                    └── IntegerConstant: '8'
+                        └── Type
+                            ├── category: 'basic'
+                            └── descriptor: 'int'
 
 @endtest
 
@@ -234,42 +270,54 @@ TranslationUnit: '{{any}}'
     │   └── descriptor: 'int'
     └── CompoundStatement
         └── ExpressionStatement
-            └── AdditiveExpression: '+'
+            └── BinaryExpression
+                ├── Operation: '+'
                 ├── Type
                 │   ├── category: 'basic'
                 │   └── descriptor: 'int'
-                ├── AdditiveExpression: '+'
-                │   ├── Type
-                │   │   ├── category: 'basic'
-                │   │   └── descriptor: 'int'
-                │   ├── AdditiveExpression: '+'
-                │   │   ├── Type
-                │   │   │   ├── category: 'basic'
-                │   │   │   └── descriptor: 'int'
-                │   │   ├── AdditiveExpression: '+'
-                │   │   │   ├── Type
-                │   │   │   │   ├── category: 'basic'
-                │   │   │   │   └── descriptor: 'int'
-                │   │   │   ├── IntegerConstant: '7'
-                │   │   │   │   └── Type
-                │   │   │   │       ├── category: 'basic'
-                │   │   │   │       └── descriptor: 'int'
-                │   │   │   └── IntegerConstant: '6'
-                │   │   │       └── Type
-                │   │   │           ├── category: 'basic'
-                │   │   │           └── descriptor: 'int'
-                │   │   └── IntegerConstant: '8'
-                │   │       └── Type
-                │   │           ├── category: 'basic'
-                │   │           └── descriptor: 'int'
-                │   └── IntegerConstant: '10'
-                │       └── Type
-                │           ├── category: 'basic'
-                │           └── descriptor: 'int'
-                └── IntegerConstant: '15'
-                    └── Type
-                        ├── category: 'basic'
-                        └── descriptor: 'int'
+                ├── Lhs
+                │   └── BinaryExpression
+                │       ├── Operation: '+'
+                │       ├── Type
+                │       │   ├── category: 'basic'
+                │       │   └── descriptor: 'int'
+                │       ├── Lhs
+                │       │   └── BinaryExpression
+                │       │       ├── Operation: '+'
+                │       │       ├── Type
+                │       │       │   ├── category: 'basic'
+                │       │       │   └── descriptor: 'int'
+                │       │       ├── Lhs
+                │       │       │   └── BinaryExpression
+                │       │       │       ├── Operation: '+'
+                │       │       │       ├── Type
+                │       │       │       │   ├── category: 'basic'
+                │       │       │       │   └── descriptor: 'int'
+                │       │       │       ├── Lhs
+                │       │       │       │   └── IntegerConstant: '7'
+                │       │       │       │       └── Type
+                │       │       │       │           ├── category: 'basic'
+                │       │       │       │           └── descriptor: 'int'
+                │       │       │       └── Rhs
+                │       │       │           └── IntegerConstant: '6'
+                │       │       │               └── Type
+                │       │       │                   ├── category: 'basic'
+                │       │       │                   └── descriptor: 'int'
+                │       │       └── Rhs
+                │       │           └── IntegerConstant: '8'
+                │       │               └── Type
+                │       │                   ├── category: 'basic'
+                │       │                   └── descriptor: 'int'
+                │       └── Rhs
+                │           └── IntegerConstant: '10'
+                │               └── Type
+                │                   ├── category: 'basic'
+                │                   └── descriptor: 'int'
+                └── Rhs
+                    └── IntegerConstant: '15'
+                        └── Type
+                            ├── category: 'basic'
+                            └── descriptor: 'int'
 
 @endtest
 
@@ -287,26 +335,32 @@ TranslationUnit: '{{any}}'
     │   └── descriptor: 'int'
     └── CompoundStatement
         └── ExpressionStatement
-            └── AdditiveExpression: '-'
+            └── BinaryExpression
+                ├── Operation: '-'
                 ├── Type
                 │   ├── category: 'basic'
                 │   └── descriptor: 'int'
-                ├── AdditiveExpression: '+'
-                │   ├── Type
-                │   │   ├── category: 'basic'
-                │   │   └── descriptor: 'int'
-                │   ├── IntegerConstant: '15'
-                │   │   └── Type
-                │   │       ├── category: 'basic'
-                │   │       └── descriptor: 'int'
-                │   └── IntegerConstant: '3'
-                │       └── Type
-                │           ├── category: 'basic'
-                │           └── descriptor: 'int'
-                └── IntegerConstant: '101'
-                    └── Type
-                        ├── category: 'basic'
-                        └── descriptor: 'int'
+                ├── Lhs
+                │   └── BinaryExpression
+                │       ├── Operation: '+'
+                │       ├── Type
+                │       │   ├── category: 'basic'
+                │       │   └── descriptor: 'int'
+                │       ├── Lhs
+                │       │   └── IntegerConstant: '15'
+                │       │       └── Type
+                │       │           ├── category: 'basic'
+                │       │           └── descriptor: 'int'
+                │       └── Rhs
+                │           └── IntegerConstant: '3'
+                │               └── Type
+                │                   ├── category: 'basic'
+                │                   └── descriptor: 'int'
+                └── Rhs
+                    └── IntegerConstant: '101'
+                        └── Type
+                            ├── category: 'basic'
+                            └── descriptor: 'int'
 
 @endtest
 
@@ -324,34 +378,43 @@ TranslationUnit: '{{any}}'
     │   └── descriptor: 'int'
     └── CompoundStatement
         └── ExpressionStatement
-            └── AdditiveExpression: '-'
+            └── BinaryExpression
+                ├── Operation: '-'
                 ├── Type
                 │   ├── category: 'basic'
                 │   └── descriptor: 'int'
-                ├── AdditiveExpression: '+'
-                │   ├── Type
-                │   │   ├── category: 'basic'
-                │   │   └── descriptor: 'int'
-                │   ├── IntegerConstant: '1'
-                │   │   └── Type
-                │   │       ├── category: 'basic'
-                │   │       └── descriptor: 'int'
-                │   └── MultiplicativeExpression: '*'
+                ├── Lhs
+                │   └── BinaryExpression
+                │       ├── Operation: '+'
                 │       ├── Type
                 │       │   ├── category: 'basic'
                 │       │   └── descriptor: 'int'
-                │       ├── IntegerConstant: '7'
-                │       │   └── Type
-                │       │       ├── category: 'basic'
-                │       │       └── descriptor: 'int'
-                │       └── IntegerConstant: '6'
-                │           └── Type
-                │               ├── category: 'basic'
-                │               └── descriptor: 'int'
-                └── IntegerConstant: '4'
-                    └── Type
-                        ├── category: 'basic'
-                        └── descriptor: 'int'
+                │       ├── Lhs
+                │       │   └── IntegerConstant: '1'
+                │       │       └── Type
+                │       │           ├── category: 'basic'
+                │       │           └── descriptor: 'int'
+                │       └── Rhs
+                │           └── BinaryExpression
+                │               ├── Operation: '*'
+                │               ├── Type
+                │               │   ├── category: 'basic'
+                │               │   └── descriptor: 'int'
+                │               ├── Lhs
+                │               │   └── IntegerConstant: '7'
+                │               │       └── Type
+                │               │           ├── category: 'basic'
+                │               │           └── descriptor: 'int'
+                │               └── Rhs
+                │                   └── IntegerConstant: '6'
+                │                       └── Type
+                │                           ├── category: 'basic'
+                │                           └── descriptor: 'int'
+                └── Rhs
+                    └── IntegerConstant: '4'
+                        └── Type
+                            ├── category: 'basic'
+                            └── descriptor: 'int'
 
 @endtest
 
@@ -369,18 +432,21 @@ TranslationUnit: '{{any}}'
     │   └── descriptor: 'int'
     └── CompoundStatement
         └── ExpressionStatement
-            └── RelationalExpression: '<'
+            └── BinaryExpression
+                ├── Operation: '<'
                 ├── Type
                 │   ├── category: 'basic'
                 │   └── descriptor: 'int'
-                ├── IntegerConstant: '7'
-                │   └── Type
-                │       ├── category: 'basic'
-                │       └── descriptor: 'int'
-                └── IntegerConstant: '8'
-                    └── Type
-                        ├── category: 'basic'
-                        └── descriptor: 'int'
+                ├── Lhs
+                │   └── IntegerConstant: '7'
+                │       └── Type
+                │           ├── category: 'basic'
+                │           └── descriptor: 'int'
+                └── Rhs
+                    └── IntegerConstant: '8'
+                        └── Type
+                            ├── category: 'basic'
+                            └── descriptor: 'int'
 
 @endtest
 
@@ -398,26 +464,32 @@ TranslationUnit: '{{any}}'
     │   └── descriptor: 'int'
     └── CompoundStatement
         └── ExpressionStatement
-            └── RelationalExpression: '<'
+            └── BinaryExpression
+                ├── Operation: '<'
                 ├── Type
                 │   ├── category: 'basic'
                 │   └── descriptor: 'int'
-                ├── RelationalExpression: '<'
-                │   ├── Type
-                │   │   ├── category: 'basic'
-                │   │   └── descriptor: 'int'
-                │   ├── IntegerConstant: '7'
-                │   │   └── Type
-                │   │       ├── category: 'basic'
-                │   │       └── descriptor: 'int'
-                │   └── IntegerConstant: '6'
-                │       └── Type
-                │           ├── category: 'basic'
-                │           └── descriptor: 'int'
-                └── IntegerConstant: '8'
-                    └── Type
-                        ├── category: 'basic'
-                        └── descriptor: 'int'
+                ├── Lhs
+                │   └── BinaryExpression
+                │       ├── Operation: '<'
+                │       ├── Type
+                │       │   ├── category: 'basic'
+                │       │   └── descriptor: 'int'
+                │       ├── Lhs
+                │       │   └── IntegerConstant: '7'
+                │       │       └── Type
+                │       │           ├── category: 'basic'
+                │       │           └── descriptor: 'int'
+                │       └── Rhs
+                │           └── IntegerConstant: '6'
+                │               └── Type
+                │                   ├── category: 'basic'
+                │                   └── descriptor: 'int'
+                └── Rhs
+                    └── IntegerConstant: '8'
+                        └── Type
+                            ├── category: 'basic'
+                            └── descriptor: 'int'
 
 @endtest
 
@@ -435,42 +507,54 @@ TranslationUnit: '{{any}}'
     │   └── descriptor: 'int'
     └── CompoundStatement
         └── ExpressionStatement
-            └── RelationalExpression: '<'
+            └── BinaryExpression
+                ├── Operation: '<'
                 ├── Type
                 │   ├── category: 'basic'
                 │   └── descriptor: 'int'
-                ├── RelationalExpression: '<'
-                │   ├── Type
-                │   │   ├── category: 'basic'
-                │   │   └── descriptor: 'int'
-                │   ├── RelationalExpression: '<'
-                │   │   ├── Type
-                │   │   │   ├── category: 'basic'
-                │   │   │   └── descriptor: 'int'
-                │   │   ├── RelationalExpression: '<'
-                │   │   │   ├── Type
-                │   │   │   │   ├── category: 'basic'
-                │   │   │   │   └── descriptor: 'int'
-                │   │   │   ├── IntegerConstant: '7'
-                │   │   │   │   └── Type
-                │   │   │   │       ├── category: 'basic'
-                │   │   │   │       └── descriptor: 'int'
-                │   │   │   └── IntegerConstant: '6'
-                │   │   │       └── Type
-                │   │   │           ├── category: 'basic'
-                │   │   │           └── descriptor: 'int'
-                │   │   └── IntegerConstant: '8'
-                │   │       └── Type
-                │   │           ├── category: 'basic'
-                │   │           └── descriptor: 'int'
-                │   └── IntegerConstant: '10'
-                │       └── Type
-                │           ├── category: 'basic'
-                │           └── descriptor: 'int'
-                └── IntegerConstant: '15'
-                    └── Type
-                        ├── category: 'basic'
-                        └── descriptor: 'int'
+                ├── Lhs
+                │   └── BinaryExpression
+                │       ├── Operation: '<'
+                │       ├── Type
+                │       │   ├── category: 'basic'
+                │       │   └── descriptor: 'int'
+                │       ├── Lhs
+                │       │   └── BinaryExpression
+                │       │       ├── Operation: '<'
+                │       │       ├── Type
+                │       │       │   ├── category: 'basic'
+                │       │       │   └── descriptor: 'int'
+                │       │       ├── Lhs
+                │       │       │   └── BinaryExpression
+                │       │       │       ├── Operation: '<'
+                │       │       │       ├── Type
+                │       │       │       │   ├── category: 'basic'
+                │       │       │       │   └── descriptor: 'int'
+                │       │       │       ├── Lhs
+                │       │       │       │   └── IntegerConstant: '7'
+                │       │       │       │       └── Type
+                │       │       │       │           ├── category: 'basic'
+                │       │       │       │           └── descriptor: 'int'
+                │       │       │       └── Rhs
+                │       │       │           └── IntegerConstant: '6'
+                │       │       │               └── Type
+                │       │       │                   ├── category: 'basic'
+                │       │       │                   └── descriptor: 'int'
+                │       │       └── Rhs
+                │       │           └── IntegerConstant: '8'
+                │       │               └── Type
+                │       │                   ├── category: 'basic'
+                │       │                   └── descriptor: 'int'
+                │       └── Rhs
+                │           └── IntegerConstant: '10'
+                │               └── Type
+                │                   ├── category: 'basic'
+                │                   └── descriptor: 'int'
+                └── Rhs
+                    └── IntegerConstant: '15'
+                        └── Type
+                            ├── category: 'basic'
+                            └── descriptor: 'int'
 
 @endtest
 
@@ -488,26 +572,32 @@ TranslationUnit: '{{any}}'
     │   └── descriptor: 'int'
     └── CompoundStatement
         └── ExpressionStatement
-            └── RelationalExpression: '>'
+            └── BinaryExpression
+                ├── Operation: '>'
                 ├── Type
                 │   ├── category: 'basic'
                 │   └── descriptor: 'int'
-                ├── RelationalExpression: '<'
-                │   ├── Type
-                │   │   ├── category: 'basic'
-                │   │   └── descriptor: 'int'
-                │   ├── IntegerConstant: '15'
-                │   │   └── Type
-                │   │       ├── category: 'basic'
-                │   │       └── descriptor: 'int'
-                │   └── IntegerConstant: '3'
-                │       └── Type
-                │           ├── category: 'basic'
-                │           └── descriptor: 'int'
-                └── IntegerConstant: '101'
-                    └── Type
-                        ├── category: 'basic'
-                        └── descriptor: 'int'
+                ├── Lhs
+                │   └── BinaryExpression
+                │       ├── Operation: '<'
+                │       ├── Type
+                │       │   ├── category: 'basic'
+                │       │   └── descriptor: 'int'
+                │       ├── Lhs
+                │       │   └── IntegerConstant: '15'
+                │       │       └── Type
+                │       │           ├── category: 'basic'
+                │       │           └── descriptor: 'int'
+                │       └── Rhs
+                │           └── IntegerConstant: '3'
+                │               └── Type
+                │                   ├── category: 'basic'
+                │                   └── descriptor: 'int'
+                └── Rhs
+                    └── IntegerConstant: '101'
+                        └── Type
+                            ├── category: 'basic'
+                            └── descriptor: 'int'
 
 @endtest
 
@@ -525,18 +615,21 @@ TranslationUnit: '{{any}}'
     │   └── descriptor: 'int'
     └── CompoundStatement
         └── ExpressionStatement
-            └── EqualityExpression: '=='
+            └── BinaryExpression
+                ├── Operation: '=='
                 ├── Type
                 │   ├── category: 'basic'
                 │   └── descriptor: 'int'
-                ├── IntegerConstant: '7'
-                │   └── Type
-                │       ├── category: 'basic'
-                │       └── descriptor: 'int'
-                └── IntegerConstant: '8'
-                    └── Type
-                        ├── category: 'basic'
-                        └── descriptor: 'int'
+                ├── Lhs
+                │   └── IntegerConstant: '7'
+                │       └── Type
+                │           ├── category: 'basic'
+                │           └── descriptor: 'int'
+                └── Rhs
+                    └── IntegerConstant: '8'
+                        └── Type
+                            ├── category: 'basic'
+                            └── descriptor: 'int'
 
 @endtest
 
@@ -554,26 +647,32 @@ TranslationUnit: '{{any}}'
     │   └── descriptor: 'int'
     └── CompoundStatement
         └── ExpressionStatement
-            └── EqualityExpression: '=='
+            └── BinaryExpression
+                ├── Operation: '=='
                 ├── Type
                 │   ├── category: 'basic'
                 │   └── descriptor: 'int'
-                ├── EqualityExpression: '=='
-                │   ├── Type
-                │   │   ├── category: 'basic'
-                │   │   └── descriptor: 'int'
-                │   ├── IntegerConstant: '7'
-                │   │   └── Type
-                │   │       ├── category: 'basic'
-                │   │       └── descriptor: 'int'
-                │   └── IntegerConstant: '6'
-                │       └── Type
-                │           ├── category: 'basic'
-                │           └── descriptor: 'int'
-                └── IntegerConstant: '8'
-                    └── Type
-                        ├── category: 'basic'
-                        └── descriptor: 'int'
+                ├── Lhs
+                │   └── BinaryExpression
+                │       ├── Operation: '=='
+                │       ├── Type
+                │       │   ├── category: 'basic'
+                │       │   └── descriptor: 'int'
+                │       ├── Lhs
+                │       │   └── IntegerConstant: '7'
+                │       │       └── Type
+                │       │           ├── category: 'basic'
+                │       │           └── descriptor: 'int'
+                │       └── Rhs
+                │           └── IntegerConstant: '6'
+                │               └── Type
+                │                   ├── category: 'basic'
+                │                   └── descriptor: 'int'
+                └── Rhs
+                    └── IntegerConstant: '8'
+                        └── Type
+                            ├── category: 'basic'
+                            └── descriptor: 'int'
 
 @endtest
 
@@ -591,42 +690,54 @@ TranslationUnit: '{{any}}'
     │   └── descriptor: 'int'
     └── CompoundStatement
         └── ExpressionStatement
-            └── EqualityExpression: '=='
+            └── BinaryExpression
+                ├── Operation: '=='
                 ├── Type
                 │   ├── category: 'basic'
                 │   └── descriptor: 'int'
-                ├── EqualityExpression: '=='
-                │   ├── Type
-                │   │   ├── category: 'basic'
-                │   │   └── descriptor: 'int'
-                │   ├── EqualityExpression: '=='
-                │   │   ├── Type
-                │   │   │   ├── category: 'basic'
-                │   │   │   └── descriptor: 'int'
-                │   │   ├── EqualityExpression: '=='
-                │   │   │   ├── Type
-                │   │   │   │   ├── category: 'basic'
-                │   │   │   │   └── descriptor: 'int'
-                │   │   │   ├── IntegerConstant: '7'
-                │   │   │   │   └── Type
-                │   │   │   │       ├── category: 'basic'
-                │   │   │   │       └── descriptor: 'int'
-                │   │   │   └── IntegerConstant: '6'
-                │   │   │       └── Type
-                │   │   │           ├── category: 'basic'
-                │   │   │           └── descriptor: 'int'
-                │   │   └── IntegerConstant: '8'
-                │   │       └── Type
-                │   │           ├── category: 'basic'
-                │   │           └── descriptor: 'int'
-                │   └── IntegerConstant: '10'
-                │       └── Type
-                │           ├── category: 'basic'
-                │           └── descriptor: 'int'
-                └── IntegerConstant: '15'
-                    └── Type
-                        ├── category: 'basic'
-                        └── descriptor: 'int'
+                ├── Lhs
+                │   └── BinaryExpression
+                │       ├── Operation: '=='
+                │       ├── Type
+                │       │   ├── category: 'basic'
+                │       │   └── descriptor: 'int'
+                │       ├── Lhs
+                │       │   └── BinaryExpression
+                │       │       ├── Operation: '=='
+                │       │       ├── Type
+                │       │       │   ├── category: 'basic'
+                │       │       │   └── descriptor: 'int'
+                │       │       ├── Lhs
+                │       │       │   └── BinaryExpression
+                │       │       │       ├── Operation: '=='
+                │       │       │       ├── Type
+                │       │       │       │   ├── category: 'basic'
+                │       │       │       │   └── descriptor: 'int'
+                │       │       │       ├── Lhs
+                │       │       │       │   └── IntegerConstant: '7'
+                │       │       │       │       └── Type
+                │       │       │       │           ├── category: 'basic'
+                │       │       │       │           └── descriptor: 'int'
+                │       │       │       └── Rhs
+                │       │       │           └── IntegerConstant: '6'
+                │       │       │               └── Type
+                │       │       │                   ├── category: 'basic'
+                │       │       │                   └── descriptor: 'int'
+                │       │       └── Rhs
+                │       │           └── IntegerConstant: '8'
+                │       │               └── Type
+                │       │                   ├── category: 'basic'
+                │       │                   └── descriptor: 'int'
+                │       └── Rhs
+                │           └── IntegerConstant: '10'
+                │               └── Type
+                │                   ├── category: 'basic'
+                │                   └── descriptor: 'int'
+                └── Rhs
+                    └── IntegerConstant: '15'
+                        └── Type
+                            ├── category: 'basic'
+                            └── descriptor: 'int'
 
 @endtest
 
@@ -644,26 +755,32 @@ TranslationUnit: '{{any}}'
     │   └── descriptor: 'int'
     └── CompoundStatement
         └── ExpressionStatement
-            └── EqualityExpression: '!='
+            └── BinaryExpression
+                ├── Operation: '!='
                 ├── Type
                 │   ├── category: 'basic'
                 │   └── descriptor: 'int'
-                ├── EqualityExpression: '=='
-                │   ├── Type
-                │   │   ├── category: 'basic'
-                │   │   └── descriptor: 'int'
-                │   ├── IntegerConstant: '15'
-                │   │   └── Type
-                │   │       ├── category: 'basic'
-                │   │       └── descriptor: 'int'
-                │   └── IntegerConstant: '3'
-                │       └── Type
-                │           ├── category: 'basic'
-                │           └── descriptor: 'int'
-                └── IntegerConstant: '101'
-                    └── Type
-                        ├── category: 'basic'
-                        └── descriptor: 'int'
+                ├── Lhs
+                │   └── BinaryExpression
+                │       ├── Operation: '=='
+                │       ├── Type
+                │       │   ├── category: 'basic'
+                │       │   └── descriptor: 'int'
+                │       ├── Lhs
+                │       │   └── IntegerConstant: '15'
+                │       │       └── Type
+                │       │           ├── category: 'basic'
+                │       │           └── descriptor: 'int'
+                │       └── Rhs
+                │           └── IntegerConstant: '3'
+                │               └── Type
+                │                   ├── category: 'basic'
+                │                   └── descriptor: 'int'
+                └── Rhs
+                    └── IntegerConstant: '101'
+                        └── Type
+                            ├── category: 'basic'
+                            └── descriptor: 'int'
 
 @endtest
 
@@ -681,26 +798,32 @@ TranslationUnit: '{{any}}'
     │   └── descriptor: 'int'
     └── CompoundStatement
         └── ExpressionStatement
-            └── AdditiveExpression: '+'
+            └── BinaryExpression
+                ├── Operation: '+'
                 ├── Type
                 │   ├── category: 'basic'
                 │   └── descriptor: 'int'
-                ├── AdditiveExpression: '+'
-                │   ├── Type
-                │   │   ├── category: 'basic'
-                │   │   └── descriptor: 'int'
-                │   ├── IntegerConstant: '1'
-                │   │   └── Type
-                │   │       ├── category: 'basic'
-                │   │       └── descriptor: 'int'
-                │   └── IntegerConstant: '2'
-                │       └── Type
-                │           ├── category: 'basic'
-                │           └── descriptor: 'int'
-                └── IntegerConstant: '3'
-                    └── Type
-                        ├── category: 'basic'
-                        └── descriptor: 'int'
+                ├── Lhs
+                │   └── BinaryExpression
+                │       ├── Operation: '+'
+                │       ├── Type
+                │       │   ├── category: 'basic'
+                │       │   └── descriptor: 'int'
+                │       ├── Lhs
+                │       │   └── IntegerConstant: '1'
+                │       │       └── Type
+                │       │           ├── category: 'basic'
+                │       │           └── descriptor: 'int'
+                │       └── Rhs
+                │           └── IntegerConstant: '2'
+                │               └── Type
+                │                   ├── category: 'basic'
+                │                   └── descriptor: 'int'
+                └── Rhs
+                    └── IntegerConstant: '3'
+                        └── Type
+                            ├── category: 'basic'
+                            └── descriptor: 'int'
 
 @endtest
 
@@ -718,26 +841,32 @@ TranslationUnit: '{{any}}'
     │   └── descriptor: 'int'
     └── CompoundStatement
         └── ExpressionStatement
-            └── MultiplicativeExpression: '*'
+            └── BinaryExpression
+                ├── Operation: '*'
                 ├── Type
                 │   ├── category: 'basic'
                 │   └── descriptor: 'int'
-                ├── MultiplicativeExpression: '*'
-                │   ├── Type
-                │   │   ├── category: 'basic'
-                │   │   └── descriptor: 'int'
-                │   ├── IntegerConstant: '2'
-                │   │   └── Type
-                │   │       ├── category: 'basic'
-                │   │       └── descriptor: 'int'
-                │   └── IntegerConstant: '3'
-                │       └── Type
-                │           ├── category: 'basic'
-                │           └── descriptor: 'int'
-                └── IntegerConstant: '4'
-                    └── Type
-                        ├── category: 'basic'
-                        └── descriptor: 'int'
+                ├── Lhs
+                │   └── BinaryExpression
+                │       ├── Operation: '*'
+                │       ├── Type
+                │       │   ├── category: 'basic'
+                │       │   └── descriptor: 'int'
+                │       ├── Lhs
+                │       │   └── IntegerConstant: '2'
+                │       │       └── Type
+                │       │           ├── category: 'basic'
+                │       │           └── descriptor: 'int'
+                │       └── Rhs
+                │           └── IntegerConstant: '3'
+                │               └── Type
+                │                   ├── category: 'basic'
+                │                   └── descriptor: 'int'
+                └── Rhs
+                    └── IntegerConstant: '4'
+                        └── Type
+                            ├── category: 'basic'
+                            └── descriptor: 'int'
 
 @endtest
 
@@ -755,26 +884,32 @@ TranslationUnit: '{{any}}'
     │   └── descriptor: 'int'
     └── CompoundStatement
         └── ExpressionStatement
-            └── AdditiveExpression: '+'
+            └── BinaryExpression
+                ├── Operation: '+'
                 ├── Type
                 │   ├── category: 'basic'
                 │   └── descriptor: 'int'
-                ├── IntegerConstant: '1'
-                │   └── Type
-                │       ├── category: 'basic'
-                │       └── descriptor: 'int'
-                └── MultiplicativeExpression: '*'
-                    ├── Type
-                    │   ├── category: 'basic'
-                    │   └── descriptor: 'int'
-                    ├── IntegerConstant: '2'
-                    │   └── Type
-                    │       ├── category: 'basic'
-                    │       └── descriptor: 'int'
-                    └── IntegerConstant: '3'
-                        └── Type
-                            ├── category: 'basic'
-                            └── descriptor: 'int'
+                ├── Lhs
+                │   └── IntegerConstant: '1'
+                │       └── Type
+                │           ├── category: 'basic'
+                │           └── descriptor: 'int'
+                └── Rhs
+                    └── BinaryExpression
+                        ├── Operation: '*'
+                        ├── Type
+                        │   ├── category: 'basic'
+                        │   └── descriptor: 'int'
+                        ├── Lhs
+                        │   └── IntegerConstant: '2'
+                        │       └── Type
+                        │           ├── category: 'basic'
+                        │           └── descriptor: 'int'
+                        └── Rhs
+                            └── IntegerConstant: '3'
+                                └── Type
+                                    ├── category: 'basic'
+                                    └── descriptor: 'int'
 
 @endtest
 
@@ -792,26 +927,32 @@ TranslationUnit: '{{any}}'
     │   └── descriptor: 'int'
     └── CompoundStatement
         └── ExpressionStatement
-            └── EqualityExpression: '=='
+            └── BinaryExpression
+                ├── Operation: '=='
                 ├── Type
                 │   ├── category: 'basic'
                 │   └── descriptor: 'int'
-                ├── IntegerConstant: '1'
-                │   └── Type
-                │       ├── category: 'basic'
-                │       └── descriptor: 'int'
-                └── RelationalExpression: '<'
-                    ├── Type
-                    │   ├── category: 'basic'
-                    │   └── descriptor: 'int'
-                    ├── IntegerConstant: '2'
-                    │   └── Type
-                    │       ├── category: 'basic'
-                    │       └── descriptor: 'int'
-                    └── IntegerConstant: '3'
-                        └── Type
-                            ├── category: 'basic'
-                            └── descriptor: 'int'
+                ├── Lhs
+                │   └── IntegerConstant: '1'
+                │       └── Type
+                │           ├── category: 'basic'
+                │           └── descriptor: 'int'
+                └── Rhs
+                    └── BinaryExpression
+                        ├── Operation: '<'
+                        ├── Type
+                        │   ├── category: 'basic'
+                        │   └── descriptor: 'int'
+                        ├── Lhs
+                        │   └── IntegerConstant: '2'
+                        │       └── Type
+                        │           ├── category: 'basic'
+                        │           └── descriptor: 'int'
+                        └── Rhs
+                            └── IntegerConstant: '3'
+                                └── Type
+                                    ├── category: 'basic'
+                                    └── descriptor: 'int'
 
 @endtest
 
@@ -829,34 +970,43 @@ TranslationUnit: '{{any}}'
     │   └── descriptor: 'int'
     └── CompoundStatement
         └── ExpressionStatement
-            └── EqualityExpression: '=='
+            └── BinaryExpression
+                ├── Operation: '=='
                 ├── Type
                 │   ├── category: 'basic'
                 │   └── descriptor: 'int'
-                ├── RelationalExpression: '<'
-                │   ├── Type
-                │   │   ├── category: 'basic'
-                │   │   └── descriptor: 'int'
-                │   ├── IntegerConstant: '1'
-                │   │   └── Type
-                │   │       ├── category: 'basic'
-                │   │       └── descriptor: 'int'
-                │   └── IntegerConstant: '2'
-                │       └── Type
-                │           ├── category: 'basic'
-                │           └── descriptor: 'int'
-                └── RelationalExpression: '>'
-                    ├── Type
-                    │   ├── category: 'basic'
-                    │   └── descriptor: 'int'
-                    ├── IntegerConstant: '3'
-                    │   └── Type
-                    │       ├── category: 'basic'
-                    │       └── descriptor: 'int'
-                    └── IntegerConstant: '4'
-                        └── Type
-                            ├── category: 'basic'
-                            └── descriptor: 'int'
+                ├── Lhs
+                │   └── BinaryExpression
+                │       ├── Operation: '<'
+                │       ├── Type
+                │       │   ├── category: 'basic'
+                │       │   └── descriptor: 'int'
+                │       ├── Lhs
+                │       │   └── IntegerConstant: '1'
+                │       │       └── Type
+                │       │           ├── category: 'basic'
+                │       │           └── descriptor: 'int'
+                │       └── Rhs
+                │           └── IntegerConstant: '2'
+                │               └── Type
+                │                   ├── category: 'basic'
+                │                   └── descriptor: 'int'
+                └── Rhs
+                    └── BinaryExpression
+                        ├── Operation: '>'
+                        ├── Type
+                        │   ├── category: 'basic'
+                        │   └── descriptor: 'int'
+                        ├── Lhs
+                        │   └── IntegerConstant: '3'
+                        │       └── Type
+                        │           ├── category: 'basic'
+                        │           └── descriptor: 'int'
+                        └── Rhs
+                            └── IntegerConstant: '4'
+                                └── Type
+                                    ├── category: 'basic'
+                                    └── descriptor: 'int'
 
 @endtest
 
@@ -874,26 +1024,32 @@ TranslationUnit: '{{any}}'
     │   └── descriptor: 'int'
     └── CompoundStatement
         └── ExpressionStatement
-            └── EqualityExpression: '=='
+            └── BinaryExpression
+                ├── Operation: '=='
                 ├── Type
                 │   ├── category: 'basic'
                 │   └── descriptor: 'int'
-                ├── IntegerConstant: '1'
-                │   └── Type
-                │       ├── category: 'basic'
-                │       └── descriptor: 'int'
-                └── AdditiveExpression: '+'
-                    ├── Type
-                    │   ├── category: 'basic'
-                    │   └── descriptor: 'int'
-                    ├── IntegerConstant: '2'
-                    │   └── Type
-                    │       ├── category: 'basic'
-                    │       └── descriptor: 'int'
-                    └── IntegerConstant: '3'
-                        └── Type
-                            ├── category: 'basic'
-                            └── descriptor: 'int'
+                ├── Lhs
+                │   └── IntegerConstant: '1'
+                │       └── Type
+                │           ├── category: 'basic'
+                │           └── descriptor: 'int'
+                └── Rhs
+                    └── BinaryExpression
+                        ├── Operation: '+'
+                        ├── Type
+                        │   ├── category: 'basic'
+                        │   └── descriptor: 'int'
+                        ├── Lhs
+                        │   └── IntegerConstant: '2'
+                        │       └── Type
+                        │           ├── category: 'basic'
+                        │           └── descriptor: 'int'
+                        └── Rhs
+                            └── IntegerConstant: '3'
+                                └── Type
+                                    ├── category: 'basic'
+                                    └── descriptor: 'int'
 
 @endtest
 
@@ -911,26 +1067,32 @@ TranslationUnit: '{{any}}'
     │   └── descriptor: 'int'
     └── CompoundStatement
         └── ExpressionStatement
-            └── RelationalExpression: '<'
+            └── BinaryExpression
+                ├── Operation: '<'
                 ├── Type
                 │   ├── category: 'basic'
                 │   └── descriptor: 'int'
-                ├── IntegerConstant: '1'
-                │   └── Type
-                │       ├── category: 'basic'
-                │       └── descriptor: 'int'
-                └── AdditiveExpression: '+'
-                    ├── Type
-                    │   ├── category: 'basic'
-                    │   └── descriptor: 'int'
-                    ├── IntegerConstant: '2'
-                    │   └── Type
-                    │       ├── category: 'basic'
-                    │       └── descriptor: 'int'
-                    └── IntegerConstant: '3'
-                        └── Type
-                            ├── category: 'basic'
-                            └── descriptor: 'int'
+                ├── Lhs
+                │   └── IntegerConstant: '1'
+                │       └── Type
+                │           ├── category: 'basic'
+                │           └── descriptor: 'int'
+                └── Rhs
+                    └── BinaryExpression
+                        ├── Operation: '+'
+                        ├── Type
+                        │   ├── category: 'basic'
+                        │   └── descriptor: 'int'
+                        ├── Lhs
+                        │   └── IntegerConstant: '2'
+                        │       └── Type
+                        │           ├── category: 'basic'
+                        │           └── descriptor: 'int'
+                        └── Rhs
+                            └── IntegerConstant: '3'
+                                └── Type
+                                    ├── category: 'basic'
+                                    └── descriptor: 'int'
 
 @endtest
 
@@ -979,26 +1141,32 @@ TranslationUnit: '{{any}}'
     │   └── descriptor: 'int'
     └── CompoundStatement
         └── ExpressionStatement
-            └── MultiplicativeExpression: '*'
+            └── BinaryExpression
+                ├── Operation: '*'
                 ├── Type
                 │   ├── category: 'basic'
                 │   └── descriptor: 'int'
-                ├── IntegerConstant: '77'
-                │   └── Type
-                │       ├── category: 'basic'
-                │       └── descriptor: 'int'
-                └── AdditiveExpression: '+'
-                    ├── Type
-                    │   ├── category: 'basic'
-                    │   └── descriptor: 'int'
-                    ├── IntegerConstant: '1'
-                    │   └── Type
-                    │       ├── category: 'basic'
-                    │       └── descriptor: 'int'
-                    └── IntegerConstant: '23'
-                        └── Type
-                            ├── category: 'basic'
-                            └── descriptor: 'int'
+                ├── Lhs
+                │   └── IntegerConstant: '77'
+                │       └── Type
+                │           ├── category: 'basic'
+                │           └── descriptor: 'int'
+                └── Rhs
+                    └── BinaryExpression
+                        ├── Operation: '+'
+                        ├── Type
+                        │   ├── category: 'basic'
+                        │   └── descriptor: 'int'
+                        ├── Lhs
+                        │   └── IntegerConstant: '1'
+                        │       └── Type
+                        │           ├── category: 'basic'
+                        │           └── descriptor: 'int'
+                        └── Rhs
+                            └── IntegerConstant: '23'
+                                └── Type
+                                    ├── category: 'basic'
+                                    └── descriptor: 'int'
 
 @endtest
 
@@ -1056,22 +1224,25 @@ TranslationUnit: '{{any}}'
                 ├── Type
                 │   ├── category: 'basic'
                 │   └── descriptor: 'int'
-                └── AdditiveExpression: '+'
+                └── BinaryExpression
+                    ├── Operation: '+'
                     ├── Type
                     │   ├── category: 'basic'
                     │   └── descriptor: 'unsigned int'
-                    ├── CastExpression
-                    │   ├── Type
-                    │   │   ├── category: 'basic'
-                    │   │   └── descriptor: 'unsigned int'
-                    │   └── VariableExpression: 'x'
-                    │       └── Type
-                    │           ├── category: 'basic'
-                    │           └── descriptor: 'int'
-                    └── VariableExpression: 'y'
-                        └── Type
-                            ├── category: 'basic'
-                            └── descriptor: 'unsigned int'
+                    ├── Lhs
+                    │   └── CastExpression
+                    │       ├── Type
+                    │       │   ├── category: 'basic'
+                    │       │   └── descriptor: 'unsigned int'
+                    │       └── VariableExpression: 'x'
+                    │           └── Type
+                    │               ├── category: 'basic'
+                    │               └── descriptor: 'int'
+                    └── Rhs
+                        └── VariableExpression: 'y'
+                            └── Type
+                                ├── category: 'basic'
+                                └── descriptor: 'unsigned int'
 
 @endtest
 
@@ -1129,22 +1300,25 @@ TranslationUnit: '{{any}}'
                 ├── Type
                 │   ├── category: 'basic'
                 │   └── descriptor: 'int'
-                └── MultiplicativeExpression: '*'
+                └── BinaryExpression
+                    ├── Operation: '*'
                     ├── Type
                     │   ├── category: 'basic'
                     │   └── descriptor: 'unsigned int'
-                    ├── CastExpression
-                    │   ├── Type
-                    │   │   ├── category: 'basic'
-                    │   │   └── descriptor: 'unsigned int'
-                    │   └── VariableExpression: 'x'
-                    │       └── Type
-                    │           ├── category: 'basic'
-                    │           └── descriptor: 'int'
-                    └── VariableExpression: 'y'
-                        └── Type
-                            ├── category: 'basic'
-                            └── descriptor: 'unsigned int'
+                    ├── Lhs
+                    │   └── CastExpression
+                    │       ├── Type
+                    │       │   ├── category: 'basic'
+                    │       │   └── descriptor: 'unsigned int'
+                    │       └── VariableExpression: 'x'
+                    │           └── Type
+                    │               ├── category: 'basic'
+                    │               └── descriptor: 'int'
+                    └── Rhs
+                        └── VariableExpression: 'y'
+                            └── Type
+                                ├── category: 'basic'
+                                └── descriptor: 'unsigned int'
 
 @endtest
 
@@ -1213,22 +1387,25 @@ TranslationUnit: '{{any}}'
         │           ├── Type
         │           │   ├── category: 'basic'
         │           │   └── descriptor: 'int'
-        │           └── RelationalExpression: '<'
+        │           └── BinaryExpression
+        │               ├── Operation: '<'
         │               ├── Type
         │               │   ├── category: 'basic'
         │               │   └── descriptor: 'unsigned int'
-        │               ├── CastExpression
-        │               │   ├── Type
-        │               │   │   ├── category: 'basic'
-        │               │   │   └── descriptor: 'unsigned int'
-        │               │   └── VariableExpression: 'x'
-        │               │       └── Type
-        │               │           ├── category: 'basic'
-        │               │           └── descriptor: 'int'
-        │               └── VariableExpression: 'y'
-        │                   └── Type
-        │                       ├── category: 'basic'
-        │                       └── descriptor: 'unsigned int'
+        │               ├── Lhs
+        │               │   └── CastExpression
+        │               │       ├── Type
+        │               │       │   ├── category: 'basic'
+        │               │       │   └── descriptor: 'unsigned int'
+        │               │       └── VariableExpression: 'x'
+        │               │           └── Type
+        │               │               ├── category: 'basic'
+        │               │               └── descriptor: 'int'
+        │               └── Rhs
+        │                   └── VariableExpression: 'y'
+        │                       └── Type
+        │                           ├── category: 'basic'
+        │                           └── descriptor: 'unsigned int'
         └── ReturnStatement
             └── VariableExpression: 'z'
                 └── Type
@@ -1302,22 +1479,25 @@ TranslationUnit: '{{any}}'
         │           ├── Type
         │           │   ├── category: 'basic'
         │           │   └── descriptor: 'int'
-        │           └── EqualityExpression: '=='
+        │           └── BinaryExpression
+        │               ├── Operation: '=='
         │               ├── Type
         │               │   ├── category: 'basic'
         │               │   └── descriptor: 'unsigned int'
-        │               ├── CastExpression
-        │               │   ├── Type
-        │               │   │   ├── category: 'basic'
-        │               │   │   └── descriptor: 'unsigned int'
-        │               │   └── VariableExpression: 'x'
-        │               │       └── Type
-        │               │           ├── category: 'basic'
-        │               │           └── descriptor: 'int'
-        │               └── VariableExpression: 'y'
-        │                   └── Type
-        │                       ├── category: 'basic'
-        │                       └── descriptor: 'unsigned int'
+        │               ├── Lhs
+        │               │   └── CastExpression
+        │               │       ├── Type
+        │               │       │   ├── category: 'basic'
+        │               │       │   └── descriptor: 'unsigned int'
+        │               │       └── VariableExpression: 'x'
+        │               │           └── Type
+        │               │               ├── category: 'basic'
+        │               │               └── descriptor: 'int'
+        │               └── Rhs
+        │                   └── VariableExpression: 'y'
+        │                       └── Type
+        │                           ├── category: 'basic'
+        │                           └── descriptor: 'unsigned int'
         └── ReturnStatement
             └── VariableExpression: 'z'
                 └── Type
@@ -1380,17 +1560,20 @@ TranslationUnit: '{{any}}'
         │                   ├── category: 'basic'
         │                   └── descriptor: 'int'
         └── ReturnStatement
-            └── AdditiveExpression: '+'
+            └── BinaryExpression
+                ├── Operation: '+'
                 ├── Type
                 │   ├── category: 'basic'
                 │   └── descriptor: 'unsigned int'
-                ├── VariableExpression: 'x'
-                │   └── Type
-                │       ├── category: 'basic'
-                │       └── descriptor: 'unsigned int'
-                └── VariableExpression: 'y'
-                    └── Type
-                        ├── category: 'basic'
-                        └── descriptor: 'unsigned int'
+                ├── Lhs
+                │   └── VariableExpression: 'x'
+                │       └── Type
+                │           ├── category: 'basic'
+                │           └── descriptor: 'unsigned int'
+                └── Rhs
+                    └── VariableExpression: 'y'
+                        └── Type
+                            ├── category: 'basic'
+                            └── descriptor: 'unsigned int'
 
 @endtest

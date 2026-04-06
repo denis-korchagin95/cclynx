@@ -199,7 +199,7 @@ unsigned int foo(int x) {
 }
 @whenRun("./bin/cclynx", args="--emit-ast -Wall /dev/stdin")
 @expectOutput("stderr")
-{{any}}: WARNING: implicit conversion changes signedness from 'int' to 'unsigned int', use an explicit cast
+{{any}}:2:13: WARNING: implicit conversion changes signedness from 'int' to 'unsigned int', use an explicit cast
 
 @endtest
 
@@ -243,7 +243,7 @@ int foo(int x) {
 }
 @whenRun("./bin/cclynx", args="--emit-ast -Wno-unused-variable /dev/stdin")
 @expectOutput("stderr")
-{{any}}: WARNING: unused parameter 'x'
+{{any}}:1:13: WARNING: unused parameter 'x'
 
 @endtest
 
@@ -298,7 +298,7 @@ void foo(int x) {
 }
 @whenRun("./bin/cclynx", args="--emit-ast -Wall /dev/stdin")
 @expectOutput("stderr")
-{{any}}: WARNING: implicit conversion changes signedness from 'int' to 'unsigned int', use an explicit cast
+{{any}}:3:7: WARNING: implicit conversion changes signedness from 'int' to 'unsigned int', use an explicit cast
 
 @endtest
 
@@ -315,7 +315,7 @@ void foo(void) {
 }
 @whenRun("./bin/cclynx", args="--emit-ast -Wall /dev/stdin")
 @expectOutput("stderr")
-{{any}}: WARNING: implicit conversion changes signedness from 'int' to 'unsigned int', use an explicit cast
+{{any}}:8:5: WARNING: implicit conversion changes signedness from 'int' to 'unsigned int', use an explicit cast
 
 @endtest
 
@@ -338,9 +338,9 @@ int foo(int x) {
 }
 @whenRun("./bin/cclynx", args="--emit-ast --no-warnings -Wall /dev/stdin")
 @expectOutput("stderr")
-{{any}}: WARNING: empty if body
-{{any}}: WARNING: unused variable 'y'
-{{any}}: WARNING: function 'foo' missing return statement
+{{any}}:3:5: WARNING: empty if body
+{{any}}:2:10: WARNING: unused variable 'y'
+{{any}}:1:5: WARNING: function 'foo' missing return statement
 
 @endtest
 
@@ -376,7 +376,7 @@ int foo(int x) {
 }
 @whenRun("./bin/cclynx", args="--emit-ast -Wno-unused -Wno-empty-body /dev/stdin")
 @expectOutput("stderr")
-{{any}}: WARNING: function 'foo' missing return statement
+{{any}}:1:5: WARNING: function 'foo' missing return statement
 
 @endtest
 
@@ -387,7 +387,7 @@ void foo(void) {
 }
 @whenRun("./bin/cclynx", args="--emit-ast /dev/stdin")
 @expectOutput("stderr")
-{{any}}: WARNING: empty compound statement
+{{any}}:2:5: WARNING: empty compound statement
 
 @endtest
 
@@ -399,7 +399,7 @@ void foo(int x) {
 }
 @whenRun("./bin/cclynx", args="--emit-ast -Wno-empty-if-body /dev/stdin")
 @expectOutput("stderr")
-{{any}}: WARNING: empty while body
+{{any}}:3:5: WARNING: empty while body
 
 @endtest
 
@@ -410,7 +410,7 @@ unsigned int foo(unsigned int x, int y) {
 }
 @whenRun("./bin/cclynx", args="--emit-ast -Wall /dev/stdin")
 @expectOutput("stderr")
-{{any}}: WARNING: implicit conversion changes signedness from 'int' to 'unsigned int', use an explicit cast
+{{any}}:2:14: WARNING: implicit conversion changes signedness from 'int' to 'unsigned int', use an explicit cast
 
 @endtest
 
@@ -421,41 +421,7 @@ unsigned int foo(unsigned int x, int y) {
 }
 @whenRun("./bin/cclynx", args="--emit-ast -Wall /dev/stdin")
 @expectOutput("stderr")
-{{any}}: WARNING: implicit conversion changes signedness from 'int' to 'unsigned int', use an explicit cast
-
-@expectOutput("stdout")
-TranslationUnit: '{{any}}'
-└── FunctionDefinition: 'foo' <2-parameters>
-    ├── ReturnType
-    │   ├── category: 'basic'
-    │   └── descriptor: 'unsigned int'
-    ├── ParameterList
-    │   ├── Parameter: 'x'
-    │   │   └── Type
-    │   │       ├── category: 'basic'
-    │   │       └── descriptor: 'unsigned int'
-    │   └── Parameter: 'y'
-    │       └── Type
-    │           ├── category: 'basic'
-    │           └── descriptor: 'int'
-    └── CompoundStatement
-        └── ReturnStatement
-            └── RelationalExpression: '<'
-                ├── Type
-                │   ├── category: 'basic'
-                │   └── descriptor: 'unsigned int'
-                ├── VariableExpression: 'x'
-                │   └── Type
-                │       ├── category: 'basic'
-                │       └── descriptor: 'unsigned int'
-                └── CastExpression
-                    ├── Type
-                    │   ├── category: 'basic'
-                    │   └── descriptor: 'unsigned int'
-                    └── VariableExpression: 'y'
-                        └── Type
-                            ├── category: 'basic'
-                            └── descriptor: 'int'
+{{any}}:2:14: WARNING: implicit conversion changes signedness from 'int' to 'unsigned int', use an explicit cast
 
 @endtest
 
@@ -466,41 +432,7 @@ unsigned int foo(unsigned int x, int y) {
 }
 @whenRun("./bin/cclynx", args="--emit-ast -Wall /dev/stdin")
 @expectOutput("stderr")
-{{any}}: WARNING: implicit conversion changes signedness from 'int' to 'unsigned int', use an explicit cast
-
-@expectOutput("stdout")
-TranslationUnit: '{{any}}'
-└── FunctionDefinition: 'foo' <2-parameters>
-    ├── ReturnType
-    │   ├── category: 'basic'
-    │   └── descriptor: 'unsigned int'
-    ├── ParameterList
-    │   ├── Parameter: 'x'
-    │   │   └── Type
-    │   │       ├── category: 'basic'
-    │   │       └── descriptor: 'unsigned int'
-    │   └── Parameter: 'y'
-    │       └── Type
-    │           ├── category: 'basic'
-    │           └── descriptor: 'int'
-    └── CompoundStatement
-        └── ReturnStatement
-            └── RelationalExpression: '>'
-                ├── Type
-                │   ├── category: 'basic'
-                │   └── descriptor: 'unsigned int'
-                ├── VariableExpression: 'x'
-                │   └── Type
-                │       ├── category: 'basic'
-                │       └── descriptor: 'unsigned int'
-                └── CastExpression
-                    ├── Type
-                    │   ├── category: 'basic'
-                    │   └── descriptor: 'unsigned int'
-                    └── VariableExpression: 'y'
-                        └── Type
-                            ├── category: 'basic'
-                            └── descriptor: 'int'
+{{any}}:2:14: WARNING: implicit conversion changes signedness from 'int' to 'unsigned int', use an explicit cast
 
 @endtest
 
@@ -511,41 +443,7 @@ unsigned int foo(unsigned int x, int y) {
 }
 @whenRun("./bin/cclynx", args="--emit-ast -Wall /dev/stdin")
 @expectOutput("stderr")
-{{any}}: WARNING: implicit conversion changes signedness from 'int' to 'unsigned int', use an explicit cast
-
-@expectOutput("stdout")
-TranslationUnit: '{{any}}'
-└── FunctionDefinition: 'foo' <2-parameters>
-    ├── ReturnType
-    │   ├── category: 'basic'
-    │   └── descriptor: 'unsigned int'
-    ├── ParameterList
-    │   ├── Parameter: 'x'
-    │   │   └── Type
-    │   │       ├── category: 'basic'
-    │   │       └── descriptor: 'unsigned int'
-    │   └── Parameter: 'y'
-    │       └── Type
-    │           ├── category: 'basic'
-    │           └── descriptor: 'int'
-    └── CompoundStatement
-        └── ReturnStatement
-            └── EqualityExpression: '=='
-                ├── Type
-                │   ├── category: 'basic'
-                │   └── descriptor: 'unsigned int'
-                ├── VariableExpression: 'x'
-                │   └── Type
-                │       ├── category: 'basic'
-                │       └── descriptor: 'unsigned int'
-                └── CastExpression
-                    ├── Type
-                    │   ├── category: 'basic'
-                    │   └── descriptor: 'unsigned int'
-                    └── VariableExpression: 'y'
-                        └── Type
-                            ├── category: 'basic'
-                            └── descriptor: 'int'
+{{any}}:2:14: WARNING: implicit conversion changes signedness from 'int' to 'unsigned int', use an explicit cast
 
 @endtest
 
@@ -556,41 +454,7 @@ unsigned int foo(unsigned int x, int y) {
 }
 @whenRun("./bin/cclynx", args="--emit-ast -Wall /dev/stdin")
 @expectOutput("stderr")
-{{any}}: WARNING: implicit conversion changes signedness from 'int' to 'unsigned int', use an explicit cast
-
-@expectOutput("stdout")
-TranslationUnit: '{{any}}'
-└── FunctionDefinition: 'foo' <2-parameters>
-    ├── ReturnType
-    │   ├── category: 'basic'
-    │   └── descriptor: 'unsigned int'
-    ├── ParameterList
-    │   ├── Parameter: 'x'
-    │   │   └── Type
-    │   │       ├── category: 'basic'
-    │   │       └── descriptor: 'unsigned int'
-    │   └── Parameter: 'y'
-    │       └── Type
-    │           ├── category: 'basic'
-    │           └── descriptor: 'int'
-    └── CompoundStatement
-        └── ReturnStatement
-            └── EqualityExpression: '!='
-                ├── Type
-                │   ├── category: 'basic'
-                │   └── descriptor: 'unsigned int'
-                ├── VariableExpression: 'x'
-                │   └── Type
-                │       ├── category: 'basic'
-                │       └── descriptor: 'unsigned int'
-                └── CastExpression
-                    ├── Type
-                    │   ├── category: 'basic'
-                    │   └── descriptor: 'unsigned int'
-                    └── VariableExpression: 'y'
-                        └── Type
-                            ├── category: 'basic'
-                            └── descriptor: 'int'
+{{any}}:2:14: WARNING: implicit conversion changes signedness from 'int' to 'unsigned int', use an explicit cast
 
 @endtest
 
@@ -611,41 +475,7 @@ unsigned int foo(int x, unsigned int y) {
 }
 @whenRun("./bin/cclynx", args="--emit-ast -Wall /dev/stdin")
 @expectOutput("stderr")
-{{any}}: WARNING: implicit conversion changes signedness from 'int' to 'unsigned int', use an explicit cast
-
-@expectOutput("stdout")
-TranslationUnit: '{{any}}'
-└── FunctionDefinition: 'foo' <2-parameters>
-    ├── ReturnType
-    │   ├── category: 'basic'
-    │   └── descriptor: 'unsigned int'
-    ├── ParameterList
-    │   ├── Parameter: 'x'
-    │   │   └── Type
-    │   │       ├── category: 'basic'
-    │   │       └── descriptor: 'int'
-    │   └── Parameter: 'y'
-    │       └── Type
-    │           ├── category: 'basic'
-    │           └── descriptor: 'unsigned int'
-    └── CompoundStatement
-        └── ReturnStatement
-            └── RelationalExpression: '<'
-                ├── Type
-                │   ├── category: 'basic'
-                │   └── descriptor: 'unsigned int'
-                ├── CastExpression
-                │   ├── Type
-                │   │   ├── category: 'basic'
-                │   │   └── descriptor: 'unsigned int'
-                │   └── VariableExpression: 'x'
-                │       └── Type
-                │           ├── category: 'basic'
-                │           └── descriptor: 'int'
-                └── VariableExpression: 'y'
-                    └── Type
-                        ├── category: 'basic'
-                        └── descriptor: 'unsigned int'
+{{any}}:2:14: WARNING: implicit conversion changes signedness from 'int' to 'unsigned int', use an explicit cast
 
 @endtest
 
@@ -676,6 +506,6 @@ unsigned int foo(unsigned int x, int y) {
 }
 @whenRun("./bin/cclynx", args="--emit-ast -Wall -Wno-sign-compare /dev/stdin")
 @expectOutput("stderr")
-{{any}}: WARNING: implicit conversion changes signedness from 'int' to 'unsigned int', use an explicit cast
+{{any}}:2:18: WARNING: implicit conversion changes signedness from 'int' to 'unsigned int', use an explicit cast
 
 @endtest
