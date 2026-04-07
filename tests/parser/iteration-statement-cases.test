@@ -70,6 +70,134 @@ TranslationUnit: '{{any}}'
 
 @endtest
 
+@test("It should parse nested while loops")
+@given("stdin")
+int main() {
+    int i;
+    int j;
+    i = 0;
+    while(i < 2) {
+        j = 0;
+        while(j < 2) {
+            j = j + 1;
+        }
+        i = i + 1;
+    }
+}
+@whenRun("./bin/cclynx", args="--emit-ast /dev/stdin")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        ├── VariableDeclaration: 'i'
+        │   └── Type
+        │       ├── category: 'basic'
+        │       └── descriptor: 'int'
+        ├── VariableDeclaration: 'j'
+        │   └── Type
+        │       ├── category: 'basic'
+        │       └── descriptor: 'int'
+        ├── ExpressionStatement
+        │   └── AssignmentExpression: '='
+        │       ├── VariableExpression: 'i'
+        │       │   └── Type
+        │       │       ├── category: 'basic'
+        │       │       └── descriptor: 'int'
+        │       └── IntegerConstant: '0'
+        │           └── Type
+        │               ├── category: 'basic'
+        │               └── descriptor: 'int'
+        └── WhileStatement
+            ├── (condition) BinaryExpression
+            │   ├── Operation: '<'
+            │   ├── Type
+            │   │   ├── category: 'basic'
+            │   │   └── descriptor: 'int'
+            │   ├── Lhs
+            │   │   └── VariableExpression: 'i'
+            │   │       └── Type
+            │   │           ├── category: 'basic'
+            │   │           └── descriptor: 'int'
+            │   └── Rhs
+            │       └── IntegerConstant: '2'
+            │           └── Type
+            │               ├── category: 'basic'
+            │               └── descriptor: 'int'
+            └── (body) CompoundStatement
+                ├── ExpressionStatement
+                │   └── AssignmentExpression: '='
+                │       ├── VariableExpression: 'j'
+                │       │   └── Type
+                │       │       ├── category: 'basic'
+                │       │       └── descriptor: 'int'
+                │       └── IntegerConstant: '0'
+                │           └── Type
+                │               ├── category: 'basic'
+                │               └── descriptor: 'int'
+                ├── WhileStatement
+                │   ├── (condition) BinaryExpression
+                │   │   ├── Operation: '<'
+                │   │   ├── Type
+                │   │   │   ├── category: 'basic'
+                │   │   │   └── descriptor: 'int'
+                │   │   ├── Lhs
+                │   │   │   └── VariableExpression: 'j'
+                │   │   │       └── Type
+                │   │   │           ├── category: 'basic'
+                │   │   │           └── descriptor: 'int'
+                │   │   └── Rhs
+                │   │       └── IntegerConstant: '2'
+                │   │           └── Type
+                │   │               ├── category: 'basic'
+                │   │               └── descriptor: 'int'
+                │   └── (body) CompoundStatement
+                │       └── ExpressionStatement
+                │           └── AssignmentExpression: '='
+                │               ├── VariableExpression: 'j'
+                │               │   └── Type
+                │               │       ├── category: 'basic'
+                │               │       └── descriptor: 'int'
+                │               └── BinaryExpression
+                │                   ├── Operation: '+'
+                │                   ├── Type
+                │                   │   ├── category: 'basic'
+                │                   │   └── descriptor: 'int'
+                │                   ├── Lhs
+                │                   │   └── VariableExpression: 'j'
+                │                   │       └── Type
+                │                   │           ├── category: 'basic'
+                │                   │           └── descriptor: 'int'
+                │                   └── Rhs
+                │                       └── IntegerConstant: '1'
+                │                           └── Type
+                │                               ├── category: 'basic'
+                │                               └── descriptor: 'int'
+                └── ExpressionStatement
+                    └── AssignmentExpression: '='
+                        ├── VariableExpression: 'i'
+                        │   └── Type
+                        │       ├── category: 'basic'
+                        │       └── descriptor: 'int'
+                        └── BinaryExpression
+                            ├── Operation: '+'
+                            ├── Type
+                            │   ├── category: 'basic'
+                            │   └── descriptor: 'int'
+                            ├── Lhs
+                            │   └── VariableExpression: 'i'
+                            │       └── Type
+                            │           ├── category: 'basic'
+                            │           └── descriptor: 'int'
+                            └── Rhs
+                                └── IntegerConstant: '1'
+                                    └── Type
+                                        ├── category: 'basic'
+                                        └── descriptor: 'int'
+
+@endtest
 @test("It should parse while with empty statement")
 @given("stdin")
 int main() {
