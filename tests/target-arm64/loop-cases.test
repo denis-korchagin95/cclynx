@@ -387,3 +387,51 @@ _main:
     ret
 
 @endtest
+
+@test("It should generate target arm64 code for while loop with break statement")
+@given("stdin")
+int main() {
+    int i;
+    i = 0;
+    while (1) {
+        if (i == 5) {
+            break;
+        }
+        i = i + 1;
+    }
+    return i;
+}
+@whenRun("./bin/cclynx", args="--emit-asm /dev/stdin")
+@expectOutput("stdout")
+.text
+.align 2
+
+.global _main
+_main:
+    stp x29, x30, [sp, -16]!
+    mov x29, sp
+    sub sp, sp, #16
+    mov w9, #0
+    str w9, [sp, #0]
+.L1:
+    mov w9, #1
+    cbz w9, .L2
+    ldr w9, [sp, #0]
+    mov w10, #5
+    cmp w9, w10
+    b.ne .L3
+    b .L2
+.L3:
+    ldr w9, [sp, #0]
+    mov w10, #1
+    add w11, w9, w10
+    str w11, [sp, #0]
+    b .L1
+.L2:
+    ldr w9, [sp, #0]
+    mov w0, w9
+    add sp, sp, #16
+    ldp x29, x30, [sp], #16
+    ret
+
+@endtest

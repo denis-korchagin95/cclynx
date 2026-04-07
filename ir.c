@@ -160,6 +160,16 @@ void do_generate_ir(struct ir_context * ctx, struct ir_program * program, const 
 
             }
             break;
+        case AST_NODE_KIND_BREAK_STATEMENT:
+            {
+                assert(ctx->current_loop_end_label != NULL);
+
+                struct ir_instruction * instruction = ir_create_instruction(ctx, OP_JUMP);
+                instruction->op1 = ctx->current_loop_end_label;
+
+                ir_emit(program, instruction);
+            }
+            break;
         case AST_NODE_KIND_WHILE_STATEMENT:
             {
                 struct ir_operand * start_of_loop_label = ir_create_operand(ctx, OPERAND_KIND_LABEL);
@@ -179,6 +189,9 @@ void do_generate_ir(struct ir_context * ctx, struct ir_program * program, const 
 
                 ir_generate_condition(ctx, program, node->content.while_statement.condition, end_of_loop_label);
 
+                struct ir_operand * previous_loop_end_label = ctx->current_loop_end_label;
+                ctx->current_loop_end_label = end_of_loop_label;
+
                 if (
                     node->content.while_statement.body->kind == AST_NODE_KIND_EXPRESSION_STATEMENT
                     && node->content.while_statement.body->content.node == NULL
@@ -187,6 +200,8 @@ void do_generate_ir(struct ir_context * ctx, struct ir_program * program, const 
                 } else {
                     do_generate_ir(ctx, program, node->content.while_statement.body);
                 }
+
+                ctx->current_loop_end_label = previous_loop_end_label;
 
                 {
                     struct ir_instruction * instruction = ir_create_instruction(ctx, OP_JUMP);

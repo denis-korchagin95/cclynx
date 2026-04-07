@@ -265,6 +265,44 @@ OP_FUNC_END
 
 @endtest
 
+@test("It should generate IR code on while loop with break statement")
+@given("stdin")
+int main() {
+    int i;
+    i = 0;
+    while (1) {
+        if (i == 5) {
+            break;
+        }
+        i = i + 1;
+    }
+    return i;
+}
+@whenRun("./bin/cclynx", args="--emit-ir /dev/stdin")
+@expectOutput("stdout")
+OP_FUNC "main"
+OP_CONST 0, t1
+OP_STORE i, t1
+OP_LABEL ".L1"
+OP_CONST 1, t2
+OP_JUMP_IF_FALSE t2, ".L2"
+OP_LOAD i, t3
+OP_CONST 5, t4
+OP_JUMP_IF_NE t3, t4, ".L3"
+OP_JUMP ".L2"
+OP_LABEL ".L3"
+OP_LOAD i, t5
+OP_CONST 1, t6
+OP_ADD t5, t6, t7
+OP_STORE i, t7
+OP_JUMP ".L1"
+OP_LABEL ".L2"
+OP_LOAD i, t8
+OP_RETURN t8
+OP_FUNC_END
+
+@endtest
+
 @test("It should generate OP_JUMP_IF_UNSIGNED_LTE for unsigned greater than in while")
 @given("stdin")
 int main() {

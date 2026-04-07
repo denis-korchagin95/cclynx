@@ -28,6 +28,7 @@ static struct ast_node * parse_translation_unit(struct parser_context * ctx);
 static struct ast_node * parse_expression(struct parser_context * ctx);
 static struct ast_node * parse_if_statement(struct parser_context * ctx, struct token * keyword_token);
 static struct ast_node * parse_return_statement(struct parser_context * ctx);
+static struct ast_node * parse_break_statement(struct parser_context * ctx, struct token * keyword_token);
 static struct ast_node * parse_statement(struct parser_context * ctx);
 static struct ast_node * parse_while_statement(struct parser_context * ctx, struct token * keyword_token);
 static struct ast_node * parse_assignment_expression(struct parser_context * ctx);
@@ -207,6 +208,9 @@ struct ast_node * parse_statement(struct parser_context * ctx)
         } else if (current_token->identifier->keyword_code == KEYWORD_RETURN) {
             parser_get_token(ctx);
             statement = parse_return_statement(ctx);
+        } else if (current_token->identifier->keyword_code == KEYWORD_BREAK) {
+            parser_get_token(ctx);
+            statement = parse_break_statement(ctx, current_token);
         } else if (current_token->identifier->keyword_code == KEYWORD_IF) {
             parser_get_token(ctx);
             statement = parse_if_statement(ctx, current_token);
@@ -349,6 +353,31 @@ struct ast_node * parse_if_statement(struct parser_context * ctx, struct token *
     return if_statement;
 }
 
+struct ast_node * parse_break_statement(struct parser_context * ctx, struct token * keyword_token)
+{
+    assert(ctx != NULL);
+    assert(keyword_token != NULL);
+
+    if (ctx->loop_depth == 0) {
+        parser_report_error(ctx, keyword_token, "'break' statement not in loop");
+    }
+
+    struct token * current_token = parser_get_token(ctx);
+
+    if (!token_is_punctuator(current_token, ';')) {
+        parser_report_error(ctx, current_token, "expected ';' but got %s", token_stringify(current_token));
+        if (current_token != &eos_token) {
+            parser_putback_token(current_token, ctx);
+        }
+        parser_synchronize_statement(ctx);
+        return NULL;
+    }
+
+    struct ast_node * break_statement = ast_create_node(ctx->pool, AST_NODE_KIND_BREAK_STATEMENT, &type_void);
+
+    return break_statement;
+}
+
 struct ast_node * parse_return_statement(struct parser_context * ctx)
 {
     assert(ctx != NULL);
@@ -426,7 +455,9 @@ struct ast_node * parse_while_statement(struct parser_context * ctx, struct toke
         return NULL;
     }
 
+    ctx->loop_depth++;
     struct ast_node * statement = parse_statement(ctx);
+    ctx->loop_depth--;
 
     if (ast_is_empty_compound_statement(statement)) {
         parser_report_warning(ctx, WARNING_EMPTY_WHILE_BODY, keyword_token, "empty while body");
@@ -437,6 +468,7 @@ struct ast_node * parse_while_statement(struct parser_context * ctx, struct toke
     }
 
     struct ast_node * while_statement = ast_create_node(ctx->pool, AST_NODE_KIND_WHILE_STATEMENT, &type_void);
+
     while_statement->content.while_statement.condition = expression;
     while_statement->content.while_statement.body = statement;
 

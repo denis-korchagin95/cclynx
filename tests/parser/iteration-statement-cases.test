@@ -316,3 +316,61 @@ TranslationUnit: '{{any}}'
                                     └── descriptor: 'int'
 
 @endtest
+
+
+@test("It should parse break instruction for while loop")
+@given("stdin")
+int main(void) {
+    while(1) {
+        break;
+    }
+    return 0;
+}
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings /dev/stdin")
+@expectOutput("stdout")
+TranslationUnit: 'stdin'
+└── FunctionDefinition: 'main' <no-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        ├── WhileStatement
+        │   ├── (condition) IntegerConstant: '1'
+        │   │   └── Type
+        │   │       ├── category: 'basic'
+        │   │       └── descriptor: 'int'
+        │   └── (body) CompoundStatement
+        │       └── BreakStatement
+        └── ReturnStatement
+            └── IntegerConstant: '0'
+                └── Type
+                    ├── category: 'basic'
+                    └── descriptor: 'int'
+
+@endtest
+
+@test("It should report an error on missing semicolon after break")
+@given("stdin")
+int main(void) {
+    while(1) {
+        break
+    }
+    return 0;
+}
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings /dev/stdin")
+@expectOutput("stderr")
+{{any}}:4:5: ERROR: expected ';' but got '}'
+
+@endtest
+
+@test("It should report an error on break statement outside of a loop")
+@given("stdin")
+int main(void) {
+    break;
+    return 0;
+}
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings /dev/stdin")
+@expectOutput("stderr")
+{{any}}:2:5: ERROR: 'break' statement not in loop
+
+@endtest

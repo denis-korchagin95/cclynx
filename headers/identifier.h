@@ -27,6 +27,7 @@ enum keyword_code
     KEYWORD_SIGNED,
     KEYWORD_IF,
     KEYWORD_ELSE,
+    KEYWORD_BREAK,
 };
 
 struct identifier

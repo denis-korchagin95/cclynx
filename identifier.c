@@ -22,6 +22,7 @@ static struct keyword
     {"else",        KEYWORD_ELSE},
     {"unsigned",    KEYWORD_UNSIGNED},
     {"signed",      KEYWORD_SIGNED},
+    {"break",       KEYWORD_BREAK},
 };
 
 

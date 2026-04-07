@@ -169,6 +169,9 @@ void do_print_ast(const struct ast_node * ast, FILE * file, int depth, unsigned 
             if (ast->content.node != NULL)
                 do_print_ast(ast->content.node, file, depth + 1, ancestors_info, NULL);
             break;
+        case AST_NODE_KIND_BREAK_STATEMENT:
+            fprintf(file, "BreakStatement\n");
+            break;
         case AST_NODE_KIND_WHILE_STATEMENT:
             fprintf(file, "WhileStatement\n");
             ancestors_info[depth] = 2;

@@ -22,6 +22,7 @@ struct parser_context
     const char * source_filename;
     struct error_list errors;
     struct symbol * current_function;
+    unsigned int loop_depth;
     bool has_error;
     struct warning_flags warning_flags;
 };
