@@ -54,6 +54,7 @@ while
 if
 else
 unsigned
+signed
 @whenRun("./bin/cclynx", args="--emit-tokens /dev/stdin")
 @expectOutput("stdout")
 <TOKEN_KEYWORD 'int'>
@@ -62,6 +63,7 @@ unsigned
 <TOKEN_KEYWORD 'if'>
 <TOKEN_KEYWORD 'else'>
 <TOKEN_KEYWORD 'unsigned'>
+<TOKEN_KEYWORD 'signed'>
 <TOKEN_EOS>
 
 @endtest
