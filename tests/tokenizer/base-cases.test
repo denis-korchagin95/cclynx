@@ -56,6 +56,7 @@ else
 unsigned
 signed
 break
+continue
 @whenRun("./bin/cclynx", args="--emit-tokens /dev/stdin")
 @expectOutput("stdout")
 <TOKEN_KEYWORD 'int'>
@@ -66,6 +67,7 @@ break
 <TOKEN_KEYWORD 'unsigned'>
 <TOKEN_KEYWORD 'signed'>
 <TOKEN_KEYWORD 'break'>
+<TOKEN_KEYWORD 'continue'>
 <TOKEN_EOS>
 
 @endtest

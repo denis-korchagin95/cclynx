@@ -183,7 +183,9 @@ void do_generate_ir(struct ir_context * ctx, struct ir_program * program, const 
 
                 ir_generate_condition(ctx, program, node->content.iteration_statement.condition, end_of_loop_label);
 
+                struct ir_operand * previous_loop_start_label = ctx->current_loop_start_label;
                 struct ir_operand * previous_loop_end_label = ctx->current_loop_end_label;
+                ctx->current_loop_start_label = start_of_loop_label;
                 ctx->current_loop_end_label = end_of_loop_label;
 
                 if (
@@ -195,6 +197,7 @@ void do_generate_ir(struct ir_context * ctx, struct ir_program * program, const 
                     do_generate_ir(ctx, program, node->content.iteration_statement.body);
                 }
 
+                ctx->current_loop_start_label = previous_loop_start_label;
                 ctx->current_loop_end_label = previous_loop_end_label;
 
                 {
@@ -365,6 +368,16 @@ void do_generate_ir(struct ir_context * ctx, struct ir_program * program, const 
 
                         struct ir_instruction * jump = ir_create_instruction(ctx, OP_JUMP);
                         jump->op1 = ctx->current_loop_end_label;
+
+                        ir_emit(program, jump);
+                    }
+                    break;
+                case JUMP_OPERATION_CONTINUE:
+                    {
+                        assert(ctx->current_loop_start_label != NULL);
+
+                        struct ir_instruction * jump = ir_create_instruction(ctx, OP_JUMP);
+                        jump->op1 = ctx->current_loop_start_label;
 
                         ir_emit(program, jump);
                     }

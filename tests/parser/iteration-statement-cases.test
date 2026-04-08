@@ -382,3 +382,63 @@ int main(void) {
 {{any}}:2:5: ERROR: 'break' statement not in loop
 
 @endtest
+
+@test("It should parse continue instruction for while loop")
+@given("stdin")
+int main(void) {
+    while(1) {
+        continue;
+    }
+    return 0;
+}
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings /dev/stdin")
+@expectOutput("stdout")
+TranslationUnit: 'stdin'
+└── FunctionDefinition: 'main' <no-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        ├── IterationStatement
+        │   ├── Operation: 'while'
+        │   ├── (condition) IntegerConstant: '1'
+        │   │   └── Type
+        │   │       ├── category: 'basic'
+        │   │       └── descriptor: 'int'
+        │   └── (body) CompoundStatement
+        │       └── JumpStatement
+        │           └── Operation: 'continue'
+        └── JumpStatement
+            ├── Operation: 'return'
+            └── IntegerConstant: '0'
+                └── Type
+                    ├── category: 'basic'
+                    └── descriptor: 'int'
+
+@endtest
+
+@test("It should report an error on missing semicolon after continue")
+@given("stdin")
+int main(void) {
+    while(1) {
+        continue
+    }
+    return 0;
+}
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings /dev/stdin")
+@expectOutput("stderr")
+{{any}}:4:5: ERROR: expected ';' but got '}'
+
+@endtest
+
+@test("It should report an error on continue statement outside of a loop")
+@given("stdin")
+int main(void) {
+    continue;
+    return 0;
+}
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings /dev/stdin")
+@expectOutput("stderr")
+{{any}}:2:5: ERROR: 'continue' statement not in loop
+
+@endtest

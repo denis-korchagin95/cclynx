@@ -435,3 +435,55 @@ _main:
     ret
 
 @endtest
+
+@test("It should generate target arm64 code for while loop with continue statement")
+@given("stdin")
+int main() {
+    int i;
+    int j;
+    i = 0;
+    j = 0;
+    while (i < 10) {
+        i = i + 1;
+        continue;
+        j = j + 1;
+    }
+    return j;
+}
+@whenRun("./bin/cclynx", args="--emit-asm /dev/stdin")
+@expectOutput("stdout")
+.text
+.align 2
+
+.global _main
+_main:
+    stp x29, x30, [sp, -16]!
+    mov x29, sp
+    sub sp, sp, #16
+    mov w9, #0
+    str w9, [sp, #0]
+    mov w9, #0
+    str w9, [sp, #4]
+.L1:
+    ldr w9, [sp, #0]
+    mov w10, #10
+    cmp w9, w10
+    b.ge .L2
+    ldr w9, [sp, #0]
+    mov w10, #1
+    add w11, w9, w10
+    str w11, [sp, #0]
+    b .L1
+    ldr w9, [sp, #4]
+    mov w10, #1
+    add w11, w9, w10
+    str w11, [sp, #4]
+    b .L1
+.L2:
+    ldr w9, [sp, #4]
+    mov w0, w9
+    add sp, sp, #16
+    ldp x29, x30, [sp], #16
+    ret
+
+@endtest

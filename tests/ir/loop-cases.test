@@ -333,3 +333,45 @@ OP_RETURN t7
 OP_FUNC_END
 
 @endtest
+
+@test("It should generate IR code on while loop with continue statement")
+@given("stdin")
+int main() {
+    int i;
+    int j;
+    i = 0;
+    j = 0;
+    while (i < 10) {
+        i = i + 1;
+        continue;
+        j = j + 1;
+    }
+    return j;
+}
+@whenRun("./bin/cclynx", args="--emit-ir /dev/stdin")
+@expectOutput("stdout")
+OP_FUNC "main"
+OP_CONST 0, t1
+OP_STORE i, t1
+OP_CONST 0, t2
+OP_STORE j, t2
+OP_LABEL ".L1"
+OP_LOAD i, t3
+OP_CONST 10, t4
+OP_JUMP_IF_GTE t3, t4, ".L2"
+OP_LOAD i, t5
+OP_CONST 1, t6
+OP_ADD t5, t6, t7
+OP_STORE i, t7
+OP_JUMP ".L1"
+OP_LOAD j, t8
+OP_CONST 1, t9
+OP_ADD t8, t9, t10
+OP_STORE j, t10
+OP_JUMP ".L1"
+OP_LABEL ".L2"
+OP_LOAD j, t11
+OP_RETURN t11
+OP_FUNC_END
+
+@endtest

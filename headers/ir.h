@@ -100,6 +100,7 @@ struct ir_context
     struct ir_operand * last_variable;
     unsigned int is_assign;
     struct ir_instruction * current_func;
+    struct ir_operand * current_loop_start_label;
     struct ir_operand * current_loop_end_label;
     struct ir_operand operands[IR_MAX_OPERAND_COUNT];
     size_t operand_pos;

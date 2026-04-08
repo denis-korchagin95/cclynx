@@ -30,6 +30,7 @@ static struct ast_node * parse_if_statement(struct parser_context * ctx, struct 
 static struct ast_node * parse_jump_statement(struct parser_context * ctx, struct token * keyword_token);
 static struct ast_node * parse_return_statement(struct parser_context * ctx);
 static struct ast_node * parse_break_statement(struct parser_context * ctx, struct token * keyword_token);
+static struct ast_node * parse_continue_statement(struct parser_context * ctx, struct token * keyword_token);
 static struct ast_node * parse_statement(struct parser_context * ctx);
 static struct ast_node * parse_iteration_statement(struct parser_context * ctx, struct token * keyword_token);
 static struct ast_node * parse_while_statement(struct parser_context * ctx, struct token * keyword_token);
@@ -210,6 +211,7 @@ struct ast_node * parse_statement(struct parser_context * ctx)
         } else if (
             current_token->identifier->keyword_code == KEYWORD_RETURN
             || current_token->identifier->keyword_code == KEYWORD_BREAK
+            || current_token->identifier->keyword_code == KEYWORD_CONTINUE
         ) {
             parser_get_token(ctx);
             statement = parse_jump_statement(ctx, current_token);
@@ -364,6 +366,10 @@ struct ast_node * parse_jump_statement(struct parser_context * ctx, struct token
         return parse_break_statement(ctx, keyword_token);
     }
 
+    if (keyword_token->identifier->keyword_code == KEYWORD_CONTINUE) {
+        return parse_continue_statement(ctx, keyword_token);
+    }
+
     return parse_return_statement(ctx);
 }
 
@@ -389,6 +395,33 @@ struct ast_node * parse_break_statement(struct parser_context * ctx, struct toke
 
     struct ast_node * jump_statement = ast_create_node(ctx->pool, AST_NODE_KIND_JUMP_STATEMENT, &type_void);
     jump_statement->content.jump_statement.operation = JUMP_OPERATION_BREAK;
+    jump_statement->content.jump_statement.expression = NULL;
+
+    return jump_statement;
+}
+
+struct ast_node * parse_continue_statement(struct parser_context * ctx, struct token * keyword_token)
+{
+    assert(ctx != NULL);
+    assert(keyword_token != NULL);
+
+    if (ctx->loop_depth == 0) {
+        parser_report_error(ctx, keyword_token, "'continue' statement not in loop");
+    }
+
+    struct token * current_token = parser_get_token(ctx);
+
+    if (!token_is_punctuator(current_token, ';')) {
+        parser_report_error(ctx, current_token, "expected ';' but got %s", token_stringify(current_token));
+        if (current_token != &eos_token) {
+            parser_putback_token(current_token, ctx);
+        }
+        parser_synchronize_statement(ctx);
+        return NULL;
+    }
+
+    struct ast_node * jump_statement = ast_create_node(ctx->pool, AST_NODE_KIND_JUMP_STATEMENT, &type_void);
+    jump_statement->content.jump_statement.operation = JUMP_OPERATION_CONTINUE;
     jump_statement->content.jump_statement.expression = NULL;
 
     return jump_statement;

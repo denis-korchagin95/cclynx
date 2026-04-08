@@ -28,6 +28,7 @@ enum keyword_code
     KEYWORD_IF,
     KEYWORD_ELSE,
     KEYWORD_BREAK,
+    KEYWORD_CONTINUE,
 };
 
 struct identifier

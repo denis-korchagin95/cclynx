@@ -169,6 +169,7 @@ void do_print_ast(const struct ast_node * ast, FILE * file, int depth, unsigned 
                 const char * op_str = "";
                 switch (ast->content.jump_statement.operation) {
                     case JUMP_OPERATION_BREAK:  op_str = "break";  break;
+                    case JUMP_OPERATION_CONTINUE: op_str = "continue"; break;
                     case JUMP_OPERATION_RETURN: op_str = "return"; break;
                     default:
                         cclynx_fatal_error("ERROR: unknown jump operation\n");

@@ -23,6 +23,7 @@ static struct keyword
     {"unsigned",    KEYWORD_UNSIGNED},
     {"signed",      KEYWORD_SIGNED},
     {"break",       KEYWORD_BREAK},
+    {"continue",    KEYWORD_CONTINUE},
 };
 
 

@@ -47,6 +47,7 @@ enum jump_operation
 {
     JUMP_OPERATION_BREAK = 1,
     JUMP_OPERATION_RETURN,
+    JUMP_OPERATION_CONTINUE,
 };
 
 enum binary_operation
