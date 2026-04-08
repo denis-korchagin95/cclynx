@@ -15,7 +15,8 @@ TranslationUnit: '{{any}}'
 │   │   ├── category: 'basic'
 │   │   └── descriptor: 'int'
 │   └── CompoundStatement
-│       └── ReturnStatement
+│       └── JumpStatement
+│           ├── Operation: 'return'
 │           └── IntegerConstant: '7'
 │               └── Type
 │                   ├── category: 'basic'
@@ -25,7 +26,8 @@ TranslationUnit: '{{any}}'
     │   ├── category: 'basic'
     │   └── descriptor: 'int'
     └── CompoundStatement
-        └── ReturnStatement
+        └── JumpStatement
+            ├── Operation: 'return'
             └── BinaryExpression
                 ├── Operation: '*'
                 ├── Type
@@ -61,7 +63,8 @@ TranslationUnit: '{{any}}'
 │   │   ├── category: 'basic'
 │   │   └── descriptor: 'int'
 │   └── CompoundStatement
-│       └── ReturnStatement
+│       └── JumpStatement
+│           ├── Operation: 'return'
 │           └── IntegerConstant: '7'
 │               └── Type
 │                   ├── category: 'basic'
@@ -71,7 +74,8 @@ TranslationUnit: '{{any}}'
     │   ├── category: 'basic'
     │   └── descriptor: 'int'
     └── CompoundStatement
-        └── ReturnStatement
+        └── JumpStatement
+            ├── Operation: 'return'
             └── BinaryExpression
                 ├── Operation: '*'
                 ├── Type
@@ -107,7 +111,8 @@ TranslationUnit: '{{any}}'
 │   │   ├── category: 'basic'
 │   │   └── descriptor: 'int'
 │   └── CompoundStatement
-│       └── ReturnStatement
+│       └── JumpStatement
+│           ├── Operation: 'return'
 │           └── IntegerConstant: '7'
 │               └── Type
 │                   ├── category: 'basic'
@@ -117,7 +122,8 @@ TranslationUnit: '{{any}}'
     │   ├── category: 'basic'
     │   └── descriptor: 'int'
     └── CompoundStatement
-        └── ReturnStatement
+        └── JumpStatement
+            ├── Operation: 'return'
             └── FunctionCallExpression: 'foo' <1-argument>
                 ├── ReturnType
                 │   ├── category: 'basic'
@@ -151,7 +157,8 @@ TranslationUnit: '{{any}}'
 │   │           ├── category: 'basic'
 │   │           └── descriptor: 'int'
 │   └── CompoundStatement
-│       └── ReturnStatement
+│       └── JumpStatement
+│           ├── Operation: 'return'
 │           └── VariableExpression: 'a'
 │               └── Type
 │                   ├── category: 'basic'
@@ -161,7 +168,8 @@ TranslationUnit: '{{any}}'
     │   ├── category: 'basic'
     │   └── descriptor: 'int'
     └── CompoundStatement
-        └── ReturnStatement
+        └── JumpStatement
+            ├── Operation: 'return'
             └── FunctionCallExpression: 'identity' <1-argument>
                 ├── ReturnType
                 │   ├── category: 'basic'
@@ -199,7 +207,8 @@ TranslationUnit: '{{any}}'
 │   │           ├── category: 'basic'
 │   │           └── descriptor: 'int'
 │   └── CompoundStatement
-│       └── ReturnStatement
+│       └── JumpStatement
+│           ├── Operation: 'return'
 │           └── BinaryExpression
 │               ├── Operation: '+'
 │               ├── Type
@@ -220,7 +229,8 @@ TranslationUnit: '{{any}}'
     │   ├── category: 'basic'
     │   └── descriptor: 'int'
     └── CompoundStatement
-        └── ReturnStatement
+        └── JumpStatement
+            ├── Operation: 'return'
             └── FunctionCallExpression: 'add' <2-arguments>
                 ├── ReturnType
                 │   ├── category: 'basic'
@@ -266,7 +276,8 @@ TranslationUnit: '{{any}}'
 │   │           ├── category: 'basic'
 │   │           └── descriptor: 'int'
 │   └── CompoundStatement
-│       └── ReturnStatement
+│       └── JumpStatement
+│           ├── Operation: 'return'
 │           └── BinaryExpression
 │               ├── Operation: '+'
 │               ├── Type
@@ -298,7 +309,8 @@ TranslationUnit: '{{any}}'
     │   ├── category: 'basic'
     │   └── descriptor: 'int'
     └── CompoundStatement
-        └── ReturnStatement
+        └── JumpStatement
+            ├── Operation: 'return'
             └── FunctionCallExpression: 'foo' <3-arguments>
                 ├── ReturnType
                 │   ├── category: 'basic'
@@ -344,7 +356,8 @@ TranslationUnit: '{{any}}'
 │   │           ├── category: 'basic'
 │   │           └── descriptor: 'int'
 │   └── CompoundStatement
-│       └── ReturnStatement
+│       └── JumpStatement
+│           ├── Operation: 'return'
 │           └── BinaryExpression
 │               ├── Operation: '+'
 │               ├── Type
@@ -365,7 +378,8 @@ TranslationUnit: '{{any}}'
     │   ├── category: 'basic'
     │   └── descriptor: 'int'
     └── CompoundStatement
-        └── ReturnStatement
+        └── JumpStatement
+            ├── Operation: 'return'
             └── FunctionCallExpression: 'add' <2-arguments>
                 ├── ReturnType
                 │   ├── category: 'basic'
@@ -451,7 +465,8 @@ TranslationUnit: '{{any}}'
 │   │           ├── category: 'basic'
 │   │           └── descriptor: 'int'
 │   └── CompoundStatement
-│       └── ReturnStatement
+│       └── JumpStatement
+│           ├── Operation: 'return'
 │           └── VariableExpression: 'a'
 │               └── Type
 │                   ├── category: 'basic'
@@ -461,7 +476,8 @@ TranslationUnit: '{{any}}'
     │   ├── category: 'basic'
     │   └── descriptor: 'int'
     └── CompoundStatement
-        └── ReturnStatement
+        └── JumpStatement
+            ├── Operation: 'return'
             └── FunctionCallExpression: 'foo' <1-argument>
                 ├── ReturnType
                 │   ├── category: 'basic'

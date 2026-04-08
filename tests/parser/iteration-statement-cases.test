@@ -29,7 +29,8 @@ TranslationUnit: '{{any}}'
         │           └── Type
         │               ├── category: 'basic'
         │               └── descriptor: 'int'
-        └── WhileStatement
+        └── IterationStatement
+            ├── Operation: 'while'
             ├── (condition) BinaryExpression
             │   ├── Operation: '<'
             │   ├── Type
@@ -110,7 +111,8 @@ TranslationUnit: '{{any}}'
         │           └── Type
         │               ├── category: 'basic'
         │               └── descriptor: 'int'
-        └── WhileStatement
+        └── IterationStatement
+            ├── Operation: 'while'
             ├── (condition) BinaryExpression
             │   ├── Operation: '<'
             │   ├── Type
@@ -137,7 +139,8 @@ TranslationUnit: '{{any}}'
                 │           └── Type
                 │               ├── category: 'basic'
                 │               └── descriptor: 'int'
-                ├── WhileStatement
+                ├── IterationStatement
+                │   ├── Operation: 'while'
                 │   ├── (condition) BinaryExpression
                 │   │   ├── Operation: '<'
                 │   │   ├── Type
@@ -227,7 +230,8 @@ TranslationUnit: '{{any}}'
         │           └── Type
         │               ├── category: 'basic'
         │               └── descriptor: 'int'
-        └── WhileStatement
+        └── IterationStatement
+            ├── Operation: 'while'
             ├── (condition) BinaryExpression
             │   ├── Operation: '<'
             │   ├── Type
@@ -277,7 +281,8 @@ TranslationUnit: '{{any}}'
         │           └── Type
         │               ├── category: 'basic'
         │               └── descriptor: 'int'
-        └── WhileStatement
+        └── IterationStatement
+            ├── Operation: 'while'
             ├── (condition) BinaryExpression
             │   ├── Operation: '<'
             │   ├── Type
@@ -334,14 +339,17 @@ TranslationUnit: 'stdin'
     │   ├── category: 'basic'
     │   └── descriptor: 'int'
     └── CompoundStatement
-        ├── WhileStatement
+        ├── IterationStatement
+        │   ├── Operation: 'while'
         │   ├── (condition) IntegerConstant: '1'
         │   │   └── Type
         │   │       ├── category: 'basic'
         │   │       └── descriptor: 'int'
         │   └── (body) CompoundStatement
-        │       └── BreakStatement
-        └── ReturnStatement
+        │       └── JumpStatement
+        │           └── Operation: 'break'
+        └── JumpStatement
+            ├── Operation: 'return'
             └── IntegerConstant: '0'
                 └── Type
                     ├── category: 'basic'

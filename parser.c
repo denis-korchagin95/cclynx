@@ -27,9 +27,11 @@ struct declaration_specifiers
 static struct ast_node * parse_translation_unit(struct parser_context * ctx);
 static struct ast_node * parse_expression(struct parser_context * ctx);
 static struct ast_node * parse_if_statement(struct parser_context * ctx, struct token * keyword_token);
+static struct ast_node * parse_jump_statement(struct parser_context * ctx, struct token * keyword_token);
 static struct ast_node * parse_return_statement(struct parser_context * ctx);
 static struct ast_node * parse_break_statement(struct parser_context * ctx, struct token * keyword_token);
 static struct ast_node * parse_statement(struct parser_context * ctx);
+static struct ast_node * parse_iteration_statement(struct parser_context * ctx, struct token * keyword_token);
 static struct ast_node * parse_while_statement(struct parser_context * ctx, struct token * keyword_token);
 static struct ast_node * parse_assignment_expression(struct parser_context * ctx);
 static struct ast_node * parse_compound_statement(struct parser_context * ctx);
@@ -204,13 +206,13 @@ struct ast_node * parse_statement(struct parser_context * ctx)
     if (token_is_keyword(current_token)) {
         if (current_token->identifier->keyword_code == KEYWORD_WHILE) {
             parser_get_token(ctx);
-            statement = parse_while_statement(ctx, current_token);
-        } else if (current_token->identifier->keyword_code == KEYWORD_RETURN) {
+            statement = parse_iteration_statement(ctx, current_token);
+        } else if (
+            current_token->identifier->keyword_code == KEYWORD_RETURN
+            || current_token->identifier->keyword_code == KEYWORD_BREAK
+        ) {
             parser_get_token(ctx);
-            statement = parse_return_statement(ctx);
-        } else if (current_token->identifier->keyword_code == KEYWORD_BREAK) {
-            parser_get_token(ctx);
-            statement = parse_break_statement(ctx, current_token);
+            statement = parse_jump_statement(ctx, current_token);
         } else if (current_token->identifier->keyword_code == KEYWORD_IF) {
             parser_get_token(ctx);
             statement = parse_if_statement(ctx, current_token);
@@ -353,6 +355,18 @@ struct ast_node * parse_if_statement(struct parser_context * ctx, struct token *
     return if_statement;
 }
 
+struct ast_node * parse_jump_statement(struct parser_context * ctx, struct token * keyword_token)
+{
+    assert(ctx != NULL);
+    assert(keyword_token != NULL);
+
+    if (keyword_token->identifier->keyword_code == KEYWORD_BREAK) {
+        return parse_break_statement(ctx, keyword_token);
+    }
+
+    return parse_return_statement(ctx);
+}
+
 struct ast_node * parse_break_statement(struct parser_context * ctx, struct token * keyword_token)
 {
     assert(ctx != NULL);
@@ -373,9 +387,11 @@ struct ast_node * parse_break_statement(struct parser_context * ctx, struct toke
         return NULL;
     }
 
-    struct ast_node * break_statement = ast_create_node(ctx->pool, AST_NODE_KIND_BREAK_STATEMENT, &type_void);
+    struct ast_node * jump_statement = ast_create_node(ctx->pool, AST_NODE_KIND_JUMP_STATEMENT, &type_void);
+    jump_statement->content.jump_statement.operation = JUMP_OPERATION_BREAK;
+    jump_statement->content.jump_statement.expression = NULL;
 
-    return break_statement;
+    return jump_statement;
 }
 
 struct ast_node * parse_return_statement(struct parser_context * ctx)
@@ -420,10 +436,24 @@ struct ast_node * parse_return_statement(struct parser_context * ctx)
         expression = cast;
     }
 
-    struct ast_node * return_statement = ast_create_node(ctx->pool, AST_NODE_KIND_RETURN_STATEMENT, &type_void);
-    return_statement->content.node = expression;
+    struct ast_node * jump_statement = ast_create_node(ctx->pool, AST_NODE_KIND_JUMP_STATEMENT, &type_void);
+    jump_statement->content.jump_statement.operation = JUMP_OPERATION_RETURN;
+    jump_statement->content.jump_statement.expression = expression;
 
-    return return_statement;
+    return jump_statement;
+}
+
+struct ast_node * parse_iteration_statement(struct parser_context * ctx, struct token * keyword_token)
+{
+    assert(ctx != NULL);
+    assert(keyword_token != NULL);
+
+    if (keyword_token->identifier->keyword_code == KEYWORD_WHILE) {
+        return parse_while_statement(ctx, keyword_token);
+    }
+
+    cclynx_fatal_error("ERROR: unknown iteration keyword\n");
+    return NULL;
 }
 
 struct ast_node * parse_while_statement(struct parser_context * ctx, struct token * keyword_token)
@@ -467,12 +497,13 @@ struct ast_node * parse_while_statement(struct parser_context * ctx, struct toke
         return NULL;
     }
 
-    struct ast_node * while_statement = ast_create_node(ctx->pool, AST_NODE_KIND_WHILE_STATEMENT, &type_void);
+    struct ast_node * iteration_statement = ast_create_node(ctx->pool, AST_NODE_KIND_ITERATION_STATEMENT, &type_void);
 
-    while_statement->content.while_statement.condition = expression;
-    while_statement->content.while_statement.body = statement;
+    iteration_statement->content.iteration_statement.operation = ITERATION_OPERATION_WHILE;
+    iteration_statement->content.iteration_statement.condition = expression;
+    iteration_statement->content.iteration_statement.body = statement;
 
-    return while_statement;
+    return iteration_statement;
 }
 
 struct ast_node * parse_expression_statement(struct parser_context * ctx)

@@ -16,7 +16,8 @@ TranslationUnit: '{{any}}'
         │   └── Type
         │       ├── category: 'basic'
         │       └── descriptor: 'int'
-        └── ReturnStatement
+        └── JumpStatement
+            ├── Operation: 'return'
             └── IntegerConstant: '0'
                 └── Type
                     ├── category: 'basic'
@@ -42,7 +43,8 @@ TranslationUnit: '{{any}}'
         │   └── Type
         │       ├── category: 'basic'
         │       └── descriptor: 'unsigned int'
-        └── ReturnStatement
+        └── JumpStatement
+            ├── Operation: 'return'
             └── IntegerConstant: '0'
                 └── Type
                     ├── category: 'basic'
@@ -68,7 +70,8 @@ TranslationUnit: '{{any}}'
         │   └── Type
         │       ├── category: 'basic'
         │       └── descriptor: 'unsigned int'
-        └── ReturnStatement
+        └── JumpStatement
+            ├── Operation: 'return'
             └── IntegerConstant: '0'
                 └── Type
                     ├── category: 'basic'
@@ -129,7 +132,8 @@ TranslationUnit: 'stdin'
         │   └── Type
         │       ├── category: 'basic'
         │       └── descriptor: 'int'
-        └── ReturnStatement
+        └── JumpStatement
+            ├── Operation: 'return'
             └── IntegerConstant: '0'
                 └── Type
                     ├── category: 'basic'
@@ -200,7 +204,8 @@ TranslationUnit: '{{any}}'
         │   └── Type
         │       ├── category: 'basic'
         │       └── descriptor: 'int'
-        └── ReturnStatement
+        └── JumpStatement
+            ├── Operation: 'return'
             └── IntegerConstant: '0'
                 └── Type
                     ├── category: 'basic'
@@ -226,7 +231,8 @@ TranslationUnit: '{{any}}'
         │   └── Type
         │       ├── category: 'basic'
         │       └── descriptor: 'unsigned int'
-        └── ReturnStatement
+        └── JumpStatement
+            ├── Operation: 'return'
             └── IntegerConstant: '0'
                 └── Type
                     ├── category: 'basic'
@@ -252,7 +258,8 @@ TranslationUnit: '{{any}}'
         │   └── Type
         │       ├── category: 'basic'
         │       └── descriptor: 'int'
-        └── ReturnStatement
+        └── JumpStatement
+            ├── Operation: 'return'
             └── IntegerConstant: '0'
                 └── Type
                     ├── category: 'basic'

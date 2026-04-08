@@ -19,9 +19,8 @@ enum ast_node_kind
 
     AST_NODE_KIND_COMPOUND_STATEMENT,
     AST_NODE_KIND_EXPRESSION_STATEMENT,
-    AST_NODE_KIND_WHILE_STATEMENT,
-    AST_NODE_KIND_RETURN_STATEMENT,
-    AST_NODE_KIND_BREAK_STATEMENT,
+    AST_NODE_KIND_ITERATION_STATEMENT,
+    AST_NODE_KIND_JUMP_STATEMENT,
     AST_NODE_KIND_IF_STATEMENT,
 
     AST_NODE_KIND_ASSIGNMENT_EXPRESSION,
@@ -37,6 +36,17 @@ enum ast_node_kind
 enum unary_operation
 {
     UNARY_OPERATION_NEGATE = 1,
+};
+
+enum iteration_operation
+{
+    ITERATION_OPERATION_WHILE = 1,
+};
+
+enum jump_operation
+{
+    JUMP_OPERATION_BREAK = 1,
+    JUMP_OPERATION_RETURN,
 };
 
 enum binary_operation
@@ -109,10 +119,15 @@ struct ast_node
             struct ast_node * lhs;
             struct ast_node * initializer;
         } assignment;
-        struct while_statement {
+        struct jump_statement {
+            enum jump_operation operation;
+            struct ast_node * expression;
+        } jump_statement;
+        struct iteration_statement {
+            enum iteration_operation operation;
             struct ast_node * condition;
             struct ast_node * body;
-        } while_statement;
+        } iteration_statement;
         struct if_statement {
             struct ast_node * condition;
             struct ast_node * true_branch;

@@ -11,7 +11,8 @@ TranslationUnit: '{{any}}'
     │   ├── category: 'basic'
     │   └── descriptor: 'int'
     └── CompoundStatement
-        └── ReturnStatement
+        └── JumpStatement
+            ├── Operation: 'return'
             └── IntegerConstant: '42'
                 └── Type
                     ├── category: 'basic'
@@ -89,7 +90,8 @@ TranslationUnit: '{{any}}'
     │   ├── category: 'basic'
     │   └── descriptor: 'int'
     └── CompoundStatement
-        └── ReturnStatement
+        └── JumpStatement
+            ├── Operation: 'return'
             └── IntegerConstant: '7'
                 └── Type
                     ├── category: 'basic'
@@ -110,7 +112,8 @@ TranslationUnit: '{{any}}'
     │   ├── category: 'basic'
     │   └── descriptor: 'int'
     └── CompoundStatement
-        └── ReturnStatement
+        └── JumpStatement
+            └── Operation: 'return'
 
 @endtest
 
@@ -143,7 +146,8 @@ TranslationUnit: '{{any}}'
         │           └── Type
         │               ├── category: 'basic'
         │               └── descriptor: 'int'
-        └── ReturnStatement
+        └── JumpStatement
+            ├── Operation: 'return'
             └── VariableExpression: 'result'
                 └── Type
                     ├── category: 'basic'
@@ -168,7 +172,8 @@ TranslationUnit: '{{any}}'
 │   │   ├── category: 'basic'
 │   │   └── descriptor: 'int'
 │   └── CompoundStatement
-│       └── ReturnStatement
+│       └── JumpStatement
+│           ├── Operation: 'return'
 │           └── IntegerConstant: '1'
 │               └── Type
 │                   ├── category: 'basic'
@@ -178,7 +183,8 @@ TranslationUnit: '{{any}}'
     │   ├── category: 'basic'
     │   └── descriptor: 'int'
     └── CompoundStatement
-        └── ReturnStatement
+        └── JumpStatement
+            ├── Operation: 'return'
             └── IntegerConstant: '2'
                 └── Type
                     ├── category: 'basic'
@@ -209,7 +215,8 @@ TranslationUnit: '{{any}}'
 │       │   └── Type
 │       │       ├── category: 'basic'
 │       │       └── descriptor: 'int'
-│       └── ReturnStatement
+│       └── JumpStatement
+│           ├── Operation: 'return'
 │           └── VariableExpression: 'x'
 │               └── Type
 │                   ├── category: 'basic'
@@ -223,7 +230,8 @@ TranslationUnit: '{{any}}'
         │   └── Type
         │       ├── category: 'basic'
         │       └── descriptor: 'int'
-        └── ReturnStatement
+        └── JumpStatement
+            ├── Operation: 'return'
             └── VariableExpression: 'x'
                 └── Type
                     ├── category: 'basic'
@@ -249,7 +257,8 @@ TranslationUnit: '{{any}}'
     │           ├── category: 'basic'
     │           └── descriptor: 'int'
     └── CompoundStatement
-        └── ReturnStatement
+        └── JumpStatement
+            ├── Operation: 'return'
             └── VariableExpression: 'a'
                 └── Type
                     ├── category: 'basic'
@@ -279,7 +288,8 @@ TranslationUnit: '{{any}}'
     │           ├── category: 'basic'
     │           └── descriptor: 'int'
     └── CompoundStatement
-        └── ReturnStatement
+        └── JumpStatement
+            ├── Operation: 'return'
             └── BinaryExpression
                 ├── Operation: '+'
                 ├── Type
@@ -324,7 +334,8 @@ TranslationUnit: '{{any}}'
     │           ├── category: 'basic'
     │           └── descriptor: 'int'
     └── CompoundStatement
-        └── ReturnStatement
+        └── JumpStatement
+            ├── Operation: 'return'
             └── BinaryExpression
                 ├── Operation: '+'
                 ├── Type
@@ -367,7 +378,8 @@ TranslationUnit: '{{any}}'
     │   ├── category: 'basic'
     │   └── descriptor: 'unsigned int'
     └── CompoundStatement
-        └── ReturnStatement
+        └── JumpStatement
+            ├── Operation: 'return'
             └── CastExpression
                 ├── Type
                 │   ├── category: 'basic'
@@ -392,7 +404,8 @@ TranslationUnit: '{{any}}'
     │   ├── category: 'basic'
     │   └── descriptor: 'unsigned int'
     └── CompoundStatement
-        └── ReturnStatement
+        └── JumpStatement
+            ├── Operation: 'return'
             └── CastExpression
                 ├── Type
                 │   ├── category: 'basic'
@@ -422,7 +435,8 @@ TranslationUnit: '{{any}}'
     │           ├── category: 'basic'
     │           └── descriptor: 'unsigned int'
     └── CompoundStatement
-        └── ReturnStatement
+        └── JumpStatement
+            ├── Operation: 'return'
             └── CastExpression
                 ├── Type
                 │   ├── category: 'basic'
@@ -534,7 +548,8 @@ TranslationUnit: '{{any}}'
         │           └── Type
         │               ├── category: 'basic'
         │               └── descriptor: 'int'
-        └── ReturnStatement
+        └── JumpStatement
+            ├── Operation: 'return'
             └── CastExpression
                 ├── Type
                 │   ├── category: 'basic'

@@ -32,7 +32,8 @@ TranslationUnit: '{{any}}'
     │   ├── category: 'basic'
     │   └── descriptor: 'unsigned int'
     └── CompoundStatement
-        └── ReturnStatement
+        └── JumpStatement
+            ├── Operation: 'return'
             └── IntegerConstant: '42'
                 └── Type
                     ├── category: 'basic'
@@ -69,7 +70,8 @@ TranslationUnit: '{{any}}'
         │           └── Type
         │               ├── category: 'basic'
         │               └── descriptor: 'unsigned int'
-        └── ReturnStatement
+        └── JumpStatement
+            ├── Operation: 'return'
             └── BinaryExpression
                 ├── Operation: '+'
                 ├── Type

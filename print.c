@@ -163,21 +163,44 @@ void do_print_ast(const struct ast_node * ast, FILE * file, int depth, unsigned 
                 do_print_ast(ast->content.if_statement.false_branch, file, depth + 1, ancestors_info, "(false branch) ");
             }
             break;
-        case AST_NODE_KIND_RETURN_STATEMENT:
-            fprintf(file, "ReturnStatement\n");
-            ancestors_info[depth] = 0;
-            if (ast->content.node != NULL)
-                do_print_ast(ast->content.node, file, depth + 1, ancestors_info, NULL);
+        case AST_NODE_KIND_JUMP_STATEMENT:
+            {
+                fprintf(file, "JumpStatement\n");
+                const char * op_str = "";
+                switch (ast->content.jump_statement.operation) {
+                    case JUMP_OPERATION_BREAK:  op_str = "break";  break;
+                    case JUMP_OPERATION_RETURN: op_str = "return"; break;
+                    default:
+                        cclynx_fatal_error("ERROR: unknown jump operation\n");
+                }
+                bool has_expression =
+                    ast->content.jump_statement.operation == JUMP_OPERATION_RETURN
+                    && ast->content.jump_statement.expression != NULL;
+                ancestors_info[depth] = has_expression ? 2 : 0;
+                print_tree_connector(file, depth, ancestors_info);
+                fprintf(file, "Operation: '%s'\n", op_str);
+                if (has_expression) {
+                    ancestors_info[depth] = 0;
+                    do_print_ast(ast->content.jump_statement.expression, file, depth + 1, ancestors_info, NULL);
+                }
+            }
             break;
-        case AST_NODE_KIND_BREAK_STATEMENT:
-            fprintf(file, "BreakStatement\n");
-            break;
-        case AST_NODE_KIND_WHILE_STATEMENT:
-            fprintf(file, "WhileStatement\n");
-            ancestors_info[depth] = 2;
-            do_print_ast(ast->content.while_statement.condition, file, depth + 1, ancestors_info, "(condition) ");
-            ancestors_info[depth] = 0;
-            do_print_ast(ast->content.while_statement.body, file, depth + 1, ancestors_info, "(body) ");
+        case AST_NODE_KIND_ITERATION_STATEMENT:
+            {
+                const char * op_str = "";
+                switch (ast->content.iteration_statement.operation) {
+                    case ITERATION_OPERATION_WHILE: op_str = "while"; break;
+                    default:
+                        cclynx_fatal_error("ERROR: unknown iteration operation\n");
+                }
+                fprintf(file, "IterationStatement\n");
+                ancestors_info[depth] = 2;
+                print_tree_connector(file, depth, ancestors_info);
+                fprintf(file, "Operation: '%s'\n", op_str);
+                do_print_ast(ast->content.iteration_statement.condition, file, depth + 1, ancestors_info, "(condition) ");
+                ancestors_info[depth] = 0;
+                do_print_ast(ast->content.iteration_statement.body, file, depth + 1, ancestors_info, "(body) ");
+            }
             break;
         case AST_NODE_KIND_ASSIGNMENT_EXPRESSION:
             fprintf(file, "AssignmentExpression: '='\n");

@@ -11,7 +11,8 @@ TranslationUnit: '{{any}}'
     │   ├── category: 'basic'
     │   └── descriptor: 'int'
     └── CompoundStatement
-        └── ReturnStatement
+        └── JumpStatement
+            ├── Operation: 'return'
             └── IntegerConstant: '42'
                 └── Type
                     ├── category: 'basic'
@@ -32,7 +33,8 @@ TranslationUnit: 'stdin'
     │   ├── category: 'basic'
     │   └── descriptor: 'int'
     └── CompoundStatement
-        └── ReturnStatement
+        └── JumpStatement
+            ├── Operation: 'return'
             └── IntegerConstant: '42'
                 └── Type
                     ├── category: 'basic'

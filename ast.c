@@ -22,7 +22,10 @@ bool ast_statement_always_returns(const struct ast_node * node)
         return false;
     }
 
-    if (node->kind == AST_NODE_KIND_RETURN_STATEMENT) {
+    if (
+        node->kind == AST_NODE_KIND_JUMP_STATEMENT
+        && node->content.jump_statement.operation == JUMP_OPERATION_RETURN
+    ) {
         return true;
     }
 

@@ -47,7 +47,8 @@ TranslationUnit: '{{any}}'
         │               └── Type
         │                   ├── category: 'basic'
         │                   └── descriptor: 'int'
-        └── ReturnStatement
+        └── JumpStatement
+            ├── Operation: 'return'
             └── CastExpression
                 ├── Type
                 │   ├── category: 'basic'
@@ -108,7 +109,8 @@ TranslationUnit: '{{any}}'
         │               └── Type
         │                   ├── category: 'basic'
         │                   └── descriptor: 'int'
-        └── ReturnStatement
+        └── JumpStatement
+            ├── Operation: 'return'
             └── CastExpression
                 ├── Type
                 │   ├── category: 'basic'

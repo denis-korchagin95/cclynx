@@ -160,18 +160,12 @@ void do_generate_ir(struct ir_context * ctx, struct ir_program * program, const 
 
             }
             break;
-        case AST_NODE_KIND_BREAK_STATEMENT:
+        case AST_NODE_KIND_ITERATION_STATEMENT:
             {
-                assert(ctx->current_loop_end_label != NULL);
+                if (node->content.iteration_statement.operation != ITERATION_OPERATION_WHILE) {
+                    cclynx_fatal_error("ERROR: unknown iteration operation\n");
+                }
 
-                struct ir_instruction * instruction = ir_create_instruction(ctx, OP_JUMP);
-                instruction->op1 = ctx->current_loop_end_label;
-
-                ir_emit(program, instruction);
-            }
-            break;
-        case AST_NODE_KIND_WHILE_STATEMENT:
-            {
                 struct ir_operand * start_of_loop_label = ir_create_operand(ctx, OPERAND_KIND_LABEL);
                 start_of_loop_label->content.label_id = ++ctx->label_id;
                 start_of_loop_label->type = &type_void;
@@ -187,18 +181,18 @@ void do_generate_ir(struct ir_context * ctx, struct ir_program * program, const 
                 end_of_loop_label->content.label_id = ++ctx->label_id;
                 end_of_loop_label->type = &type_void;
 
-                ir_generate_condition(ctx, program, node->content.while_statement.condition, end_of_loop_label);
+                ir_generate_condition(ctx, program, node->content.iteration_statement.condition, end_of_loop_label);
 
                 struct ir_operand * previous_loop_end_label = ctx->current_loop_end_label;
                 ctx->current_loop_end_label = end_of_loop_label;
 
                 if (
-                    node->content.while_statement.body->kind == AST_NODE_KIND_EXPRESSION_STATEMENT
-                    && node->content.while_statement.body->content.node == NULL
+                    node->content.iteration_statement.body->kind == AST_NODE_KIND_EXPRESSION_STATEMENT
+                    && node->content.iteration_statement.body->content.node == NULL
                 ) {
                     ir_emit(program, ir_create_instruction(ctx, OP_NOP));
                 } else {
-                    do_generate_ir(ctx, program, node->content.while_statement.body);
+                    do_generate_ir(ctx, program, node->content.iteration_statement.body);
                 }
 
                 ctx->current_loop_end_label = previous_loop_end_label;
@@ -363,17 +357,33 @@ void do_generate_ir(struct ir_context * ctx, struct ir_program * program, const 
                 }
             }
             break;
-        case AST_NODE_KIND_RETURN_STATEMENT:
-            {
-                struct ir_instruction * instruction = ir_create_instruction(ctx, OP_RETURN);
-                instruction->result = ctx->current_func->result;
+        case AST_NODE_KIND_JUMP_STATEMENT:
+            switch (node->content.jump_statement.operation) {
+                case JUMP_OPERATION_BREAK:
+                    {
+                        assert(ctx->current_loop_end_label != NULL);
 
-                if (node->content.node != NULL) {
-                    do_generate_ir(ctx, program, node->content.node);
-                    instruction->op1 = program->instructions[program->position - 1]->result;
-                }
+                        struct ir_instruction * jump = ir_create_instruction(ctx, OP_JUMP);
+                        jump->op1 = ctx->current_loop_end_label;
 
-                ir_emit(program, instruction);
+                        ir_emit(program, jump);
+                    }
+                    break;
+                case JUMP_OPERATION_RETURN:
+                    {
+                        struct ir_instruction * instruction = ir_create_instruction(ctx, OP_RETURN);
+                        instruction->result = ctx->current_func->result;
+
+                        if (node->content.jump_statement.expression != NULL) {
+                            do_generate_ir(ctx, program, node->content.jump_statement.expression);
+                            instruction->op1 = program->instructions[program->position - 1]->result;
+                        }
+
+                        ir_emit(program, instruction);
+                    }
+                    break;
+                default:
+                    cclynx_fatal_error("ERROR: unknown jump operation\n");
             }
             break;
         case AST_NODE_KIND_INTEGER_CONSTANT_EXPRESSION:

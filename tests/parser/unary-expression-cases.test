@@ -62,7 +62,8 @@ TranslationUnit: 'stdin'
         │                   └── Type
         │                       ├── category: 'basic'
         │                       └── descriptor: 'int'
-        └── ReturnStatement
+        └── JumpStatement
+            ├── Operation: 'return'
             └── VariableExpression: 'x'
                 └── Type
                     ├── category: 'basic'
@@ -84,7 +85,8 @@ TranslationUnit: 'stdin'
     │   ├── category: 'basic'
     │   └── descriptor: 'unsigned int'
     └── CompoundStatement
-        └── ReturnStatement
+        └── JumpStatement
+            ├── Operation: 'return'
             └── UnaryExpression
                 ├── Operation: '-'
                 ├── Type
