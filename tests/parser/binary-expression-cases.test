@@ -1582,3 +1582,35 @@ TranslationUnit: '{{any}}'
                             └── descriptor: 'unsigned int'
 
 @endtest
+
+@test("It should parse a multiplicative expression (%) (primitive case)")
+@given("stdin")
+int main() {
+    10 % 3;
+}
+@whenRun("./bin/cclynx", args="--emit-ast /dev/stdin")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        └── ExpressionStatement
+            └── BinaryExpression
+                ├── Operation: '%'
+                ├── Type
+                │   ├── category: 'basic'
+                │   └── descriptor: 'int'
+                ├── Lhs
+                │   └── IntegerConstant: '10'
+                │       └── Type
+                │           ├── category: 'basic'
+                │           └── descriptor: 'int'
+                └── Rhs
+                    └── IntegerConstant: '3'
+                        └── Type
+                            ├── category: 'basic'
+                            └── descriptor: 'int'
+
+@endtest

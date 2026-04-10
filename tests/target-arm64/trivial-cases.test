@@ -303,3 +303,51 @@ _main:
     ret
 
 @endtest
+
+@test("It should generate target arm64 code for signed modulo")
+@given("stdin")
+int main(void) {
+    return 10 % 3;
+}
+@whenRun("./bin/cclynx", args="--emit-asm /dev/stdin")
+@expectOutput("stdout")
+.text
+.align 2
+
+.global _main
+_main:
+    stp x29, x30, [sp, -16]!
+    mov x29, sp
+    mov w9, #10
+    mov w10, #3
+    sdiv w11, w9, w10
+    msub w12, w11, w10, w9
+    mov w0, w12
+    ldp x29, x30, [sp], #16
+    ret
+
+@endtest
+
+@test("It should generate target arm64 code for unsigned modulo")
+@given("stdin")
+unsigned int main(void) {
+    return 10u % 3u;
+}
+@whenRun("./bin/cclynx", args="--emit-asm --no-warnings /dev/stdin")
+@expectOutput("stdout")
+.text
+.align 2
+
+.global _main
+_main:
+    stp x29, x30, [sp, -16]!
+    mov x29, sp
+    mov w9, #10
+    mov w10, #3
+    udiv w11, w9, w10
+    msub w12, w11, w10, w9
+    mov w0, w12
+    ldp x29, x30, [sp], #16
+    ret
+
+@endtest

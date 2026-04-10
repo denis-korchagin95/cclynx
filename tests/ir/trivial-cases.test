@@ -321,3 +321,43 @@ OP_RETURN t3
 OP_FUNC_END
 
 @endtest
+
+@test("It should generate OP_MOD for signed int modulo")
+@given("stdin")
+int main(void) {
+    int x;
+    x = 10;
+    return x % 3;
+}
+@whenRun("./bin/cclynx", args="--emit-ir --no-warnings /dev/stdin")
+@expectOutput("stdout")
+OP_FUNC "main"
+OP_CONST 10, t1
+OP_STORE x, t1
+OP_LOAD x, t2
+OP_CONST 3, t3
+OP_MOD t2, t3, t4
+OP_RETURN t4
+OP_FUNC_END
+
+@endtest
+
+@test("It should generate OP_UNSIGNED_MOD for unsigned int modulo")
+@given("stdin")
+unsigned int main(void) {
+    unsigned int x;
+    x = 10u;
+    return x % 3u;
+}
+@whenRun("./bin/cclynx", args="--emit-ir --no-warnings /dev/stdin")
+@expectOutput("stdout")
+OP_FUNC "main"
+OP_CONST 10, t1
+OP_STORE x, t1
+OP_LOAD x, t2
+OP_CONST 3, t3
+OP_UNSIGNED_MOD t2, t3, t4
+OP_RETURN t4
+OP_FUNC_END
+
+@endtest

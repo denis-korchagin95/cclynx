@@ -247,6 +247,22 @@ void target_arm64_generate(struct codegen_context * ctx, struct ir_program * pro
                     push_reg(ctx, result_reg);
                 }
                 break;
+            case OP_MOD:
+            case OP_UNSIGNED_MOD:
+                {
+                    struct codegen_reg * op2_reg = pop_reg(ctx);
+                    struct codegen_reg * op1_reg = pop_reg(ctx);
+                    struct codegen_reg * quotient_reg = alloc_reg(ctx, CODEGEN_REG_KIND_INTEGER);
+                    struct codegen_reg * result_reg = alloc_reg(ctx, CODEGEN_REG_KIND_INTEGER);
+                    const char * div_op = instruction->code == OP_UNSIGNED_MOD ? "udiv" : "sdiv";
+                    fprintf(file, "    %s %s, %s, %s\n", div_op, quotient_reg->name, op1_reg->name, op2_reg->name);
+                    fprintf(file, "    msub %s, %s, %s, %s\n", result_reg->name, quotient_reg->name, op2_reg->name, op1_reg->name);
+                    free_reg(op1_reg);
+                    free_reg(op2_reg);
+                    free_reg(quotient_reg);
+                    push_reg(ctx, result_reg);
+                }
+                break;
             case OP_SUB:
                 {
                     struct codegen_reg * op2_reg = pop_reg(ctx);

@@ -263,6 +263,7 @@ void do_print_ast(const struct ast_node * ast, FILE * file, int depth, unsigned 
                     case BINARY_OPERATION_SUBTRACTION:  op_str = "-";  break;
                     case BINARY_OPERATION_MULTIPLY:     op_str = "*";  break;
                     case BINARY_OPERATION_DIVIDE:       op_str = "/";  break;
+                    case BINARY_OPERATION_MODULO:       op_str = "%";  break;
                     default:
                         cclynx_fatal_error("ERROR: unknown binary operation\n");
                 }
@@ -468,6 +469,14 @@ void print_ir_program(const struct ir_program * program, FILE * file)
             case OP_UNSIGNED_DIV:
                 snprintf(buf, sizeof(buf), "t%llu, t%llu, t%llu", instruction->op1->content.temp_id, instruction->op2->content.temp_id, instruction->result->content.temp_id);
                 fprintf(file, "OP_UNSIGNED_DIV %s\n", buf);
+                break;
+            case OP_MOD:
+                snprintf(buf, sizeof(buf), "t%llu, t%llu, t%llu", instruction->op1->content.temp_id, instruction->op2->content.temp_id, instruction->result->content.temp_id);
+                fprintf(file, "OP_MOD %s\n", buf);
+                break;
+            case OP_UNSIGNED_MOD:
+                snprintf(buf, sizeof(buf), "t%llu, t%llu, t%llu", instruction->op1->content.temp_id, instruction->op2->content.temp_id, instruction->result->content.temp_id);
+                fprintf(file, "OP_UNSIGNED_MOD %s\n", buf);
                 break;
             case OP_CONST:
                 {

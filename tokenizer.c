@@ -174,6 +174,7 @@ void tokenizer_get_one_token(struct tokenizer_context * ctx, struct source * sou
             case '+':
             case '-':
             case '*':
+            case '%':
             case '(':
             case ')':
             case '{':

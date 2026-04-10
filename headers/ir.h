@@ -66,6 +66,8 @@ enum opcode
     OP_MUL,
     OP_DIV,
     OP_UNSIGNED_DIV,
+    OP_MOD,
+    OP_UNSIGNED_MOD,
     OP_SUB,
     OP_NEG,
     OP_LOGICAL_NOT,
