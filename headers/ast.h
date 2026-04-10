@@ -36,6 +36,7 @@ enum ast_node_kind
 enum unary_operation
 {
     UNARY_OPERATION_NEGATE = 1,
+    UNARY_OPERATION_LOGICAL_NOT,
 };
 
 enum iteration_operation

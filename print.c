@@ -234,10 +234,15 @@ void do_print_ast(const struct ast_node * ast, FILE * file, int depth, unsigned 
             break;
         case AST_NODE_KIND_UNARY_EXPRESSION:
             {
+                const char * unary_op_str = "";
+                switch (ast->content.unary_expression.operation) {
+                    case UNARY_OPERATION_NEGATE:      unary_op_str = "-"; break;
+                    case UNARY_OPERATION_LOGICAL_NOT: unary_op_str = "!"; break;
+                }
                 fprintf(file, "UnaryExpression\n");
                 ancestors_info[depth] = 2;
                 print_tree_connector(file, depth, ancestors_info);
-                fprintf(file, "Operation: '-'\n");
+                fprintf(file, "Operation: '%s'\n", unary_op_str);
                 print_type_child(file, depth, ancestors_info, ast->type, 1);
                 ancestors_info[depth] = 0;
                 print_tree_connector(file, depth, ancestors_info);
@@ -452,6 +457,9 @@ void print_ir_program(const struct ir_program * program, FILE * file)
                 break;
             case OP_NEG:
                 fprintf(file, "OP_NEG t%llu, t%llu\n", instruction->op1->content.temp_id, instruction->result->content.temp_id);
+                break;
+            case OP_LOGICAL_NOT:
+                fprintf(file, "OP_LOGICAL_NOT t%llu, t%llu\n", instruction->op1->content.temp_id, instruction->result->content.temp_id);
                 break;
             case OP_DIV:
                 snprintf(buf, sizeof(buf), "t%llu, t%llu, t%llu", instruction->op1->content.temp_id, instruction->op2->content.temp_id, instruction->result->content.temp_id);

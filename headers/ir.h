@@ -68,6 +68,7 @@ enum opcode
     OP_UNSIGNED_DIV,
     OP_SUB,
     OP_NEG,
+    OP_LOGICAL_NOT,
     OP_CALL,
     OP_ARG,
     OP_STORE_PARAM,

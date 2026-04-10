@@ -1031,6 +1031,17 @@ struct ast_node * parse_unary_expression(struct parser_context * ctx)
         return negate;
     }
 
+    if (token_is_punctuator(parser_peek_token(ctx), '!')) {
+        (void)parser_get_token(ctx);
+
+        struct ast_node * primary = parse_primary_expression(ctx);
+
+        struct ast_node * logical_not = ast_create_node(ctx->pool, AST_NODE_KIND_UNARY_EXPRESSION, primary->type);
+        logical_not->content.unary_expression.operation = UNARY_OPERATION_LOGICAL_NOT;
+        logical_not->content.unary_expression.operand = primary;
+        return logical_not;
+    }
+
     return parse_primary_expression(ctx);
 }
 

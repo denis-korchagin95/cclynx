@@ -99,3 +99,60 @@ TranslationUnit: 'stdin'
                             └── descriptor: 'unsigned int'
 
 @endtest
+
+@test("It should parse an unary logical not for unsigned numbers")
+@given("stdin")
+unsigned int main(void)
+{
+    return !1u;
+}
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings /dev/stdin")
+@expectOutput("stdout")
+TranslationUnit: 'stdin'
+└── FunctionDefinition: 'main' <no-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'unsigned int'
+    └── CompoundStatement
+        └── JumpStatement
+            ├── Operation: 'return'
+            └── UnaryExpression
+                ├── Operation: '!'
+                ├── Type
+                │   ├── category: 'basic'
+                │   └── descriptor: 'unsigned int'
+                └── Operand
+                    └── IntegerConstant: '1'
+                        └── Type
+                            ├── category: 'basic'
+                            └── descriptor: 'unsigned int'
+
+@endtest
+
+@test("It should parse an unary logical not")
+@given("stdin")
+int main(void)
+{
+    !0;
+}
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings /dev/stdin")
+@expectOutput("stdout")
+TranslationUnit: 'stdin'
+└── FunctionDefinition: 'main' <no-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        └── ExpressionStatement
+            └── UnaryExpression
+                ├── Operation: '!'
+                ├── Type
+                │   ├── category: 'basic'
+                │   └── descriptor: 'int'
+                └── Operand
+                    └── IntegerConstant: '0'
+                        └── Type
+                            ├── category: 'basic'
+                            └── descriptor: 'int'
+
+@endtest

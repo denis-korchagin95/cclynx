@@ -333,6 +333,9 @@ void do_generate_ir(struct ir_context * ctx, struct ir_program * program, const 
                     case UNARY_OPERATION_NEGATE:
                         instruction->code = OP_NEG;
                         break;
+                    case UNARY_OPERATION_LOGICAL_NOT:
+                        instruction->code = OP_LOGICAL_NOT;
+                        break;
                     default:
                         cclynx_fatal_error("ERROR: unknown unary operation\n");
                 }

@@ -267,6 +267,16 @@ void target_arm64_generate(struct codegen_context * ctx, struct ir_program * pro
                     push_reg(ctx, result_reg);
                 }
                 break;
+            case OP_LOGICAL_NOT:
+                {
+                    struct codegen_reg * op1_reg = pop_reg(ctx);
+                    struct codegen_reg * result_reg = alloc_reg(ctx, CODEGEN_REG_KIND_INTEGER);
+                    fprintf(file, "    cmp %s, #0\n", op1_reg->name);
+                    fprintf(file, "    cset %s, eq\n", result_reg->name);
+                    free_reg(op1_reg);
+                    push_reg(ctx, result_reg);
+                }
+                break;
             case OP_ADD:
                 {
                     struct codegen_reg * op2_reg = pop_reg(ctx);
