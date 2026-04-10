@@ -305,6 +305,28 @@ int main() {
 
 @endtest
 
+@test("It should raise a duplicate type specifier error for 'int int'")
+@given("stdin")
+int int foo() {
+    return 0;
+}
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings /dev/stdin")
+@expectOutput("stderr")
+{{any}}:1:5: ERROR: duplicate type specifier 'int'
+
+@endtest
+
+@test("It should raise a duplicate type specifier error for 'void void'")
+@given("stdin")
+void void foo() {
+    return;
+}
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings /dev/stdin")
+@expectOutput("stderr")
+{{any}}:1:6: ERROR: duplicate type specifier 'void'
+
+@endtest
+
 @test("It should raise a mixed types error for 'int void'")
 @given("stdin")
 int void foo() {

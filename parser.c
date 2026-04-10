@@ -1262,7 +1262,19 @@ void parse_declaration_specifiers(struct parser_context * ctx, struct declaratio
             case KEYWORD_VOID:
             case KEYWORD_INT:
                 if (specifiers->type_kind != TYPE_KIND_UNDEFINED) {
-                    parser_report_error(ctx, current_token, "mixed types");
+                    if (
+                        specifiers->type_kind == TYPE_KIND_VOID
+                        && current_token->identifier->keyword_code == KEYWORD_VOID
+                    ) {
+                        parser_report_error(ctx, current_token, "duplicate type specifier 'void'");
+                    } else if (
+                        specifiers->type_kind == TYPE_KIND_INTEGER
+                        && current_token->identifier->keyword_code == KEYWORD_INT
+                    ) {
+                        parser_report_error(ctx, current_token, "duplicate type specifier 'int'");
+                    } else {
+                        parser_report_error(ctx, current_token, "mixed types");
+                    }
                     current_token = parser_get_token(ctx);
                     continue;
                 }
