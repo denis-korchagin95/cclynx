@@ -1036,7 +1036,7 @@ struct ast_node * parse_unary_expression(struct parser_context * ctx)
 
         struct ast_node * primary = parse_primary_expression(ctx);
 
-        struct ast_node * logical_not = ast_create_node(ctx->pool, AST_NODE_KIND_UNARY_EXPRESSION, primary->type);
+        struct ast_node * logical_not = ast_create_node(ctx->pool, AST_NODE_KIND_UNARY_EXPRESSION, &type_sint32);
         logical_not->content.unary_expression.operation = UNARY_OPERATION_LOGICAL_NOT;
         logical_not->content.unary_expression.operand = primary;
         return logical_not;

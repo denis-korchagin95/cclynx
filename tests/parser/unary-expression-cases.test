@@ -116,16 +116,20 @@ TranslationUnit: 'stdin'
     └── CompoundStatement
         └── JumpStatement
             ├── Operation: 'return'
-            └── UnaryExpression
-                ├── Operation: '!'
+            └── CastExpression
                 ├── Type
                 │   ├── category: 'basic'
                 │   └── descriptor: 'unsigned int'
-                └── Operand
-                    └── IntegerConstant: '1'
-                        └── Type
-                            ├── category: 'basic'
-                            └── descriptor: 'unsigned int'
+                └── UnaryExpression
+                    ├── Operation: '!'
+                    ├── Type
+                    │   ├── category: 'basic'
+                    │   └── descriptor: 'int'
+                    └── Operand
+                        └── IntegerConstant: '1'
+                            └── Type
+                                ├── category: 'basic'
+                                └── descriptor: 'unsigned int'
 
 @endtest
 
