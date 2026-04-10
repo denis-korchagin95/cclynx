@@ -160,3 +160,73 @@ TranslationUnit: 'stdin'
                             └── descriptor: 'int'
 
 @endtest
+
+@test("It should parse a double unary logical not")
+@given("stdin")
+int main(void)
+{
+    return !!5;
+}
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings /dev/stdin")
+@expectOutput("stdout")
+TranslationUnit: 'stdin'
+└── FunctionDefinition: 'main' <no-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        └── JumpStatement
+            ├── Operation: 'return'
+            └── UnaryExpression
+                ├── Operation: '!'
+                ├── Type
+                │   ├── category: 'basic'
+                │   └── descriptor: 'int'
+                └── Operand
+                    └── UnaryExpression
+                        ├── Operation: '!'
+                        ├── Type
+                        │   ├── category: 'basic'
+                        │   └── descriptor: 'int'
+                        └── Operand
+                            └── IntegerConstant: '5'
+                                └── Type
+                                    ├── category: 'basic'
+                                    └── descriptor: 'int'
+
+@endtest
+
+@test("It should parse an unary logical not of a negation")
+@given("stdin")
+int main(void)
+{
+    return !-5;
+}
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings /dev/stdin")
+@expectOutput("stdout")
+TranslationUnit: 'stdin'
+└── FunctionDefinition: 'main' <no-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        └── JumpStatement
+            ├── Operation: 'return'
+            └── UnaryExpression
+                ├── Operation: '!'
+                ├── Type
+                │   ├── category: 'basic'
+                │   └── descriptor: 'int'
+                └── Operand
+                    └── UnaryExpression
+                        ├── Operation: '-'
+                        ├── Type
+                        │   ├── category: 'basic'
+                        │   └── descriptor: 'int'
+                        └── Operand
+                            └── IntegerConstant: '5'
+                                └── Type
+                                    ├── category: 'basic'
+                                    └── descriptor: 'int'
+
+@endtest

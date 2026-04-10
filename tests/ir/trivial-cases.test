@@ -305,3 +305,19 @@ OP_RETURN t2
 OP_FUNC_END
 
 @endtest
+
+@test("It should generate IR code for a double unary logical not")
+@given("stdin")
+int main(void) {
+    return !!5;
+}
+@whenRun("./bin/cclynx", args="--emit-ir /dev/stdin")
+@expectOutput("stdout")
+OP_FUNC "main"
+OP_CONST 5, t1
+OP_LOGICAL_NOT t1, t2
+OP_LOGICAL_NOT t2, t3
+OP_RETURN t3
+OP_FUNC_END
+
+@endtest

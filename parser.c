@@ -1023,7 +1023,7 @@ struct ast_node * parse_unary_expression(struct parser_context * ctx)
     if (token_is_punctuator(parser_peek_token(ctx), '-')) {
         (void)parser_get_token(ctx);
 
-        struct ast_node * primary = parse_primary_expression(ctx);
+        struct ast_node * primary = parse_unary_expression(ctx);
 
         struct ast_node * negate = ast_create_node(ctx->pool, AST_NODE_KIND_UNARY_EXPRESSION, primary->type);
         negate->content.unary_expression.operation = UNARY_OPERATION_NEGATE;
@@ -1034,7 +1034,7 @@ struct ast_node * parse_unary_expression(struct parser_context * ctx)
     if (token_is_punctuator(parser_peek_token(ctx), '!')) {
         (void)parser_get_token(ctx);
 
-        struct ast_node * primary = parse_primary_expression(ctx);
+        struct ast_node * primary = parse_unary_expression(ctx);
 
         struct ast_node * logical_not = ast_create_node(ctx->pool, AST_NODE_KIND_UNARY_EXPRESSION, &type_sint32);
         logical_not->content.unary_expression.operation = UNARY_OPERATION_LOGICAL_NOT;
