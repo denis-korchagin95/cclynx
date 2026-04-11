@@ -19,6 +19,15 @@ static const struct codegen_reg initial_regs[CODEGEN_REG_COUNT] = {
     { "w15", CODEGEN_REG_KIND_INTEGER,   0, },
 };
 
+struct simulator_context
+{
+    unsigned int live_regs;
+    unsigned int stack_pos;
+    unsigned int stack_spilled_count;
+    unsigned int max_spilled_live;
+    unsigned char stack_is_spill[CODEGEN_REG_STACK_SIZE];
+};
+
 static void op_const(struct codegen_context * ctx, FILE * output, struct ir_operand * op1);
 static void op_load(struct codegen_context * ctx, FILE * output, struct ir_operand * op1);
 
@@ -29,19 +38,27 @@ static void push_reg(struct codegen_context * ctx, struct codegen_reg * reg)
     if (ctx->reg_stack_pos >= CODEGEN_REG_STACK_SIZE) {
         cclynx_fatal_error("ERROR: reg stack overflow for target arm64 generator\n");
     }
-    ctx->reg_stack[ctx->reg_stack_pos++] = reg;
+    struct codegen_stack_entry * entry = &ctx->reg_stack[ctx->reg_stack_pos++];
+    entry->kind = CODEGEN_STACK_ENTRY_REAL;
+    entry->content.reg = reg;
 }
 
-static struct codegen_reg * pop_reg(struct codegen_context * ctx)
+static unsigned int alloc_spill_slot(struct codegen_context * ctx)
 {
-    assert(ctx != NULL);
-    if (ctx->reg_stack_pos <= 0) {
-        cclynx_fatal_error("ERROR: reg stack underflow for target arm64 generator\n");
+    for (unsigned int i = 0; i < ctx->current_func_max_spills; ++i) {
+        if (!ctx->spill_slot_used[i]) {
+            ctx->spill_slot_used[i] = 1;
+            return i;
+        }
     }
-    struct codegen_reg * reg = ctx->reg_stack[ctx->reg_stack_pos - 1];
-    ctx->reg_stack[ctx->reg_stack_pos - 1] = NULL;
-    --ctx->reg_stack_pos;
-    return reg;
+    cclynx_fatal_error("ERROR: out of spill slots\n");
+}
+
+static void free_spill_slot(struct codegen_context * ctx, unsigned int slot)
+{
+    assert(slot < ctx->current_func_max_spills);
+    assert(ctx->spill_slot_used[slot]);
+    ctx->spill_slot_used[slot] = 0;
 }
 
 static struct codegen_reg * alloc_reg(struct codegen_context * ctx, enum codegen_reg_kind kind)
@@ -55,7 +72,47 @@ static struct codegen_reg * alloc_reg(struct codegen_context * ctx, enum codegen
         }
     }
 
+    for (unsigned int k = 0; k < ctx->reg_stack_pos; ++k) {
+        struct codegen_stack_entry * entry = &ctx->reg_stack[k];
+        if (entry->kind != CODEGEN_STACK_ENTRY_REAL) {
+            continue;
+        }
+        struct codegen_reg * victim = entry->content.reg;
+        if (victim->kind != kind) {
+            continue;
+        }
+        unsigned int slot = alloc_spill_slot(ctx);
+        size_t offset = ctx->current_func_locals_size + slot * 4;
+        fprintf(ctx->output, "    str %s, [sp, #%zu]\n", victim->name, offset);
+        entry->kind = CODEGEN_STACK_ENTRY_SPILLED;
+        entry->content.spill_slot = slot;
+        victim->busy = 1;
+        return victim;
+    }
+
     cclynx_fatal_error("ERROR: too many registers\n");
+}
+
+static struct codegen_reg * pop_reg(struct codegen_context * ctx)
+{
+    assert(ctx != NULL);
+    if (ctx->reg_stack_pos <= 0) {
+        cclynx_fatal_error("ERROR: reg stack underflow for target arm64 generator\n");
+    }
+    struct codegen_stack_entry * entry = &ctx->reg_stack[ctx->reg_stack_pos - 1];
+    if (entry->kind == CODEGEN_STACK_ENTRY_REAL) {
+        struct codegen_reg * reg = entry->content.reg;
+        entry->content.reg = NULL;
+        --ctx->reg_stack_pos;
+        return reg;
+    }
+    unsigned int slot = entry->content.spill_slot;
+    --ctx->reg_stack_pos;
+    struct codegen_reg * reg = alloc_reg(ctx, CODEGEN_REG_KIND_INTEGER);
+    size_t offset = ctx->current_func_locals_size + slot * 4;
+    fprintf(ctx->output, "    ldr %s, [sp, #%zu]\n", reg->name, offset);
+    free_spill_slot(ctx, slot);
+    return reg;
 }
 
 static void free_reg(struct codegen_reg * reg)
@@ -63,6 +120,138 @@ static void free_reg(struct codegen_reg * reg)
     assert(reg != NULL);
 
     reg->busy = 0;
+}
+
+static void simulator_alloc(struct simulator_context * ctx)
+{
+    assert(ctx != NULL);
+    if (ctx->live_regs < CODEGEN_REG_COUNT) {
+        ctx->live_regs++;
+        return;
+    }
+    for (unsigned int k = 0; k < ctx->stack_pos; ++k) {
+        if (!ctx->stack_is_spill[k]) {
+            ctx->stack_is_spill[k] = 1;
+            ctx->stack_spilled_count++;
+            if (ctx->stack_spilled_count > ctx->max_spilled_live) {
+                ctx->max_spilled_live = ctx->stack_spilled_count;
+            }
+            return;
+        }
+    }
+    cclynx_fatal_error("ERROR: simulator cannot allocate register\n");
+}
+
+static void simulator_free(struct simulator_context * ctx)
+{
+    assert(ctx != NULL);
+    assert(ctx->live_regs > 0);
+    ctx->live_regs--;
+}
+
+static void simulator_push(struct simulator_context * ctx)
+{
+    assert(ctx != NULL);
+    if (ctx->stack_pos >= CODEGEN_REG_STACK_SIZE) {
+        cclynx_fatal_error("ERROR: simulator reg stack overflow\n");
+    }
+    ctx->stack_is_spill[ctx->stack_pos++] = 0;
+}
+
+static void simulator_pop(struct simulator_context * ctx)
+{
+    assert(ctx != NULL);
+    assert(ctx->stack_pos > 0);
+    ctx->stack_pos--;
+    if (ctx->stack_is_spill[ctx->stack_pos]) {
+        ctx->stack_spilled_count--;
+        simulator_alloc(ctx);
+    }
+}
+
+static unsigned int simulator_compute_max_spills(struct ir_program * program, size_t func_pos)
+{
+    assert(program != NULL);
+    struct simulator_context ctx;
+    memset(&ctx, 0, sizeof(ctx));
+
+    for (size_t i = func_pos + 1; i < program->position; ++i) {
+        struct ir_instruction * ins = program->instructions[i];
+        switch (ins->code) {
+            case OP_FUNC_END:
+                return ctx.max_spilled_live;
+            case OP_LABEL:
+            case OP_JUMP:
+            case OP_NOP:
+            case OP_STORE_PARAM:
+                break;
+            case OP_CONST:
+            case OP_LOAD:
+                simulator_alloc(&ctx);
+                simulator_push(&ctx);
+                break;
+            case OP_STORE:
+            case OP_JUMP_IF_FALSE:
+            case OP_ARG:
+                simulator_pop(&ctx);
+                simulator_free(&ctx);
+                break;
+            case OP_JUMP_IF_EQ:
+            case OP_JUMP_IF_NE:
+            case OP_JUMP_IF_LTE:
+            case OP_JUMP_IF_GTE:
+                simulator_pop(&ctx);
+                simulator_pop(&ctx);
+                simulator_free(&ctx);
+                simulator_free(&ctx);
+                break;
+            case OP_ADD:
+            case OP_SUB:
+            case OP_MUL:
+            case OP_DIV:
+            case OP_LT:
+            case OP_GT:
+            case OP_EQ:
+            case OP_NE:
+                simulator_pop(&ctx);
+                simulator_pop(&ctx);
+                simulator_alloc(&ctx);
+                simulator_free(&ctx);
+                simulator_free(&ctx);
+                simulator_push(&ctx);
+                break;
+            case OP_MOD:
+                simulator_pop(&ctx);
+                simulator_pop(&ctx);
+                simulator_alloc(&ctx);
+                simulator_alloc(&ctx);
+                simulator_free(&ctx);
+                simulator_free(&ctx);
+                simulator_free(&ctx);
+                simulator_push(&ctx);
+                break;
+            case OP_NEG:
+            case OP_LOGICAL_NOT:
+                simulator_pop(&ctx);
+                simulator_alloc(&ctx);
+                simulator_free(&ctx);
+                simulator_push(&ctx);
+                break;
+            case OP_RETURN:
+                if (ins->op1 != NULL) {
+                    simulator_pop(&ctx);
+                    simulator_free(&ctx);
+                }
+                break;
+            case OP_CALL:
+                simulator_alloc(&ctx);
+                simulator_push(&ctx);
+                break;
+            default:
+                break;
+        }
+    }
+    return ctx.max_spilled_live;
 }
 
 void codegen_context_init(struct codegen_context * ctx)
@@ -79,6 +268,8 @@ void target_arm64_generate(struct codegen_context * ctx, struct ir_program * pro
     assert(file != NULL);
     assert(program->position > 0);
 
+    ctx->output = file;
+
     fprintf(file, ".text\n");
     fprintf(file, ".align 2\n");
     fprintf(file, "\n");
@@ -94,12 +285,18 @@ void target_arm64_generate(struct codegen_context * ctx, struct ir_program * pro
                 fprintf(file, "    b .L%llu\n", instruction->op1->content.label_id);
                 break;
             case OP_FUNC:
-                fprintf(file, ".global _%s\n", instruction->result->content.function.identifier->name);
-                fprintf(file, "_%s:\n", instruction->result->content.function.identifier->name);
-                fprintf(file, "    stp x29, x30, [sp, -16]!\n");
-                fprintf(file, "    mov x29, sp\n");
-                if (instruction->result->content.function.local_vars_size > 0) {
-                    fprintf(file, "    sub sp, sp, #%zu\n", align_up(instruction->result->content.function.local_vars_size, 16));
+                {
+                    ctx->current_func_max_spills = simulator_compute_max_spills(program, i);
+                    ctx->current_func_locals_size = instruction->result->content.function.local_vars_size;
+                    memset(ctx->spill_slot_used, 0, sizeof(ctx->spill_slot_used));
+                    size_t frame_size = align_up(ctx->current_func_locals_size + ctx->current_func_max_spills * 4, 16);
+                    fprintf(file, ".global _%s\n", instruction->result->content.function.identifier->name);
+                    fprintf(file, "_%s:\n", instruction->result->content.function.identifier->name);
+                    fprintf(file, "    stp x29, x30, [sp, -16]!\n");
+                    fprintf(file, "    mov x29, sp\n");
+                    if (frame_size > 0) {
+                        fprintf(file, "    sub sp, sp, #%zu\n", frame_size);
+                    }
                 }
                 break;
             case OP_FUNC_END:
@@ -306,8 +503,10 @@ void target_arm64_generate(struct codegen_context * ctx, struct ir_program * pro
                         free_reg(result_reg);
                     }
 
-                    if (instruction->result->content.function.local_vars_size > 0) {
-                        fprintf(file, "    add sp, sp, #%zu\n", align_up(instruction->result->content.function.local_vars_size, 16));
+                    size_t locals = instruction->result->content.function.local_vars_size;
+                    size_t frame_size = align_up(locals + ctx->current_func_max_spills * 4, 16);
+                    if (frame_size > 0) {
+                        fprintf(file, "    add sp, sp, #%zu\n", frame_size);
                     }
                     fprintf(file, "    ldp x29, x30, [sp], #16\n");
                     fprintf(file, "    ret\n");
@@ -330,21 +529,36 @@ void target_arm64_generate(struct codegen_context * ctx, struct ir_program * pro
                 break;
             case OP_CALL:
                 {
-                    size_t saved_active_reg_count = ctx->reg_stack_pos;
-                    size_t spill_memory_size = align_up(saved_active_reg_count * 4, 16);
+                    size_t saved_real_count = 0;
+                    for (size_t j = 0; j < ctx->reg_stack_pos; ++j) {
+                        if (ctx->reg_stack[j].kind == CODEGEN_STACK_ENTRY_REAL) {
+                            saved_real_count++;
+                        }
+                    }
+                    size_t spill_memory_size = align_up(saved_real_count * 4, 16);
 
-                    if (saved_active_reg_count > 0) {
+                    if (saved_real_count > 0) {
                         fprintf(file, "    sub sp, sp, #%zu\n", spill_memory_size);
-                        for (size_t j = 0; j < saved_active_reg_count; ++j) {
-                            fprintf(file, "    str %s, [sp, #%zu]\n", ctx->reg_stack[j]->name, j * 4);
+                        size_t k = 0;
+                        for (size_t j = 0; j < ctx->reg_stack_pos; ++j) {
+                            if (ctx->reg_stack[j].kind != CODEGEN_STACK_ENTRY_REAL) {
+                                continue;
+                            }
+                            fprintf(file, "    str %s, [sp, #%zu]\n", ctx->reg_stack[j].content.reg->name, k * 4);
+                            k++;
                         }
                     }
 
                     fprintf(file, "    bl _%s\n", instruction->op1->content.function.identifier->name);
 
-                    if (saved_active_reg_count > 0) {
-                        for (size_t j = 0; j < saved_active_reg_count; ++j) {
-                            fprintf(file, "    ldr %s, [sp, #%zu]\n", ctx->reg_stack[j]->name, j * 4);
+                    if (saved_real_count > 0) {
+                        size_t k = 0;
+                        for (size_t j = 0; j < ctx->reg_stack_pos; ++j) {
+                            if (ctx->reg_stack[j].kind != CODEGEN_STACK_ENTRY_REAL) {
+                                continue;
+                            }
+                            fprintf(file, "    ldr %s, [sp, #%zu]\n", ctx->reg_stack[j].content.reg->name, k * 4);
+                            k++;
                         }
                         fprintf(file, "    add sp, sp, #%zu\n", spill_memory_size);
                     }

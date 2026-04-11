@@ -20,11 +20,30 @@ struct codegen_reg
     unsigned int busy;
 };
 
+enum codegen_stack_entry_kind
+{
+    CODEGEN_STACK_ENTRY_REAL = 0,
+    CODEGEN_STACK_ENTRY_SPILLED,
+};
+
+struct codegen_stack_entry
+{
+    enum codegen_stack_entry_kind kind;
+    union {
+        struct codegen_reg * reg;
+        unsigned int spill_slot;
+    } content;
+};
+
 struct codegen_context
 {
     struct codegen_reg regs[CODEGEN_REG_COUNT];
-    struct codegen_reg * reg_stack[CODEGEN_REG_STACK_SIZE];
+    struct codegen_stack_entry reg_stack[CODEGEN_REG_STACK_SIZE];
     unsigned int reg_stack_pos;
+    unsigned int current_func_max_spills;
+    size_t current_func_locals_size;
+    unsigned char spill_slot_used[CODEGEN_REG_STACK_SIZE];
+    FILE * output;
     char buf[CODEGEN_BUF_SIZE];
 };
 
