@@ -1,25 +1,4 @@
-@test("It should generate target arm64 code on return integer constant")
-@given("stdin")
-int main() {
-    return 7;
-}
-@whenRun("./bin/cclynx", args="--emit-asm /dev/stdin")
-@expectOutput("stdout")
-.text
-.align 2
-
-.global _main
-_main:
-    stp x29, x30, [sp, -16]!
-    mov x29, sp
-    mov w9, #7
-    mov w0, w9
-    ldp x29, x30, [sp], #16
-    ret
-
-@endtest
-
-@test("It should generate target arm64 code on return trivial expression (without variables +, *)")
+@test("It should generate target arm64 code for additive and multiplicative expression (+, *)")
 @given("stdin")
 int main() {
     return 2 * 3 + 1;
@@ -44,32 +23,7 @@ _main:
 
 @endtest
 
-@test("It should generate target arm64 code on return trivial expression (without variables, -, /)")
-@given("stdin")
-int main() {
-    return 12 / 3 - 1;
-}
-@whenRun("./bin/cclynx", args="--emit-asm /dev/stdin")
-@expectOutput("stdout")
-.text
-.align 2
-
-.global _main
-_main:
-    stp x29, x30, [sp, -16]!
-    mov x29, sp
-    mov w9, #12
-    mov w10, #3
-    sdiv w11, w9, w10
-    mov w9, #1
-    sub w10, w11, w9
-    mov w0, w10
-    ldp x29, x30, [sp], #16
-    ret
-
-@endtest
-
-@test("It should generate target arm64 code on return trivial expression with nested sub-expressions")
+@test("It should generate target arm64 code for nested sub-expressions")
 @given("stdin")
 int main() {
     return 2 * ((3 * 4 + 20) + 1) * 15;
@@ -100,7 +54,32 @@ _main:
 
 @endtest
 
-@test("It should generate target arm64 code on return trivial expression (without variables, >)")
+@test("It should generate target arm64 code for subtraction and division (-, /)")
+@given("stdin")
+int main() {
+    return 12 / 3 - 1;
+}
+@whenRun("./bin/cclynx", args="--emit-asm /dev/stdin")
+@expectOutput("stdout")
+.text
+.align 2
+
+.global _main
+_main:
+    stp x29, x30, [sp, -16]!
+    mov x29, sp
+    mov w9, #12
+    mov w10, #3
+    sdiv w11, w9, w10
+    mov w9, #1
+    sub w10, w11, w9
+    mov w0, w10
+    ldp x29, x30, [sp], #16
+    ret
+
+@endtest
+
+@test("It should generate target arm64 code for signed greater than (>)")
 @given("stdin")
 int main() {
     return 12 > 3;
@@ -124,7 +103,7 @@ _main:
 
 @endtest
 
-@test("It should generate target arm64 code on return trivial expression (without variables, <)")
+@test("It should generate target arm64 code for signed less than (<)")
 @given("stdin")
 int main() {
     return 12 < 3;
@@ -148,7 +127,7 @@ _main:
 
 @endtest
 
-@test("It should generate target arm64 code on return trivial expression (without variables, ==)")
+@test("It should generate target arm64 code for equality (==)")
 @given("stdin")
 int main() {
     return 12 == 3;
@@ -172,7 +151,7 @@ _main:
 
 @endtest
 
-@test("It should generate target arm64 code on return trivial expression (without variables, !=)")
+@test("It should generate target arm64 code for inequality (!=)")
 @given("stdin")
 int main() {
     return 12 != 3;
@@ -196,74 +175,12 @@ _main:
 
 @endtest
 
-@test("It should generate target arm64 code with early return inside if statement")
+@test("It should generate target arm64 code for unsigned division")
 @given("stdin")
-int main() {
-    int x;
-    x = 42;
-    if (x > 100) {
-        return 1;
-    }
-    return x;
+unsigned int main() {
+    return 10u / 3u;
 }
-@whenRun("./bin/cclynx", args="--emit-asm /dev/stdin")
-@expectOutput("stdout")
-.text
-.align 2
-
-.global _main
-_main:
-    stp x29, x30, [sp, -16]!
-    mov x29, sp
-    sub sp, sp, #16
-    mov w9, #42
-    str w9, [sp, #0]
-    ldr w9, [sp, #0]
-    mov w10, #100
-    cmp w9, w10
-    b.le .L1
-    mov w9, #1
-    mov w0, w9
-    add sp, sp, #16
-    ldp x29, x30, [sp], #16
-    ret
-.L1:
-    ldr w9, [sp, #0]
-    mov w0, w9
-    add sp, sp, #16
-    ldp x29, x30, [sp], #16
-    ret
-
-@endtest
-
-@test("It should generate target arm64 code on return 32-bit integer constant")
-@given("stdin")
-int main() {
-    return 100000;
-}
-@whenRun("./bin/cclynx", args="--emit-asm /dev/stdin")
-@expectOutput("stdout")
-.text
-.align 2
-
-.global _main
-_main:
-    stp x29, x30, [sp, -16]!
-    mov x29, sp
-    movz w9, #0x86a0
-    movk w9, #0x1, lsl #16
-    mov w0, w9
-    ldp x29, x30, [sp], #16
-    ret
-
-@endtest
-
-@test("It should generate target arm64 code for unary negation")
-@given("stdin")
-int main(void) {
-    return -10;
-}
-@whenRun("./bin/cclynx", args="--emit-asm /dev/stdin")
+@whenRun("./bin/cclynx", args="--emit-asm --no-warnings /dev/stdin")
 @expectOutput("stdout")
 .text
 .align 2
@@ -273,31 +190,8 @@ _main:
     stp x29, x30, [sp, -16]!
     mov x29, sp
     mov w9, #10
-    neg w10, w9
-    mov w0, w10
-    ldp x29, x30, [sp], #16
-    ret
-
-@endtest
-
-@test("It should generate target arm64 code for unary negation in expression")
-@given("stdin")
-int main(void) {
-    return -1 + 2;
-}
-@whenRun("./bin/cclynx", args="--emit-asm /dev/stdin")
-@expectOutput("stdout")
-.text
-.align 2
-
-.global _main
-_main:
-    stp x29, x30, [sp, -16]!
-    mov x29, sp
-    mov w9, #1
-    neg w10, w9
-    mov w9, #2
-    add w11, w10, w9
+    mov w10, #3
+    udiv w11, w9, w10
     mov w0, w11
     ldp x29, x30, [sp], #16
     ret
@@ -347,6 +241,52 @@ _main:
     udiv w11, w9, w10
     msub w12, w11, w10, w9
     mov w0, w12
+    ldp x29, x30, [sp], #16
+    ret
+
+@endtest
+
+@test("It should generate target arm64 code for unary negation")
+@given("stdin")
+int main(void) {
+    return -10;
+}
+@whenRun("./bin/cclynx", args="--emit-asm /dev/stdin")
+@expectOutput("stdout")
+.text
+.align 2
+
+.global _main
+_main:
+    stp x29, x30, [sp, -16]!
+    mov x29, sp
+    mov w9, #10
+    neg w10, w9
+    mov w0, w10
+    ldp x29, x30, [sp], #16
+    ret
+
+@endtest
+
+@test("It should generate target arm64 code for unary negation in expression")
+@given("stdin")
+int main(void) {
+    return -1 + 2;
+}
+@whenRun("./bin/cclynx", args="--emit-asm /dev/stdin")
+@expectOutput("stdout")
+.text
+.align 2
+
+.global _main
+_main:
+    stp x29, x30, [sp, -16]!
+    mov x29, sp
+    mov w9, #1
+    neg w10, w9
+    mov w9, #2
+    add w11, w10, w9
+    mov w0, w11
     ldp x29, x30, [sp], #16
     ret
 

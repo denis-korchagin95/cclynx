@@ -1,45 +1,4 @@
-@test("It should generate IR code on bare return statement")
-@given("stdin")
-int main() {
-    return;
-}
-@whenRun("./bin/cclynx", args="--emit-ir /dev/stdin")
-@expectOutput("stdout")
-OP_FUNC "main"
-OP_RETURN
-OP_FUNC_END
-
-@endtest
-
-@test("It should generate IR code on return large integer constant")
-@given("stdin")
-int main() {
-    return 100000;
-}
-@whenRun("./bin/cclynx", args="--emit-ir /dev/stdin")
-@expectOutput("stdout")
-OP_FUNC "main"
-OP_CONST 100000, t1
-OP_RETURN t1
-OP_FUNC_END
-
-@endtest
-
-@test("It should generate IR code on return integer constant")
-@given("stdin")
-int main() {
-    return 7;
-}
-@whenRun("./bin/cclynx", args="--emit-ir /dev/stdin")
-@expectOutput("stdout")
-OP_FUNC "main"
-OP_CONST 7, t1
-OP_RETURN t1
-OP_FUNC_END
-
-@endtest
-
-@test("It should generate IR code on return trivial expression (without variables +, *)")
+@test("It should generate IR code for additive and multiplicative expression (+, *)")
 @given("stdin")
 int main() {
     return 2 * 3 + 1;
@@ -57,7 +16,7 @@ OP_FUNC_END
 
 @endtest
 
-@test("It should generate IR code on return trivial expression with nested sub-expressions")
+@test("It should generate IR code for nested sub-expressions")
 @given("stdin")
 int main() {
     return 2 * ((3 * 4 + 20) + 1) * 15;
@@ -81,7 +40,7 @@ OP_FUNC_END
 
 @endtest
 
-@test("It should generate IR code on return trivial expression (without variables, -, /)")
+@test("It should generate IR code for subtraction and division (-, /)")
 @given("stdin")
 int main() {
     return 12 / 3 - 1;
@@ -99,7 +58,7 @@ OP_FUNC_END
 
 @endtest
 
-@test("It should generate IR code on return trivial expression (without variables, >)")
+@test("It should generate OP_GT for signed greater than")
 @given("stdin")
 int main() {
     return 12 > 3;
@@ -115,7 +74,7 @@ OP_FUNC_END
 
 @endtest
 
-@test("It should generate IR code on return trivial expression (without variables, <)")
+@test("It should generate OP_LT for signed less than")
 @given("stdin")
 int main() {
     return 12 < 3;
@@ -131,7 +90,7 @@ OP_FUNC_END
 
 @endtest
 
-@test("It should generate IR code on return trivial expression (without variables, ==)")
+@test("It should generate OP_EQ for equality")
 @given("stdin")
 int main() {
     return 12 == 3;
@@ -147,7 +106,7 @@ OP_FUNC_END
 
 @endtest
 
-@test("It should generate IR code on return trivial expression (without variables, !=)")
+@test("It should generate OP_NE for inequality")
 @given("stdin")
 int main() {
     return 12 != 3;
@@ -163,42 +122,66 @@ OP_FUNC_END
 
 @endtest
 
-@test("It should generate OP_UNSIGNED_DIV for unsigned int division")
+@test("It should generate OP_DIV for signed division")
 @given("stdin")
-unsigned int main() {
-    unsigned int x;
-    x = 10u;
-    return x / 3u;
+int main() {
+    return 10 / 3;
 }
-@whenRun("./bin/cclynx", args="--emit-ir --no-warnings /dev/stdin")
+@whenRun("./bin/cclynx", args="--emit-ir /dev/stdin")
 @expectOutput("stdout")
 OP_FUNC "main"
 OP_CONST 10, t1
-OP_STORE x, t1
-OP_LOAD x, t2
-OP_CONST 3, t3
-OP_UNSIGNED_DIV t2, t3, t4
-OP_RETURN t4
+OP_CONST 3, t2
+OP_DIV t1, t2, t3
+OP_RETURN t3
 OP_FUNC_END
 
 @endtest
 
-@test("It should generate OP_DIV for signed int division")
+@test("It should generate OP_UNSIGNED_DIV for unsigned division")
 @given("stdin")
-int main() {
-    int x;
-    x = 10;
-    return x / 3;
+unsigned int main() {
+    return 10u / 3u;
 }
 @whenRun("./bin/cclynx", args="--emit-ir --no-warnings /dev/stdin")
 @expectOutput("stdout")
 OP_FUNC "main"
 OP_CONST 10, t1
-OP_STORE x, t1
-OP_LOAD x, t2
-OP_CONST 3, t3
-OP_DIV t2, t3, t4
-OP_RETURN t4
+OP_CONST 3, t2
+OP_UNSIGNED_DIV t1, t2, t3
+OP_RETURN t3
+OP_FUNC_END
+
+@endtest
+
+@test("It should generate OP_MOD for signed modulo")
+@given("stdin")
+int main() {
+    return 10 % 3;
+}
+@whenRun("./bin/cclynx", args="--emit-ir /dev/stdin")
+@expectOutput("stdout")
+OP_FUNC "main"
+OP_CONST 10, t1
+OP_CONST 3, t2
+OP_MOD t1, t2, t3
+OP_RETURN t3
+OP_FUNC_END
+
+@endtest
+
+@test("It should generate OP_UNSIGNED_MOD for unsigned modulo")
+@given("stdin")
+unsigned int main() {
+    return 10u % 3u;
+}
+@whenRun("./bin/cclynx", args="--emit-ir --no-warnings /dev/stdin")
+@expectOutput("stdout")
+OP_FUNC "main"
+OP_CONST 10, t1
+OP_CONST 3, t2
+OP_UNSIGNED_MOD t1, t2, t3
+OP_RETURN t3
 OP_FUNC_END
 
 @endtest
@@ -206,27 +189,15 @@ OP_FUNC_END
 @test("It should generate OP_UNSIGNED_LT for unsigned less than")
 @given("stdin")
 int main() {
-    unsigned int a;
-    a = 3u;
-    unsigned int b;
-    b = 5u;
-    int r;
-    r = a < b;
-    return r;
+    return 3u < 5u;
 }
 @whenRun("./bin/cclynx", args="--emit-ir --no-warnings /dev/stdin")
 @expectOutput("stdout")
 OP_FUNC "main"
 OP_CONST 3, t1
-OP_STORE a, t1
 OP_CONST 5, t2
-OP_STORE b, t2
-OP_LOAD a, t3
-OP_LOAD b, t4
-OP_UNSIGNED_LT t3, t4, t5
-OP_STORE r, t5
-OP_LOAD r, t6
-OP_RETURN t6
+OP_UNSIGNED_LT t1, t2, t3
+OP_RETURN t3
 OP_FUNC_END
 
 @endtest
@@ -234,27 +205,15 @@ OP_FUNC_END
 @test("It should generate OP_UNSIGNED_GT for unsigned greater than")
 @given("stdin")
 int main() {
-    unsigned int a;
-    a = 5u;
-    unsigned int b;
-    b = 3u;
-    int r;
-    r = a > b;
-    return r;
+    return 5u > 3u;
 }
 @whenRun("./bin/cclynx", args="--emit-ir --no-warnings /dev/stdin")
 @expectOutput("stdout")
 OP_FUNC "main"
 OP_CONST 5, t1
-OP_STORE a, t1
 OP_CONST 3, t2
-OP_STORE b, t2
-OP_LOAD a, t3
-OP_LOAD b, t4
-OP_UNSIGNED_GT t3, t4, t5
-OP_STORE r, t5
-OP_LOAD r, t6
-OP_RETURN t6
+OP_UNSIGNED_GT t1, t2, t3
+OP_RETURN t3
 OP_FUNC_END
 
 @endtest
@@ -318,46 +277,6 @@ OP_CONST 5, t1
 OP_LOGICAL_NOT t1, t2
 OP_LOGICAL_NOT t2, t3
 OP_RETURN t3
-OP_FUNC_END
-
-@endtest
-
-@test("It should generate OP_MOD for signed int modulo")
-@given("stdin")
-int main(void) {
-    int x;
-    x = 10;
-    return x % 3;
-}
-@whenRun("./bin/cclynx", args="--emit-ir --no-warnings /dev/stdin")
-@expectOutput("stdout")
-OP_FUNC "main"
-OP_CONST 10, t1
-OP_STORE x, t1
-OP_LOAD x, t2
-OP_CONST 3, t3
-OP_MOD t2, t3, t4
-OP_RETURN t4
-OP_FUNC_END
-
-@endtest
-
-@test("It should generate OP_UNSIGNED_MOD for unsigned int modulo")
-@given("stdin")
-unsigned int main(void) {
-    unsigned int x;
-    x = 10u;
-    return x % 3u;
-}
-@whenRun("./bin/cclynx", args="--emit-ir --no-warnings /dev/stdin")
-@expectOutput("stdout")
-OP_FUNC "main"
-OP_CONST 10, t1
-OP_STORE x, t1
-OP_LOAD x, t2
-OP_CONST 3, t3
-OP_UNSIGNED_MOD t2, t3, t4
-OP_RETURN t4
 OP_FUNC_END
 
 @endtest

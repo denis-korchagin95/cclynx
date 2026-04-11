@@ -1,0 +1,40 @@
+@test("It should generate IR code on bare return statement")
+@given("stdin")
+int main() {
+    return;
+}
+@whenRun("./bin/cclynx", args="--emit-ir /dev/stdin")
+@expectOutput("stdout")
+OP_FUNC "main"
+OP_RETURN
+OP_FUNC_END
+
+@endtest
+
+@test("It should generate IR code on return integer constant")
+@given("stdin")
+int main() {
+    return 7;
+}
+@whenRun("./bin/cclynx", args="--emit-ir /dev/stdin")
+@expectOutput("stdout")
+OP_FUNC "main"
+OP_CONST 7, t1
+OP_RETURN t1
+OP_FUNC_END
+
+@endtest
+
+@test("It should generate IR code on return large integer constant")
+@given("stdin")
+int main() {
+    return 100000;
+}
+@whenRun("./bin/cclynx", args="--emit-ir /dev/stdin")
+@expectOutput("stdout")
+OP_FUNC "main"
+OP_CONST 100000, t1
+OP_RETURN t1
+OP_FUNC_END
+
+@endtest

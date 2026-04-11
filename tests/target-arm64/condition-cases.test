@@ -492,3 +492,43 @@ _main:
     ret
 
 @endtest
+
+@test("It should generate target arm64 code with early return inside if statement")
+@given("stdin")
+int main() {
+    int x;
+    x = 42;
+    if (x > 100) {
+        return 1;
+    }
+    return x;
+}
+@whenRun("./bin/cclynx", args="--emit-asm /dev/stdin")
+@expectOutput("stdout")
+.text
+.align 2
+
+.global _main
+_main:
+    stp x29, x30, [sp, -16]!
+    mov x29, sp
+    sub sp, sp, #16
+    mov w9, #42
+    str w9, [sp, #0]
+    ldr w9, [sp, #0]
+    mov w10, #100
+    cmp w9, w10
+    b.le .L1
+    mov w9, #1
+    mov w0, w9
+    add sp, sp, #16
+    ldp x29, x30, [sp], #16
+    ret
+.L1:
+    ldr w9, [sp, #0]
+    mov w0, w9
+    add sp, sp, #16
+    ldp x29, x30, [sp], #16
+    ret
+
+@endtest
