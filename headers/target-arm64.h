@@ -3,7 +3,7 @@
 
 #include <stdio.h>
 
-#define CODEGEN_REG_COUNT (15)
+#define CODEGEN_REG_COUNT (7)
 #define CODEGEN_REG_STACK_SIZE (16)
 #define CODEGEN_BUF_SIZE (1024)
 struct ir_program;
