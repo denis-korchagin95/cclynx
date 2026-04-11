@@ -1,0 +1,91 @@
+@test("It should tokenize one char punctuators")
+@given("stdin")
+,
++
+-
+*
+/
+%
+(
+)
+{
+}
+=
+;
+>
+<
+!
+!=
+==
+@whenRun("./bin/cclynx", args="--emit-tokens /dev/stdin")
+@expectOutput("stdout")
+<TOKEN_PUNCTUATOR ','>
+<TOKEN_PUNCTUATOR '+'>
+<TOKEN_PUNCTUATOR '-'>
+<TOKEN_PUNCTUATOR '*'>
+<TOKEN_PUNCTUATOR '/'>
+<TOKEN_PUNCTUATOR '%'>
+<TOKEN_PUNCTUATOR '('>
+<TOKEN_PUNCTUATOR ')'>
+<TOKEN_PUNCTUATOR '{'>
+<TOKEN_PUNCTUATOR '}'>
+<TOKEN_PUNCTUATOR '='>
+<TOKEN_PUNCTUATOR ';'>
+<TOKEN_PUNCTUATOR '>'>
+<TOKEN_PUNCTUATOR '<'>
+<TOKEN_PUNCTUATOR '!'>
+<TOKEN_SPECIAL_PUNCTUATOR '!='>
+<TOKEN_SPECIAL_PUNCTUATOR '=='>
+<TOKEN_EOS>
+
+@endtest
+
+@test("It should tokenize division operator when slash is not followed by slash or star")
+@given("stdin")
+int main() { return 10 / 2; }
+@whenRun("./bin/cclynx", args="--emit-tokens /dev/stdin")
+@expectOutput("stdout")
+<TOKEN_KEYWORD 'int'>
+<TOKEN_IDENTIFIER 'main'>
+<TOKEN_PUNCTUATOR '('>
+<TOKEN_PUNCTUATOR ')'>
+<TOKEN_PUNCTUATOR '{'>
+<TOKEN_KEYWORD 'return'>
+<TOKEN_NUMBER '10'>
+<TOKEN_PUNCTUATOR '/'>
+<TOKEN_NUMBER '2'>
+<TOKEN_PUNCTUATOR ';'>
+<TOKEN_PUNCTUATOR '}'>
+<TOKEN_EOS>
+
+@endtest
+
+@test("It should tokenize unknown characters")
+@given("stdin")
+@
+#
+$
+?
+@whenRun("./bin/cclynx", args="--emit-tokens /dev/stdin")
+@expectOutput("stdout")
+<TOKEN_UNKNOWN_CHARACTER '@'>
+<TOKEN_UNKNOWN_CHARACTER '#'>
+<TOKEN_UNKNOWN_CHARACTER '$'>
+<TOKEN_UNKNOWN_CHARACTER '?'>
+<TOKEN_EOS>
+
+@endtest
+
+@test("It should tokenize an unknown character between valid tokens")
+@given("stdin")
+int x; @ ;
+@whenRun("./bin/cclynx", args="--emit-tokens /dev/stdin")
+@expectOutput("stdout")
+<TOKEN_KEYWORD 'int'>
+<TOKEN_IDENTIFIER 'x'>
+<TOKEN_PUNCTUATOR ';'>
+<TOKEN_UNKNOWN_CHARACTER '@'>
+<TOKEN_PUNCTUATOR ';'>
+<TOKEN_EOS>
+
+@endtest

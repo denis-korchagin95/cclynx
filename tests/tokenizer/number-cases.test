@@ -1,0 +1,82 @@
+@test("It should tokenize int numbers")
+@given("stdin")
+0
+1
+2
+10
+777
+10000780
+@whenRun("./bin/cclynx", args="--emit-tokens /dev/stdin")
+@expectOutput("stdout")
+<TOKEN_NUMBER '0'>
+<TOKEN_NUMBER '1'>
+<TOKEN_NUMBER '2'>
+<TOKEN_NUMBER '10'>
+<TOKEN_NUMBER '777'>
+<TOKEN_NUMBER '10000780'>
+<TOKEN_EOS>
+
+@endtest
+
+@test("It should tokenize unsigned int numbers")
+@given("stdin")
+0u
+1U
+42u
+10000780U
+@whenRun("./bin/cclynx", args="--emit-tokens /dev/stdin")
+@expectOutput("stdout")
+<TOKEN_NUMBER '0u'>
+<TOKEN_NUMBER '1U'>
+<TOKEN_NUMBER '42u'>
+<TOKEN_NUMBER '10000780U'>
+<TOKEN_EOS>
+
+@endtest
+
+@test("It should treat a dot followed by a digit as a float literal")
+@given("stdin")
+.5
+@whenRun("./bin/cclynx", args="--emit-tokens /dev/stdin")
+@expectOutput("stderr")
+ERROR: float literals are not supported
+
+@endtest
+
+@test("It should treat '.0' as a float literal")
+@given("stdin")
+.0
+@whenRun("./bin/cclynx", args="--emit-tokens /dev/stdin")
+@expectOutput("stderr")
+ERROR: float literals are not supported
+
+@endtest
+
+@test("It should raise a float literal error on integer followed by fraction")
+@given("stdin")
+1.5
+@whenRun("./bin/cclynx", args="--emit-tokens /dev/stdin")
+@expectOutput("stderr")
+ERROR: float literals are not supported
+
+@endtest
+
+@test("It should raise a float literal error on '42.0'")
+@given("stdin")
+42.0
+@whenRun("./bin/cclynx", args="--emit-tokens /dev/stdin")
+@expectOutput("stderr")
+ERROR: float literals are not supported
+
+@endtest
+
+@test("It should treat a dot followed by an identifier as an unknown character")
+@given("stdin")
+.abc
+@whenRun("./bin/cclynx", args="--emit-tokens /dev/stdin")
+@expectOutput("stdout")
+<TOKEN_UNKNOWN_CHARACTER '.'>
+<TOKEN_IDENTIFIER 'abc'>
+<TOKEN_EOS>
+
+@endtest

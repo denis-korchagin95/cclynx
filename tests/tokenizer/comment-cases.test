@@ -67,22 +67,3 @@ ERROR: unterminated comment
 
 @endtest
 
-@test("It should tokenize division operator when slash is not followed by slash or star")
-@given("stdin")
-int main() { return 10 / 2; }
-@whenRun("./bin/cclynx", args="--emit-tokens /dev/stdin")
-@expectOutput("stdout")
-<TOKEN_KEYWORD 'int'>
-<TOKEN_IDENTIFIER 'main'>
-<TOKEN_PUNCTUATOR '('>
-<TOKEN_PUNCTUATOR ')'>
-<TOKEN_PUNCTUATOR '{'>
-<TOKEN_KEYWORD 'return'>
-<TOKEN_NUMBER '10'>
-<TOKEN_PUNCTUATOR '/'>
-<TOKEN_NUMBER '2'>
-<TOKEN_PUNCTUATOR ';'>
-<TOKEN_PUNCTUATOR '}'>
-<TOKEN_EOS>
-
-@endtest

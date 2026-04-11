@@ -1,0 +1,25 @@
+@test("It should tokenize keywords")
+@given("stdin")
+int
+return
+while
+if
+else
+unsigned
+signed
+break
+continue
+@whenRun("./bin/cclynx", args="--emit-tokens /dev/stdin")
+@expectOutput("stdout")
+<TOKEN_KEYWORD 'int'>
+<TOKEN_KEYWORD 'return'>
+<TOKEN_KEYWORD 'while'>
+<TOKEN_KEYWORD 'if'>
+<TOKEN_KEYWORD 'else'>
+<TOKEN_KEYWORD 'unsigned'>
+<TOKEN_KEYWORD 'signed'>
+<TOKEN_KEYWORD 'break'>
+<TOKEN_KEYWORD 'continue'>
+<TOKEN_EOS>
+
+@endtest

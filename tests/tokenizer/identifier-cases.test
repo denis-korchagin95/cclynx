@@ -1,0 +1,17 @@
+@test("It should tokenize identifiers")
+@given("stdin")
+a
+name
+super_cool_name
+superVar1
+superVar_2
+@whenRun("./bin/cclynx", args="--emit-tokens /dev/stdin")
+@expectOutput("stdout")
+<TOKEN_IDENTIFIER 'a'>
+<TOKEN_IDENTIFIER 'name'>
+<TOKEN_IDENTIFIER 'super_cool_name'>
+<TOKEN_IDENTIFIER 'superVar1'>
+<TOKEN_IDENTIFIER 'superVar_2'>
+<TOKEN_EOS>
+
+@endtest
