@@ -234,7 +234,7 @@ OP_FUNC_END
 @endtest
 
 
-@test("It should generate OP_JUMP_IF_UNSIGNED_GTE for unsigned less than in while")
+@test("It should generate OP_JUMP_IF_GTE for unsigned less than in while")
 @given("stdin")
 int main() {
     unsigned int x;
@@ -252,7 +252,7 @@ OP_STORE x, t1
 OP_LABEL ".L1"
 OP_LOAD x, t2
 OP_CONST 3, t3
-OP_JUMP_IF_UNSIGNED_GTE t2, t3, ".L2"
+OP_JUMP_IF_GTE t2, t3, ".L2"
 OP_LOAD x, t4
 OP_CONST 1, t5
 OP_ADD t4, t5, t6
@@ -303,7 +303,7 @@ OP_FUNC_END
 
 @endtest
 
-@test("It should generate OP_JUMP_IF_UNSIGNED_LTE for unsigned greater than in while")
+@test("It should generate OP_JUMP_IF_LTE for unsigned greater than in while")
 @given("stdin")
 int main() {
     unsigned int x;
@@ -321,7 +321,7 @@ OP_STORE x, t1
 OP_LABEL ".L1"
 OP_LOAD x, t2
 OP_CONST 0, t3
-OP_JUMP_IF_UNSIGNED_LTE t2, t3, ".L2"
+OP_JUMP_IF_LTE t2, t3, ".L2"
 OP_LOAD x, t4
 OP_CONST 1, t5
 OP_SUB t4, t5, t6

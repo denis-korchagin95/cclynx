@@ -142,11 +142,10 @@ void target_arm64_generate(struct codegen_context * ctx, struct ir_program * pro
                 }
                 break;
             case OP_JUMP_IF_LTE:
-            case OP_JUMP_IF_UNSIGNED_LTE:
                 {
                     struct codegen_reg * op2_reg = pop_reg(ctx);
                     struct codegen_reg * op1_reg = pop_reg(ctx);
-                    const char * cond = instruction->code == OP_JUMP_IF_UNSIGNED_LTE ? "b.ls" : "b.le";
+                    const char * cond = type_is_unsigned(instruction->op1->type) ? "b.ls" : "b.le";
                     fprintf(file, "    cmp %s, %s\n", op1_reg->name, op2_reg->name);
                     fprintf(file, "    %s .L%llu\n", cond, instruction->result->content.label_id);
                     free_reg(op1_reg);
@@ -154,11 +153,10 @@ void target_arm64_generate(struct codegen_context * ctx, struct ir_program * pro
                 }
                 break;
             case OP_JUMP_IF_GTE:
-            case OP_JUMP_IF_UNSIGNED_GTE:
                 {
                     struct codegen_reg * op2_reg = pop_reg(ctx);
                     struct codegen_reg * op1_reg = pop_reg(ctx);
-                    const char * cond = instruction->code == OP_JUMP_IF_UNSIGNED_GTE ? "b.hs" : "b.ge";
+                    const char * cond = type_is_unsigned(instruction->op1->type) ? "b.hs" : "b.ge";
                     fprintf(file, "    cmp %s, %s\n", op1_reg->name, op2_reg->name);
                     fprintf(file, "    %s .L%llu\n", cond, instruction->result->content.label_id);
                     free_reg(op1_reg);
@@ -166,12 +164,11 @@ void target_arm64_generate(struct codegen_context * ctx, struct ir_program * pro
                 }
                 break;
             case OP_GT:
-            case OP_UNSIGNED_GT:
                 {
                     struct codegen_reg * op2_reg = pop_reg(ctx);
                     struct codegen_reg * op1_reg = pop_reg(ctx);
                     struct codegen_reg * result_reg = alloc_reg(ctx, CODEGEN_REG_KIND_INTEGER);
-                    const char * cond = instruction->code == OP_UNSIGNED_GT ? "hi" : "gt";
+                    const char * cond = type_is_unsigned(instruction->op1->type) ? "hi" : "gt";
                     fprintf(file, "    cmp %s, %s\n", op1_reg->name, op2_reg->name);
                     fprintf(file, "    cset %s, %s\n", result_reg->name, cond);
                     free_reg(op1_reg);
@@ -180,12 +177,11 @@ void target_arm64_generate(struct codegen_context * ctx, struct ir_program * pro
                 }
                 break;
             case OP_LT:
-            case OP_UNSIGNED_LT:
                 {
                     struct codegen_reg * op2_reg = pop_reg(ctx);
                     struct codegen_reg * op1_reg = pop_reg(ctx);
                     struct codegen_reg * result_reg = alloc_reg(ctx, CODEGEN_REG_KIND_INTEGER);
-                    const char * cond = instruction->code == OP_UNSIGNED_LT ? "lo" : "lt";
+                    const char * cond = type_is_unsigned(instruction->op1->type) ? "lo" : "lt";
                     fprintf(file, "    cmp %s, %s\n", op1_reg->name, op2_reg->name);
                     fprintf(file, "    cset %s, %s\n", result_reg->name, cond);
                     free_reg(op1_reg);
@@ -235,12 +231,11 @@ void target_arm64_generate(struct codegen_context * ctx, struct ir_program * pro
                 }
                 break;
             case OP_DIV:
-            case OP_UNSIGNED_DIV:
                 {
                     struct codegen_reg * op2_reg = pop_reg(ctx);
                     struct codegen_reg * op1_reg = pop_reg(ctx);
                     struct codegen_reg * result_reg = alloc_reg(ctx, CODEGEN_REG_KIND_INTEGER);
-                    const char * op = instruction->code == OP_UNSIGNED_DIV ? "udiv" : "sdiv";
+                    const char * op = type_is_unsigned(instruction->result->type) ? "udiv" : "sdiv";
                     fprintf(file, "    %s %s, %s, %s\n", op, result_reg->name, op1_reg->name, op2_reg->name);
                     free_reg(op1_reg);
                     free_reg(op2_reg);
@@ -248,13 +243,12 @@ void target_arm64_generate(struct codegen_context * ctx, struct ir_program * pro
                 }
                 break;
             case OP_MOD:
-            case OP_UNSIGNED_MOD:
                 {
                     struct codegen_reg * op2_reg = pop_reg(ctx);
                     struct codegen_reg * op1_reg = pop_reg(ctx);
                     struct codegen_reg * quotient_reg = alloc_reg(ctx, CODEGEN_REG_KIND_INTEGER);
                     struct codegen_reg * result_reg = alloc_reg(ctx, CODEGEN_REG_KIND_INTEGER);
-                    const char * div_op = instruction->code == OP_UNSIGNED_MOD ? "udiv" : "sdiv";
+                    const char * div_op = type_is_unsigned(instruction->result->type) ? "udiv" : "sdiv";
                     fprintf(file, "    %s %s, %s, %s\n", div_op, quotient_reg->name, op1_reg->name, op2_reg->name);
                     fprintf(file, "    msub %s, %s, %s, %s\n", result_reg->name, quotient_reg->name, op2_reg->name, op1_reg->name);
                     free_reg(op1_reg);

@@ -138,7 +138,7 @@ OP_FUNC_END
 
 @endtest
 
-@test("It should generate OP_UNSIGNED_DIV for unsigned division")
+@test("It should generate OP_DIV for unsigned division")
 @given("stdin")
 unsigned int main() {
     return 10u / 3u;
@@ -148,7 +148,7 @@ unsigned int main() {
 OP_FUNC "main"
 OP_CONST 10, t1
 OP_CONST 3, t2
-OP_UNSIGNED_DIV t1, t2, t3
+OP_DIV t1, t2, t3
 OP_RETURN t3
 OP_FUNC_END
 
@@ -170,7 +170,7 @@ OP_FUNC_END
 
 @endtest
 
-@test("It should generate OP_UNSIGNED_MOD for unsigned modulo")
+@test("It should generate OP_MOD for unsigned modulo")
 @given("stdin")
 unsigned int main() {
     return 10u % 3u;
@@ -180,13 +180,13 @@ unsigned int main() {
 OP_FUNC "main"
 OP_CONST 10, t1
 OP_CONST 3, t2
-OP_UNSIGNED_MOD t1, t2, t3
+OP_MOD t1, t2, t3
 OP_RETURN t3
 OP_FUNC_END
 
 @endtest
 
-@test("It should generate OP_UNSIGNED_LT for unsigned less than")
+@test("It should generate OP_LT for unsigned less than")
 @given("stdin")
 int main() {
     return 3u < 5u;
@@ -196,13 +196,13 @@ int main() {
 OP_FUNC "main"
 OP_CONST 3, t1
 OP_CONST 5, t2
-OP_UNSIGNED_LT t1, t2, t3
+OP_LT t1, t2, t3
 OP_RETURN t3
 OP_FUNC_END
 
 @endtest
 
-@test("It should generate OP_UNSIGNED_GT for unsigned greater than")
+@test("It should generate OP_GT for unsigned greater than")
 @given("stdin")
 int main() {
     return 5u > 3u;
@@ -212,7 +212,7 @@ int main() {
 OP_FUNC "main"
 OP_CONST 5, t1
 OP_CONST 3, t2
-OP_UNSIGNED_GT t1, t2, t3
+OP_GT t1, t2, t3
 OP_RETURN t3
 OP_FUNC_END
 

@@ -240,6 +240,7 @@ void do_generate_ir(struct ir_context * ctx, struct ir_program * program, const 
                 instruction->op1 = variable;
 
                 instruction->result = new_temporary_operand(ctx);
+                instruction->result->type = node->type;
 
                 ir_emit(program, instruction);
             }
@@ -290,10 +291,10 @@ void do_generate_ir(struct ir_context * ctx, struct ir_program * program, const 
                         instruction->code = OP_MUL;
                         break;
                     case BINARY_OPERATION_DIVIDE:
-                        instruction->code = type_is_unsigned(node->type) ? OP_UNSIGNED_DIV : OP_DIV;
+                        instruction->code = OP_DIV;
                         break;
                     case BINARY_OPERATION_MODULO:
-                        instruction->code = type_is_unsigned(node->type) ? OP_UNSIGNED_MOD : OP_MOD;
+                        instruction->code = OP_MOD;
                         break;
                     case BINARY_OPERATION_EQUALITY:
                         instruction->code = OP_EQ;
@@ -302,10 +303,10 @@ void do_generate_ir(struct ir_context * ctx, struct ir_program * program, const 
                         instruction->code = OP_NE;
                         break;
                     case BINARY_OPERATION_LESS_THAN:
-                        instruction->code = type_is_unsigned(node->type) ? OP_UNSIGNED_LT : OP_LT;
+                        instruction->code = OP_LT;
                         break;
                     case BINARY_OPERATION_GREATER_THAN:
-                        instruction->code = type_is_unsigned(node->type) ? OP_UNSIGNED_GT : OP_GT;
+                        instruction->code = OP_GT;
                         break;
                     case BINARY_OPERATION_ADDITION:
                         instruction->code = OP_ADD;
@@ -324,6 +325,7 @@ void do_generate_ir(struct ir_context * ctx, struct ir_program * program, const 
                 instruction->op2 = program->instructions[program->position - 1]->result;
 
                 instruction->result = new_temporary_operand(ctx);
+                instruction->result->type = node->type;
 
                 ir_emit(program, instruction);
             }
@@ -347,6 +349,7 @@ void do_generate_ir(struct ir_context * ctx, struct ir_program * program, const 
                 instruction->op1 = program->instructions[program->position - 1]->result;
 
                 instruction->result = new_temporary_operand(ctx);
+                instruction->result->type = node->type;
 
                 ir_emit(program, instruction);
             }
@@ -415,6 +418,7 @@ void do_generate_ir(struct ir_context * ctx, struct ir_program * program, const 
 
                 instruction->op1 = constant;
                 instruction->result = new_temporary_operand(ctx);
+                instruction->result->type = node->type;
 
                 ir_emit(program, instruction);
             }
@@ -516,8 +520,7 @@ void ir_generate_condition(struct ir_context * ctx, struct ir_program * program,
         do_generate_ir(ctx, program, condition->content.binary_expression.rhs);
         op2 = program->instructions[program->position - 1]->result;
 
-        enum opcode jump_op = type_is_unsigned(condition->type) ? OP_JUMP_IF_UNSIGNED_GTE : OP_JUMP_IF_GTE;
-        struct ir_instruction * instruction = ir_create_instruction(ctx, jump_op);
+        struct ir_instruction * instruction = ir_create_instruction(ctx, OP_JUMP_IF_GTE);
         instruction->op1 = op1;
         instruction->op2 = op2;
         instruction->result = jump_label;
@@ -532,8 +535,7 @@ void ir_generate_condition(struct ir_context * ctx, struct ir_program * program,
         do_generate_ir(ctx, program, condition->content.binary_expression.rhs);
         op2 = program->instructions[program->position - 1]->result;
 
-        enum opcode jump_op = type_is_unsigned(condition->type) ? OP_JUMP_IF_UNSIGNED_LTE : OP_JUMP_IF_LTE;
-        struct ir_instruction * instruction = ir_create_instruction(ctx, jump_op);
+        struct ir_instruction * instruction = ir_create_instruction(ctx, OP_JUMP_IF_LTE);
         instruction->op1 = op1;
         instruction->op2 = op2;
         instruction->result = jump_label;
