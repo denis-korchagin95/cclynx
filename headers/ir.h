@@ -4,6 +4,7 @@
 #include <stddef.h>
 
 #define IR_INITIAL_INSTRUCTION_CAPACITY (256)
+#define IR_INITIAL_FUNCTION_CAPACITY (16)
 
 struct type;
 struct ast_node;
@@ -78,11 +79,20 @@ struct ir_instruction
     enum opcode code;
 };
 
-struct ir_program
+struct ir_function
 {
     struct ir_instruction ** instructions;
-    size_t position;
-    size_t capacity;
+    size_t instruction_count;
+    size_t instruction_capacity;
+};
+
+#define ir_last_instruction(func) ((func)->instructions[(func)->instruction_count - 1])
+
+struct ir_program
+{
+    struct ir_function ** functions;
+    size_t function_count;
+    size_t function_capacity;
 };
 
 struct ir_context

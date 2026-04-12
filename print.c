@@ -370,12 +370,15 @@ void print_ir_program(const struct ir_program * program, FILE * file)
 {
     assert(program != NULL);
     assert(file != NULL);
-    assert(program->position > 0);
+    assert(program->function_count > 0);
 
     static char buf[1024] = {'\0'};
 
-    for (size_t idx = 0; idx < program->position; ++idx) {
-        struct ir_instruction * instruction = program->instructions[idx];
+    for (size_t func_idx = 0; func_idx < program->function_count; ++func_idx) {
+        struct ir_function * func = program->functions[func_idx];
+
+    for (size_t idx = 0; idx < func->instruction_count; ++idx) {
+        struct ir_instruction * instruction = func->instructions[idx];
 
         switch (instruction->code) {
             case OP_JUMP_IF_EQ:
@@ -490,6 +493,11 @@ void print_ir_program(const struct ir_program * program, FILE * file)
                 break;
             default:
                 cclynx_fatal_error("ERROR(print): Unknown instruction for IR program\n");
+        }
+    }
+
+        if (func_idx + 1 < program->function_count) {
+            fprintf(file, "\n");
         }
     }
 

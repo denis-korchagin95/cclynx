@@ -169,17 +169,18 @@ static void simulator_pop(struct simulator_context * ctx)
     }
 }
 
-static unsigned int simulator_compute_max_spills(struct ir_program * program, size_t func_pos)
+static unsigned int simulator_compute_max_spills(struct ir_function * func)
 {
-    assert(program != NULL);
+    assert(func != NULL);
     struct simulator_context ctx;
     memset(&ctx, 0, sizeof(ctx));
 
-    for (size_t i = func_pos + 1; i < program->position; ++i) {
-        struct ir_instruction * ins = program->instructions[i];
+    for (size_t i = 0; i < func->instruction_count; ++i) {
+        struct ir_instruction * ins = func->instructions[i];
         switch (ins->code) {
+            case OP_FUNC:
             case OP_FUNC_END:
-                return ctx.max_spilled_live;
+                break;
             case OP_LABEL:
             case OP_JUMP:
             case OP_NOP:
@@ -266,7 +267,7 @@ void target_arm64_generate(struct codegen_context * ctx, struct ir_program * pro
     assert(ctx != NULL);
     assert(program != NULL);
     assert(file != NULL);
-    assert(program->position > 0);
+    assert(program->function_count > 0);
 
     ctx->output = file;
 
@@ -274,8 +275,11 @@ void target_arm64_generate(struct codegen_context * ctx, struct ir_program * pro
     fprintf(file, ".align 2\n");
     fprintf(file, "\n");
 
-    for (size_t i = 0; i < program->position; ++i) {
-        struct ir_instruction * instruction = program->instructions[i];
+    for (size_t func_idx = 0; func_idx < program->function_count; ++func_idx) {
+        struct ir_function * func = program->functions[func_idx];
+
+    for (size_t i = 0; i < func->instruction_count; ++i) {
+        struct ir_instruction * instruction = func->instructions[i];
 
         switch (instruction->code) {
             case OP_LABEL:
@@ -286,7 +290,7 @@ void target_arm64_generate(struct codegen_context * ctx, struct ir_program * pro
                 break;
             case OP_FUNC:
                 {
-                    ctx->current_func_max_spills = simulator_compute_max_spills(program, i);
+                    ctx->current_func_max_spills = simulator_compute_max_spills(func);
                     ctx->current_func_locals_size = instruction->result->content.function.local_vars_size;
                     memset(ctx->spill_slot_used, 0, sizeof(ctx->spill_slot_used));
                     size_t frame_size = align_up(ctx->current_func_locals_size + ctx->current_func_max_spills * 4, 16);
@@ -571,6 +575,8 @@ void target_arm64_generate(struct codegen_context * ctx, struct ir_program * pro
             default:
                 cclynx_fatal_error("ERROR: unknown instruction\n");
         }
+    }
+
     }
 
     fflush(file);
