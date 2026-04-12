@@ -82,12 +82,28 @@
 
 **Category:** signedness
 
+### sign-compare
+
+**Message:** "implicit conversion changes signedness from '<type>' to '<type>', use an explicit cast"
+
+**Trigger:** Comparison between signed and unsigned operands.
+
+**Category:** signedness
+
+### redundant-logical-not
+
+**Message:** "redundant logical negation (more than 2 chained '!' operators)"
+
+**Trigger:** Three or more chained logical-not operators (e.g. `!!!x`). Single `!` (logical not) and double `!!` (boolean cast) are accepted.
+
+**Category:** redundant
+
 
 ## Warning Modes
 
 ### Default behavior
   Tolerant mode is active by default. All warnings are enabled except those
-  in the tolerant suppression list (sign-conversion, sign-compare, etc.).
+  in the tolerant suppression list (signedness, redundant).
   This means correct C code compiles cleanly without noise.
 
 ### --no-warnings
@@ -130,4 +146,6 @@
   
   **empty-body**       : empty-compound-statement, empty-if-body, empty-else-body, empty-while-body, empty-function-body (enabled by default)
   
-  **signedness**       : sign-conversion (suppressed by default in tolerant mode, enabled by -Wall)
+  **signedness**       : sign-conversion, sign-compare (suppressed by default in tolerant mode, enabled by -Wall)
+  
+  **redundant**        : redundant-logical-not (suppressed by default in tolerant mode, enabled by -Wall)

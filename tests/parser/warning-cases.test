@@ -509,3 +509,96 @@ unsigned int foo(unsigned int x, int y) {
 {{any}}:2:18: WARNING: implicit conversion changes signedness from 'int' to 'unsigned int', use an explicit cast
 
 @endtest
+
+@test("It should not warn on single logical-not")
+@given("stdin")
+int foo(int x) {
+    return !x;
+}
+@whenRun("./bin/cclynx", args="--emit-ast /dev/stdin")
+@expectOutput("stderr")
+
+@endtest
+
+@test("It should not warn on double logical-not")
+@given("stdin")
+int foo(int x) {
+    return !!x;
+}
+@whenRun("./bin/cclynx", args="--emit-ast /dev/stdin")
+@expectOutput("stderr")
+
+@endtest
+
+@test("It should not warn on triple logical-not by default (tolerant)")
+@given("stdin")
+int foo(int x) {
+    return !!!x;
+}
+@whenRun("./bin/cclynx", args="--emit-ast /dev/stdin")
+@expectOutput("stderr")
+
+@endtest
+
+@test("It should warn on triple logical-not with -Wall")
+@given("stdin")
+int foo(int x) {
+    return !!!x;
+}
+@whenRun("./bin/cclynx", args="--emit-ast -Wall /dev/stdin")
+@expectOutput("stderr")
+{{any}}:2:12: WARNING: redundant logical negation (more than 2 chained '!' operators)
+
+@endtest
+
+@test("It should warn on quadruple logical-not with -Wall")
+@given("stdin")
+int foo(int x) {
+    return !!!!x;
+}
+@whenRun("./bin/cclynx", args="--emit-ast -Wall /dev/stdin")
+@expectOutput("stderr")
+{{any}}:2:13: WARNING: redundant logical negation (more than 2 chained '!' operators)
+
+@endtest
+
+@test("It should warn on quintuple logical-not with -Wall")
+@given("stdin")
+int foo(int x) {
+    return !!!!!x;
+}
+@whenRun("./bin/cclynx", args="--emit-ast -Wall /dev/stdin")
+@expectOutput("stderr")
+{{any}}:2:14: WARNING: redundant logical negation (more than 2 chained '!' operators)
+
+@endtest
+
+@test("It should suppress redundant-logical-not with -Wall -Wno-redundant-logical-not")
+@given("stdin")
+int foo(int x) {
+    return !!!x;
+}
+@whenRun("./bin/cclynx", args="--emit-ast -Wall -Wno-redundant-logical-not /dev/stdin")
+@expectOutput("stderr")
+
+@endtest
+
+@test("It should suppress redundant-logical-not with -Wall -Wno-redundant")
+@given("stdin")
+int foo(int x) {
+    return !!!x;
+}
+@whenRun("./bin/cclynx", args="--emit-ast -Wall -Wno-redundant /dev/stdin")
+@expectOutput("stderr")
+
+@endtest
+
+@test("It should re-suppress redundant with -Wall -Wtolerant")
+@given("stdin")
+int foo(int x) {
+    return !!!x;
+}
+@whenRun("./bin/cclynx", args="--emit-ast -Wall -Wtolerant /dev/stdin")
+@expectOutput("stderr")
+
+@endtest

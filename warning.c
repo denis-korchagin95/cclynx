@@ -20,6 +20,7 @@ static const struct warning_entry warning_table[WARNING_COUNT] = {
     [WARNING_UNSPECIFIED_PARAMETERS]   = { "unspecified-parameters",   WARNING_CATEGORY_NONE },
     [WARNING_SIGN_CONVERSION]          = { "sign-conversion",          WARNING_CATEGORY_SIGNEDNESS },
     [WARNING_SIGN_COMPARE]             = { "sign-compare",             WARNING_CATEGORY_SIGNEDNESS },
+    [WARNING_REDUNDANT_LOGICAL_NOT]    = { "redundant-logical-not",    WARNING_CATEGORY_REDUNDANT },
 };
 
 static const char * category_names[WARNING_CATEGORY_COUNT] = {
@@ -28,6 +29,7 @@ static const char * category_names[WARNING_CATEGORY_COUNT] = {
     [WARNING_CATEGORY_MISSING]    = "missing",
     [WARNING_CATEGORY_EMPTY_BODY] = "empty-body",
     [WARNING_CATEGORY_SIGNEDNESS] = "signedness",
+    [WARNING_CATEGORY_REDUNDANT]  = "redundant",
 };
 
 
@@ -56,7 +58,10 @@ void warning_disable_all(struct warning_flags * flags)
 void warning_apply_tolerant(struct warning_flags * flags)
 {
     for (int i = 0; i < WARNING_COUNT; ++i) {
-        if (warning_table[i].category == WARNING_CATEGORY_SIGNEDNESS) {
+        if (
+            warning_table[i].category == WARNING_CATEGORY_SIGNEDNESS
+            || warning_table[i].category == WARNING_CATEGORY_REDUNDANT
+        ) {
             flags->enabled[i] = false;
         }
     }

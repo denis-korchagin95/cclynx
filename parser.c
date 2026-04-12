@@ -1032,9 +1032,26 @@ struct ast_node * parse_unary_expression(struct parser_context * ctx)
     }
 
     if (token_is_punctuator(parser_peek_token(ctx), '!')) {
-        (void)parser_get_token(ctx);
+        struct token * not_token = parser_get_token(ctx);
 
         struct ast_node * primary = parse_unary_expression(ctx);
+
+        {
+            int nested_depth = 0;
+            struct ast_node * inner = primary;
+
+            while (
+                inner->kind == AST_NODE_KIND_UNARY_EXPRESSION
+                && inner->content.unary_expression.operation == UNARY_OPERATION_LOGICAL_NOT
+            ) {
+                ++nested_depth;
+                inner = inner->content.unary_expression.operand;
+            }
+
+            if (nested_depth == 2) {
+                parser_report_warning(ctx, WARNING_REDUNDANT_LOGICAL_NOT, not_token, "redundant logical negation (more than 2 chained '!' operators)");
+            }
+        }
 
         struct ast_node * logical_not = ast_create_node(ctx->pool, AST_NODE_KIND_UNARY_EXPRESSION, &type_sint32);
         logical_not->content.unary_expression.operation = UNARY_OPERATION_LOGICAL_NOT;
