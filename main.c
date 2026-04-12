@@ -64,6 +64,9 @@ int main(const int argc, const char * argv[])
 
     int exit_code = 0;
 
+    struct ir_program ir_program;
+    ir_program_init(&ir_program);
+
     struct parser_context parser_ctx;
     parser_init_context(&parser_ctx, tokens, &ctx.pool, &ctx.global_scope, source_filename);
     parser_ctx.warning_flags = warning_flags;
@@ -97,9 +100,6 @@ int main(const int argc, const char * argv[])
     struct ir_context ir_ctx;
     ir_context_init(&ir_ctx, &ctx.pool);
 
-    struct ir_program ir_program;
-    ir_program_init(&ir_program, &ctx.pool);
-
     {
         struct ast_node_list * iterator = ast->content.translation_unit.list;
         while (iterator != NULL) {
@@ -118,6 +118,7 @@ int main(const int argc, const char * argv[])
     target_arm64_generate(&codegen_ctx, &ir_program, stdout);
 
 cleanup:
+    ir_program_free(&ir_program);
     source_free(&source);
     cclynx_free(&ctx);
 

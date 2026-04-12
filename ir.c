@@ -1,5 +1,6 @@
 #include <assert.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "ir.h"
 #include "allocator.h"
@@ -24,14 +25,23 @@ void ir_context_init(struct ir_context * ctx, struct memory_blob_pool * pool)
     ctx->pool = pool;
 }
 
-void ir_program_init(struct ir_program * program, struct memory_blob_pool * pool)
+void ir_program_init(struct ir_program * program)
 {
     assert(program != NULL);
-    assert(pool != NULL);
 
-    program->capacity = INITIAL_INSTRUCTION_COUNT;
+    program->capacity = 0;
     program->position = 0;
-    program->instructions = memory_blob_pool_alloc(pool, program->capacity * sizeof(struct ir_instruction *));
+    program->instructions = NULL;
+}
+
+void ir_program_free(struct ir_program * program)
+{
+    assert(program != NULL);
+
+    free(program->instructions);
+    program->instructions = NULL;
+    program->position = 0;
+    program->capacity = 0;
 }
 
 void ir_program_generate(struct ir_context * ctx, struct ir_program * program, const struct ast_node * ast)
@@ -461,7 +471,13 @@ void ir_emit(struct ir_program * program, struct ir_instruction * instruction)
     assert(instruction != NULL);
 
     if (program->position == program->capacity) {
-        cclynx_fatal_error("ERROR: too many instructions\n");
+        size_t new_capacity = program->capacity == 0 ? IR_INITIAL_INSTRUCTION_CAPACITY : program->capacity * 2;
+        struct ir_instruction ** new_instructions = realloc(program->instructions, new_capacity * sizeof(struct ir_instruction *));
+        if (new_instructions == NULL) {
+            cclynx_fatal_error("ERROR: failed to allocate instructions\n");
+        }
+        program->instructions = new_instructions;
+        program->capacity = new_capacity;
     }
 
     program->instructions[program->position++] = instruction;

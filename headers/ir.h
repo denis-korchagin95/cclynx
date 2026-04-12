@@ -3,7 +3,7 @@
 
 #include <stddef.h>
 
-#define INITIAL_INSTRUCTION_COUNT (100000)
+#define IR_INITIAL_INSTRUCTION_CAPACITY (256)
 
 struct type;
 struct ast_node;
@@ -87,8 +87,6 @@ struct ir_program
 
 #define IR_MAX_OPERAND_COUNT (1024)
 
-struct memory_blob_pool;
-
 struct ir_context
 {
     struct memory_blob_pool * pool;
@@ -104,7 +102,8 @@ struct ir_context
 };
 
 void ir_context_init(struct ir_context * ctx, struct memory_blob_pool * pool);
-void ir_program_init(struct ir_program * program, struct memory_blob_pool * pool);
+void ir_program_init(struct ir_program * program);
+void ir_program_free(struct ir_program * program);
 void ir_program_generate(struct ir_context * ctx, struct ir_program * program, const struct ast_node * ast);
 
 #endif /* CCLYNX_IR_H */
