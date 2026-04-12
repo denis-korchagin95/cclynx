@@ -510,10 +510,7 @@ struct ir_operand * new_temporary_operand(struct ir_context * ctx)
 struct ir_operand * alloc_operand(struct ir_context * ctx)
 {
     assert(ctx != NULL);
-    if (ctx->operand_pos >= IR_MAX_OPERAND_COUNT) {
-        cclynx_fatal_error("ERROR: too many operands!\n");
-    }
-    struct ir_operand * operand = &ctx->operands[ctx->operand_pos++];
+    struct ir_operand * operand = memory_blob_pool_alloc(ctx->pool, sizeof(struct ir_operand));
     memset(operand, 0, sizeof(struct ir_operand));
     return operand;
 }

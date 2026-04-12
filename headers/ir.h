@@ -85,8 +85,6 @@ struct ir_program
     size_t capacity;
 };
 
-#define IR_MAX_OPERAND_COUNT (1024)
-
 struct ir_context
 {
     struct memory_blob_pool * pool;
@@ -97,8 +95,6 @@ struct ir_context
     struct ir_instruction * current_func;
     struct ir_operand * current_loop_start_label;
     struct ir_operand * current_loop_end_label;
-    struct ir_operand operands[IR_MAX_OPERAND_COUNT];
-    size_t operand_pos;
 };
 
 void ir_context_init(struct ir_context * ctx, struct memory_blob_pool * pool);
