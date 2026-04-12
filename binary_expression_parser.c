@@ -63,7 +63,7 @@ static struct type * cast_binary_operands(struct parser_context * ctx, enum warn
         return target_type;
     }
 
-    return type_resolve(lhs_type, rhs_type);
+    return type_check(lhs_type, rhs_type);
 }
 
 static const struct op_entry * match_operator(const struct token * token, enum binary_expression_precedence min_precedence)

@@ -24,7 +24,7 @@ const char * type_stringify(const struct type * type)
     }
 }
 
-struct type * type_resolve(struct type * lhs, const struct type * rhs)
+struct type * type_check(struct type * lhs, const struct type * rhs)
 {
     assert(lhs != NULL);
     assert(rhs != NULL);

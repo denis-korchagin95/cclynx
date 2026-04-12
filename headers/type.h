@@ -43,6 +43,6 @@ static inline int type_signedness_differs(const struct type * a, const struct ty
 }
 
 const char * type_stringify(const struct type * type);
-struct type * type_resolve(struct type * lhs, const struct type * rhs);
+struct type * type_check(struct type * lhs, const struct type * rhs);
 
 #endif /* CCLYNX_TYPE_H */
