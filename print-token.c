@@ -34,6 +34,12 @@ void print_token(const struct token * token, FILE * file)
         case TOKEN_KIND_NOT_EQUAL_PUNCTUATOR:
             fprintf(file, "<TOKEN_SPECIAL_PUNCTUATOR '!='>\n");
             break;
+        case TOKEN_KIND_LESS_EQUAL_PUNCTUATOR:
+            fprintf(file, "<TOKEN_SPECIAL_PUNCTUATOR '<='>\n");
+            break;
+        case TOKEN_KIND_GREATER_EQUAL_PUNCTUATOR:
+            fprintf(file, "<TOKEN_SPECIAL_PUNCTUATOR '>='>\n");
+            break;
         default:
             fprintf(file, "<TOKEN_UNKNOWN>\n");
             exit(1);

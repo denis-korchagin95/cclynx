@@ -601,6 +601,113 @@ TranslationUnit: '{{any}}'
 
 @endtest
 
+@test("It should parse a relational expression (<=) (primitive case)")
+@given("stdin")
+int main() {
+    7 <= 8;
+}
+@whenRun("./bin/cclynx", args="--emit-ast /dev/stdin")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        └── ExpressionStatement
+            └── BinaryExpression
+                ├── Operation: '<='
+                ├── Type
+                │   ├── category: 'basic'
+                │   └── descriptor: 'int'
+                ├── Lhs
+                │   └── IntegerConstant: '7'
+                │       └── Type
+                │           ├── category: 'basic'
+                │           └── descriptor: 'int'
+                └── Rhs
+                    └── IntegerConstant: '8'
+                        └── Type
+                            ├── category: 'basic'
+                            └── descriptor: 'int'
+
+@endtest
+
+@test("It should parse a relational expression (>=) (primitive case)")
+@given("stdin")
+int main() {
+    7 >= 8;
+}
+@whenRun("./bin/cclynx", args="--emit-ast /dev/stdin")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        └── ExpressionStatement
+            └── BinaryExpression
+                ├── Operation: '>='
+                ├── Type
+                │   ├── category: 'basic'
+                │   └── descriptor: 'int'
+                ├── Lhs
+                │   └── IntegerConstant: '7'
+                │       └── Type
+                │           ├── category: 'basic'
+                │           └── descriptor: 'int'
+                └── Rhs
+                    └── IntegerConstant: '8'
+                        └── Type
+                            ├── category: 'basic'
+                            └── descriptor: 'int'
+
+@endtest
+
+@test("It should parse a relational expression (combination <=, >=) (with nested level primitive case)")
+@given("stdin")
+int main() {
+    15 <= 3 >= 101;
+}
+@whenRun("./bin/cclynx", args="--emit-ast /dev/stdin")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        └── ExpressionStatement
+            └── BinaryExpression
+                ├── Operation: '>='
+                ├── Type
+                │   ├── category: 'basic'
+                │   └── descriptor: 'int'
+                ├── Lhs
+                │   └── BinaryExpression
+                │       ├── Operation: '<='
+                │       ├── Type
+                │       │   ├── category: 'basic'
+                │       │   └── descriptor: 'int'
+                │       ├── Lhs
+                │       │   └── IntegerConstant: '15'
+                │       │       └── Type
+                │       │           ├── category: 'basic'
+                │       │           └── descriptor: 'int'
+                │       └── Rhs
+                │           └── IntegerConstant: '3'
+                │               └── Type
+                │                   ├── category: 'basic'
+                │                   └── descriptor: 'int'
+                └── Rhs
+                    └── IntegerConstant: '101'
+                        └── Type
+                            ├── category: 'basic'
+                            └── descriptor: 'int'
+
+@endtest
+
 @test("It should parse a equality expression (==) (primitive case)")
 @given("stdin")
 int main() {
@@ -1391,6 +1498,192 @@ TranslationUnit: '{{any}}'
         │           │   └── descriptor: 'int'
         │           └── BinaryExpression
         │               ├── Operation: '<'
+        │               ├── Type
+        │               │   ├── category: 'basic'
+        │               │   └── descriptor: 'unsigned int'
+        │               ├── Lhs
+        │               │   └── CastExpression
+        │               │       ├── Type
+        │               │       │   ├── category: 'basic'
+        │               │       │   └── descriptor: 'unsigned int'
+        │               │       └── VariableExpression: 'x'
+        │               │           └── Type
+        │               │               ├── category: 'basic'
+        │               │               └── descriptor: 'int'
+        │               └── Rhs
+        │                   └── VariableExpression: 'y'
+        │                       └── Type
+        │                           ├── category: 'basic'
+        │                           └── descriptor: 'unsigned int'
+        └── JumpStatement
+            ├── Operation: 'return'
+            └── VariableExpression: 'z'
+                └── Type
+                    ├── category: 'basic'
+                    └── descriptor: 'int'
+
+@endtest
+
+@test("It should insert implicit cast on less than or equal expression with mixed signedness")
+@given("stdin")
+int main() {
+    int x;
+    unsigned int y;
+    x = 1;
+    y = 2;
+    int z;
+    z = x <= y;
+    return z;
+}
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings /dev/stdin")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        ├── VariableDeclaration: 'x'
+        │   └── Type
+        │       ├── category: 'basic'
+        │       └── descriptor: 'int'
+        ├── VariableDeclaration: 'y'
+        │   └── Type
+        │       ├── category: 'basic'
+        │       └── descriptor: 'unsigned int'
+        ├── ExpressionStatement
+        │   └── AssignmentExpression: '='
+        │       ├── VariableExpression: 'x'
+        │       │   └── Type
+        │       │       ├── category: 'basic'
+        │       │       └── descriptor: 'int'
+        │       └── IntegerConstant: '1'
+        │           └── Type
+        │               ├── category: 'basic'
+        │               └── descriptor: 'int'
+        ├── ExpressionStatement
+        │   └── AssignmentExpression: '='
+        │       ├── VariableExpression: 'y'
+        │       │   └── Type
+        │       │       ├── category: 'basic'
+        │       │       └── descriptor: 'unsigned int'
+        │       └── CastExpression
+        │           ├── Type
+        │           │   ├── category: 'basic'
+        │           │   └── descriptor: 'unsigned int'
+        │           └── IntegerConstant: '2'
+        │               └── Type
+        │                   ├── category: 'basic'
+        │                   └── descriptor: 'int'
+        ├── VariableDeclaration: 'z'
+        │   └── Type
+        │       ├── category: 'basic'
+        │       └── descriptor: 'int'
+        ├── ExpressionStatement
+        │   └── AssignmentExpression: '='
+        │       ├── VariableExpression: 'z'
+        │       │   └── Type
+        │       │       ├── category: 'basic'
+        │       │       └── descriptor: 'int'
+        │       └── CastExpression
+        │           ├── Type
+        │           │   ├── category: 'basic'
+        │           │   └── descriptor: 'int'
+        │           └── BinaryExpression
+        │               ├── Operation: '<='
+        │               ├── Type
+        │               │   ├── category: 'basic'
+        │               │   └── descriptor: 'unsigned int'
+        │               ├── Lhs
+        │               │   └── CastExpression
+        │               │       ├── Type
+        │               │       │   ├── category: 'basic'
+        │               │       │   └── descriptor: 'unsigned int'
+        │               │       └── VariableExpression: 'x'
+        │               │           └── Type
+        │               │               ├── category: 'basic'
+        │               │               └── descriptor: 'int'
+        │               └── Rhs
+        │                   └── VariableExpression: 'y'
+        │                       └── Type
+        │                           ├── category: 'basic'
+        │                           └── descriptor: 'unsigned int'
+        └── JumpStatement
+            ├── Operation: 'return'
+            └── VariableExpression: 'z'
+                └── Type
+                    ├── category: 'basic'
+                    └── descriptor: 'int'
+
+@endtest
+
+@test("It should insert implicit cast on greater than or equal expression with mixed signedness")
+@given("stdin")
+int main() {
+    int x;
+    unsigned int y;
+    x = 1;
+    y = 2;
+    int z;
+    z = x >= y;
+    return z;
+}
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings /dev/stdin")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        ├── VariableDeclaration: 'x'
+        │   └── Type
+        │       ├── category: 'basic'
+        │       └── descriptor: 'int'
+        ├── VariableDeclaration: 'y'
+        │   └── Type
+        │       ├── category: 'basic'
+        │       └── descriptor: 'unsigned int'
+        ├── ExpressionStatement
+        │   └── AssignmentExpression: '='
+        │       ├── VariableExpression: 'x'
+        │       │   └── Type
+        │       │       ├── category: 'basic'
+        │       │       └── descriptor: 'int'
+        │       └── IntegerConstant: '1'
+        │           └── Type
+        │               ├── category: 'basic'
+        │               └── descriptor: 'int'
+        ├── ExpressionStatement
+        │   └── AssignmentExpression: '='
+        │       ├── VariableExpression: 'y'
+        │       │   └── Type
+        │       │       ├── category: 'basic'
+        │       │       └── descriptor: 'unsigned int'
+        │       └── CastExpression
+        │           ├── Type
+        │           │   ├── category: 'basic'
+        │           │   └── descriptor: 'unsigned int'
+        │           └── IntegerConstant: '2'
+        │               └── Type
+        │                   ├── category: 'basic'
+        │                   └── descriptor: 'int'
+        ├── VariableDeclaration: 'z'
+        │   └── Type
+        │       ├── category: 'basic'
+        │       └── descriptor: 'int'
+        ├── ExpressionStatement
+        │   └── AssignmentExpression: '='
+        │       ├── VariableExpression: 'z'
+        │       │   └── Type
+        │       │       ├── category: 'basic'
+        │       │       └── descriptor: 'int'
+        │       └── CastExpression
+        │           ├── Type
+        │           │   ├── category: 'basic'
+        │           │   └── descriptor: 'int'
+        │           └── BinaryExpression
+        │               ├── Operation: '>='
         │               ├── Type
         │               │   ├── category: 'basic'
         │               │   └── descriptor: 'unsigned int'

@@ -1,4 +1,4 @@
-// expected return: 5
+// expected return: 11
 // wrapper: ./scripts/int32_wrapper.c
 int main() {
     int result;
@@ -38,6 +38,58 @@ int main() {
     if (c == 50) {
         result = result + 1;
     }
+
+    // signed le: -1 <= 1 is true
+    if (a <= b) {
+        result = result + 1;
+    }
+
+    // le: 1 <= 1 is true (equal case)
+    if (b <= 1) {
+        result = result + 1;
+    }
+
+    // ge: 1 >= -1 is true
+    if (b >= a) {
+        result = result + 1;
+    }
+
+    // ge: 50 >= 50 is true (equal case)
+    if (c >= 50) {
+        result = result + 1;
+    }
+
+    // le (negative): 1 <= -1 is false
+    if (b <= a) {
+        result = result + 100;
+    }
+
+    // ge (negative): -1 >= 1 is false
+    if (a >= b) {
+        result = result + 100;
+    }
+
+    // le (negative): 50 <= 49 is false (strictly greater)
+    if (c <= 49) {
+        result = result + 100;
+    }
+
+    // negative ge: -1 >= 0 is false (strictly less)
+    if (a >= 0) {
+        result = result + 100;
+    }
+
+    // le as value: -1 <= 1 is 1
+    result = result + (a <= b);
+
+    // ge as value: 1 >= -1 is 1
+    result = result + (b >= a);
+
+    // le as value (negative): 1 <= -1 is 0
+    result = result + (b <= a);
+
+    // ge as value (negative): -1 >= 1 is 0
+    result = result + (a >= b);
 
     return result;
 }

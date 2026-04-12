@@ -140,7 +140,7 @@ void tokenizer_get_one_token(struct tokenizer_context * ctx, struct source * sou
                         token->span.position.line = span_line;
                         token->span.position.column = span_column;
                     } else {
-                        source_unget_char(source, next_char);
+                        if (next_char != EOF) source_unget_char(source, next_char);
 
                         token->kind = TOKEN_KIND_PUNCTUATOR;
                         token->span.offset = span_start;
@@ -161,7 +161,49 @@ void tokenizer_get_one_token(struct tokenizer_context * ctx, struct source * sou
                         token->span.position.line = span_line;
                         token->span.position.column = span_column;
                     } else {
-                        source_unget_char(source, next_char);
+                        if (next_char != EOF) source_unget_char(source, next_char);
+
+                        token->kind = TOKEN_KIND_PUNCTUATOR;
+                        token->span.offset = span_start;
+                        token->span.length = 1;
+                        token->span.position.line = span_line;
+                        token->span.position.column = span_column;
+                    }
+                }
+                break;
+            case '<':
+                {
+                    int next_char = source_get_char(source);
+
+                    if (next_char == '=') {
+                        token->kind = TOKEN_KIND_LESS_EQUAL_PUNCTUATOR;
+                        token->span.offset = span_start;
+                        token->span.length = 2;
+                        token->span.position.line = span_line;
+                        token->span.position.column = span_column;
+                    } else {
+                        if (next_char != EOF) source_unget_char(source, next_char);
+
+                        token->kind = TOKEN_KIND_PUNCTUATOR;
+                        token->span.offset = span_start;
+                        token->span.length = 1;
+                        token->span.position.line = span_line;
+                        token->span.position.column = span_column;
+                    }
+                }
+                break;
+            case '>':
+                {
+                    int next_char = source_get_char(source);
+
+                    if (next_char == '=') {
+                        token->kind = TOKEN_KIND_GREATER_EQUAL_PUNCTUATOR;
+                        token->span.offset = span_start;
+                        token->span.length = 2;
+                        token->span.position.line = span_line;
+                        token->span.position.column = span_column;
+                    } else {
+                        if (next_char != EOF) source_unget_char(source, next_char);
 
                         token->kind = TOKEN_KIND_PUNCTUATOR;
                         token->span.offset = span_start;
@@ -180,8 +222,6 @@ void tokenizer_get_one_token(struct tokenizer_context * ctx, struct source * sou
             case '{':
             case '}':
             case ';':
-            case '>':
-            case '<':
             case ',':
                 token->kind = TOKEN_KIND_PUNCTUATOR;
                 token->span.offset = span_start;
@@ -295,6 +335,10 @@ const char * token_stringify(const struct token * token)
             return "'=='";
         case TOKEN_KIND_NOT_EQUAL_PUNCTUATOR:
             return "'!='";
+        case TOKEN_KIND_LESS_EQUAL_PUNCTUATOR:
+            return "'<='";
+        case TOKEN_KIND_GREATER_EQUAL_PUNCTUATOR:
+            return "'>='";
         default:
             return "unknown token";
     }

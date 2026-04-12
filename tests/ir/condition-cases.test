@@ -305,3 +305,61 @@ OP_FUNC_END
 
 @endtest
 
+@test("It should generate IR code for if statement with relational expression <=")
+@given("stdin")
+int main() {
+    int i;
+    i = 0;
+    if (i <= 10) {
+        i = i + 1;
+    }
+    return i;
+}
+@whenRun("./bin/cclynx", args="--emit-ir /dev/stdin")
+@expectOutput("stdout")
+OP_FUNC "main"
+OP_CONST 0, t0
+OP_STORE i, t0
+OP_LOAD i, t1
+OP_CONST 10, t2
+OP_JUMP_IF_GT t1, t2, ".L1"
+OP_LOAD i, t3
+OP_CONST 1, t4
+OP_ADD t3, t4, t5
+OP_STORE i, t5
+OP_LABEL ".L1"
+OP_LOAD i, t6
+OP_RETURN t6
+OP_FUNC_END
+
+@endtest
+
+@test("It should generate IR code for if statement with relational expression >=")
+@given("stdin")
+int main() {
+    int i;
+    i = 3;
+    if (i >= 1) {
+        i = i - 1;
+    }
+    return i;
+}
+@whenRun("./bin/cclynx", args="--emit-ir /dev/stdin")
+@expectOutput("stdout")
+OP_FUNC "main"
+OP_CONST 3, t0
+OP_STORE i, t0
+OP_LOAD i, t1
+OP_CONST 1, t2
+OP_JUMP_IF_LT t1, t2, ".L1"
+OP_LOAD i, t3
+OP_CONST 1, t4
+OP_SUB t3, t4, t5
+OP_STORE i, t5
+OP_LABEL ".L1"
+OP_LOAD i, t6
+OP_RETURN t6
+OP_FUNC_END
+
+@endtest
+

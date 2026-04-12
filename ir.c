@@ -347,6 +347,12 @@ void do_generate_ir(struct ir_context * ctx, struct ir_function * function, cons
                     case BINARY_OPERATION_GREATER_THAN:
                         instruction->code = OP_GT;
                         break;
+                    case BINARY_OPERATION_LESS_THAN_OR_EQUAL:
+                        instruction->code = OP_LTE;
+                        break;
+                    case BINARY_OPERATION_GREATER_THAN_OR_EQUAL:
+                        instruction->code = OP_GTE;
+                        break;
                     case BINARY_OPERATION_ADDITION:
                         instruction->code = OP_ADD;
                         break;
@@ -609,6 +615,36 @@ void ir_generate_condition(struct ir_context * ctx, struct ir_function * functio
         op2 = ir_last_instruction(function)->result;
 
         struct ir_instruction * instruction = ir_create_instruction(ctx, OP_JUMP_IF_EQ);
+        instruction->op1 = op1;
+        instruction->op2 = op2;
+        instruction->result = jump_label;
+
+        ir_emit(function, instruction);
+    } else if (
+        condition->kind == AST_NODE_KIND_BINARY_EXPRESSION
+        && condition->content.binary_expression.operation == BINARY_OPERATION_LESS_THAN_OR_EQUAL
+    ) {
+        do_generate_ir(ctx, function, condition->content.binary_expression.lhs);
+        op1 = ir_last_instruction(function)->result;
+        do_generate_ir(ctx, function, condition->content.binary_expression.rhs);
+        op2 = ir_last_instruction(function)->result;
+
+        struct ir_instruction * instruction = ir_create_instruction(ctx, OP_JUMP_IF_GT);
+        instruction->op1 = op1;
+        instruction->op2 = op2;
+        instruction->result = jump_label;
+
+        ir_emit(function, instruction);
+    } else if (
+        condition->kind == AST_NODE_KIND_BINARY_EXPRESSION
+        && condition->content.binary_expression.operation == BINARY_OPERATION_GREATER_THAN_OR_EQUAL
+    ) {
+        do_generate_ir(ctx, function, condition->content.binary_expression.lhs);
+        op1 = ir_last_instruction(function)->result;
+        do_generate_ir(ctx, function, condition->content.binary_expression.rhs);
+        op2 = ir_last_instruction(function)->result;
+
+        struct ir_instruction * instruction = ir_create_instruction(ctx, OP_JUMP_IF_LT);
         instruction->op1 = op1;
         instruction->op2 = op2;
         instruction->result = jump_label;

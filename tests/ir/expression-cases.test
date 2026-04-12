@@ -218,6 +218,70 @@ OP_FUNC_END
 
 @endtest
 
+@test("It should generate OP_LTE for signed less than or equal")
+@given("stdin")
+int main() {
+    return 12 <= 3;
+}
+@whenRun("./bin/cclynx", args="--emit-ir /dev/stdin")
+@expectOutput("stdout")
+OP_FUNC "main"
+OP_CONST 12, t0
+OP_CONST 3, t1
+OP_LTE t0, t1, t2
+OP_RETURN t2
+OP_FUNC_END
+
+@endtest
+
+@test("It should generate OP_GTE for signed greater than or equal")
+@given("stdin")
+int main() {
+    return 12 >= 3;
+}
+@whenRun("./bin/cclynx", args="--emit-ir /dev/stdin")
+@expectOutput("stdout")
+OP_FUNC "main"
+OP_CONST 12, t0
+OP_CONST 3, t1
+OP_GTE t0, t1, t2
+OP_RETURN t2
+OP_FUNC_END
+
+@endtest
+
+@test("It should generate OP_LTE for unsigned less than or equal")
+@given("stdin")
+int main() {
+    return 3u <= 5u;
+}
+@whenRun("./bin/cclynx", args="--emit-ir --no-warnings /dev/stdin")
+@expectOutput("stdout")
+OP_FUNC "main"
+OP_CONST 3, t0
+OP_CONST 5, t1
+OP_LTE t0, t1, t2
+OP_RETURN t2
+OP_FUNC_END
+
+@endtest
+
+@test("It should generate OP_GTE for unsigned greater than or equal")
+@given("stdin")
+int main() {
+    return 5u >= 3u;
+}
+@whenRun("./bin/cclynx", args="--emit-ir --no-warnings /dev/stdin")
+@expectOutput("stdout")
+OP_FUNC "main"
+OP_CONST 5, t0
+OP_CONST 3, t1
+OP_GTE t0, t1, t2
+OP_RETURN t2
+OP_FUNC_END
+
+@endtest
+
 @test("It should generate IR code for unary negation")
 @given("stdin")
 int main(void) {

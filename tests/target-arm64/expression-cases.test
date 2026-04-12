@@ -291,3 +291,51 @@ _main:
     ret
 
 @endtest
+
+@test("It should generate target arm64 code for signed less than or equal (<=)")
+@given("stdin")
+int main() {
+    return 12 <= 3;
+}
+@whenRun("./bin/cclynx", args="--emit-asm /dev/stdin")
+@expectOutput("stdout")
+.text
+.align 2
+
+.global _main
+_main:
+    stp x29, x30, [sp, -16]!
+    mov x29, sp
+    mov w9, #12
+    mov w10, #3
+    cmp w9, w10
+    cset w11, le
+    mov w0, w11
+    ldp x29, x30, [sp], #16
+    ret
+
+@endtest
+
+@test("It should generate target arm64 code for signed greater than or equal (>=)")
+@given("stdin")
+int main() {
+    return 12 >= 3;
+}
+@whenRun("./bin/cclynx", args="--emit-asm /dev/stdin")
+@expectOutput("stdout")
+.text
+.align 2
+
+.global _main
+_main:
+    stp x29, x30, [sp, -16]!
+    mov x29, sp
+    mov w9, #12
+    mov w10, #3
+    cmp w9, w10
+    cset w11, ge
+    mov w0, w11
+    ldp x29, x30, [sp], #16
+    ret
+
+@endtest

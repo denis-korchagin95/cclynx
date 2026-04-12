@@ -31,6 +31,14 @@ void print_ir_program(const struct ir_program * program, FILE * file)
                 snprintf(buf, sizeof(buf), "t%llu, t%llu, \".L%llu\"", instruction->op1->content.temp_id, instruction->op2->content.temp_id, instruction->result->content.label_id);
                 fprintf(file, "OP_JUMP_IF_NE %s\n", buf);
                 break;
+            case OP_JUMP_IF_LT:
+                snprintf(buf, sizeof(buf), "t%llu, t%llu, \".L%llu\"", instruction->op1->content.temp_id, instruction->op2->content.temp_id, instruction->result->content.label_id);
+                fprintf(file, "OP_JUMP_IF_LT %s\n", buf);
+                break;
+            case OP_JUMP_IF_GT:
+                snprintf(buf, sizeof(buf), "t%llu, t%llu, \".L%llu\"", instruction->op1->content.temp_id, instruction->op2->content.temp_id, instruction->result->content.label_id);
+                fprintf(file, "OP_JUMP_IF_GT %s\n", buf);
+                break;
             case OP_JUMP_IF_LTE:
                 snprintf(buf, sizeof(buf), "t%llu, t%llu, \".L%llu\"", instruction->op1->content.temp_id, instruction->op2->content.temp_id, instruction->result->content.label_id);
                 fprintf(file, "OP_JUMP_IF_LTE %s\n", buf);
@@ -66,6 +74,14 @@ void print_ir_program(const struct ir_program * program, FILE * file)
             case OP_NE:
                 snprintf(buf, sizeof(buf), "t%llu, t%llu, t%llu", instruction->op1->content.temp_id, instruction->op2->content.temp_id, instruction->result->content.temp_id);
                 fprintf(file, "OP_NE %s\n", buf);
+                break;
+            case OP_LTE:
+                snprintf(buf, sizeof(buf), "t%llu, t%llu, t%llu", instruction->op1->content.temp_id, instruction->op2->content.temp_id, instruction->result->content.temp_id);
+                fprintf(file, "OP_LTE %s\n", buf);
+                break;
+            case OP_GTE:
+                snprintf(buf, sizeof(buf), "t%llu, t%llu, t%llu", instruction->op1->content.temp_id, instruction->op2->content.temp_id, instruction->result->content.temp_id);
+                fprintf(file, "OP_GTE %s\n", buf);
                 break;
             case OP_STORE:
                 snprintf(buf, sizeof(buf), "t%llu", instruction->op2->content.temp_id);

@@ -17,6 +17,8 @@
 !
 !=
 ==
+<=
+>=
 @whenRun("./bin/cclynx", args="--emit-tokens /dev/stdin")
 @expectOutput("stdout")
 <TOKEN_PUNCTUATOR ','>
@@ -36,6 +38,8 @@
 <TOKEN_PUNCTUATOR '!'>
 <TOKEN_SPECIAL_PUNCTUATOR '!='>
 <TOKEN_SPECIAL_PUNCTUATOR '=='>
+<TOKEN_SPECIAL_PUNCTUATOR '<='>
+<TOKEN_SPECIAL_PUNCTUATOR '>='>
 <TOKEN_EOS>
 
 @endtest
@@ -56,6 +60,106 @@ int main() { return 10 / 2; }
 <TOKEN_NUMBER '2'>
 <TOKEN_PUNCTUATOR ';'>
 <TOKEN_PUNCTUATOR '}'>
+<TOKEN_EOS>
+
+@endtest
+
+@test("It should tokenize <= as a single special punctuator")
+@given("stdin")
+1<=2
+@whenRun("./bin/cclynx", args="--emit-tokens /dev/stdin")
+@expectOutput("stdout")
+<TOKEN_NUMBER '1'>
+<TOKEN_SPECIAL_PUNCTUATOR '<='>
+<TOKEN_NUMBER '2'>
+<TOKEN_EOS>
+
+@endtest
+
+@test("It should tokenize >= as a single special punctuator")
+@given("stdin")
+1>=2
+@whenRun("./bin/cclynx", args="--emit-tokens /dev/stdin")
+@expectOutput("stdout")
+<TOKEN_NUMBER '1'>
+<TOKEN_SPECIAL_PUNCTUATOR '>='>
+<TOKEN_NUMBER '2'>
+<TOKEN_EOS>
+
+@endtest
+
+@test("It should tokenize < followed by non-= as separate tokens")
+@given("stdin")
+1<2
+@whenRun("./bin/cclynx", args="--emit-tokens /dev/stdin")
+@expectOutput("stdout")
+<TOKEN_NUMBER '1'>
+<TOKEN_PUNCTUATOR '<'>
+<TOKEN_NUMBER '2'>
+<TOKEN_EOS>
+
+@endtest
+
+@test("It should tokenize > followed by non-= as separate tokens")
+@given("stdin")
+1>2
+@whenRun("./bin/cclynx", args="--emit-tokens /dev/stdin")
+@expectOutput("stdout")
+<TOKEN_NUMBER '1'>
+<TOKEN_PUNCTUATOR '>'>
+<TOKEN_NUMBER '2'>
+<TOKEN_EOS>
+
+@endtest
+
+@test("It should tokenize !== as != followed by =")
+@given("stdin")
+1 !== 2
+@whenRun("./bin/cclynx", args="--emit-tokens /dev/stdin")
+@expectOutput("stdout")
+<TOKEN_NUMBER '1'>
+<TOKEN_SPECIAL_PUNCTUATOR '!='>
+<TOKEN_PUNCTUATOR '='>
+<TOKEN_NUMBER '2'>
+<TOKEN_EOS>
+
+@endtest
+
+@test("It should tokenize === as == followed by =")
+@given("stdin")
+1 === 2
+@whenRun("./bin/cclynx", args="--emit-tokens /dev/stdin")
+@expectOutput("stdout")
+<TOKEN_NUMBER '1'>
+<TOKEN_SPECIAL_PUNCTUATOR '=='>
+<TOKEN_PUNCTUATOR '='>
+<TOKEN_NUMBER '2'>
+<TOKEN_EOS>
+
+@endtest
+
+@test("It should tokenize <== as <= followed by =")
+@given("stdin")
+1 <== 2
+@whenRun("./bin/cclynx", args="--emit-tokens /dev/stdin")
+@expectOutput("stdout")
+<TOKEN_NUMBER '1'>
+<TOKEN_SPECIAL_PUNCTUATOR '<='>
+<TOKEN_PUNCTUATOR '='>
+<TOKEN_NUMBER '2'>
+<TOKEN_EOS>
+
+@endtest
+
+@test("It should tokenize >== as >= followed by =")
+@given("stdin")
+1 >== 2
+@whenRun("./bin/cclynx", args="--emit-tokens /dev/stdin")
+@expectOutput("stdout")
+<TOKEN_NUMBER '1'>
+<TOKEN_SPECIAL_PUNCTUATOR '>='>
+<TOKEN_PUNCTUATOR '='>
+<TOKEN_NUMBER '2'>
 <TOKEN_EOS>
 
 @endtest

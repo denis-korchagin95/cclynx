@@ -217,15 +217,17 @@ void do_print_ast(const struct ast_node * ast, FILE * file, int depth, unsigned 
             {
                 const char * op_str = "";
                 switch (ast->content.binary_expression.operation) {
-                    case BINARY_OPERATION_EQUALITY:     op_str = "=="; break;
-                    case BINARY_OPERATION_INEQUALITY:   op_str = "!="; break;
-                    case BINARY_OPERATION_LESS_THAN:    op_str = "<";  break;
-                    case BINARY_OPERATION_GREATER_THAN: op_str = ">";  break;
-                    case BINARY_OPERATION_ADDITION:     op_str = "+";  break;
-                    case BINARY_OPERATION_SUBTRACTION:  op_str = "-";  break;
-                    case BINARY_OPERATION_MULTIPLY:     op_str = "*";  break;
-                    case BINARY_OPERATION_DIVIDE:       op_str = "/";  break;
-                    case BINARY_OPERATION_MODULO:       op_str = "%";  break;
+                    case BINARY_OPERATION_EQUALITY:                 op_str = "=="; break;
+                    case BINARY_OPERATION_INEQUALITY:               op_str = "!="; break;
+                    case BINARY_OPERATION_LESS_THAN:                op_str = "<";  break;
+                    case BINARY_OPERATION_GREATER_THAN:             op_str = ">";  break;
+                    case BINARY_OPERATION_LESS_THAN_OR_EQUAL:       op_str = "<="; break;
+                    case BINARY_OPERATION_GREATER_THAN_OR_EQUAL:    op_str = ">="; break;
+                    case BINARY_OPERATION_ADDITION:                 op_str = "+";  break;
+                    case BINARY_OPERATION_SUBTRACTION:              op_str = "-";  break;
+                    case BINARY_OPERATION_MULTIPLY:                 op_str = "*";  break;
+                    case BINARY_OPERATION_DIVIDE:                   op_str = "/";  break;
+                    case BINARY_OPERATION_MODULO:                   op_str = "%";  break;
                     default:
                         cclynx_fatal_error("FATAL ERROR: unknown binary operation\n");
                 }

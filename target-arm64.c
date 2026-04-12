@@ -199,6 +199,8 @@ static unsigned int simulator_compute_max_spills(struct ir_function * func)
                 break;
             case OP_JUMP_IF_EQ:
             case OP_JUMP_IF_NE:
+            case OP_JUMP_IF_LT:
+            case OP_JUMP_IF_GT:
             case OP_JUMP_IF_LTE:
             case OP_JUMP_IF_GTE:
                 simulator_pop(&ctx);
@@ -212,6 +214,8 @@ static unsigned int simulator_compute_max_spills(struct ir_function * func)
             case OP_DIV:
             case OP_LT:
             case OP_GT:
+            case OP_LTE:
+            case OP_GTE:
             case OP_EQ:
             case OP_NE:
                 simulator_pop(&ctx);
@@ -342,6 +346,28 @@ void target_arm64_generate(struct codegen_context * ctx, struct ir_program * pro
                     free_reg(op2_reg);
                 }
                 break;
+            case OP_JUMP_IF_LT:
+                {
+                    struct codegen_reg * op2_reg = pop_reg(ctx);
+                    struct codegen_reg * op1_reg = pop_reg(ctx);
+                    const char * cond = type_is_unsigned(instruction->op1->type) ? "b.lo" : "b.lt";
+                    fprintf(file, "    cmp %s, %s\n", op1_reg->name, op2_reg->name);
+                    fprintf(file, "    %s .L%llu\n", cond, instruction->result->content.label_id);
+                    free_reg(op1_reg);
+                    free_reg(op2_reg);
+                }
+                break;
+            case OP_JUMP_IF_GT:
+                {
+                    struct codegen_reg * op2_reg = pop_reg(ctx);
+                    struct codegen_reg * op1_reg = pop_reg(ctx);
+                    const char * cond = type_is_unsigned(instruction->op1->type) ? "b.hi" : "b.gt";
+                    fprintf(file, "    cmp %s, %s\n", op1_reg->name, op2_reg->name);
+                    fprintf(file, "    %s .L%llu\n", cond, instruction->result->content.label_id);
+                    free_reg(op1_reg);
+                    free_reg(op2_reg);
+                }
+                break;
             case OP_JUMP_IF_LTE:
                 {
                     struct codegen_reg * op2_reg = pop_reg(ctx);
@@ -383,6 +409,32 @@ void target_arm64_generate(struct codegen_context * ctx, struct ir_program * pro
                     struct codegen_reg * op1_reg = pop_reg(ctx);
                     struct codegen_reg * result_reg = alloc_reg(ctx, CODEGEN_REG_KIND_INTEGER);
                     const char * cond = type_is_unsigned(instruction->op1->type) ? "lo" : "lt";
+                    fprintf(file, "    cmp %s, %s\n", op1_reg->name, op2_reg->name);
+                    fprintf(file, "    cset %s, %s\n", result_reg->name, cond);
+                    free_reg(op1_reg);
+                    free_reg(op2_reg);
+                    push_reg(ctx, result_reg);
+                }
+                break;
+            case OP_LTE:
+                {
+                    struct codegen_reg * op2_reg = pop_reg(ctx);
+                    struct codegen_reg * op1_reg = pop_reg(ctx);
+                    struct codegen_reg * result_reg = alloc_reg(ctx, CODEGEN_REG_KIND_INTEGER);
+                    const char * cond = type_is_unsigned(instruction->op1->type) ? "ls" : "le";
+                    fprintf(file, "    cmp %s, %s\n", op1_reg->name, op2_reg->name);
+                    fprintf(file, "    cset %s, %s\n", result_reg->name, cond);
+                    free_reg(op1_reg);
+                    free_reg(op2_reg);
+                    push_reg(ctx, result_reg);
+                }
+                break;
+            case OP_GTE:
+                {
+                    struct codegen_reg * op2_reg = pop_reg(ctx);
+                    struct codegen_reg * op1_reg = pop_reg(ctx);
+                    struct codegen_reg * result_reg = alloc_reg(ctx, CODEGEN_REG_KIND_INTEGER);
+                    const char * cond = type_is_unsigned(instruction->op1->type) ? "hs" : "ge";
                     fprintf(file, "    cmp %s, %s\n", op1_reg->name, op2_reg->name);
                     fprintf(file, "    cset %s, %s\n", result_reg->name, cond);
                     free_reg(op1_reg);
