@@ -6,12 +6,12 @@ int main() {
 @whenRun("./bin/cclynx", args="--emit-ir /dev/stdin")
 @expectOutput("stdout")
 OP_FUNC "main"
-OP_CONST 2, t1
-OP_CONST 3, t2
-OP_MUL t1, t2, t3
-OP_CONST 1, t4
-OP_ADD t3, t4, t5
-OP_RETURN t5
+OP_CONST 2, t0
+OP_CONST 3, t1
+OP_MUL t0, t1, t2
+OP_CONST 1, t3
+OP_ADD t2, t3, t4
+OP_RETURN t4
 OP_FUNC_END
 
 @endtest
@@ -24,18 +24,18 @@ int main() {
 @whenRun("./bin/cclynx", args="--emit-ir /dev/stdin")
 @expectOutput("stdout")
 OP_FUNC "main"
-OP_CONST 2, t1
-OP_CONST 3, t2
-OP_CONST 4, t3
-OP_MUL t2, t3, t4
-OP_CONST 20, t5
-OP_ADD t4, t5, t6
-OP_CONST 1, t7
-OP_ADD t6, t7, t8
-OP_MUL t1, t8, t9
-OP_CONST 15, t10
-OP_MUL t9, t10, t11
-OP_RETURN t11
+OP_CONST 2, t0
+OP_CONST 3, t1
+OP_CONST 4, t2
+OP_MUL t1, t2, t3
+OP_CONST 20, t4
+OP_ADD t3, t4, t5
+OP_CONST 1, t6
+OP_ADD t5, t6, t7
+OP_MUL t0, t7, t8
+OP_CONST 15, t9
+OP_MUL t8, t9, t10
+OP_RETURN t10
 OP_FUNC_END
 
 @endtest
@@ -48,12 +48,12 @@ int main() {
 @whenRun("./bin/cclynx", args="--emit-ir /dev/stdin")
 @expectOutput("stdout")
 OP_FUNC "main"
-OP_CONST 12, t1
-OP_CONST 3, t2
-OP_DIV t1, t2, t3
-OP_CONST 1, t4
-OP_SUB t3, t4, t5
-OP_RETURN t5
+OP_CONST 12, t0
+OP_CONST 3, t1
+OP_DIV t0, t1, t2
+OP_CONST 1, t3
+OP_SUB t2, t3, t4
+OP_RETURN t4
 OP_FUNC_END
 
 @endtest
@@ -66,10 +66,10 @@ int main() {
 @whenRun("./bin/cclynx", args="--emit-ir /dev/stdin")
 @expectOutput("stdout")
 OP_FUNC "main"
-OP_CONST 12, t1
-OP_CONST 3, t2
-OP_GT t1, t2, t3
-OP_RETURN t3
+OP_CONST 12, t0
+OP_CONST 3, t1
+OP_GT t0, t1, t2
+OP_RETURN t2
 OP_FUNC_END
 
 @endtest
@@ -82,10 +82,10 @@ int main() {
 @whenRun("./bin/cclynx", args="--emit-ir /dev/stdin")
 @expectOutput("stdout")
 OP_FUNC "main"
-OP_CONST 12, t1
-OP_CONST 3, t2
-OP_LT t1, t2, t3
-OP_RETURN t3
+OP_CONST 12, t0
+OP_CONST 3, t1
+OP_LT t0, t1, t2
+OP_RETURN t2
 OP_FUNC_END
 
 @endtest
@@ -98,10 +98,10 @@ int main() {
 @whenRun("./bin/cclynx", args="--emit-ir /dev/stdin")
 @expectOutput("stdout")
 OP_FUNC "main"
-OP_CONST 12, t1
-OP_CONST 3, t2
-OP_EQ t1, t2, t3
-OP_RETURN t3
+OP_CONST 12, t0
+OP_CONST 3, t1
+OP_EQ t0, t1, t2
+OP_RETURN t2
 OP_FUNC_END
 
 @endtest
@@ -114,10 +114,10 @@ int main() {
 @whenRun("./bin/cclynx", args="--emit-ir /dev/stdin")
 @expectOutput("stdout")
 OP_FUNC "main"
-OP_CONST 12, t1
-OP_CONST 3, t2
-OP_NE t1, t2, t3
-OP_RETURN t3
+OP_CONST 12, t0
+OP_CONST 3, t1
+OP_NE t0, t1, t2
+OP_RETURN t2
 OP_FUNC_END
 
 @endtest
@@ -130,10 +130,10 @@ int main() {
 @whenRun("./bin/cclynx", args="--emit-ir /dev/stdin")
 @expectOutput("stdout")
 OP_FUNC "main"
-OP_CONST 10, t1
-OP_CONST 3, t2
-OP_DIV t1, t2, t3
-OP_RETURN t3
+OP_CONST 10, t0
+OP_CONST 3, t1
+OP_DIV t0, t1, t2
+OP_RETURN t2
 OP_FUNC_END
 
 @endtest
@@ -146,10 +146,10 @@ unsigned int main() {
 @whenRun("./bin/cclynx", args="--emit-ir --no-warnings /dev/stdin")
 @expectOutput("stdout")
 OP_FUNC "main"
-OP_CONST 10, t1
-OP_CONST 3, t2
-OP_DIV t1, t2, t3
-OP_RETURN t3
+OP_CONST 10, t0
+OP_CONST 3, t1
+OP_DIV t0, t1, t2
+OP_RETURN t2
 OP_FUNC_END
 
 @endtest
@@ -162,10 +162,10 @@ int main() {
 @whenRun("./bin/cclynx", args="--emit-ir /dev/stdin")
 @expectOutput("stdout")
 OP_FUNC "main"
-OP_CONST 10, t1
-OP_CONST 3, t2
-OP_MOD t1, t2, t3
-OP_RETURN t3
+OP_CONST 10, t0
+OP_CONST 3, t1
+OP_MOD t0, t1, t2
+OP_RETURN t2
 OP_FUNC_END
 
 @endtest
@@ -178,10 +178,10 @@ unsigned int main() {
 @whenRun("./bin/cclynx", args="--emit-ir --no-warnings /dev/stdin")
 @expectOutput("stdout")
 OP_FUNC "main"
-OP_CONST 10, t1
-OP_CONST 3, t2
-OP_MOD t1, t2, t3
-OP_RETURN t3
+OP_CONST 10, t0
+OP_CONST 3, t1
+OP_MOD t0, t1, t2
+OP_RETURN t2
 OP_FUNC_END
 
 @endtest
@@ -194,10 +194,10 @@ int main() {
 @whenRun("./bin/cclynx", args="--emit-ir --no-warnings /dev/stdin")
 @expectOutput("stdout")
 OP_FUNC "main"
-OP_CONST 3, t1
-OP_CONST 5, t2
-OP_LT t1, t2, t3
-OP_RETURN t3
+OP_CONST 3, t0
+OP_CONST 5, t1
+OP_LT t0, t1, t2
+OP_RETURN t2
 OP_FUNC_END
 
 @endtest
@@ -210,10 +210,10 @@ int main() {
 @whenRun("./bin/cclynx", args="--emit-ir --no-warnings /dev/stdin")
 @expectOutput("stdout")
 OP_FUNC "main"
-OP_CONST 5, t1
-OP_CONST 3, t2
-OP_GT t1, t2, t3
-OP_RETURN t3
+OP_CONST 5, t0
+OP_CONST 3, t1
+OP_GT t0, t1, t2
+OP_RETURN t2
 OP_FUNC_END
 
 @endtest
@@ -226,9 +226,9 @@ int main(void) {
 @whenRun("./bin/cclynx", args="--emit-ir /dev/stdin")
 @expectOutput("stdout")
 OP_FUNC "main"
-OP_CONST 10, t1
-OP_NEG t1, t2
-OP_RETURN t2
+OP_CONST 10, t0
+OP_NEG t0, t1
+OP_RETURN t1
 OP_FUNC_END
 
 @endtest
@@ -241,11 +241,11 @@ int main(void) {
 @whenRun("./bin/cclynx", args="--emit-ir /dev/stdin")
 @expectOutput("stdout")
 OP_FUNC "main"
-OP_CONST 1, t1
-OP_NEG t1, t2
-OP_CONST 2, t3
-OP_ADD t2, t3, t4
-OP_RETURN t4
+OP_CONST 1, t0
+OP_NEG t0, t1
+OP_CONST 2, t2
+OP_ADD t1, t2, t3
+OP_RETURN t3
 OP_FUNC_END
 
 @endtest
@@ -258,9 +258,9 @@ int main(void) {
 @whenRun("./bin/cclynx", args="--emit-ir /dev/stdin")
 @expectOutput("stdout")
 OP_FUNC "main"
-OP_CONST 0, t1
-OP_LOGICAL_NOT t1, t2
-OP_RETURN t2
+OP_CONST 0, t0
+OP_LOGICAL_NOT t0, t1
+OP_RETURN t1
 OP_FUNC_END
 
 @endtest
@@ -273,10 +273,10 @@ int main(void) {
 @whenRun("./bin/cclynx", args="--emit-ir /dev/stdin")
 @expectOutput("stdout")
 OP_FUNC "main"
-OP_CONST 5, t1
+OP_CONST 5, t0
+OP_LOGICAL_NOT t0, t1
 OP_LOGICAL_NOT t1, t2
-OP_LOGICAL_NOT t2, t3
-OP_RETURN t3
+OP_RETURN t2
 OP_FUNC_END
 
 @endtest

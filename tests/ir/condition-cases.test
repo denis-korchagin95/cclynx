@@ -11,15 +11,15 @@ int main() {
 @whenRun("./bin/cclynx", args="--emit-ir /dev/stdin")
 @expectOutput("stdout")
 OP_FUNC "main"
-OP_CONST 4, t1
-OP_STORE i, t1
-OP_CONST 0, t2
-OP_JUMP_IF_FALSE t2, ".L1"
-OP_CONST 50, t3
-OP_STORE i, t3
+OP_CONST 4, t0
+OP_STORE i, t0
+OP_CONST 0, t1
+OP_JUMP_IF_FALSE t1, ".L1"
+OP_CONST 50, t2
+OP_STORE i, t2
 OP_LABEL ".L1"
-OP_LOAD i, t4
-OP_RETURN t4
+OP_LOAD i, t3
+OP_RETURN t3
 OP_FUNC_END
 
 @endtest
@@ -37,15 +37,15 @@ int main() {
 @whenRun("./bin/cclynx", args="--emit-ir /dev/stdin")
 @expectOutput("stdout")
 OP_FUNC "main"
-OP_CONST 4, t1
-OP_STORE i, t1
-OP_CONST 1, t2
-OP_JUMP_IF_FALSE t2, ".L1"
-OP_CONST 50, t3
-OP_STORE i, t3
+OP_CONST 4, t0
+OP_STORE i, t0
+OP_CONST 1, t1
+OP_JUMP_IF_FALSE t1, ".L1"
+OP_CONST 50, t2
+OP_STORE i, t2
 OP_LABEL ".L1"
-OP_LOAD i, t4
-OP_RETURN t4
+OP_LOAD i, t3
+OP_RETURN t3
 OP_FUNC_END
 
 @endtest
@@ -59,12 +59,12 @@ int main() {
 @whenRun("./bin/cclynx", args="--emit-ir /dev/stdin")
 @expectOutput("stdout")
 OP_FUNC "main"
-OP_CONST 0, t1
-OP_JUMP_IF_FALSE t1, ".L1"
+OP_CONST 0, t0
+OP_JUMP_IF_FALSE t0, ".L1"
 OP_NOP
 OP_LABEL ".L1"
-OP_CONST 0, t2
-OP_RETURN t2
+OP_CONST 0, t1
+OP_RETURN t1
 OP_FUNC_END
 
 @endtest
@@ -79,12 +79,12 @@ int main() {
 @whenRun("./bin/cclynx", args="--emit-ir /dev/stdin")
 @expectOutput("stdout")
 OP_FUNC "main"
-OP_CONST 0, t1
-OP_JUMP_IF_FALSE t1, ".L1"
+OP_CONST 0, t0
+OP_JUMP_IF_FALSE t0, ".L1"
 OP_NOP
 OP_LABEL ".L1"
-OP_CONST 0, t2
-OP_RETURN t2
+OP_CONST 0, t1
+OP_RETURN t1
 OP_FUNC_END
 
 @endtest
@@ -102,18 +102,18 @@ int main() {
 @whenRun("./bin/cclynx", args="--emit-ir /dev/stdin")
 @expectOutput("stdout")
 OP_FUNC "main"
-OP_CONST 0, t1
-OP_STORE i, t1
-OP_LOAD i, t2
-OP_CONST 10, t3
-OP_JUMP_IF_GTE t2, t3, ".L1"
-OP_LOAD i, t4
-OP_CONST 1, t5
-OP_ADD t4, t5, t6
-OP_STORE i, t6
+OP_CONST 0, t0
+OP_STORE i, t0
+OP_LOAD i, t1
+OP_CONST 10, t2
+OP_JUMP_IF_GTE t1, t2, ".L1"
+OP_LOAD i, t3
+OP_CONST 1, t4
+OP_ADD t3, t4, t5
+OP_STORE i, t5
 OP_LABEL ".L1"
-OP_LOAD i, t7
-OP_RETURN t7
+OP_LOAD i, t6
+OP_RETURN t6
 OP_FUNC_END
 
 @endtest
@@ -131,18 +131,18 @@ int main() {
 @whenRun("./bin/cclynx", args="--emit-ir /dev/stdin")
 @expectOutput("stdout")
 OP_FUNC "main"
-OP_CONST 3, t1
-OP_STORE i, t1
-OP_LOAD i, t2
-OP_CONST 1, t3
-OP_JUMP_IF_LTE t2, t3, ".L1"
-OP_LOAD i, t4
-OP_CONST 1, t5
-OP_SUB t4, t5, t6
-OP_STORE i, t6
+OP_CONST 3, t0
+OP_STORE i, t0
+OP_LOAD i, t1
+OP_CONST 1, t2
+OP_JUMP_IF_LTE t1, t2, ".L1"
+OP_LOAD i, t3
+OP_CONST 1, t4
+OP_SUB t3, t4, t5
+OP_STORE i, t5
 OP_LABEL ".L1"
-OP_LOAD i, t7
-OP_RETURN t7
+OP_LOAD i, t6
+OP_RETURN t6
 OP_FUNC_END
 
 @endtest
@@ -160,18 +160,18 @@ int main() {
 @whenRun("./bin/cclynx", args="--emit-ir /dev/stdin")
 @expectOutput("stdout")
 OP_FUNC "main"
-OP_CONST 0, t1
-OP_STORE i, t1
-OP_LOAD i, t2
-OP_CONST 0, t3
-OP_JUMP_IF_NE t2, t3, ".L1"
-OP_LOAD i, t4
-OP_CONST 7, t5
-OP_ADD t4, t5, t6
-OP_STORE i, t6
+OP_CONST 0, t0
+OP_STORE i, t0
+OP_LOAD i, t1
+OP_CONST 0, t2
+OP_JUMP_IF_NE t1, t2, ".L1"
+OP_LOAD i, t3
+OP_CONST 7, t4
+OP_ADD t3, t4, t5
+OP_STORE i, t5
 OP_LABEL ".L1"
-OP_LOAD i, t7
-OP_RETURN t7
+OP_LOAD i, t6
+OP_RETURN t6
 OP_FUNC_END
 
 @endtest
@@ -189,18 +189,18 @@ int main() {
 @whenRun("./bin/cclynx", args="--emit-ir /dev/stdin")
 @expectOutput("stdout")
 OP_FUNC "main"
-OP_CONST 10, t1
-OP_STORE i, t1
-OP_LOAD i, t2
-OP_CONST 3, t3
-OP_JUMP_IF_EQ t2, t3, ".L1"
-OP_LOAD i, t4
-OP_CONST 1, t5
-OP_SUB t4, t5, t6
-OP_STORE i, t6
+OP_CONST 10, t0
+OP_STORE i, t0
+OP_LOAD i, t1
+OP_CONST 3, t2
+OP_JUMP_IF_EQ t1, t2, ".L1"
+OP_LOAD i, t3
+OP_CONST 1, t4
+OP_SUB t3, t4, t5
+OP_STORE i, t5
 OP_LABEL ".L1"
-OP_LOAD i, t7
-OP_RETURN t7
+OP_LOAD i, t6
+OP_RETURN t6
 OP_FUNC_END
 
 @endtest
@@ -220,23 +220,23 @@ int main() {
 @whenRun("./bin/cclynx", args="--emit-ir /dev/stdin")
 @expectOutput("stdout")
 OP_FUNC "main"
-OP_CONST 10, t1
-OP_STORE i, t1
-OP_CONST 0, t2
-OP_JUMP_IF_FALSE t2, ".L1"
-OP_LOAD i, t3
-OP_CONST 1, t4
-OP_SUB t3, t4, t5
-OP_STORE i, t5
+OP_CONST 10, t0
+OP_STORE i, t0
+OP_CONST 0, t1
+OP_JUMP_IF_FALSE t1, ".L1"
+OP_LOAD i, t2
+OP_CONST 1, t3
+OP_SUB t2, t3, t4
+OP_STORE i, t4
 OP_JUMP ".L2"
 OP_LABEL ".L1"
-OP_LOAD i, t6
-OP_CONST 15, t7
-OP_MUL t6, t7, t8
-OP_STORE i, t8
+OP_LOAD i, t5
+OP_CONST 15, t6
+OP_MUL t5, t6, t7
+OP_STORE i, t7
 OP_LABEL ".L2"
-OP_LOAD i, t9
-OP_RETURN t9
+OP_LOAD i, t8
+OP_RETURN t8
 OP_FUNC_END
 
 @endtest
@@ -255,20 +255,20 @@ int main() {
 @whenRun("./bin/cclynx", args="--emit-ir /dev/stdin")
 @expectOutput("stdout")
 OP_FUNC "main"
-OP_CONST 10, t1
-OP_STORE i, t1
-OP_CONST 0, t2
-OP_JUMP_IF_FALSE t2, ".L1"
-OP_LOAD i, t3
-OP_CONST 1, t4
-OP_SUB t3, t4, t5
-OP_STORE i, t5
+OP_CONST 10, t0
+OP_STORE i, t0
+OP_CONST 0, t1
+OP_JUMP_IF_FALSE t1, ".L1"
+OP_LOAD i, t2
+OP_CONST 1, t3
+OP_SUB t2, t3, t4
+OP_STORE i, t4
 OP_JUMP ".L2"
 OP_LABEL ".L1"
 OP_NOP
 OP_LABEL ".L2"
-OP_LOAD i, t6
-OP_RETURN t6
+OP_LOAD i, t5
+OP_RETURN t5
 OP_FUNC_END
 
 @endtest
@@ -287,20 +287,20 @@ int main() {
 @whenRun("./bin/cclynx", args="--emit-ir /dev/stdin")
 @expectOutput("stdout")
 OP_FUNC "main"
-OP_CONST 10, t1
-OP_STORE i, t1
-OP_CONST 0, t2
-OP_JUMP_IF_FALSE t2, ".L1"
-OP_LOAD i, t3
-OP_CONST 1, t4
-OP_SUB t3, t4, t5
-OP_STORE i, t5
+OP_CONST 10, t0
+OP_STORE i, t0
+OP_CONST 0, t1
+OP_JUMP_IF_FALSE t1, ".L1"
+OP_LOAD i, t2
+OP_CONST 1, t3
+OP_SUB t2, t3, t4
+OP_STORE i, t4
 OP_JUMP ".L2"
 OP_LABEL ".L1"
 OP_NOP
 OP_LABEL ".L2"
-OP_LOAD i, t6
-OP_RETURN t6
+OP_LOAD i, t5
+OP_RETURN t5
 OP_FUNC_END
 
 @endtest

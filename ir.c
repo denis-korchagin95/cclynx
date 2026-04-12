@@ -533,7 +533,7 @@ struct ir_operand * new_temporary_operand(struct ir_context * ctx, struct ir_fun
     assert(ctx != NULL);
     assert(function != NULL);
     struct ir_operand * result = ir_create_operand(ctx, OPERAND_KIND_TEMPORARY);
-    result->content.temp_id = ++function->temp_id;
+    result->content.temp_id = function->temp_id++;
     return result;
 }
 

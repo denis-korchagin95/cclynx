@@ -8,10 +8,10 @@ int main() {
 @whenRun("./bin/cclynx", args="--emit-ir /dev/stdin")
 @expectOutput("stdout")
 OP_FUNC "main"
-OP_CONST 10, t1
-OP_STORE x, t1
-OP_LOAD x, t2
-OP_RETURN t2
+OP_CONST 10, t0
+OP_STORE x, t0
+OP_LOAD x, t1
+OP_RETURN t1
 OP_FUNC_END
 
 @endtest
@@ -26,14 +26,14 @@ int main() {
 @whenRun("./bin/cclynx", args="--emit-ir /dev/stdin")
 @expectOutput("stdout")
 OP_FUNC "main"
-OP_CONST 7, t1
-OP_CONST 8, t2
-OP_MUL t1, t2, t3
-OP_STORE x, t3
-OP_LOAD x, t4
-OP_CONST 2, t5
-OP_DIV t4, t5, t6
-OP_RETURN t6
+OP_CONST 7, t0
+OP_CONST 8, t1
+OP_MUL t0, t1, t2
+OP_STORE x, t2
+OP_LOAD x, t3
+OP_CONST 2, t4
+OP_DIV t3, t4, t5
+OP_RETURN t5
 OP_FUNC_END
 
 @endtest

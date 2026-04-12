@@ -10,15 +10,15 @@ int main() {
 @whenRun("./bin/cclynx", args="--emit-ir /dev/stdin")
 @expectOutput("stdout")
 OP_FUNC "foo"
-OP_CONST 7, t1
-OP_RETURN t1
+OP_CONST 7, t0
+OP_RETURN t0
 OP_FUNC_END
 
 OP_FUNC "main"
-OP_CONST 42, t1
-OP_CALL "foo", t2
-OP_MUL t1, t2, t3
-OP_RETURN t3
+OP_CONST 42, t0
+OP_CALL "foo", t1
+OP_MUL t0, t1, t2
+OP_RETURN t2
 OP_FUNC_END
 
 @endtest
@@ -36,15 +36,15 @@ int main() {
 @expectOutput("stdout")
 OP_FUNC "identity"
 OP_STORE_PARAM "a", 0
-OP_LOAD a, t1
-OP_RETURN t1
+OP_LOAD a, t0
+OP_RETURN t0
 OP_FUNC_END
 
 OP_FUNC "main"
-OP_CONST 42, t1
-OP_ARG t1, 0
-OP_CALL "identity", t2
-OP_RETURN t2
+OP_CONST 42, t0
+OP_ARG t0, 0
+OP_CALL "identity", t1
+OP_RETURN t1
 OP_FUNC_END
 
 @endtest
@@ -63,19 +63,19 @@ int main() {
 OP_FUNC "add"
 OP_STORE_PARAM "a", 0
 OP_STORE_PARAM "b", 1
-OP_LOAD a, t1
-OP_LOAD b, t2
-OP_ADD t1, t2, t3
-OP_RETURN t3
+OP_LOAD a, t0
+OP_LOAD b, t1
+OP_ADD t0, t1, t2
+OP_RETURN t2
 OP_FUNC_END
 
 OP_FUNC "main"
-OP_CONST 19, t1
-OP_ARG t1, 0
-OP_CONST 23, t2
-OP_ARG t2, 1
-OP_CALL "add", t3
-OP_RETURN t3
+OP_CONST 19, t0
+OP_ARG t0, 0
+OP_CONST 23, t1
+OP_ARG t1, 1
+OP_CALL "add", t2
+OP_RETURN t2
 OP_FUNC_END
 
 @endtest
@@ -95,23 +95,23 @@ OP_FUNC "foo"
 OP_STORE_PARAM "a", 0
 OP_STORE_PARAM "b", 1
 OP_STORE_PARAM "c", 2
-OP_LOAD a, t1
-OP_LOAD b, t2
-OP_ADD t1, t2, t3
-OP_LOAD c, t4
-OP_ADD t3, t4, t5
-OP_RETURN t5
+OP_LOAD a, t0
+OP_LOAD b, t1
+OP_ADD t0, t1, t2
+OP_LOAD c, t3
+OP_ADD t2, t3, t4
+OP_RETURN t4
 OP_FUNC_END
 
 OP_FUNC "main"
-OP_CONST 1, t1
-OP_ARG t1, 0
-OP_CONST 2, t2
-OP_ARG t2, 1
-OP_CONST 3, t3
-OP_ARG t3, 2
-OP_CALL "foo", t4
-OP_RETURN t4
+OP_CONST 1, t0
+OP_ARG t0, 0
+OP_CONST 2, t1
+OP_ARG t1, 1
+OP_CONST 3, t2
+OP_ARG t2, 2
+OP_CALL "foo", t3
+OP_RETURN t3
 OP_FUNC_END
 
 @endtest
@@ -128,15 +128,15 @@ int main() {
 @whenRun("./bin/cclynx", args="--emit-ir /dev/stdin")
 @expectOutput("stdout")
 OP_FUNC "foo"
-OP_CONST 7, t1
-OP_RETURN t1
+OP_CONST 7, t0
+OP_RETURN t0
 OP_FUNC_END
 
 OP_FUNC "main"
-OP_CONST 42, t1
-OP_CALL "foo", t2
-OP_MUL t1, t2, t3
-OP_RETURN t3
+OP_CONST 42, t0
+OP_CALL "foo", t1
+OP_MUL t0, t1, t2
+OP_RETURN t2
 OP_FUNC_END
 
 @endtest
