@@ -22,7 +22,7 @@ static void process_command(const char * line, struct memory_blob_pool * pool)
         sscanf(line, "init %d", &capacity);
 
         if (map_count >= MAX_MAPS) {
-            cclynx_fatal_error("ERROR: too many maps\n");
+            cclynx_fatal_error("FATAL ERROR: too many maps\n");
         }
 
         hashmap_init(&maps[map_count], (size_t)capacity, pool);
@@ -77,13 +77,13 @@ static void process_command(const char * line, struct memory_blob_pool * pool)
 int main(const int argc, const char * argv[])
 {
     if (argc <= 1) {
-        cclynx_fatal_error("No source given!\n");
+        cclynx_fatal_error("FATAL ERROR: No source given!\n");
     }
 
     FILE * file = fopen(argv[1], "r");
 
     if (file == NULL) {
-        cclynx_fatal_error("Could not open file %s\n", argv[1]);
+        cclynx_fatal_error("FATAL ERROR: Could not open file %s\n", argv[1]);
     }
 
     struct cclynx_context ctx;

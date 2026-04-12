@@ -134,7 +134,7 @@ void do_print_ast(const struct ast_node * ast, FILE * file, int depth, unsigned 
                     case JUMP_OPERATION_CONTINUE: op_str = "continue"; break;
                     case JUMP_OPERATION_RETURN: op_str = "return"; break;
                     default:
-                        cclynx_fatal_error("ERROR: unknown jump operation\n");
+                        cclynx_fatal_error("FATAL ERROR: unknown jump operation\n");
                 }
                 bool has_expression =
                     ast->content.jump_statement.operation == JUMP_OPERATION_RETURN
@@ -154,7 +154,7 @@ void do_print_ast(const struct ast_node * ast, FILE * file, int depth, unsigned 
                 switch (ast->content.iteration_statement.operation) {
                     case ITERATION_OPERATION_WHILE: op_str = "while"; break;
                     default:
-                        cclynx_fatal_error("ERROR: unknown iteration operation\n");
+                        cclynx_fatal_error("FATAL ERROR: unknown iteration operation\n");
                 }
                 fprintf(file, "IterationStatement\n");
                 ancestors_info[depth] = 2;
@@ -227,7 +227,7 @@ void do_print_ast(const struct ast_node * ast, FILE * file, int depth, unsigned 
                     case BINARY_OPERATION_DIVIDE:       op_str = "/";  break;
                     case BINARY_OPERATION_MODULO:       op_str = "%";  break;
                     default:
-                        cclynx_fatal_error("ERROR: unknown binary operation\n");
+                        cclynx_fatal_error("FATAL ERROR: unknown binary operation\n");
                 }
                 fprintf(file, "BinaryExpression\n");
                 ancestors_info[depth] = 2;

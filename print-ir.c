@@ -134,7 +134,7 @@ void print_ir_program(const struct ir_program * program, FILE * file)
                 fprintf(file, "OP_STORE_PARAM \"%s\", %lld\n", instruction->op1->content.variable.symbol->identifier->name, instruction->op2->content.int_value);
                 break;
             default:
-                cclynx_fatal_error("ERROR(print): Unknown instruction for IR program\n");
+                cclynx_fatal_error("FATAL ERROR(print): Unknown instruction for IR program\n");
         }
     }
 

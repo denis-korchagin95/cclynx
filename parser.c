@@ -485,7 +485,7 @@ struct ast_node * parse_iteration_statement(struct parser_context * ctx, struct 
         return parse_while_statement(ctx, keyword_token);
     }
 
-    cclynx_fatal_error("ERROR: unknown iteration keyword\n");
+    cclynx_fatal_error("FATAL ERROR: unknown iteration keyword\n");
     return NULL;
 }
 
@@ -1146,11 +1146,11 @@ void parser_putback_token(struct token * token, struct parser_context * ctx)
     assert(ctx != NULL);
 
     if (token == &eos_token) {
-        cclynx_fatal_error("ERROR: Trying to putback EOS token!\n");
+        cclynx_fatal_error("FATAL ERROR: Trying to putback EOS token!\n");
     }
 
     if (ctx->token_buffer_pos >= MAX_TOKEN_BUFFER_SIZE) {
-        cclynx_fatal_error("ERROR: Maximum token buffer size reached!\n");
+        cclynx_fatal_error("FATAL ERROR: Maximum token buffer size reached!\n");
     }
 
     ctx->token_buffer[ctx->token_buffer_pos++] = token;

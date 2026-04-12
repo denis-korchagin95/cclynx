@@ -16,7 +16,7 @@ void source_load(struct source * source, const char * path)
     FILE * file = fopen(path, "rb");
 
     if (file == NULL) {
-        cclynx_fatal_error("ERROR: cannot open file '%s'\n", path);
+        cclynx_fatal_error("FATAL ERROR: cannot open file '%s'\n", path);
     }
 
     char * content = NULL;
@@ -32,7 +32,7 @@ void source_load(struct source * source, const char * path)
 
         if (content == NULL) {
             fclose(file);
-            cclynx_fatal_error("ERROR: cannot allocate memory for file '%s'\n", path);
+            cclynx_fatal_error("FATAL ERROR: cannot allocate memory for file '%s'\n", path);
         }
 
         read_size = fread(content, 1, file_size, file);
@@ -42,7 +42,7 @@ void source_load(struct source * source, const char * path)
 
         if (content == NULL) {
             fclose(file);
-            cclynx_fatal_error("ERROR: cannot allocate memory for file '%s'\n", path);
+            cclynx_fatal_error("FATAL ERROR: cannot allocate memory for file '%s'\n", path);
         }
 
         size_t n;
@@ -54,7 +54,7 @@ void source_load(struct source * source, const char * path)
                 if (new_content == NULL) {
                     free(content);
                     fclose(file);
-                    cclynx_fatal_error("ERROR: cannot allocate memory for file '%s'\n", path);
+                    cclynx_fatal_error("FATAL ERROR: cannot allocate memory for file '%s'\n", path);
                 }
                 content = new_content;
             }
@@ -99,7 +99,7 @@ void source_unget_char(struct source * source, int ch)
     assert(source != NULL);
 
     if (ch == EOF) {
-        cclynx_fatal_error("ERROR: cannot unget EOF\n");
+        cclynx_fatal_error("FATAL ERROR: cannot unget EOF\n");
     }
 
     assert(source->cursor > 0);

@@ -48,7 +48,7 @@ int main(const int argc, const char * argv[])
     }
 
     if (source_filename == NULL) {
-        cclynx_fatal_error("No source given!\n");
+        cclynx_fatal_error("FATAL ERROR: No source given!\n");
     }
 
     struct cclynx_context ctx;
@@ -172,10 +172,10 @@ void parse_options(const int argc, const char * argv[])
         if (strncmp(arg, "-Wno-", sizeof("-Wno-") - 1) == 0) {
             const char * name = arg + sizeof("-Wno-") - 1;
             if (*name == '\0') {
-                cclynx_fatal_error("ERROR: missing warning name after -Wno-\n");
+                cclynx_fatal_error("FATAL ERROR: missing warning name after -Wno-\n");
             }
             if (!warning_disable_by_name(&warning_flags, name)) {
-                cclynx_fatal_error("ERROR: unknown warning \"%s\"\n", name);
+                cclynx_fatal_error("FATAL ERROR: unknown warning \"%s\"\n", name);
             }
             continue;
         }
@@ -186,11 +186,11 @@ void parse_options(const int argc, const char * argv[])
         }
 
         if (strncmp(arg, "--", sizeof("--") - 1) == 0) {
-            cclynx_fatal_error("ERROR: unknown option \"%s\"\n", arg);
+            cclynx_fatal_error("FATAL ERROR: unknown option \"%s\"\n", arg);
         }
 
         if (strncmp(arg, "-W", sizeof("-W") - 1) == 0) {
-            cclynx_fatal_error("ERROR: unknown warning option \"%s\"\n", arg);
+            cclynx_fatal_error("FATAL ERROR: unknown warning option \"%s\"\n", arg);
         }
     }
 }

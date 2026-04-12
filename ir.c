@@ -56,7 +56,7 @@ static struct ir_function * ir_program_add_function(struct ir_program * program,
         size_t new_capacity = program->function_capacity == 0 ? IR_INITIAL_FUNCTION_CAPACITY : program->function_capacity * 2;
         struct ir_function ** new_functions = realloc(program->functions, new_capacity * sizeof(struct ir_function *));
         if (new_functions == NULL) {
-            cclynx_fatal_error("ERROR: failed to allocate functions\n");
+            cclynx_fatal_error("FATAL ERROR: failed to allocate functions\n");
         }
         program->functions = new_functions;
         program->function_capacity = new_capacity;
@@ -78,7 +78,7 @@ void ir_program_generate(struct ir_context * ctx, struct ir_program * program, c
     assert(ast != NULL);
 
     if (ast->kind != AST_NODE_KIND_FUNCTION_DEFINITION) {
-        cclynx_fatal_error("ERROR: expected function to generate it to IR\n");
+        cclynx_fatal_error("FATAL ERROR: expected function to generate it to IR\n");
     }
 
     struct ir_function * function = ir_program_add_function(program, ctx->pool);
@@ -202,7 +202,7 @@ void do_generate_ir(struct ir_context * ctx, struct ir_function * function, cons
         case AST_NODE_KIND_ITERATION_STATEMENT:
             {
                 if (node->content.iteration_statement.operation != ITERATION_OPERATION_WHILE) {
-                    cclynx_fatal_error("ERROR: unknown iteration operation\n");
+                    cclynx_fatal_error("FATAL ERROR: unknown iteration operation\n");
                 }
 
                 struct ir_operand * start_of_loop_label = ir_create_operand(ctx, OPERAND_KIND_LABEL);
@@ -302,7 +302,7 @@ void do_generate_ir(struct ir_context * ctx, struct ir_function * function, cons
                         instruction->code = OP_STORE;
                         break;
                     default:
-                        cclynx_fatal_error("ERROR: unknown assignment\n");
+                        cclynx_fatal_error("FATAL ERROR: unknown assignment\n");
                 }
 
                 ctx->is_assign = 1;
@@ -354,7 +354,7 @@ void do_generate_ir(struct ir_context * ctx, struct ir_function * function, cons
                         instruction->code = OP_SUB;
                         break;
                     default:
-                        cclynx_fatal_error("ERROR: unknown operation\n");
+                        cclynx_fatal_error("FATAL ERROR: unknown operation\n");
                 }
 
                 do_generate_ir(ctx, function, node->content.binary_expression.lhs);
@@ -381,7 +381,7 @@ void do_generate_ir(struct ir_context * ctx, struct ir_function * function, cons
                         instruction->code = OP_LOGICAL_NOT;
                         break;
                     default:
-                        cclynx_fatal_error("ERROR: unknown unary operation\n");
+                        cclynx_fatal_error("FATAL ERROR: unknown unary operation\n");
                 }
 
                 do_generate_ir(ctx, function, node->content.unary_expression.operand);
@@ -444,7 +444,7 @@ void do_generate_ir(struct ir_context * ctx, struct ir_function * function, cons
                     }
                     break;
                 default:
-                    cclynx_fatal_error("ERROR: unknown jump operation\n");
+                    cclynx_fatal_error("FATAL ERROR: unknown jump operation\n");
             }
             break;
         case AST_NODE_KIND_INTEGER_CONSTANT_EXPRESSION:
@@ -490,7 +490,7 @@ void do_generate_ir(struct ir_context * ctx, struct ir_function * function, cons
             }
             break;
         default:
-            cclynx_fatal_error("ERROR: unknown ast node for IR generator\n");
+            cclynx_fatal_error("FATAL ERROR: unknown ast node for IR generator\n");
     }
 }
 
@@ -503,7 +503,7 @@ void ir_emit(struct ir_function * function, struct ir_instruction * instruction)
         size_t new_capacity = function->instruction_capacity == 0 ? IR_INITIAL_INSTRUCTION_CAPACITY : function->instruction_capacity * 2;
         struct ir_instruction ** new_instructions = realloc(function->instructions, new_capacity * sizeof(struct ir_instruction *));
         if (new_instructions == NULL) {
-            cclynx_fatal_error("ERROR: failed to allocate instructions\n");
+            cclynx_fatal_error("FATAL ERROR: failed to allocate instructions\n");
         }
         function->instructions = new_instructions;
         function->instruction_capacity = new_capacity;

@@ -233,7 +233,7 @@ void read_number(struct tokenizer_context * ctx, struct source * source, struct 
         }
 
         if (ptr[i] == '.') {
-            cclynx_fatal_error("ERROR: float literals are not supported\n");
+            cclynx_fatal_error("FATAL ERROR: float literals are not supported\n");
         }
     }
 }
@@ -318,7 +318,7 @@ void skip_multi_line_comment(struct tokenizer_context * ctx, struct source * sou
         int ch = source_get_char(source);
 
         if (ch == EOF) {
-            cclynx_fatal_error("ERROR: unterminated comment\n");
+            cclynx_fatal_error("FATAL ERROR: unterminated comment\n");
         }
 
         if (ch == '*') {

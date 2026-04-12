@@ -30,7 +30,7 @@ struct type * type_check(struct type * lhs, const struct type * rhs)
     assert(rhs != NULL);
 
     if (lhs->kind != rhs->kind) {
-        cclynx_fatal_error("ERROR: type mismatch between '%s' and '%s'\n", type_stringify(lhs), type_stringify(rhs));
+        cclynx_fatal_error("FATAL ERROR: type mismatch between '%s' and '%s'\n", type_stringify(lhs), type_stringify(rhs));
     }
     return lhs;
 }

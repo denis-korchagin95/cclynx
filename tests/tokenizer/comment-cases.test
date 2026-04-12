@@ -63,7 +63,7 @@ int main() { /* /* */ * / return 42; }
 int main() { /* unterminated
 @whenRun("./bin/cclynx", args="--emit-tokens /dev/stdin")
 @expectOutput("stderr")
-ERROR: unterminated comment
+FATAL ERROR: unterminated comment
 
 @endtest
 

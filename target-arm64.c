@@ -36,7 +36,7 @@ static void push_reg(struct codegen_context * ctx, struct codegen_reg * reg)
     assert(ctx != NULL);
     assert(reg != NULL);
     if (ctx->reg_stack_pos >= CODEGEN_REG_STACK_SIZE) {
-        cclynx_fatal_error("ERROR: reg stack overflow for target arm64 generator\n");
+        cclynx_fatal_error("FATAL ERROR: reg stack overflow for target arm64 generator\n");
     }
     struct codegen_stack_entry * entry = &ctx->reg_stack[ctx->reg_stack_pos++];
     entry->kind = CODEGEN_STACK_ENTRY_REAL;
@@ -51,7 +51,7 @@ static unsigned int alloc_spill_slot(struct codegen_context * ctx)
             return i;
         }
     }
-    cclynx_fatal_error("ERROR: out of spill slots\n");
+    cclynx_fatal_error("FATAL ERROR: out of spill slots\n");
 }
 
 static void free_spill_slot(struct codegen_context * ctx, unsigned int slot)
@@ -90,14 +90,14 @@ static struct codegen_reg * alloc_reg(struct codegen_context * ctx, enum codegen
         return victim;
     }
 
-    cclynx_fatal_error("ERROR: too many registers\n");
+    cclynx_fatal_error("FATAL ERROR: too many registers\n");
 }
 
 static struct codegen_reg * pop_reg(struct codegen_context * ctx)
 {
     assert(ctx != NULL);
     if (ctx->reg_stack_pos <= 0) {
-        cclynx_fatal_error("ERROR: reg stack underflow for target arm64 generator\n");
+        cclynx_fatal_error("FATAL ERROR: reg stack underflow for target arm64 generator\n");
     }
     struct codegen_stack_entry * entry = &ctx->reg_stack[ctx->reg_stack_pos - 1];
     if (entry->kind == CODEGEN_STACK_ENTRY_REAL) {
@@ -139,7 +139,7 @@ static void simulator_alloc(struct simulator_context * ctx)
             return;
         }
     }
-    cclynx_fatal_error("ERROR: simulator cannot allocate register\n");
+    cclynx_fatal_error("FATAL ERROR: simulator cannot allocate register\n");
 }
 
 static void simulator_free(struct simulator_context * ctx)
@@ -153,7 +153,7 @@ static void simulator_push(struct simulator_context * ctx)
 {
     assert(ctx != NULL);
     if (ctx->stack_pos >= CODEGEN_REG_STACK_SIZE) {
-        cclynx_fatal_error("ERROR: simulator reg stack overflow\n");
+        cclynx_fatal_error("FATAL ERROR: simulator reg stack overflow\n");
     }
     ctx->stack_is_spill[ctx->stack_pos++] = 0;
 }
@@ -573,7 +573,7 @@ void target_arm64_generate(struct codegen_context * ctx, struct ir_program * pro
                 }
                 break;
             default:
-                cclynx_fatal_error("ERROR: unknown instruction\n");
+                cclynx_fatal_error("FATAL ERROR: unknown instruction\n");
         }
     }
 
