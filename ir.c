@@ -14,7 +14,7 @@ static struct ir_operand * ir_create_operand(struct ir_context * ctx, enum opera
 static struct ir_operand * alloc_operand(struct ir_context * ctx);
 static void do_generate_ir(struct ir_context * ctx, struct ir_function * function, const struct ast_node * node);
 static void ir_emit(struct ir_function * function, struct ir_instruction * instruction);
-static struct ir_operand * new_temporary_operand(struct ir_context * ctx);
+static struct ir_operand * new_temporary_operand(struct ir_context * ctx, struct ir_function * function);
 static void ir_generate_condition(struct ir_context * ctx, struct ir_function * function, struct ast_node * condition, struct ir_operand * jump_label);
 
 void ir_context_init(struct ir_context * ctx, struct memory_blob_pool * pool)
@@ -278,7 +278,7 @@ void do_generate_ir(struct ir_context * ctx, struct ir_function * function, cons
 
                 instruction->op1 = variable;
 
-                instruction->result = new_temporary_operand(ctx);
+                instruction->result = new_temporary_operand(ctx, function);
                 instruction->result->type = node->type;
 
                 ir_emit(function, instruction);
@@ -363,7 +363,7 @@ void do_generate_ir(struct ir_context * ctx, struct ir_function * function, cons
                 do_generate_ir(ctx, function, node->content.binary_expression.rhs);
                 instruction->op2 = ir_last_instruction(function)->result;
 
-                instruction->result = new_temporary_operand(ctx);
+                instruction->result = new_temporary_operand(ctx, function);
                 instruction->result->type = node->type;
 
                 ir_emit(function, instruction);
@@ -387,7 +387,7 @@ void do_generate_ir(struct ir_context * ctx, struct ir_function * function, cons
                 do_generate_ir(ctx, function, node->content.unary_expression.operand);
                 instruction->op1 = ir_last_instruction(function)->result;
 
-                instruction->result = new_temporary_operand(ctx);
+                instruction->result = new_temporary_operand(ctx, function);
                 instruction->result->type = node->type;
 
                 ir_emit(function, instruction);
@@ -456,7 +456,7 @@ void do_generate_ir(struct ir_context * ctx, struct ir_function * function, cons
                 constant->content.int_value = node->content.constant.value;
 
                 instruction->op1 = constant;
-                instruction->result = new_temporary_operand(ctx);
+                instruction->result = new_temporary_operand(ctx, function);
                 instruction->result->type = node->type;
 
                 ir_emit(function, instruction);
@@ -483,7 +483,7 @@ void do_generate_ir(struct ir_context * ctx, struct ir_function * function, cons
                 callee->content.function.identifier = node->content.function_call.function->identifier;
                 call_instruction->op1 = callee;
 
-                call_instruction->result = new_temporary_operand(ctx);
+                call_instruction->result = new_temporary_operand(ctx, function);
                 call_instruction->result->type = node->type;
 
                 ir_emit(function, call_instruction);
@@ -528,11 +528,12 @@ struct ir_operand * ir_create_operand(struct ir_context * ctx, enum operand_kind
     return operand;
 }
 
-struct ir_operand * new_temporary_operand(struct ir_context * ctx)
+struct ir_operand * new_temporary_operand(struct ir_context * ctx, struct ir_function * function)
 {
     assert(ctx != NULL);
+    assert(function != NULL);
     struct ir_operand * result = ir_create_operand(ctx, OPERAND_KIND_TEMPORARY);
-    result->content.temp_id = ++ctx->temp_id;
+    result->content.temp_id = ++function->temp_id;
     return result;
 }
 

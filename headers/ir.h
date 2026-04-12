@@ -84,6 +84,7 @@ struct ir_function
     struct ir_instruction ** instructions;
     size_t instruction_count;
     size_t instruction_capacity;
+    unsigned long long int temp_id;
 };
 
 #define ir_last_instruction(func) ((func)->instructions[(func)->instruction_count - 1])
@@ -98,7 +99,6 @@ struct ir_program
 struct ir_context
 {
     struct memory_blob_pool * pool;
-    unsigned long long int temp_id;
     unsigned long long int label_id;
     struct ir_operand * last_variable;
     unsigned int is_assign;
