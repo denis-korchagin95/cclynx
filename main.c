@@ -60,7 +60,6 @@ int main(const int argc, const char * argv[])
     init_keywords(&ctx.identifier_table, &ctx.pool);
     struct tokenizer_context tokenizer_ctx;
     tokenizer_init(&tokenizer_ctx, &ctx.identifier_table, &ctx.pool);
-    init_symbols(&ctx.identifier_table, &ctx.pool);
 
     struct token * tokens = tokenizer_tokenize_file(&tokenizer_ctx, &source);
 
