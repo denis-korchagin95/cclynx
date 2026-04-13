@@ -1276,19 +1276,27 @@ void parse_declaration_specifiers(struct parser_context * ctx, struct declaratio
         }
 
         switch (current_token->identifier->keyword_code) {
+            case KEYWORD_CHAR:
+                if (specifiers->type_kind != TYPE_KIND_UNDEFINED) {
+                    if (
+                        specifiers->type_kind == TYPE_KIND_CHAR
+                        && current_token->identifier->keyword_code == KEYWORD_CHAR
+                    ) {
+                        parser_report_error(ctx, current_token, "duplicate type specifier 'char'");
+                    } else {
+                        parser_report_error(ctx, current_token, "mixed types");
+                    }
+                    current_token = parser_get_token(ctx);
+                    continue;
+                }
+                break;
             case KEYWORD_VOID:
-            case KEYWORD_INT:
                 if (specifiers->type_kind != TYPE_KIND_UNDEFINED) {
                     if (
                         specifiers->type_kind == TYPE_KIND_VOID
                         && current_token->identifier->keyword_code == KEYWORD_VOID
                     ) {
                         parser_report_error(ctx, current_token, "duplicate type specifier 'void'");
-                    } else if (
-                        specifiers->type_kind == TYPE_KIND_INTEGER
-                        && current_token->identifier->keyword_code == KEYWORD_INT
-                    ) {
-                        parser_report_error(ctx, current_token, "duplicate type specifier 'int'");
                     } else {
                         parser_report_error(ctx, current_token, "mixed types");
                     }
@@ -1308,6 +1316,20 @@ void parse_declaration_specifiers(struct parser_context * ctx, struct declaratio
                     && current_token->identifier->keyword_code == KEYWORD_VOID
                 ) {
                     parser_report_error(ctx, current_token, "'unsigned' cannot be applied to 'void'");
+                    current_token = parser_get_token(ctx);
+                    continue;
+                }
+                break;
+            case KEYWORD_INT:
+                if (specifiers->type_kind != TYPE_KIND_UNDEFINED) {
+                    if (
+                        specifiers->type_kind == TYPE_KIND_INTEGER
+                        && current_token->identifier->keyword_code == KEYWORD_INT
+                    ) {
+                        parser_report_error(ctx, current_token, "duplicate type specifier 'int'");
+                    } else {
+                        parser_report_error(ctx, current_token, "mixed types");
+                    }
                     current_token = parser_get_token(ctx);
                     continue;
                 }
@@ -1357,6 +1379,9 @@ void parse_declaration_specifiers(struct parser_context * ctx, struct declaratio
             case KEYWORD_INT:
                 specifiers->type_kind = TYPE_KIND_INTEGER;
                 break;
+            case KEYWORD_CHAR:
+                specifiers->type_kind = TYPE_KIND_CHAR;
+                break;
             case KEYWORD_UNSIGNED:
                 specifiers->modifiers |= TYPE_MODIFIER_UNSIGNED;
                 break;
@@ -1395,6 +1420,13 @@ struct type * resolve_type(struct declaration_specifiers * specifiers)
             return &type_uint32;
         }
         return &type_sint32;
+    }
+
+    if (specifiers->type_kind == TYPE_KIND_CHAR) {
+        if (specifiers->modifiers & TYPE_MODIFIER_UNSIGNED) {
+            return &type_uint8;
+        }
+        return &type_sint8;
     }
 
     cclynx_fatal_error("FATAL ERROR: unhandled type\n");

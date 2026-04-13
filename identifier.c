@@ -24,6 +24,7 @@ static struct keyword
     {"signed",      KEYWORD_SIGNED},
     {"break",       KEYWORD_BREAK},
     {"continue",    KEYWORD_CONTINUE},
+    {"char",        KEYWORD_CHAR},
 };
 
 

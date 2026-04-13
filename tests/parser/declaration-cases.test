@@ -348,3 +348,172 @@ void int foo() {
 {{any}}:1:6: ERROR: mixed types
 
 @endtest
+
+@test("It should parse an implicitly signed char variable")
+@given("stdin")
+int main() {
+    char x;
+    return 0;
+}
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings /dev/stdin")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        ├── VariableDeclaration: 'x'
+        │   └── Type
+        │       ├── category: 'basic'
+        │       └── descriptor: 'char'
+        └── JumpStatement
+            ├── Operation: 'return'
+            └── IntegerConstant: '0'
+                └── Type
+                    ├── category: 'basic'
+                    └── descriptor: 'int'
+
+@endtest
+
+@test("It should parse an explicitly signed char variable 'signed char'")
+@given("stdin")
+int main() {
+    signed char x;
+    return 0;
+}
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings /dev/stdin")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        ├── VariableDeclaration: 'x'
+        │   └── Type
+        │       ├── category: 'basic'
+        │       └── descriptor: 'char'
+        └── JumpStatement
+            ├── Operation: 'return'
+            └── IntegerConstant: '0'
+                └── Type
+                    ├── category: 'basic'
+                    └── descriptor: 'int'
+
+@endtest
+
+@test("It should parse an explicitly signed char variable 'char signed'")
+@given("stdin")
+int main() {
+    char signed x;
+    return 0;
+}
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings /dev/stdin")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        ├── VariableDeclaration: 'x'
+        │   └── Type
+        │       ├── category: 'basic'
+        │       └── descriptor: 'char'
+        └── JumpStatement
+            ├── Operation: 'return'
+            └── IntegerConstant: '0'
+                └── Type
+                    ├── category: 'basic'
+                    └── descriptor: 'int'
+
+@endtest
+
+@test("It should parse an unsigned char variable 'unsigned char'")
+@given("stdin")
+int main() {
+    unsigned char x;
+    return 0;
+}
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings /dev/stdin")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        ├── VariableDeclaration: 'x'
+        │   └── Type
+        │       ├── category: 'basic'
+        │       └── descriptor: 'unsigned char'
+        └── JumpStatement
+            ├── Operation: 'return'
+            └── IntegerConstant: '0'
+                └── Type
+                    ├── category: 'basic'
+                    └── descriptor: 'int'
+
+@endtest
+
+@test("It should parse an unsigned char variable 'char unsigned'")
+@given("stdin")
+int main() {
+    char unsigned x;
+    return 0;
+}
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings /dev/stdin")
+@expectOutput("stdout")
+TranslationUnit: '{{any}}'
+└── FunctionDefinition: 'main' <unspecified-parameters>
+    ├── ReturnType
+    │   ├── category: 'basic'
+    │   └── descriptor: 'int'
+    └── CompoundStatement
+        ├── VariableDeclaration: 'x'
+        │   └── Type
+        │       ├── category: 'basic'
+        │       └── descriptor: 'unsigned char'
+        └── JumpStatement
+            ├── Operation: 'return'
+            └── IntegerConstant: '0'
+                └── Type
+                    ├── category: 'basic'
+                    └── descriptor: 'int'
+
+@endtest
+
+
+@test("It should raise a mixed types error for 'char void'")
+@given("stdin")
+char void foo() {
+    return 0;
+}
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings /dev/stdin")
+@expectOutput("stderr")
+{{any}}:1:6: ERROR: mixed types
+
+@endtest
+
+@test("It should raise a mixed types error for 'void char'")
+@given("stdin")
+void char foo() {
+    return;
+}
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings /dev/stdin")
+@expectOutput("stderr")
+{{any}}:1:6: ERROR: mixed types
+
+@endtest
+
+@test("It should raise a on duplicate 'char' type")
+@given("stdin")
+char char foo() {
+    return 0;
+}
+@whenRun("./bin/cclynx", args="--emit-ast --no-warnings /dev/stdin")
+@expectOutput("stderr")
+{{any}}:1:6: ERROR: duplicate type specifier 'char'
+
+@endtest
