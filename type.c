@@ -6,6 +6,8 @@
 struct type type_void = {TYPE_KIND_VOID, 0, 0, 0};
 struct type type_sint32 = {TYPE_KIND_INTEGER, 4, 4, TYPE_MODIFIER_SIGNED};
 struct type type_uint32 = {TYPE_KIND_INTEGER, 4, 4, TYPE_MODIFIER_UNSIGNED};
+struct type type_sint8 = {TYPE_KIND_CHAR, 1, 1, TYPE_MODIFIER_SIGNED};
+struct type type_uint8 = {TYPE_KIND_CHAR, 1, 1, TYPE_MODIFIER_UNSIGNED};
 
 const char * type_stringify(const struct type * type)
 {
@@ -19,6 +21,11 @@ const char * type_stringify(const struct type * type)
                 return "unsigned int";
             }
             return "int";
+        case TYPE_KIND_CHAR:
+            if (type->modifiers & TYPE_MODIFIER_UNSIGNED) {
+                return "unsigned char";
+            }
+            return "char";
         default:
             return "<unknown type>";
     }

@@ -13,6 +13,7 @@ enum type_kind
     TYPE_KIND_UNDEFINED = 0,
     TYPE_KIND_VOID,
     TYPE_KIND_INTEGER,
+    TYPE_KIND_CHAR,
 };
 
 struct type
@@ -25,6 +26,8 @@ struct type
 
 extern struct type type_sint32;
 extern struct type type_uint32;
+extern struct type type_sint8;
+extern struct type type_uint8;
 extern struct type type_void;
 
 static inline int type_is_unsigned(const struct type * t)
